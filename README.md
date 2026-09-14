@@ -25,32 +25,71 @@ Design notes and the reasoning behind them: [`docs/auth-rbac-tenancy.md`](docs/a
 
 ## Running it locally
 
-Requires Node 20+ and PostgreSQL 14+.
+Requires Node 20+ and a PostgreSQL database (local, or a Supabase project).
+
+### 1. Install
 
 ```bash
 npm install
-cp .env.example .env        # then set JWT_SECRET to a long random value
+```
 
-createdb lumen_platform
+### 2. Create a `.env`
 
-# Migrations run as an admin user.
-ADMIN_URL=postgres://postgres@localhost:5432/lumen_platform
-DATABASE_URL=$ADMIN_URL npm run migrate
+Copy `.env.example` to `.env` and fill it in. **All the npm scripts read `.env`
+automatically** — you never need to set variables in your shell, so the same
+commands work in bash, zsh and PowerShell:
 
-# Migration 0002 creates the lumen_app role without a password. Set one:
-psql "$ADMIN_URL" -c "ALTER ROLE lumen_app LOGIN PASSWORD 'choose-one';"
+```ini
+ADMIN_DATABASE_URL=postgres://postgres:yourpassword@localhost:5432/lumen_platform
+DATABASE_URL=postgres://lumen_app:devpass@localhost:5432/lumen_platform
+JWT_SECRET=a-long-random-value-of-at-least-32-characters
+PORT=3000
+```
 
-# Demo school with one user per role.
-ADMIN_DATABASE_URL=$ADMIN_URL npm run seed
+Two URLs, not one. `ADMIN_DATABASE_URL` creates tables and roles;
+`DATABASE_URL` is what the app runs as. See "Why two database users" below —
+the server refuses to start if you get this wrong.
 
-# The app itself connects as lumen_app — never as an admin (see below).
-DATABASE_URL=postgres://lumen_app:choose-one@localhost:5432/lumen_platform npm run dev
+### 3. Create the database and migrate
+
+```bash
+createdb lumen_platform     # or create it in pgAdmin / the Supabase dashboard
+npm run migrate
+```
+
+### 4. Give the app role a password
+
+Migration 0002 creates `lumen_app` without one. Set it on the admin connection,
+in psql, pgAdmin, or the Supabase SQL editor:
+
+```sql
+ALTER ROLE lumen_app LOGIN PASSWORD 'devpass';
+```
+
+Use the same password you put in `DATABASE_URL`.
+
+### 5. Seed and run
+
+```bash
+npm run seed
+npm run dev
 ```
 
 ```bash
 curl -s localhost:3000/auth/login -H 'content-type: application/json' \
   -d '{"tenantSlug":"demo-school","email":"teacher@demo-school.test","password":"demo-password-123"}'
 ```
+
+### Windows notes
+
+- PowerShell does not support `VAR=value command`. That is why everything goes
+  in `.env` instead — use the commands exactly as written above.
+- `psql` and `createdb` only exist if PostgreSQL is installed. Install it with
+  `winget install -e --id PostgreSQL.PostgreSQL.17`, then add
+  `C:\Program Files\PostgreSQL\17\bin` to your PATH and open a new terminal.
+- No PostgreSQL install? Point `ADMIN_DATABASE_URL` and `DATABASE_URL` at a
+  Supabase project instead and create the database and role from its SQL
+  editor. `npm test` still needs a local one — see below.
 
 ### Why two database users
 

@@ -11,7 +11,6 @@
  * DATABASE_URL) because provisioning a tenant is an admin task — lumen_app has
  * read-only access to the tenants table.
  */
-import { loadConfig } from '../src/config.js';
 import { getPool, closePool } from '../src/db/pool.js';
 import { hashPassword } from '../src/auth/password.js';
 import { createTenant, findTenantBySlug } from '../src/repositories/tenantRepository.js';
@@ -26,8 +25,11 @@ async function main(): Promise<void> {
     throw new Error('Refusing to seed demo data in production');
   }
 
-  const config = loadConfig();
-  const pool = getPool(process.env.ADMIN_DATABASE_URL ?? config.databaseUrl);
+  const databaseUrl = process.env.ADMIN_DATABASE_URL ?? process.env.DATABASE_URL;
+  if (!databaseUrl) {
+    throw new Error('Set ADMIN_DATABASE_URL (or DATABASE_URL) to an admin connection');
+  }
+  const pool = getPool(databaseUrl);
 
   const tenant =
     (await findTenantBySlug(SLUG, pool)) ??

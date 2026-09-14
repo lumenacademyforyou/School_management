@@ -67,8 +67,10 @@ npm run migrate    # needs an ADMIN connection
 npm run seed       # demo school, one user per role
 ```
 
-`.env` is **not** auto-loaded — there is no dotenv wired. Either set variables
-inline, or run with `node --env-file=.env ./node_modules/.bin/tsx src/server.ts`.
+All scripts read `.env` automatically (`node --env-file-if-exists`), so no
+shell-specific variable syntax is needed — the same commands work in bash and
+PowerShell. `.env` needs `ADMIN_DATABASE_URL` (migrations, seeding) and
+`DATABASE_URL` (the app, as `lumen_app`).
 
 ## Conventions
 

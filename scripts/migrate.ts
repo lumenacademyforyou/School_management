@@ -10,7 +10,18 @@ import { readdir, readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Pool } from 'pg';
-import { loadConfig } from '../src/config.js';
+
+/**
+ * Migrations need the ADMIN connection, not the app's. They create roles and
+ * tables, which lumen_app deliberately cannot do.
+ */
+function adminDatabaseUrl(): string {
+  const url = process.env.ADMIN_DATABASE_URL ?? process.env.DATABASE_URL;
+  if (!url) {
+    throw new Error('Set ADMIN_DATABASE_URL (or DATABASE_URL) to an admin connection');
+  }
+  return url;
+}
 
 const migrationsDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'migrations');
 
@@ -56,6 +67,6 @@ export async function migrate(databaseUrl: string): Promise<string[]> {
 
 const isEntrypoint = process.argv[1] === fileURLToPath(import.meta.url);
 if (isEntrypoint) {
-  const applied = await migrate(loadConfig().databaseUrl);
+  const applied = await migrate(adminDatabaseUrl());
   console.log(applied.length ? `Applied: ${applied.join(', ')}` : 'Already up to date.');
 }

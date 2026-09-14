@@ -60,7 +60,8 @@ is set. **Never run `npm test` against a live Supabase project.**
 
 ### Known rough edges
 
-- `.env` is not auto-loaded; no dotenv is wired. Use `node --env-file=.env`.
+- ~~`.env` is not auto-loaded~~ — fixed 14 Sep: every script now reads `.env`,
+  so no shell-specific env syntax is needed on Windows or anywhere else.
 - No UI yet. This is an API — expect JSON and test output. First screens are
   [1028].
 
