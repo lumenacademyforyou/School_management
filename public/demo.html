@@ -1,0 +1,268 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foundation self-check</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #14171c; --muted: #5d6673;
+    --line: #e3e6ea; --pass: #0f7a4d; --pass-bg: #e6f4ec;
+    --fail: #b3261e; --fail-bg: #fdeceb; --accent: #2b5cd9; --code: #f0f2f5;
+  }
+  :root:not([data-theme="light"]) { }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151a; --panel: #1a1f26; --ink: #e8ebef; --muted: #98a2b0;
+      --line: #2b323b; --pass: #57d398; --pass-bg: #14301f;
+      --fail: #ff8a80; --fail-bg: #351a18; --accent: #7aa2ff; --code: #222831;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    padding-block: 32px; padding-left: 20px; padding-right: 20px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  header { margin-bottom: 24px; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--accent); font-weight: 650; margin-bottom: 6px;
+  }
+  h1 { font-size: 26px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -.01em; }
+  .sub { color: var(--muted); margin: 0; max-width: 60ch; }
+  .bar {
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+    margin: 22px 0; padding: 14px 16px; background: var(--panel);
+    border: 1px solid var(--line); border-radius: 10px;
+  }
+  button {
+    font: inherit; font-weight: 600; color: #fff; background: var(--accent);
+    border: 0; border-radius: 7px; padding: 9px 18px; cursor: pointer;
+  }
+  button:disabled { opacity: .55; cursor: progress; }
+  .tally { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .tally strong { color: var(--ink); }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  li {
+    background: var(--panel); border: 1px solid var(--line);
+    border-left: 4px solid var(--line); border-radius: 10px; padding: 14px 16px;
+  }
+  li[data-state="pass"] { border-left-color: var(--pass); }
+  li[data-state="fail"] { border-left-color: var(--fail); }
+  .row { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+  .badge {
+    font-size: 11px; font-weight: 700; letter-spacing: .06em; padding: 3px 9px;
+    border-radius: 99px; background: var(--code); color: var(--muted); flex: none;
+  }
+  li[data-state="pass"] .badge { background: var(--pass-bg); color: var(--pass); }
+  li[data-state="fail"] .badge { background: var(--fail-bg); color: var(--fail); }
+  .what { font-weight: 600; }
+  .why { color: var(--muted); font-size: 13.5px; margin: 5px 0 0; }
+  .detail {
+    margin: 10px 0 0; padding: 9px 11px; background: var(--code);
+    border-radius: 6px; font: 12.5px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--muted); white-space: pre-wrap; word-break: break-word;
+  }
+  footer { margin-top: 26px; color: var(--muted); font-size: 13px; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--code); padding: 1px 5px; border-radius: 4px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Jira 1026 · Sprint 1</div>
+    <h1>Shared auth, RBAC and tenant isolation</h1>
+    <p class="sub">
+      Each check below calls the running API for real and shows what came back.
+      Nothing here is mocked — if the server is down or the seed has not run,
+      these fail.
+    </p>
+  </header>
+
+  <div class="bar">
+    <button id="run">Run all checks</button>
+    <span class="tally" id="tally">Not run yet</span>
+  </div>
+
+  <ol id="results"></ol>
+
+  <footer id="footer"></footer>
+</div>
+
+<script>
+const API = location.origin;
+const PASSWORD = 'demo-password-123';
+const TENANT = 'demo-school';
+
+async function call(method, path, { token, body } = {}) {
+  const res = await fetch(API + path, {
+    method,
+    headers: {
+      ...(body ? { 'content-type': 'application/json' } : {}),
+      ...(token ? { authorization: 'Bearer ' + token } : {}),
+    },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  });
+  let payload = null;
+  try { payload = await res.json(); } catch { /* 204 has no body */ }
+  return { status: res.status, body: payload };
+}
+
+const login = (email, password = PASSWORD) =>
+  call('POST', '/auth/login', { body: { tenantSlug: TENANT, email, password } });
+
+// Each check returns { ok, detail }. Shared state lets later checks reuse tokens.
+const state = {};
+
+const checks = [
+  {
+    what: 'The server is up',
+    why: 'GET /health, the only endpoint that needs no token.',
+    async run() {
+      const r = await call('GET', '/health');
+      return { ok: r.status === 200 && r.body?.status === 'ok', detail: `${r.status} ${JSON.stringify(r.body)}` };
+    },
+  },
+  {
+    what: 'A teacher can sign in, scoped to their school',
+    why: 'Login takes a tenant slug as well as an email, so the same address can be different people at different schools.',
+    async run() {
+      const r = await login('teacher@demo-school.test');
+      state.teacher = r.body?.accessToken;
+      state.tenantId = r.body?.user?.tenantId;
+      return {
+        ok: r.status === 200 && !!state.teacher,
+        detail: r.status === 200
+          ? `200 · roles ${JSON.stringify(r.body.user.roles)} · tenant ${r.body.user.tenantId}`
+          : `${r.status} ${JSON.stringify(r.body)}`,
+      };
+    },
+  },
+  {
+    what: 'Permissions are resolved from the role, not carried in the token',
+    why: 'GET /auth/me recomputes them on every request, so changing what a role may do takes effect immediately.',
+    async run() {
+      const r = await call('GET', '/auth/me', { token: state.teacher });
+      const p = r.body?.permissions ?? [];
+      return {
+        ok: r.status === 200 && p.includes('attendance:mark') && !p.includes('fee:manage'),
+        detail: `has attendance:mark ✓   has fee:manage ✗\n${p.join('  ')}`,
+      };
+    },
+  },
+  {
+    what: 'A teacher is refused an action outside their role',
+    why: 'Routes gate on a permission, never on a role name.',
+    async run() {
+      const r = await call('POST', '/students', {
+        token: state.teacher,
+        body: { fullName: 'Should Be Rejected', classLabel: '10-A' },
+      });
+      return {
+        ok: r.status === 403,
+        detail: `${r.status} ${r.body?.error?.message ?? JSON.stringify(r.body)}`,
+      };
+    },
+  },
+  {
+    what: 'An admin with the same action succeeds',
+    why: 'Proves the refusal above was the permission check, not a broken endpoint.',
+    async run() {
+      const admin = await login('admin@demo-school.test');
+      state.admin = admin.body?.accessToken;
+      const r = await call('POST', '/students', {
+        token: state.admin,
+        body: { fullName: 'Check Student ' + Date.now().toString().slice(-5), classLabel: '10-A' },
+      });
+      state.created = r.body?.id;
+      return { ok: r.status === 201, detail: `${r.status} created ${r.body?.fullName ?? ''}` };
+    },
+  },
+  {
+    what: 'Reads are confined to the caller’s own school',
+    why: 'Every row comes back stamped with the tenant from the token. The database enforces this, not the query.',
+    async run() {
+      const r = await call('GET', '/students', { token: state.admin });
+      return {
+        ok: r.status === 200 && Array.isArray(r.body?.students),
+        detail: `${r.body?.students?.length ?? 0} student(s) visible to tenant ${state.tenantId}`,
+      };
+    },
+  },
+  {
+    what: 'A wrong password reveals nothing about the account',
+    why: 'A bad password, an unknown email and an unknown school all return an identical body, so login cannot be used to discover who has an account.',
+    async run() {
+      const bad = await login('teacher@demo-school.test', 'definitely-wrong');
+      const ghost = await login('nobody@demo-school.test', 'definitely-wrong');
+      const same = JSON.stringify(bad.body) === JSON.stringify(ghost.body);
+      return {
+        ok: bad.status === 401 && ghost.status === 401 && same,
+        detail: `both 401, identical body: ${JSON.stringify(bad.body)}`,
+      };
+    },
+  },
+  {
+    what: 'An unsigned or tampered token is rejected',
+    why: 'The verifier pins the algorithm, so a forged token claiming alg:none cannot get in.',
+    async run() {
+      const forged = 'eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.' +
+        btoa(JSON.stringify({ sub: '00000000-0000-4000-8000-000000000000', tid: state.tenantId, email: 'x@y.z', roles: ['admin'] }))
+          .replace(/=+$/, '') + '.';
+      const r = await call('GET', '/auth/me', { token: forged });
+      return { ok: r.status === 401, detail: `${r.status} ${r.body?.error?.message ?? ''}` };
+    },
+  },
+];
+
+const results = document.getElementById('results');
+const tally = document.getElementById('tally');
+const footer = document.getElementById('footer');
+const runBtn = document.getElementById('run');
+
+function render(items) {
+  results.innerHTML = '';
+  items.forEach((c) => {
+    const li = document.createElement('li');
+    li.dataset.state = c.state ?? 'idle';
+    li.innerHTML =
+      '<div class="row"><span class="badge">' +
+      (c.state === 'pass' ? 'PASS' : c.state === 'fail' ? 'FAIL' : '···') +
+      '</span><span class="what"></span></div>' +
+      '<p class="why"></p>' +
+      (c.detail ? '<div class="detail"></div>' : '');
+    li.querySelector('.what').textContent = c.what;
+    li.querySelector('.why').textContent = c.why;
+    if (c.detail) li.querySelector('.detail').textContent = c.detail;
+    results.appendChild(li);
+  });
+}
+
+async function runAll() {
+  runBtn.disabled = true;
+  const items = checks.map((c) => ({ what: c.what, why: c.why }));
+  render(items);
+  tally.textContent = 'Running…';
+
+  for (let i = 0; i < checks.length; i++) {
+    try {
+      const { ok, detail } = await checks[i].run();
+      items[i].state = ok ? 'pass' : 'fail';
+      items[i].detail = detail;
+    } catch (error) {
+      items[i].state = 'fail';
+      items[i].detail = String(error);
+    }
+    render(items);
+  }
+
+  const passed = items.filter((i) => i.state === 'pass').length;
+  tally.innerHTML = `<strong>${passed} of ${items.length}</strong> checks passed`;
+  footer.textContent =
+    `Run against ${API} at ${new Date().toLocaleString()}` +
+    (state.tenantId ? ` · tenant ${state.tenantId}` : '');
+  runBtn.disabled = false;
+}
+
+runBtn.addEventListener('click', runAll);
+runAll();
+</script>

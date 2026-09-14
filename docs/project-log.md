@@ -58,6 +58,12 @@ hosted database that would destroy real data, so `setupSchema()` and
 `resetData()` now refuse any non-local host unless `ALLOW_DESTRUCTIVE_TESTS=1`
 is set. **Never run `npm test` against a live Supabase project.**
 
+### Demo page
+
+`GET /demo` runs eight checks against the live API in a browser and shows each
+one passing — useful for standup, for a Jira attachment, and for spotting a
+broken environment at a glance. Not served in production.
+
 ### Known rough edges
 
 - ~~`.env` is not auto-loaded~~ — fixed 14 Sep: every script now reads `.env`,

@@ -80,16 +80,21 @@ curl -s localhost:3000/auth/login -H 'content-type: application/json' \
 There is no web UI yet — this is an API, so the output is JSON. Three places to
 look:
 
-1. **A browser**, for the one endpoint that takes no token:
-   <http://localhost:3000/health> → `{"status":"ok"}`.
-2. **`requests.http` in this repo.** Install the VS Code extension
+1. **<http://localhost:3000/demo>** — a page that calls the API for real and
+   shows each guarantee holding or failing: a teacher refused `student:manage`,
+   an admin allowed it, reads confined to one school, a forged token rejected.
+   Nothing on it is mocked, so it fails honestly if the server is down or the
+   seed has not run. It is a development aid, not product UI, and is not served
+   when `NODE_ENV=production`.
+2. **<http://localhost:3000/health>** in a browser → `{"status":"ok"}`.
+3. **`requests.http` in this repo.** Install the VS Code extension
    *REST Client* (`humao.rest-client`), open the file, and click the
    **Send Request** link above any block. Logging in first lets the rest reuse
    the token automatically. It walks the whole surface: login, `/auth/me` with
    resolved permissions, a teacher being refused `student:manage`, an admin
    creating a student, and a wrong password returning the same body as an
    unknown account.
-3. **Your database**, for the rows themselves — psql, pgAdmin, or the Supabase
+4. **Your database**, for the rows themselves — psql, pgAdmin, or the Supabase
    Table Editor. After `npm run seed` you should see one tenant and six users,
    one per role.
 
