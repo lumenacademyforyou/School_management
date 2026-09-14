@@ -11,8 +11,13 @@ The **shared multi-tenant platform base** for three products:
 3. **Assessment** — exams, evaluation, results.
 
 The foundation here (auth, RBAC, tenant boundary) is written once and consumed
-by all three. Work is tracked in Jira; the task list lives in
-`Jira_Import_Tasks_FastTrack.csv` (not committed — ask the project lead).
+by all three. Work is tracked in Jira; the full task list is committed at
+`docs/jira/jira-tasks.csv`, with a readable version in `docs/roadmap.md`.
+
+**A third product already exists.** The assessment engine (Prisma, its own
+Supabase project) was built before this repo and is not in it. It has no tenant
+concept at all, which is the main cost of integrating it — see
+`docs/integration-map.md` before planning any assessment work.
 
 ## Team and branches
 
@@ -60,12 +65,19 @@ security"*, that guard is working — fix `DATABASE_URL`, don't remove the guard
 ## Commands
 
 ```bash
-npm run check      # typecheck + lint + test — run before every commit
-npm test           # 73 tests; needs PostgreSQL
-npm run dev        # local server
-npm run migrate    # needs an ADMIN connection
+npm run migrate    # admin connection; also sets the lumen_app password
 npm run seed       # demo school, one user per role
+npm run dev        # local server on :3000
+npm run check      # typecheck + lint + test — run before every commit
+npm test           # 73 tests; needs a LOCAL PostgreSQL (it truncates tables)
 ```
+
+**On a fresh database the order above is load-bearing**: `dev` connects as
+`lumen_app`, which has no password until `migrate` sets it.
+
+Seeing it work: `/demo` in a browser runs eight checks against the live API and
+shows each one passing. `requests.http` drives the same endpoints from VS Code
+with the REST Client extension.
 
 All scripts read `.env` automatically (`node --env-file-if-exists`), so no
 shell-specific variable syntax is needed — the same commands work in bash and
@@ -89,3 +101,6 @@ PowerShell. `.env` needs `ADMIN_DATABASE_URL` (migrations, seeding) and
 - `docs/integration-map.md` — how School MMS, QPG and Assessment fit together.
 - `docs/project-log.md` — what was done, day by day.
 - `docs/daily-workflow.md` — how a day of work runs.
+- `docs/roadmap.md` — every sprint, epic and task, and SD1's own list.
+- `docs/troubleshooting.md` — errors hit while setting this up, and what each
+  one actually means. Check here first when something will not start.
