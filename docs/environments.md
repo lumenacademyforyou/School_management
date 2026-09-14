@@ -47,6 +47,21 @@ postgresql://lumen_app:[LUMEN-APP-PASSWORD]@aws-0-ap-southeast-2.pooler.supabase
 The pooler is fine for this codebase: tenant context is set with `SET LOCAL`
 **inside** an explicit transaction, which survives transaction-mode pooling.
 
+## Two Supabase behaviours that differ from plain PostgreSQL
+
+1. **RLS is enabled automatically on new `public` tables.** RLS on with no
+   policy means the table reads as empty for any role that does not bypass it.
+   This silently broke login — `lumen_app` could not see `tenants`, so the slug
+   lookup found nothing and every password looked wrong. Migration 0003 makes
+   the read rule explicit. Any new table needs a policy, not just RLS.
+2. **The pooler rewrites usernames.** Through
+   `aws-0-<region>.pooler.supabase.com` the user is `<role>.<project-ref>` —
+   so `lumen_app` connects as `lumen_app.jiyfmnwtomtmjnubdkcf`. On the direct
+   host (`db.<ref>.supabase.co`) it is plain `lumen_app`.
+
+Append `?sslmode=require` to both URLs: Supabase refuses unencrypted
+connections.
+
 ## First-time setup against Supabase
 
 ```bash
