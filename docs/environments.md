@@ -59,8 +59,28 @@ The pooler is fine for this codebase: tenant context is set with `SET LOCAL`
    so `lumen_app` connects as `lumen_app.jiyfmnwtomtmjnubdkcf`. On the direct
    host (`db.<ref>.supabase.co`) it is plain `lumen_app`.
 
-Append `?sslmode=require` to both URLs: Supabase refuses unencrypted
-connections.
+3. **TLS needs a parameter node-postgres does not default to.** Supabase
+   refuses unencrypted connections, but `?sslmode=require` in the current
+   `pg` is treated as `verify-full`, and Supabase's pooler chain is not in
+   node's trust store — so it fails with
+   `SELF_SIGNED_CERT_IN_CHAIN`.
+
+   For development, append this to both URLs:
+
+   ```
+   ?uselibpqcompat=true&sslmode=require
+   ```
+
+   That is libpq's own meaning of `require`: encrypt the connection, do not
+   verify the server's certificate. It also silences pg's deprecation warning
+   about the coming change in semantics.
+
+   **For production, verify the certificate.** Download the project's CA from
+   Supabase Dashboard → Project Settings → Database → SSL Configuration, then
+   use `?sslmode=verify-full&sslrootcert=/path/to/prod-ca.crt`. Without
+   verification the connection is encrypted but the server's identity is not
+   checked, which is acceptable on a developer machine and not in front of a
+   school's data.
 
 ## First-time setup against Supabase
 
