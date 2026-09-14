@@ -51,6 +51,13 @@ anywhere. That is the main integration cost, and it belongs in [1029]'s sizing.
 - **Ownership filter** (a parent sees only *their* child) — belongs with the
   SIS data model, [1027]. Today's matrix is the outer gate only.
 
+### Safety guard added
+
+The test suite TRUNCATEs every tenant-scoped table between files. Pointed at a
+hosted database that would destroy real data, so `setupSchema()` and
+`resetData()` now refuse any non-local host unless `ALLOW_DESTRUCTIVE_TESTS=1`
+is set. **Never run `npm test` against a live Supabase project.**
+
 ### Known rough edges
 
 - `.env` is not auto-loaded; no dotenv is wired. Use `node --env-file=.env`.

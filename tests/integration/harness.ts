@@ -35,6 +35,32 @@ export const testConfig: Config = loadConfig({
   PORT: '0',
 } as NodeJS.ProcessEnv);
 
+/**
+ * The test suite TRUNCATEs every tenant-scoped table between test files. Run
+ * against a hosted database — a Supabase project, staging, anything real — that
+ * silently destroys a school's data.
+ *
+ * So the tests refuse to touch a host that is not local. Setting
+ * ALLOW_DESTRUCTIVE_TESTS=1 overrides it, which should only ever happen against
+ * a database that exists to be wiped.
+ */
+function assertDisposableDatabase(): void {
+  if (process.env.ALLOW_DESTRUCTIVE_TESTS === '1') return;
+
+  const host = new URL(ADMIN_DATABASE_URL).hostname.toLowerCase();
+  const isLocal =
+    host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === 'host.docker.internal';
+
+  if (!isLocal) {
+    throw new Error(
+      `Refusing to run the test suite against "${host}": these tests TRUNCATE every ` +
+        'tenant-scoped table, which would destroy real data. Point ' +
+        'TEST_ADMIN_DATABASE_URL at a local PostgreSQL, or set ' +
+        'ALLOW_DESTRUCTIVE_TESTS=1 if that database genuinely exists to be wiped.',
+    );
+  }
+}
+
 export function createTestPool(): Pool {
   return new Pool({ connectionString: TEST_DATABASE_URL, max: 5 });
 }
@@ -52,6 +78,7 @@ export async function closeAdminPool(): Promise<void> {
 }
 
 export async function setupSchema(): Promise<void> {
+  assertDisposableDatabase();
   await migrate(ADMIN_DATABASE_URL);
   // Migration 0002 leaves lumen_app unable to log in; deployment sets its
   // password from the secret store. The tests set a throwaway one.
@@ -64,6 +91,7 @@ export async function setupSchema(): Promise<void> {
  * cannot empty a school's tables.
  */
 export async function resetData(): Promise<void> {
+  assertDisposableDatabase();
   await getAdminPool().query(
     'TRUNCATE student_records, refresh_tokens, user_roles, users, tenants RESTART IDENTITY CASCADE',
   );
