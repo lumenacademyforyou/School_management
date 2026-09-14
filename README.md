@@ -41,7 +41,8 @@ commands work in bash, zsh and PowerShell:
 
 ```ini
 ADMIN_DATABASE_URL=postgres://postgres:yourpassword@localhost:5432/lumen_platform
-DATABASE_URL=postgres://lumen_app:devpass@localhost:5432/lumen_platform
+DATABASE_URL=postgres://lumen_app:devpassword@localhost:5432/lumen_platform
+LUMEN_APP_PASSWORD=devpassword
 JWT_SECRET=a-long-random-value-of-at-least-32-characters
 PORT=3000
 ```
@@ -57,23 +58,17 @@ createdb lumen_platform     # or create it in pgAdmin / the Supabase dashboard
 npm run migrate
 ```
 
-### 4. Give the app role a password
-
-Migration 0002 creates `lumen_app` without one. Set it on the admin connection,
-in psql, pgAdmin, or the Supabase SQL editor:
-
-```sql
-ALTER ROLE lumen_app LOGIN PASSWORD 'devpass';
-```
-
-Use the same password you put in `DATABASE_URL`.
-
-### 5. Seed and run
+### 4. Seed and run
 
 ```bash
 npm run seed
 npm run dev
 ```
+
+`npm run migrate` also sets the `lumen_app` role's password from
+`LUMEN_APP_PASSWORD`, so no `psql` is needed — keep it equal to the password in
+`DATABASE_URL`. Migration 0002 deliberately creates the role without a login,
+because a password must never sit in a committed migration.
 
 ```bash
 curl -s localhost:3000/auth/login -H 'content-type: application/json' \

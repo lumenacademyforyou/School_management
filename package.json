@@ -13,9 +13,9 @@
     "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\" \"scripts/**/*.ts\"",
     "test": "vitest run",
     "test:watch": "vitest",
-    "migrate": "node --env-file-if-exists=.env ./node_modules/.bin/tsx scripts/migrate.ts",
-    "dev": "node --env-file-if-exists=.env ./node_modules/.bin/tsx watch src/server.ts",
-    "seed": "node --env-file-if-exists=.env ./node_modules/.bin/tsx scripts/seed.ts",
+    "migrate": "node --env-file-if-exists=.env --import tsx scripts/migrate.ts",
+    "dev": "node --env-file-if-exists=.env --import tsx --watch src/server.ts",
+    "seed": "node --env-file-if-exists=.env --import tsx scripts/seed.ts",
     "start": "node --env-file-if-exists=.env dist/src/server.js",
     "check": "npm run typecheck && npm run lint && npm test"
   },

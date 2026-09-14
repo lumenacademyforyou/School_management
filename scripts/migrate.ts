@@ -25,6 +25,37 @@ function adminDatabaseUrl(): string {
 
 const migrationsDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'migrations');
 
+/**
+ * Sets the lumen_app role's password, when LUMEN_APP_PASSWORD is present.
+ *
+ * Migration 0002 creates the role without a login, because a password must
+ * never live in a committed migration. Deployment sets it from the secret
+ * store; this lets a developer set it from .env without needing psql
+ * installed at all.
+ *
+ * ALTER ROLE cannot take a bind parameter, so the password is passed as one to
+ * set_config and quoted by format('%L') inside the server rather than
+ * interpolated into SQL here.
+ */
+async function setAppRolePassword(pool: Pool, password: string): Promise<void> {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query('SELECT set_config($1, $2, true)', ['lumen.app_password', password]);
+    await client.query(`DO $do$
+      BEGIN
+        EXECUTE format('ALTER ROLE lumen_app LOGIN PASSWORD %L',
+                       current_setting('lumen.app_password'));
+      END $do$;`);
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => undefined);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export async function migrate(databaseUrl: string): Promise<string[]> {
   const pool = new Pool({ connectionString: databaseUrl });
   const applied: string[] = [];
@@ -59,6 +90,14 @@ export async function migrate(databaseUrl: string): Promise<string[]> {
         client.release();
       }
     }
+    const appPassword = process.env.LUMEN_APP_PASSWORD;
+    if (appPassword) {
+      if (appPassword.length < 8) {
+        throw new Error('LUMEN_APP_PASSWORD must be at least 8 characters');
+      }
+      await setAppRolePassword(pool, appPassword);
+    }
+
     return applied;
   } finally {
     await pool.end();
@@ -69,4 +108,7 @@ const isEntrypoint = process.argv[1] === fileURLToPath(import.meta.url);
 if (isEntrypoint) {
   const applied = await migrate(adminDatabaseUrl());
   console.log(applied.length ? `Applied: ${applied.join(', ')}` : 'Already up to date.');
+  if (process.env.LUMEN_APP_PASSWORD) {
+    console.log('Set the lumen_app role password from LUMEN_APP_PASSWORD.');
+  }
 }
