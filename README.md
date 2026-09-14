@@ -75,6 +75,36 @@ curl -s localhost:3000/auth/login -H 'content-type: application/json' \
   -d '{"tenantSlug":"demo-school","email":"teacher@demo-school.test","password":"demo-password-123"}'
 ```
 
+## Seeing it work
+
+There is no web UI yet — this is an API, so the output is JSON. Three places to
+look:
+
+1. **A browser**, for the one endpoint that takes no token:
+   <http://localhost:3000/health> → `{"status":"ok"}`.
+2. **`requests.http` in this repo.** Install the VS Code extension
+   *REST Client* (`humao.rest-client`), open the file, and click the
+   **Send Request** link above any block. Logging in first lets the rest reuse
+   the token automatically. It walks the whole surface: login, `/auth/me` with
+   resolved permissions, a teacher being refused `student:manage`, an admin
+   creating a student, and a wrong password returning the same body as an
+   unknown account.
+3. **Your database**, for the rows themselves — psql, pgAdmin, or the Supabase
+   Table Editor. After `npm run seed` you should see one tenant and six users,
+   one per role.
+
+No extension handy? PowerShell can do it:
+
+```powershell
+Invoke-RestMethod http://localhost:3000/health
+
+$body = @{ tenantSlug='demo-school'; email='teacher@demo-school.test'; password='demo-password-123' } | ConvertTo-Json
+$session = Invoke-RestMethod -Method Post -Uri http://localhost:3000/auth/login -ContentType 'application/json' -Body $body
+$session.user.permissions
+
+Invoke-RestMethod http://localhost:3000/auth/me -Headers @{ Authorization = "Bearer $($session.accessToken)" }
+```
+
 ### Windows notes
 
 - PowerShell does not support `VAR=value command`. That is why everything goes

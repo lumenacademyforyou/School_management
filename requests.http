@@ -1,0 +1,108 @@
+# Seeing the API work, without leaving VS Code.
+#
+# Install the "REST Client" extension (humao.rest-client), then click the
+# "Send Request" link that appears above each ### block below.
+#
+# Run `npm run dev` first. Log in before the requests that need a token —
+# REST Client reuses the login response, so the Authorization headers below
+# fill themselves in.
+
+@host = http://localhost:3000
+
+###
+# Is the server up? This one also works in a browser.
+GET {{host}}/health
+
+###
+# @name login
+# A teacher at the seeded demo school.
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "tenantSlug": "demo-school",
+  "email": "teacher@demo-school.test",
+  "password": "demo-password-123"
+}
+
+###
+# Who am I, and what am I allowed to do?
+# Note `permissions` — resolved from the role matrix on every request,
+# never carried in the token.
+GET {{host}}/auth/me
+Authorization: Bearer {{login.response.body.accessToken}}
+
+###
+# This school's students. Empty until you create one below.
+GET {{host}}/students
+Authorization: Bearer {{login.response.body.accessToken}}
+
+###
+# A teacher may READ students but not create them: expect 403 with
+# "This action requires the student:manage permission".
+POST {{host}}/students
+Authorization: Bearer {{login.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "fullName": "Should Be Rejected",
+  "classLabel": "10-A"
+}
+
+###
+# @name adminLogin
+# The same school's admin, who does have student:manage.
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "tenantSlug": "demo-school",
+  "email": "admin@demo-school.test",
+  "password": "demo-password-123"
+}
+
+###
+# Expect 201 and the created student.
+POST {{host}}/students
+Authorization: Bearer {{adminLogin.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "fullName": "Priya Sharma",
+  "classLabel": "10-A"
+}
+
+###
+# Now the list has her in it.
+GET {{host}}/students
+Authorization: Bearer {{adminLogin.response.body.accessToken}}
+
+###
+# A parent sees a narrower permission set: result:read and fee:read,
+# but no student:manage.
+# @name parentLogin
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "tenantSlug": "demo-school",
+  "email": "parent@demo-school.test",
+  "password": "demo-password-123"
+}
+
+###
+GET {{host}}/auth/me
+Authorization: Bearer {{parentLogin.response.body.accessToken}}
+
+###
+# Wrong password: 401, and the body is identical to what an unknown
+# email or an unknown school returns. That is deliberate — the endpoint
+# will not tell you which accounts exist.
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "tenantSlug": "demo-school",
+  "email": "teacher@demo-school.test",
+  "password": "definitely-the-wrong-password"
+}
