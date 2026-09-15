@@ -12,6 +12,26 @@ rollup) — those files are a point-in-time export, not the live source of
 truth. Jira itself is authoritative; treat the CSV/roadmap as something to
 regenerate from Jira, not the other way round.
 
+## First-time setup (per person, one time)
+
+The repo's `.mcp.json` already declares the Atlassian MCP server, so opening
+this project in Claude Code (CLI or the VS Code extension) is enough for it
+to show up — no manual `claude mcp add` needed. The only thing left per
+person:
+
+1. Open the project in VS Code with the Claude Code extension (or `claude`
+   in this directory).
+2. When Claude Code lists the `Atlassian` MCP server, approve/enable it.
+3. The first Jira-related tool call triggers an OAuth login in the browser —
+   sign in with **your own** `lumenacademyforyou.atlassian.net` Jira
+   account (ask a project admin for access to the `LS` project if you don't
+   have it yet). Nobody shares credentials or tokens; each person's tools
+   run as their own Jira user.
+
+After that one-time login, the tools in this skill work automatically —
+Claude Code loads it whenever a message mentions Jira, an issue, a sprint,
+an epic, or an `LS-` key.
+
 ## Cloud ID
 
 Every Atlassian MCP tool call needs a `cloudId`. Pass the site hostname
