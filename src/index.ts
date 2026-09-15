@@ -22,10 +22,31 @@ export {
   type Permission,
   type Role,
 } from './rbac/permissions.js';
-export { can, canAccessTenant, type Principal } from './rbac/authorize.js';
+export {
+  can,
+  canAccessTenant,
+  studentScope,
+  type Principal,
+  type StudentScope,
+} from './rbac/authorize.js';
 export { authenticate } from './http/middleware/authenticate.js';
-export { requirePermission, requireOwnTenant } from './http/middleware/requirePermission.js';
+export {
+  requirePermission,
+  requireAnyPermission,
+  requireOwnTenant,
+} from './http/middleware/requirePermission.js';
 export { errorHandler } from './http/middleware/errorHandler.js';
-export { HttpError, unauthorized, forbidden, notFound, badRequest } from './http/errors.js';
+export {
+  HttpError,
+  unauthorized,
+  forbidden,
+  notFound,
+  badRequest,
+  conflict,
+} from './http/errors.js';
+export { ReferenceNotFoundError } from './db/referenceNotFound.js';
 export * as tenantRepository from './repositories/tenantRepository.js';
 export * as userRepository from './repositories/userRepository.js';
+export * as schoolStructureRepository from './repositories/schoolStructureRepository.js';
+export * as staffRepository from './repositories/staffRepository.js';
+export * as studentRepository from './repositories/studentRepository.js';

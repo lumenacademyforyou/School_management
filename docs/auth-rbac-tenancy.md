@@ -23,7 +23,7 @@ runs the callback:
 
 ```ts
 await withTenant(principal.tenantId, (client) =>
-  client.query('SELECT * FROM student_records'),
+  client.query('SELECT * FROM students'),
 );
 ```
 
@@ -38,6 +38,10 @@ Three properties fall out of doing it this way:
 - **A missed `WHERE tenant_id = ...` is not a breach.** The policy is applied
   by the database to every statement, including `UPDATE` and `DELETE`, and
   `WITH CHECK` blocks writing a row stamped with someone else's tenant.
+
+What the policy does *not* check is the row a foreign key points at. So
+references between tenant-scoped tables are composite keys on
+`(tenant_id, id)`; see [`sis-data-model.md`](sis-data-model.md).
 
 ### The one way to lose it
 
@@ -99,7 +103,7 @@ Six roles, shared across all three products:
 | `admin` | The school's own administrator. Everything inside their tenant. |
 | `teacher` | Marks attendance, authors questions, evaluates answers. |
 | `office` | Front office: admissions, records, fees. No teaching surface. |
-| `parent` | Reads their child's attendance, fees and results. Writes nothing. |
+| `parent` | Reads their own children's records, attendance, fees and results. Writes nothing. |
 | `student` | Reads their own record and results, attempts exams. |
 | `examiner` | External paper setter/evaluator. Question bank and evaluation only — **no access to student personal records.** |
 
@@ -120,9 +124,16 @@ to get it wrong.
 ### Two layers, not one
 
 RBAC answers *may this kind of user do this kind of thing*. It does not answer
-*may this parent see this child*. Narrowing `parent` and `student` to their own
-rows is an ownership filter that belongs with the records themselves, and lands
-with the SIS data model story. The matrix is the outer gate.
+*may this parent see this child*. That is the ownership filter, which landed
+with the SIS data model (LS-27):
+
+- `student:read` (admin, teacher, office) sees every student in the school.
+- `student:read_own` (parent, student) sees only students linked to the
+  caller's login.
+
+`studentScope(principal)` picks between them by permission, and the student
+queries apply it. The matrix is still the outer gate; the scope is the inner
+one.
 
 ## 4. Error contract
 
@@ -133,9 +144,11 @@ Every route returns the same shape:
 ```
 
 Codes in use: `bad_request`, `unauthorized`, `forbidden`, `not_found`,
-`invalid_credentials`, `invalid_refresh_token`, `account_disabled`,
+`conflict`, `invalid_credentials`, `invalid_refresh_token`, `account_disabled`,
 `internal_error`. Internal errors are logged in full and returned as a generic
-message — the detail may quote SQL.
+message — the detail may quote SQL. Constraint violations (a duplicate, an
+overlap, a missing reference) are translated into `conflict` or `bad_request`
+with a fixed message by `src/http/databaseErrors.ts`.
 
 Note what a cross-tenant fetch returns. `GET /students/:id` for another
 school's student is a **404**, not a 403: the row is invisible to the query, so
@@ -146,7 +159,8 @@ The gateway story adds a request id to this envelope. The shape stays as it is.
 
 ## 5. What the tests prove
 
-`npm test` — 73 tests.
+`npm test` — 148 tests. The list below is the auth and tenancy part; the SIS
+schema and setup API tests are described in `sis-data-model.md`.
 
 Unit (`tests/unit/`): the role matrix, scrypt hashing, and token
 forgery — wrong secret, tampered payload, `alg: none`, expired, wrong audience,
@@ -170,7 +184,8 @@ Integration against real PostgreSQL (`tests/integration/`):
 
 ## 6. Follow-ups
 
-- **Ownership filter** for `parent` and `student` — with the SIS data model.
+- ~~**Ownership filter** for `parent` and `student`~~ — done for students
+  (LS-27). Attendance, fees and results must reuse `studentScope`.
 - **Request id and audit log** — the gateway story; `tenant_id` and actor are
   already on every request via the principal.
 - **Rate limiting on `/auth/login`** — belongs at the gateway, not here.

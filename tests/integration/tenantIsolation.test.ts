@@ -41,7 +41,7 @@ beforeEach(async () => {
 describe('row level security', () => {
   it('shows a tenant only its own students', async () => {
     const seen = await withTenant(northwood.id, async (client) => {
-      const { rows } = await client.query<{ full_name: string }>('SELECT full_name FROM student_records');
+      const { rows } = await client.query<{ full_name: string }>('SELECT full_name FROM students');
       return rows.map((r) => r.full_name);
     }, pool);
 
@@ -51,12 +51,12 @@ describe('row level security', () => {
 
   it('hides a specific row of another tenant even when its id is known', async () => {
     const riversideStudentId = await withTenant(riverside.id, async (client) => {
-      const { rows } = await client.query<{ id: string }>('SELECT id FROM student_records');
+      const { rows } = await client.query<{ id: string }>('SELECT id FROM students');
       return rows[0]!.id;
     }, pool);
 
     const found = await withTenant(northwood.id, async (client) => {
-      const { rows } = await client.query('SELECT * FROM student_records WHERE id = $1', [
+      const { rows } = await client.query('SELECT * FROM students WHERE id = $1', [
         riversideStudentId,
       ]);
       return rows;
@@ -67,8 +67,8 @@ describe('row level security', () => {
 
   it('will not let a tenant update or delete another tenant’s row', async () => {
     const result = await withTenant(northwood.id, async (client) => {
-      const updated = await client.query("UPDATE student_records SET full_name = 'Hijacked'");
-      const deleted = await client.query('DELETE FROM student_records WHERE full_name = $1', [
+      const updated = await client.query("UPDATE students SET full_name = 'Hijacked'");
+      const deleted = await client.query('DELETE FROM students WHERE full_name = $1', [
         'Rahul Riverside',
       ]);
       return { updated: updated.rowCount, deleted: deleted.rowCount };
@@ -78,7 +78,7 @@ describe('row level security', () => {
     expect(result.deleted).toBe(0);
 
     const riversideRows = await withTenant(riverside.id, async (client) => {
-      const { rows } = await client.query<{ full_name: string }>('SELECT full_name FROM student_records');
+      const { rows } = await client.query<{ full_name: string }>('SELECT full_name FROM students');
       return rows.map((r) => r.full_name);
     }, pool);
     expect(riversideRows).toEqual(['Rahul Riverside']);
@@ -88,8 +88,8 @@ describe('row level security', () => {
     await expect(
       withTenant(northwood.id, async (client) => {
         await client.query(
-          'INSERT INTO student_records (tenant_id, full_name, class_label) VALUES ($1, $2, $3)',
-          [riverside.id, 'Smuggled In', '9-B'],
+          'INSERT INTO students (tenant_id, admission_no, full_name) VALUES ($1, $2, $3)',
+          [riverside.id, 'SMUGGLED-1', 'Smuggled In'],
         );
       }, pool),
     ).rejects.toThrow(/row-level security/i);
@@ -97,7 +97,7 @@ describe('row level security', () => {
 
   it('reads nothing at all when no tenant context is set — fails closed', async () => {
     const rows = await withoutTenant(async (client) => {
-      const students = await client.query('SELECT * FROM student_records');
+      const students = await client.query('SELECT * FROM students');
       const users = await client.query('SELECT * FROM users');
       return { students: students.rowCount, users: users.rowCount };
     }, pool);
@@ -129,7 +129,7 @@ describe('row level security', () => {
     ).rejects.toThrow('boom');
 
     const stillIsolated = await withoutTenant(async (client) => {
-      const { rowCount } = await client.query('SELECT * FROM student_records');
+      const { rowCount } = await client.query('SELECT * FROM students');
       return rowCount;
     }, pool);
     expect(stillIsolated).toBe(0);

@@ -36,7 +36,9 @@ Break any of these and a school sees another school's data:
    string or request body.
 2. **Every tenant-scoped table** has `tenant_id`, plus the RLS policy pattern in
    `migrations/0001_foundation.sql`, and **every query on it runs inside
-   `withTenant()`**.
+   `withTenant()`**. References between tenant-scoped tables are composite
+   foreign keys on `(tenant_id, id)` — RLS does not check the row a foreign key
+   points at (see `docs/sis-data-model.md`).
 3. **Routes gate on a permission, never a role** — `requirePermission('student:manage')`,
    not `if (role === 'admin')`.
 
@@ -61,10 +63,10 @@ security"*, that guard is working — fix `DATABASE_URL`, don't remove the guard
 
 ```bash
 npm run check      # typecheck + lint + test — run before every commit
-npm test           # 73 tests; needs PostgreSQL
+npm test           # 148 tests; needs PostgreSQL
 npm run dev        # local server
 npm run migrate    # needs an ADMIN connection
-npm run seed       # demo school, one user per role
+npm run seed       # demo school: one user per role, classes, sections, students
 ```
 
 All scripts read `.env` automatically (`node --env-file-if-exists`), so no
@@ -85,6 +87,7 @@ PowerShell. `.env` needs `ADMIN_DATABASE_URL` (migrations, seeding) and
 
 - `README.md` — how to run it.
 - `docs/auth-rbac-tenancy.md` — design decisions and reasoning.
+- `docs/sis-data-model.md` — the school schema, ownership filter and setup API.
 - `docs/environments.md` — Supabase projects and connection strings.
 - `docs/integration-map.md` — how School MMS, QPG and Assessment fit together.
 - `docs/project-log.md` — what was done, day by day.

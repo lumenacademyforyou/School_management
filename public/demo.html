@@ -69,8 +69,8 @@
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">Jira 1026 · Sprint 1</div>
-    <h1>Shared auth, RBAC and tenant isolation</h1>
+    <div class="eyebrow">Jira LS-26 · LS-27 · LS-28 · Sprint 1</div>
+    <h1>Auth, tenant isolation and school setup</h1>
     <p class="sub">
       Each check below calls the running API for real and shows what came back.
       Nothing here is mocked — if the server is down or the seed has not run,
@@ -155,7 +155,7 @@ const checks = [
     async run() {
       const r = await call('POST', '/students', {
         token: state.teacher,
-        body: { fullName: 'Should Be Rejected', classLabel: '10-A' },
+        body: { admissionNo: 'REJECTED-1', fullName: 'Should Be Rejected' },
       });
       return {
         ok: r.status === 403,
@@ -169,9 +169,10 @@ const checks = [
     async run() {
       const admin = await login('admin@demo-school.test');
       state.admin = admin.body?.accessToken;
+      const suffix = Date.now().toString().slice(-6);
       const r = await call('POST', '/students', {
         token: state.admin,
-        body: { fullName: 'Check Student ' + Date.now().toString().slice(-5), classLabel: '10-A' },
+        body: { admissionNo: 'CHECK-' + suffix, fullName: 'Check Student ' + suffix },
       });
       state.created = r.body?.id;
       return { ok: r.status === 201, detail: `${r.status} created ${r.body?.fullName ?? ''}` };
@@ -182,9 +183,35 @@ const checks = [
     why: 'Every row comes back stamped with the tenant from the token. The database enforces this, not the query.',
     async run() {
       const r = await call('GET', '/students', { token: state.admin });
+      state.schoolStudents = r.body?.students?.length ?? 0;
       return {
         ok: r.status === 200 && Array.isArray(r.body?.students),
-        detail: `${r.body?.students?.length ?? 0} student(s) visible to tenant ${state.tenantId}`,
+        detail: `${state.schoolStudents} student(s) visible to tenant ${state.tenantId}`,
+      };
+    },
+  },
+  {
+    what: 'A parent sees only their own children',
+    why: 'Inside a school, parents and students are narrowed to records linked to their login. Row level security only knows the school; this is the second layer.',
+    async run() {
+      const parent = await login('parent@demo-school.test');
+      const r = await call('GET', '/students', { token: parent.body?.accessToken });
+      const names = (r.body?.students ?? []).map((s) => s.fullName);
+      return {
+        ok: r.status === 200 && names.length > 0 && names.length < state.schoolStudents,
+        detail: `parent sees ${names.length} of ${state.schoolStudents}: ${names.join(', ') || '(none — has the seed run?)'}`,
+      };
+    },
+  },
+  {
+    what: 'The school has been set up',
+    why: 'GET /setup/status drives the setup wizard: a current academic year, classes, and sections for every class.',
+    async run() {
+      const r = await call('GET', '/setup/status', { token: state.admin });
+      const steps = (r.body?.steps ?? []).map((s) => `${s.done ? '✓' : '✗'} ${s.key}${s.required ? '' : ' (optional)'}`);
+      return {
+        ok: r.status === 200 && r.body?.complete === true,
+        detail: `${r.body?.currentAcademicYear?.name ?? 'no current year'} · ${JSON.stringify(r.body?.counts ?? r.body)}\n${steps.join('   ')}`,
       };
     },
   },

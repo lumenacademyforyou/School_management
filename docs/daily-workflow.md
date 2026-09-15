@@ -23,7 +23,8 @@ Never stack new work on a branch whose PR has already merged — start fresh fro
 
 Follow the three rules in `CLAUDE.md`. In particular: if the task adds a table
 that belongs to a school, it needs `tenant_id`, the RLS policy from
-`migrations/0001_foundation.sql`, and every query wrapped in `withTenant()`.
+`migrations/0001_foundation.sql`, composite `(tenant_id, id)` foreign keys to
+other school tables, and every query wrapped in `withTenant()`.
 `assertRlsEnforced()` will refuse to start the server if a `tenant_id` table is
 missing its policy, so this is checked, not remembered.
 

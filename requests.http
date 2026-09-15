@@ -33,7 +33,7 @@ GET {{host}}/auth/me
 Authorization: Bearer {{login.response.body.accessToken}}
 
 ###
-# This school's students. Empty until you create one below.
+# This school's students, with each one's current class and section.
 GET {{host}}/students
 Authorization: Bearer {{login.response.body.accessToken}}
 
@@ -45,8 +45,8 @@ Authorization: Bearer {{login.response.body.accessToken}}
 Content-Type: application/json
 
 {
-  "fullName": "Should Be Rejected",
-  "classLabel": "10-A"
+  "admissionNo": "REJECTED-1",
+  "fullName": "Should Be Rejected"
 }
 
 ###
@@ -62,24 +62,74 @@ Content-Type: application/json
 }
 
 ###
-# Expect 201 and the created student.
+# School setup (LS-28). Where is the setup wizard up to? After `npm run seed`
+# every required step is done.
+GET {{host}}/setup/status
+Authorization: Bearer {{adminLogin.response.body.accessToken}}
+
+###
+GET {{host}}/academic-years
+Authorization: Bearer {{adminLogin.response.body.accessToken}}
+
+###
+GET {{host}}/classes
+Authorization: Bearer {{adminLogin.response.body.accessToken}}
+
+###
+# @name sections
+# Sections for the current academic year unless ?academicYearId= says otherwise.
+GET {{host}}/sections
+Authorization: Bearer {{adminLogin.response.body.accessToken}}
+
+###
+# Overlaps the seeded 2026-27 year: expect 409 conflict.
+POST {{host}}/academic-years
+Authorization: Bearer {{adminLogin.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Overlapping",
+  "startsOn": "2027-01-01",
+  "endsOn": "2027-12-31"
+}
+
+###
+# Every listed class gets every listed section name, in one transaction.
+# Swap in real class ids from GET /classes. Re-running it gives 409, and
+# creates nothing.
+POST {{host}}/sections/bulk
+Authorization: Bearer {{adminLogin.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "academicYearId": "{{sections.response.body.academicYearId}}",
+  "classIds": ["<class id>"],
+  "names": ["C"],
+  "capacity": 40
+}
+
+###
+# Admit a student straight into the first listed section.
+# Expect 201 with currentEnrollment filled in.
 POST {{host}}/students
 Authorization: Bearer {{adminLogin.response.body.accessToken}}
 Content-Type: application/json
 
 {
-  "fullName": "Priya Sharma",
-  "classLabel": "10-A"
+  "admissionNo": "ADM-2026-100",
+  "fullName": "Rohan Mehta",
+  "gender": "male",
+  "sectionId": "{{sections.response.body.sections[0].id}}"
 }
 
 ###
-# Now the list has her in it.
+# Now the list has him in it.
 GET {{host}}/students
 Authorization: Bearer {{adminLogin.response.body.accessToken}}
 
 ###
-# A parent sees a narrower permission set: result:read and fee:read,
-# but no student:manage.
+# A parent sees a narrower permission set: student:read_own, result:read and
+# fee:read, but no student:manage.
 # @name parentLogin
 POST {{host}}/auth/login
 Content-Type: application/json
@@ -92,6 +142,16 @@ Content-Type: application/json
 
 ###
 GET {{host}}/auth/me
+Authorization: Bearer {{parentLogin.response.body.accessToken}}
+
+###
+# The same list the admin saw, narrowed to this parent's own child.
+GET {{host}}/students
+Authorization: Bearer {{parentLogin.response.body.accessToken}}
+
+###
+# And no school configuration at all: expect 403.
+GET {{host}}/classes
 Authorization: Bearer {{parentLogin.response.body.accessToken}}
 
 ###

@@ -4,7 +4,76 @@ One entry per working day. Newest first. Jira IDs in brackets.
 
 ---
 
-## 14 Sep 2026 (Sun) — Sprint 1
+## 15 Sep 2026 (Tue) — Sprint 1
+
+Checked for blockers first: neither ticket depends on anyone else's work.
+The LS-28 *screens* are the exception — see "Not done, deliberately".
+
+### Done — [1027 / LS-27] SMS-SIS: Student, staff, class and academic-year data model ✅
+
+`migrations/0004_sis_core.sql`, with the design written up in
+`docs/sis-data-model.md`.
+
+- **Eight tables:** `academic_years`, `classes`, `sections` (per year),
+  `staff`, `students`, `guardians`, `student_guardians`, `enrollments`. Class
+  membership is an enrollment per year, not a column on the student, so
+  history survives promotion.
+- **Composite `(tenant_id, id)` foreign keys everywhere.** Row level security
+  checks the row being written, not the row it references, and foreign key
+  checks skip policies. Without this, one school could attach a section to
+  another school's class given its uuid. There is a test for each reference, run
+  against a control using this school's own ids.
+- **Constraints that keep bad data out:** academic years cannot overlap and only
+  one is current; admission and employee numbers are unique per school,
+  case-insensitive; one section per student per year; roll numbers unique per
+  section; an enrollment's year must match its section's.
+- **Ownership filter.** New `student:read_own` for parent and student, so a
+  parent login lists only their own children and a student only themselves.
+  Before this, parents held `student:read` and would have seen the whole school
+  once real data existed.
+- Retired the `student_records` placeholder; `/students` now runs on the real
+  schema.
+
+### Done — [1028 / LS-28] SMS-SIS: Class, section and academic-year setup (API) ✅
+
+- `GET /setup/status` drives the wizard: steps done, plus the counts behind
+  them.
+- Endpoints for academic years (create, rename, make current, delete), classes
+  and sections, with **bulk** variants: "LKG to Class 12" and "A and B for every
+  class" are one request each, all-or-nothing.
+- Deletes refuse with 409 while something depends on the row (sections on a
+  class, students in a section).
+- Constraint violations come back as the shared error shape with a readable
+  message — `409 conflict` / `400 bad_request` — never the driver's text.
+- `npm run seed` now builds a set-up demo school, so `/demo` and
+  `requests.http` show the wizard status and the parent filter.
+
+**148 tests pass** (was 73). Verified the ownership filter by removing it: 3
+tests fail.
+
+### Not done, deliberately
+
+- **The setup screens.** LS-28 is labelled backend. The screens should be built
+  from the shared component library, which is **LS-31 (design system, Prince)**
+  — due 15 Sep and still To Do. Building React screens before it lands means
+  building them twice. The API is ready for them.
+- **Staff/student update, delete and spreadsheet import** — LS-38 (23 Sep).
+  Only read-only `GET /staff` exists, for choosing class teachers.
+- **Subjects** — with timetable and exams (LS-49). **Aadhaar** — not stored; see
+  the design notes.
+- **Deployed to staging / QA sign-off** — still no staging or CI ([1020], JD1).
+- **The migration has not been run against Supabase.** Run `npm run migrate`
+  when ready; it drops the `student_records` placeholder.
+
+### Rough edges found
+
+- The local PostgreSQL 17 install listens on **5433**, not 5432, so the
+  integration tests could not connect until `TEST_ADMIN_DATABASE_URL` pointed
+  there. `npm test` does not read `.env`.
+
+---
+
+## 14 Sep 2026 (Mon) — Sprint 1
 
 ### Done — [1026] FND: Extend shared auth, RBAC and tenant model  ✅
 
@@ -77,9 +146,11 @@ broken environment at a glance. Not served in production.
 
 | Date | Jira | Task |
 | --- | --- | --- |
-| 15 Sep | [1027] | SMS-SIS: Student, staff, class and academic-year data model + migrations |
-| 16 Sep | [1028] | SMS-SIS: Class, section and academic-year setup screens |
-| 17–18 Sep | [1029] | RND: Audit the NEET engine — reusable vs new |
+| 16 Sep | [1028 / LS-28] | Screens, once LS-31's component library lands |
+| 17–18 Sep | [1029 / LS-29] | RND: Audit the NEET engine — reusable vs new |
+| 23 Sep | [1038 / LS-38] | SMS-SIS: Student and staff CRUD APIs + bulk import from spreadsheet |
+| 24 Sep | [1039 / LS-39] | SMS-FEE: Fee heads, fee structure and assignment API |
+| 25 Sep | [1040 / LS-40] | SMS-ATT: Parent absence notification trigger |
 
-[1027] freezes the core school schema — after the pilot starts, changes move to
-Phase 2. Worth getting right rather than fast.
+The schema from [1027] is now what the pilot freezes. LS-38's import is the
+first thing that will stress it with real spreadsheets.

@@ -1,6 +1,15 @@
 import { Pool } from 'pg';
+import request from 'supertest';
+import type { Express } from 'express';
 import { loadConfig, type Config } from '../../src/config.js';
 import { hashPassword } from '../../src/auth/password.js';
+import {
+  createAcademicYear,
+  createClasses,
+  createSections,
+} from '../../src/repositories/schoolStructureRepository.js';
+import { createStaff } from '../../src/repositories/staffRepository.js';
+import { createStudent } from '../../src/repositories/studentRepository.js';
 import { createTenant } from '../../src/repositories/tenantRepository.js';
 import { createUser } from '../../src/repositories/userRepository.js';
 import { migrate } from '../../scripts/migrate.js';
@@ -93,7 +102,9 @@ export async function setupSchema(): Promise<void> {
 export async function resetData(): Promise<void> {
   assertDisposableDatabase();
   await getAdminPool().query(
-    'TRUNCATE student_records, refresh_tokens, user_roles, users, tenants RESTART IDENTITY CASCADE',
+    `TRUNCATE enrollments, student_guardians, guardians, sections, students, staff, classes,
+              academic_years, refresh_tokens, user_roles, users, tenants
+     RESTART IDENTITY CASCADE`,
   );
 }
 
@@ -151,24 +162,81 @@ export async function seedTwoSchools(pool: Pool): Promise<{
   return { northwood, riverside };
 }
 
-/** Inserts a student row under a given tenant, bypassing the HTTP layer. */
+let admissionCounter = 0;
+
+/** Inserts a student under a given tenant, bypassing the HTTP layer. */
 export async function seedStudent(
   pool: Pool,
   tenantId: string,
   fullName: string,
-  classLabel = '10-A',
+  admissionNo = `ADM-${++admissionCounter}`,
 ): Promise<string> {
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
-    await client.query('SELECT set_config($1, $2, true)', ['app.current_tenant', tenantId]);
-    const { rows } = await client.query<{ id: string }>(
-      'INSERT INTO student_records (tenant_id, full_name, class_label) VALUES ($1, $2, $3) RETURNING id',
-      [tenantId, fullName, classLabel],
-    );
-    await client.query('COMMIT');
-    return rows[0]!.id;
-  } finally {
-    client.release();
-  }
+  const student = await createStudent(tenantId, { admissionNo, fullName }, pool);
+  return student.id;
 }
+
+export interface SeededStructure {
+  academicYearId: string;
+  classIds: { nine: string; ten: string };
+  sectionIds: { nineA: string; tenA: string; tenB: string };
+  teacherStaffId: string;
+  officeStaffId: string;
+}
+
+/**
+ * The same structure for any school — same year name and dates, same class and
+ * section names, same employee numbers. Two schools seeded alike is what makes
+ * a missing tenant boundary show up, as duplicates or as rows that look right.
+ */
+export async function seedSchoolStructure(pool: Pool, tenantId: string): Promise<SeededStructure> {
+  const year = await createAcademicYear(
+    tenantId,
+    { name: '2026-27', startsOn: '2026-04-01', endsOn: '2027-03-31' },
+    pool,
+  );
+  const [nine, ten] = await createClasses(tenantId, [{ name: 'Class 9' }, { name: 'Class 10' }], pool);
+  const teacher = await createStaff(
+    tenantId,
+    { employeeNo: 'EMP-1', fullName: 'Meera Teacher', staffType: 'teaching' },
+    pool,
+  );
+  const office = await createStaff(
+    tenantId,
+    { employeeNo: 'EMP-2', fullName: 'Omar Office', staffType: 'non_teaching' },
+    pool,
+  );
+  const sections = await createSections(
+    tenantId,
+    [
+      { academicYearId: year.id, classId: nine!.id, name: 'A' },
+      { academicYearId: year.id, classId: ten!.id, name: 'A', classTeacherId: teacher.id },
+      { academicYearId: year.id, classId: ten!.id, name: 'B' },
+    ],
+    pool,
+  );
+  const sectionId = (classId: string, name: string) =>
+    sections.find((s) => s.classId === classId && s.name === name)!.id;
+
+  return {
+    academicYearId: year.id,
+    classIds: { nine: nine!.id, ten: ten!.id },
+    sectionIds: {
+      nineA: sectionId(nine!.id, 'A'),
+      tenA: sectionId(ten!.id, 'A'),
+      tenB: sectionId(ten!.id, 'B'),
+    },
+    teacherStaffId: teacher.id,
+    officeStaffId: office.id,
+  };
+}
+
+/** Logs in over HTTP and returns the access token, failing loudly if login does not work. */
+export async function loginAs(app: Express, tenantSlug: string, email: string): Promise<string> {
+  const res = await request(app).post('/auth/login').send({ tenantSlug, email, password: TEST_PASSWORD });
+  if (res.status !== 200) {
+    throw new Error(`Login failed for ${email} at ${tenantSlug}: ${res.status} ${JSON.stringify(res.body)}`);
+  }
+  return res.body.accessToken as string;
+}
+
+export const bearer = (token: string) => ({ authorization: `Bearer ${token}` });

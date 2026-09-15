@@ -1,13 +1,16 @@
 import type { NextFunction, Request, Response } from 'express';
 import { AuthError } from '../../auth/authService.js';
+import { fromDatabaseError } from '../databaseErrors.js';
 import { HttpError } from '../errors.js';
 
 export function errorHandler() {
-  return (error: unknown, _req: Request, res: Response, next: NextFunction): void => {
+  return (thrown: unknown, _req: Request, res: Response, next: NextFunction): void => {
     if (res.headersSent) {
-      next(error);
+      next(thrown);
       return;
     }
+
+    const error = fromDatabaseError(thrown) ?? thrown;
 
     if (error instanceof HttpError) {
       res.status(error.status).json({

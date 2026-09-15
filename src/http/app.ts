@@ -4,7 +4,12 @@ import express, { type Express } from 'express';
 import type { Pool } from 'pg';
 import type { Config } from '../config.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { academicYearRoutes } from './routes/academicYearRoutes.js';
 import { authRoutes } from './routes/authRoutes.js';
+import { classRoutes } from './routes/classRoutes.js';
+import { sectionRoutes } from './routes/sectionRoutes.js';
+import { setupRoutes } from './routes/setupRoutes.js';
+import { staffRoutes } from './routes/staffRoutes.js';
 import { studentRoutes } from './routes/studentRoutes.js';
 import { notFound } from './errors.js';
 
@@ -26,6 +31,11 @@ export function createApp(config: Config, pool?: Pool): Express {
     app.use('/demo', express.static(publicDir, { index: 'demo.html' }));
   }
   app.use('/auth', authRoutes(config, pool));
+  app.use('/setup', setupRoutes(config, pool));
+  app.use('/academic-years', academicYearRoutes(config, pool));
+  app.use('/classes', classRoutes(config, pool));
+  app.use('/sections', sectionRoutes(config, pool));
+  app.use('/staff', staffRoutes(config, pool));
   app.use('/students', studentRoutes(config, pool));
 
   app.use((_req, _res, next) => next(notFound('No such endpoint')));

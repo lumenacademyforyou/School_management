@@ -15,7 +15,8 @@ export const PERMISSIONS = [
   'audit:read',
 
   // School MMS
-  'student:read',
+  'student:read', // every student in the school
+  'student:read_own', // only students linked to the caller: their children, or themselves
   'student:manage',
   'staff:read',
   'staff:manage',
@@ -65,9 +66,9 @@ export type Role = (typeof ROLES)[number];
  *  - examiner — external paper setter/evaluator; question bank and evaluation
  *               only, no access to student personal records.
  *
- * `parent` and `student` are additionally narrowed to their own rows by the
- * ownership filter in the SIS layer; this matrix is the outer gate, not the
- * row-level one.
+ * `parent` and `student` hold `student:read_own` rather than `student:read`:
+ * the student routes then narrow them to linked rows (see `studentScope`). The
+ * matrix decides which of the two a role gets; the query does the narrowing.
  */
 const ROLE_PERMISSIONS: Readonly<Record<Role, readonly Permission[]>> = Object.freeze({
   admin: [
@@ -102,13 +103,13 @@ const ROLE_PERMISSIONS: Readonly<Record<Role, readonly Permission[]>> = Object.f
     'user:read',
   ],
   parent: [
-    'student:read',
+    'student:read_own',
     'attendance:read',
     'fee:read',
     'result:read',
   ],
   student: [
-    'student:read',
+    'student:read_own',
     'attendance:read',
     'exam:read', 'exam:attempt',
     'result:read',

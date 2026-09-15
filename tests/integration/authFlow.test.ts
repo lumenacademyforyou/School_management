@@ -169,16 +169,17 @@ describe('cross-tenant reads over HTTP', () => {
     const northAdmin = await login('northwood', 'admin@northwood.test');
     const riverAdmin = await login('riverside', 'admin@riverside.test');
 
+    // The same admission number at both schools: unique per school, not globally.
     await request(app)
       .post('/students')
       .set('authorization', `Bearer ${northAdmin.body.accessToken}`)
-      .send({ fullName: 'Nadia Northwood', classLabel: '10-A' })
+      .send({ admissionNo: 'ADM-001', fullName: 'Nadia Northwood' })
       .expect(201);
 
     const riverCreate = await request(app)
       .post('/students')
       .set('authorization', `Bearer ${riverAdmin.body.accessToken}`)
-      .send({ fullName: 'Rahul Riverside', classLabel: '10-A' })
+      .send({ admissionNo: 'ADM-001', fullName: 'Rahul Riverside' })
       .expect(201);
 
     const northList = await request(app)
@@ -222,7 +223,7 @@ describe('RBAC over HTTP', () => {
     const create = await request(app)
       .post('/students')
       .set('authorization', auth)
-      .send({ fullName: 'Someone New', classLabel: '8-C' });
+      .send({ admissionNo: 'ADM-100', fullName: 'Someone New' });
 
     expect(create.status).toBe(403);
     expect(create.body.error.code).toBe('forbidden');
@@ -234,7 +235,7 @@ describe('RBAC over HTTP', () => {
     await request(app)
       .post('/students')
       .set('authorization', `Bearer ${office.body.accessToken}`)
-      .send({ fullName: 'Admitted Today', classLabel: '6-B' })
+      .send({ admissionNo: 'ADM-101', fullName: 'Admitted Today' })
       .expect(201);
   });
 
@@ -243,7 +244,7 @@ describe('RBAC over HTTP', () => {
     await request(app)
       .post('/students')
       .set('authorization', `Bearer ${parent.body.accessToken}`)
-      .send({ fullName: 'Not Allowed', classLabel: '6-B' })
+      .send({ admissionNo: 'ADM-102', fullName: 'Not Allowed' })
       .expect(403);
   });
 });

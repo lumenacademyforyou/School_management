@@ -28,3 +28,5 @@ export const notFound = (message = 'Not found') => new HttpError(404, 'not_found
 
 export const badRequest = (message: string, details?: unknown) =>
   new HttpError(400, 'bad_request', message, details);
+
+export const conflict = (message: string) => new HttpError(409, 'conflict', message);

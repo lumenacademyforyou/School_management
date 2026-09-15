@@ -7,7 +7,7 @@ import {
   permissionsForRoles,
   type Permission,
 } from '../../src/rbac/permissions.js';
-import { can, canAccessTenant, type Principal } from '../../src/rbac/authorize.js';
+import { can, canAccessTenant, studentScope, type Principal } from '../../src/rbac/authorize.js';
 
 const principal = (roles: Principal['roles'], tenantId = 'tenant-a'): Principal => ({
   userId: 'u1',
@@ -65,7 +65,12 @@ describe('can', () => {
     ['office', 'student:manage', true],
     ['office', 'attendance:mark', false],
     ['parent', 'result:read', true],
+    ['parent', 'student:read_own', true],
+    ['parent', 'student:read', false],
     ['parent', 'student:manage', false],
+    ['student', 'student:read_own', true],
+    ['student', 'student:read', false],
+    ['teacher', 'student:read', true],
     ['parent', 'attendance:mark', false],
     ['student', 'exam:attempt', true],
     ['student', 'exam:evaluate', false],
@@ -88,6 +93,28 @@ describe('can', () => {
   it('keeps student personal records away from external examiners', () => {
     expect(can(principal(['examiner']), 'student:read')).toBe(false);
     expect(can(principal(['examiner']), 'attendance:read')).toBe(false);
+  });
+});
+
+describe('studentScope', () => {
+  it('gives staff who read students the whole school', () => {
+    for (const role of ['admin', 'teacher', 'office'] as const) {
+      expect(studentScope(principal([role]))).toEqual({ kind: 'all' });
+    }
+  });
+
+  it('narrows parents and students to records linked to their own login', () => {
+    for (const role of ['parent', 'student'] as const) {
+      expect(studentScope(principal([role]))).toEqual({ kind: 'linked', userId: 'u1' });
+    }
+  });
+
+  it('widens a parent who is also a teacher, because the permission decides', () => {
+    expect(studentScope(principal(['parent', 'teacher']))).toEqual({ kind: 'all' });
+  });
+
+  it('defaults to the narrow scope for a principal with neither permission', () => {
+    expect(studentScope(principal(['examiner']))).toEqual({ kind: 'linked', userId: 'u1' });
   });
 });
 
