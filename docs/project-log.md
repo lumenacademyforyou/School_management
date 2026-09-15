@@ -140,6 +140,20 @@ broken environment at a glance. Not served in production.
 - No UI yet. This is an API — expect JSON and test output. First screens are
   [1028].
 
+### Environment setup (Supabase)
+
+Schema applied to the `School_management` Supabase project and verified: RLS
+forced with a policy on all four tenant-scoped tables, `lumen_app` confirmed
+unable to bypass it. Setup hit a run of environment problems — PowerShell vs
+bash syntax, a Windows-only tsx shim, TLS against the pooler, and the
+migrate-before-dev ordering — all now fixed in code or captured in
+`docs/troubleshooting.md`.
+
+Region: both Supabase projects sit far from the pilot school (Sydney and
+Tokyo). Moving `School_management` to `ap-south-1` is nearly free while it is
+empty and gets harder after the pilot loads data. Blocked on the free plan's
+two-project limit — the existing project has to be deleted or paused first.
+
 ---
 
 ## Next up

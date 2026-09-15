@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "humao.rest-client",
+    "dbaeumer.vscode-eslint",
+    "ms-ossdata.vscode-pgsql"
+  ]
+}
