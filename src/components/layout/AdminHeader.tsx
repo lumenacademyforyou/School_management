@@ -63,16 +63,21 @@ export const AdminHeader: React.FC = () => {
       case 'admissions':
         return { label: 'Admissions Pipeline (ADM)', icon: 'how_to_reg', section: 'Academics' };
       case 'students':
+        return { label: 'Students (STU)', icon: 'badge', section: 'Academics' };
       case 'student-360':
         return { label: 'Student 360° Profile (STU)', icon: 'badge', section: 'Academics' };
       case 'subjects':
+      case 'curriculum':
+        return { label: 'Curriculum & Syllabus (CUR)', icon: 'menu_book', section: 'Academics' };
+      case 'classes':
       case 'academics':
-        return { label: 'Academics & Curriculum (CUR)', icon: 'menu_book', section: 'Academics' };
+        return { label: 'Day Order & Proxy (TTB)', icon: 'today', section: 'Academics' };
       case 'timetable':
         return { label: 'Timetable & Substitution (TTB)', icon: 'calendar_month', section: 'Academics' };
       case 'exams':
+        return { label: 'Examinations & Results (EXM)', icon: 'quiz', section: 'Academics' };
       case 'question-papers':
-        return { label: 'Exams & Question Studio (EXM)', icon: 'quiz', section: 'Academics' };
+        return { label: 'Question Paper Generator (QPG)', icon: 'auto_awesome', section: 'Academics' };
       case 'question-bank':
         return { label: 'Bloom’s Question Bank (QPG)', icon: 'database', section: 'Academics' };
       case 'results':
@@ -95,6 +100,8 @@ export const AdminHeader: React.FC = () => {
       case 'hr-and-payroll':
       case 'payroll':
         return { label: 'HR & 7th CPC Payroll (HRM/PAY)', icon: 'engineering', section: 'People' };
+      case 'id-cards':
+        return { label: 'ID Card Studio', icon: 'id_card', section: 'People' };
       case 'fees':
       case 'fees-and-finance':
         return { label: 'Fees & Dual Ledger (FEE)', icon: 'payments', section: 'Finance' };
@@ -133,6 +140,8 @@ export const AdminHeader: React.FC = () => {
         return { label: 'IAM & Dynamic RBAC (IAM/RBAC)', icon: 'admin_panel_settings', section: 'Governance' };
       case 'workflows':
         return { label: 'Approval Workflows (WFL)', icon: 'account_tree', section: 'Governance' };
+      case 'reports':
+        return { label: 'Reports & Analytics (RPT)', icon: 'analytics', section: 'Governance' };
       case 'documents':
         return { label: 'Document Vault & Verify (DOC)', icon: 'folder_managed', section: 'Governance' };
       case 'audit-log':

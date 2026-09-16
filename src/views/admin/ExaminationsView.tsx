@@ -172,6 +172,7 @@ export const scienceScore = (row: MarkRow, policy: RetestPolicy): ScienceScore =
   const internal = parseMark(row.internal);
   const retest = parseMark(row.retest);
   if (theory.kind === 'EX' && internal.kind === 'EX') return { status: 'exempt', marks: 0, usedRetest: false };
+  if (theory.kind === 'EX' || internal.kind === 'EX') return { status: 'incomplete', marks: 0, usedRetest: false };
   if (theory.kind === 'empty' || internal.kind === 'empty' || theory.kind === 'invalid' || internal.kind === 'invalid') {
     return { status: 'incomplete', marks: 0, usedRetest: false };
   }
@@ -269,9 +270,9 @@ const toMinutes = (hhmm: string) => {
   return h * 60 + m;
 };
 
-export const ExaminationsView: React.FC = () => {
+export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'entry' }) => {
   const { addToast } = useApp();
-  const [tab, setTab] = useState<Tab>('entry');
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [marks, setMarks] = useState<MarkRow[]>(INITIAL_MARKS);
   const [stage, setStage] = useState<EntryStage>('Draft');
   const [unlockRequested, setUnlockRequested] = useState(false);
@@ -299,6 +300,9 @@ export const ExaminationsView: React.FC = () => {
       const t = validateMark(m.theory, SCIENCE_COMPONENTS[0].max);
       const i = validateMark(m.internal, SCIENCE_COMPONENTS[1].max);
       const r = m.retest ? validateMark(m.retest, SCIENCE_COMPONENTS[0].max) : null;
+      if (!t && !i && (m.theory.trim().toUpperCase() === 'EX') !== (m.internal.trim().toUpperCase() === 'EX')) {
+        e[`${m.studentId}-${m.theory.trim().toUpperCase() === 'EX' ? 'theory' : 'internal'}`] = 'Exempt must apply to both components';
+      }
       if (t) e[`${m.studentId}-theory`] = t;
       if (i) e[`${m.studentId}-internal`] = i;
       if (r) e[`${m.studentId}-retest`] = r;
@@ -415,7 +419,7 @@ export const ExaminationsView: React.FC = () => {
     const complete = results.filter(r => !r.incomplete);
     const passPct = complete.length ? Math.round((complete.filter(r => r.status === 'Pass').length / complete.length) * 100) : 0;
     const distribution = GRADE_SCALE.map(g => ({ grade: g.grade, count: complete.filter(r => r.grade === g.grade).length }));
-    const subjectAverages = OTHER_SUBJECTS.map((subject, i) => ({
+    const subjectAverages: { subject: string; avg: number }[] = OTHER_SUBJECTS.map((subject, i) => ({
       subject,
       avg: Math.round((CLASS_10A_STUDENTS.reduce((s, st) => s + LOCKED_MARKS[st.studentId][i], 0) / CLASS_10A_STUDENTS.length) * 10) / 10,
     }));

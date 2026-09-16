@@ -63,10 +63,12 @@ export const AdminSidebar: React.FC<{ collapsed?: boolean; onToggle?: () => void
       theme: 'teal',
       items: [
         { id: 'admissions', label: 'Admissions Pipeline (ADM)', icon: 'how_to_reg', badge: '126 Leads' },
-        { id: 'students', label: 'Student 360° Profile (STU)', icon: 'badge', badge: '2,486' },
-        { id: 'subjects', label: 'Academics & Syllabus (CUR)', icon: 'menu_book' },
+        { id: 'students', label: 'Students & 360° Profile (STU)', icon: 'badge', badge: '2,486' },
+        { id: 'curriculum', label: 'Curriculum & Syllabus (CUR)', icon: 'menu_book' },
         { id: 'timetable', label: 'Timetable & Substitution (TTB)', icon: 'calendar_month', badge: 'Auto' },
-        { id: 'exams', label: 'Exams & Question Studio (EXM)', icon: 'quiz', badge: 'CBSE' },
+        { id: 'academics', label: 'Day Order & Proxy (TTB)', icon: 'today' },
+        { id: 'exams', label: 'Examinations & Results (EXM)', icon: 'quiz', badge: 'CBSE' },
+        { id: 'question-papers', label: 'Question Paper Generator (QPG)', icon: 'auto_awesome' },
         { id: 'question-bank', label: 'Question Bank (QPG Bloom’s)', icon: 'database' },
         { id: 'results', label: 'Report Cards & HPC 360° (RCD)', icon: 'grading', badge: 'NEP 2020' },
         { id: 'attendance', label: 'Attendance Roll Call (ATT)', icon: 'fact_check', badge: '94.6%' },
@@ -83,6 +85,7 @@ export const AdminSidebar: React.FC<{ collapsed?: boolean; onToggle?: () => void
         { id: 'teacher-management', label: 'Teacher Management (TCH)', icon: 'school', badge: '34 Feats' },
         { id: 'non-teaching-staff', label: 'Non-Teaching Support (NTS)', icon: 'badge', badge: '30 Feats' },
         { id: 'hr-and-payroll', label: 'HR & 7th CPC Payroll (HRM/PAY)', icon: 'engineering', badge: '174 Staff' },
+        { id: 'id-cards', label: 'ID Card Studio (STU/TCH/NTS)', icon: 'id_card', badge: 'Print' },
       ],
     },
     {
@@ -140,6 +143,7 @@ export const AdminSidebar: React.FC<{ collapsed?: boolean; onToggle?: () => void
         { id: 'tenants', label: 'Tenancy & Campuses (TEN)', icon: 'domain', badge: '4 Sites' },
         { id: 'users-and-roles', label: 'IAM & Dynamic RBAC (IAM/RBAC)', icon: 'admin_panel_settings', badge: '6 Roles' },
         { id: 'workflows', label: 'Approval Workflows (WFL)', icon: 'account_tree' },
+        { id: 'reports', label: 'Reports & Analytics (RPT)', icon: 'analytics' },
         { id: 'documents', label: 'Document Vault & Verify (DOC)', icon: 'folder_managed', badge: 'DOC-15' },
         { id: 'audit-log', label: 'Immutable Audit Log (AUD)', icon: 'history_edu', badge: 'SHA-256' },
         { id: 'masters', label: 'Masters & Config (MST)', icon: 'tune' },
@@ -367,9 +371,10 @@ export const AdminSidebar: React.FC<{ collapsed?: boolean; onToggle?: () => void
                         (item.id === 'fees' && (adminView === 'fees-and-finance' || adminView === 'fees' || adminView === 'payments' || adminView === 'invoices')) ||
                         (item.id === 'lms' && (adminView === 'lms-and-courses' || adminView === 'lms')) ||
                         (item.id === 'assignments' && (adminView === 'assignment-studio' || adminView === 'assignments')) ||
-                        (item.id === 'subjects' && (adminView === 'academics' || adminView === 'subjects' || adminView === 'classes' || adminView === 'curriculum')) ||
+                        (item.id === 'curriculum' && (adminView === 'subjects' || adminView === 'curriculum')) ||
+                        (item.id === 'academics' && (adminView === 'academics' || adminView === 'classes')) ||
                         (item.id === 'timetable' && adminView === 'timetable') ||
-                        (item.id === 'exams' && (adminView === 'question-papers' || adminView === 'exams')) ||
+                        (item.id === 'exams' && adminView === 'exams') ||
                         (item.id === 'results' && (adminView === 'report-cards' || adminView === 'results')) ||
                         (item.id === 'teacher-management' && (adminView === 'teachers' || adminView === 'teacher-management')) ||
                         (item.id === 'non-teaching-staff' && (adminView === 'employees' || adminView === 'non-teaching-staff')) ||

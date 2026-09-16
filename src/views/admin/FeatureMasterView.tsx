@@ -2,6 +2,15 @@ import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { SMS_LAYERS, SMS_MODULES, RAW_FEATURES_SPEC, TOTAL_SPEC_STATS, SMSModule } from '../../data/featureCatalog';
 import { AdminView } from '../../types';
+import { FEATURE_COVERAGE } from '../../data/featureCoverageScan';
+
+type CoverageStatus = 'On screen' | 'Deferred' | 'Not built';
+const coverageOf = (code: string): CoverageStatus => FEATURE_COVERAGE.get(code) ?? 'Not built';
+const COVERAGE_STYLE: Record<CoverageStatus, string> = {
+  'On screen': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  Deferred: 'bg-amber-50 text-amber-700 border-amber-200',
+  'Not built': 'bg-slate-100 text-slate-600 border-slate-200',
+};
 
 export const FeatureMasterView: React.FC = () => {
   const { setAdminView, addToast } = useApp();
@@ -10,6 +19,7 @@ export const FeatureMasterView: React.FC = () => {
   const [selectedPhase, setSelectedPhase] = useState<string>('all');
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCoverage, setSelectedCoverage] = useState<'all' | CoverageStatus>('all');
   const [activeTab, setActiveTab] = useState<'matrix' | 'modules' | 'stats'>('matrix');
 
   const filteredFeatures = useMemo(() => {
@@ -19,6 +29,7 @@ export const FeatureMasterView: React.FC = () => {
       if (selectedModule !== 'all' && feat.module !== selectedModule) return false;
       if (selectedPhase !== 'all' && feat.phase !== selectedPhase && !feat.phase.includes(selectedPhase)) return false;
       if (selectedPriority !== 'all' && feat.priority !== selectedPriority) return false;
+      if (selectedCoverage !== 'all' && coverageOf(feat.code) !== selectedCoverage) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         return (
@@ -30,7 +41,13 @@ export const FeatureMasterView: React.FC = () => {
       }
       return true;
     });
-  }, [selectedLayer, selectedModule, selectedPhase, selectedPriority, searchQuery]);
+  }, [selectedLayer, selectedModule, selectedPhase, selectedPriority, selectedCoverage, searchQuery]);
+
+  const coverageCounts = useMemo(() => {
+    const counts: Record<CoverageStatus, number> = { 'On screen': 0, Deferred: 0, 'Not built': 0 };
+    RAW_FEATURES_SPEC.forEach(f => counts[coverageOf(f.code)]++);
+    return counts;
+  }, []);
 
   const handleExportCSV = () => {
     const headers = ['Code', 'Module', 'Name', 'Phase', 'Priority', 'Status', 'Description'];
@@ -40,7 +57,7 @@ export const FeatureMasterView: React.FC = () => {
       `"${f.name.replace(/"/g, '""')}"`,
       f.phase,
       f.priority,
-      'Live Operational',
+      coverageOf(f.code),
       `"${f.desc.replace(/"/g, '""')}"`,
     ]);
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
@@ -281,7 +298,7 @@ export const FeatureMasterView: React.FC = () => {
                     type="text"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    placeholder="Search 625 items..."
+                    placeholder={`Search ${RAW_FEATURES_SPEC.length} items...`}
                     className="w-full bg-[#f8f9ff] border border-[#e0ecf4] rounded-xl pl-8 pr-2.5 py-1.5 text-xs text-[#082b3d] placeholder-[#777587] focus:outline-hidden focus:border-[#0e5d84]"
                   />
                 </div>
@@ -297,7 +314,7 @@ export const FeatureMasterView: React.FC = () => {
                   selectedLayer === 'all' ? 'bg-[#0e5d84] text-white font-bold' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
-                All (625)
+                All ({RAW_FEATURES_SPEC.length})
               </button>
               {SMS_LAYERS.map(l => (
                 <button
@@ -317,10 +334,22 @@ export const FeatureMasterView: React.FC = () => {
           <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
             <div className="p-3 bg-[#f8f9ff] border-b border-[#e0ecf4] flex items-center justify-between text-xs font-semibold text-[#464555]">
               <span>Showing {filteredFeatures.length} matching features</span>
-              <span className="text-emerald-700 flex items-center gap-1 font-mono">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Active Spec State: Live Verified</span>
-              </span>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[10px] text-[#777587] mr-1">
+                  {RAW_FEATURES_SPEC.length} of {TOTAL_SPEC_STATS.totalFeatures} catalogue rows loaded ·
+                </span>
+                {(['all', 'On screen', 'Deferred', 'Not built'] as const).map(c => (
+                  <button
+                    key={c}
+                    onClick={() => setSelectedCoverage(c)}
+                    className={`text-[10px] px-2 py-0.5 rounded-full border font-semibold ${
+                      selectedCoverage === c ? 'bg-[#0e5d84] text-white border-[#0e5d84]' : c === 'all' ? 'bg-white text-[#464555] border-[#e0ecf4]' : COVERAGE_STYLE[c]
+                    }`}
+                  >
+                    {c === 'all' ? 'All statuses' : `${c} · ${coverageCounts[c]}`}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="overflow-x-auto">
@@ -332,6 +361,7 @@ export const FeatureMasterView: React.FC = () => {
                     <th className="py-3 px-4">Feature Name</th>
                     <th className="py-3 px-3 w-24 text-center">Phase</th>
                     <th className="py-3 px-3 w-20 text-center">Priority</th>
+                    <th className="py-3 px-3 w-24 text-center">Status</th>
                     <th className="py-3 px-4 w-36">Layer</th>
                     <th className="py-3 px-4 w-28 text-right">Actions</th>
                   </tr>
@@ -360,7 +390,7 @@ export const FeatureMasterView: React.FC = () => {
                             {feat.name}
                           </div>
                           <div className="text-[11px] text-[#464555] mt-0.5 line-clamp-1">
-                            {feat.desc}
+                            {feat.desc || <span className="italic text-[#94a3b8]">Description pending — name, phase and priority from the PDF feature list</span>}
                           </div>
                         </td>
                         {/* Phase */}
@@ -373,6 +403,12 @@ export const FeatureMasterView: React.FC = () => {
                         <td className="py-3 px-3 text-center">
                           <span className={`inline-block text-[10px] px-2 py-0.5 rounded-md border ${getPriorityBadge(feat.priority)}`}>
                             {feat.priority === 'M' ? 'Must' : feat.priority === 'S' ? 'Should' : 'Could'}
+                          </span>
+                        </td>
+                        {/* Coverage */}
+                        <td className="py-3 px-3 text-center">
+                          <span className={`inline-block text-[10px] px-2 py-0.5 rounded-md border whitespace-nowrap ${COVERAGE_STYLE[coverageOf(feat.code)]}`}>
+                            {coverageOf(feat.code)}
                           </span>
                         </td>
                         {/* Layer */}

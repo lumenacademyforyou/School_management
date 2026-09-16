@@ -11,7 +11,7 @@ export const FeatureTags: React.FC<{ ids: string[]; className?: string }> = ({ i
       return (
         <span
           key={id}
-          title={feat ? `${feat.name} · ${feat.phase} · ${feat.priority} — ${feat.desc}` : 'Not in catalogue'}
+          title={feat ? `${feat.name} · ${feat.phase} · ${feat.priority}${feat.desc ? ` — ${feat.desc}` : ''}` : 'Not in catalogue'}
           className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ${
             feat ? 'bg-[#f0f7fb] text-[#0e5d84] border-[#cbe0ec]' : 'bg-rose-50 text-rose-700 border-rose-200'
           }`}

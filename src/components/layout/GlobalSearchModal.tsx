@@ -115,6 +115,24 @@ export const GlobalSearchModal: React.FC = () => {
         setSearchModalOpen(false);
       },
     },
+    ...([
+      ['page-id-cards', 'ID Card Studio', 'Design, generate, reissue and bulk print student, faculty and staff ID cards', 'id-cards', 'id_card'],
+      ['page-curriculum', 'Curriculum & Syllabus Coverage', 'Subject mapping, elective groups, syllabus coverage and lesson plans', 'curriculum', 'menu_book'],
+      ['page-exams', 'Examinations & Results', 'Marks entry, moderation, result computation and publishing', 'exams', 'quiz'],
+      ['page-workflows', 'Approval Workflows', 'Approval queue, delegation, escalation and stage analytics', 'workflows', 'account_tree'],
+      ['page-reports', 'Reports & Analytics', 'Role dashboards, report library, branch comparison and schedules', 'reports', 'analytics'],
+    ] as const).map(([id, title, subtitle, view, icon]) => ({
+      id,
+      title,
+      subtitle,
+      category: 'Navigation',
+      icon,
+      action: () => {
+        setRole('admin');
+        setAdminView(view);
+        setSearchModalOpen(false);
+      },
+    })),
     {
       id: 'page-question-paper',
       title: 'AI Question Paper Studio & CBSE Blueprint',

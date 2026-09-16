@@ -68,7 +68,7 @@ export const PRIMARY_STUDENT: Student = {
   section: 'A',
   house: 'Emerald Falcon',
   apaarId: '9842-3310-8841',
-  pen: 'PEN-2023-99410',
+  pen: '20231099410',
   admissionNo: 'ADM-2018-0492',
   gender: 'Male',
   dob: '14 Oct 2009',

@@ -335,3 +335,46 @@
   box-shadow: 0 8px 25px -5px rgba(14, 93, 132, 0.1),
               0 4px 10px -6px rgba(14, 93, 132, 0.05);
 }
+
+/* ─── Print portal (ID card sheets, offer letters) ─── */
+.print-portal {
+  display: none;
+}
+
+.id-card {
+  flex-shrink: 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  body.printing-portal > *:not(.print-portal) {
+    display: none !important;
+  }
+
+  body.printing-portal .print-portal {
+    display: block;
+  }
+
+  .id-print-page {
+    display: flex;
+    flex-direction: column;
+    gap: 4mm;
+    break-after: page;
+  }
+
+  .id-print-page:last-child {
+    break-after: auto;
+  }
+
+  .id-print-row {
+    display: flex;
+    gap: 4mm;
+    break-inside: avoid;
+  }
+}

@@ -123,6 +123,13 @@ Generated on: ${new Date().toLocaleString()}`;
               <span>Download Dossier</span>
             </button>
             <button
+              onClick={() => setAdminView('id-cards')}
+              className="flex items-center gap-1.5 bg-[#f0f7fb] hover:bg-[#e0ecf4] text-[#0e5d84] text-xs font-semibold px-3 py-2 rounded-xl border border-[#cbe0ec] transition-colors"
+            >
+              <span className="material-symbols-outlined text-base">id_card</span>
+              <span>ID Card</span>
+            </button>
+            <button
               onClick={() => setPtmModalOpen(true)}
               className="flex items-center gap-1.5 bg-[#f0f7fb] hover:bg-[#e0ecf4] text-[#0e5d84] text-xs font-semibold px-3 py-2 rounded-xl border border-[#cbe0ec] transition-colors"
             >

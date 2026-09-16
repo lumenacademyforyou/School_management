@@ -73,6 +73,7 @@ export type AdminView =
   // LAYER 6: PEOPLE (MODULES 36 & 37)
   | 'teacher-management'
   | 'non-teaching-staff'
+  | 'id-cards'
   // Legacy aliases
   | 'student-360'
   | 'tenancy-and-campuses'

@@ -159,9 +159,9 @@ const APPLICABILITY_STYLE: Record<Applicability, string> = {
 
 const NEXT_APPLICABILITY: Record<Applicability, Applicability> = { M: 'E', E: '-', '-': 'M' };
 
-export const CurriculumView: React.FC = () => {
+export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'subjects' }) => {
   const { addToast } = useApp();
-  const [tab, setTab] = useState<Tab>('subjects');
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [mapping, setMapping] = useState(INITIAL_MAPPING);
   const [groups, setGroups] = useState(INITIAL_GROUPS);
   const [requests, setRequests] = useState(INITIAL_REQUESTS);

@@ -22,8 +22,7 @@ import { ToastContainer } from './components/layout/ToastContainer';
 import { DashboardView } from './views/admin/DashboardView';
 import { FeatureMasterView } from './views/admin/FeatureMasterView';
 import { Student360View } from './views/admin/Student360View';
-import { AttendanceView } from './views/admin/AttendanceView';
-import { FeesView } from './views/admin/FeesView';
+import { AttendanceDeskView } from './views/admin/AttendanceDeskView';
 import { TransportView } from './views/admin/TransportView';
 import { HostelView } from './views/admin/HostelView';
 import { QuestionPapersView } from './views/admin/QuestionPapersView';
@@ -32,7 +31,7 @@ import { LMSCoursesView } from './views/admin/LMSCoursesView';
 import { AssignmentStudioView } from './views/admin/AssignmentStudioView';
 import { TenancyRBACView } from './views/admin/TenancyRBACView';
 import { AuditLogView } from './views/admin/AuditLogView';
-import { AdmissionsView } from './views/admin/AdmissionsView';
+import { AdmissionsDeskView } from './views/admin/AdmissionsDeskView';
 import { AcademicsView } from './views/admin/AcademicsView';
 import { HRPayrollView } from './views/admin/HRPayrollView';
 import { LibraryView } from './views/admin/LibraryView';
@@ -53,6 +52,13 @@ import { TimetableSubstitutionView } from './views/admin/TimetableSubstitutionVi
 import { TeacherManagementView } from './views/admin/TeacherManagementView';
 import { NonTeachingStaffView } from './views/admin/NonTeachingStaffView';
 import { DesignSystemView } from './views/admin/DesignSystemView';
+import { CurriculumView } from './views/admin/CurriculumView';
+import { ExaminationsView } from './views/admin/ExaminationsView';
+import { WorkflowsView } from './views/admin/WorkflowsView';
+import { ReportsView } from './views/admin/ReportsView';
+import { IdCardStudioView } from './views/admin/IdCardStudioView';
+import { StudentDirectoryView } from './views/admin/StudentDirectoryView';
+import { FeesDeskView } from './views/admin/FeesDeskView';
 
 // Parent Views
 import { ParentHomeView } from './views/parent/ParentHomeView';
@@ -115,6 +121,8 @@ const MainLayout: React.FC = () => {
         return <FeatureMasterView />;
       // PEOPLE & STUDENTS
       case 'students':
+      case 'parents':
+        return <StudentDirectoryView />;
       case 'student-360':
         return <Student360View />;
       case 'teacher-management':
@@ -123,23 +131,27 @@ const MainLayout: React.FC = () => {
       case 'non-teaching-staff':
       case 'employees':
         return <NonTeachingStaffView />;
-      case 'parents':
       case 'hr-and-payroll':
       case 'payroll':
         return <HRPayrollView />;
+      case 'id-cards':
+        return <IdCardStudioView />;
       // ACADEMICS & TIMETABLE & RESULTS
       case 'classes':
-      case 'subjects':
       case 'academics':
         return <AcademicsView />;
+      case 'subjects':
+      case 'curriculum':
+        return <CurriculumView />;
       case 'timetable':
         return <TimetableSubstitutionView />;
       case 'results':
       case 'report-cards':
         return <ReportCardsView />;
       case 'attendance':
-        return <AttendanceView />;
+        return <AttendanceDeskView />;
       case 'exams':
+        return <ExaminationsView />;
       case 'question-papers':
         return <QuestionPapersView />;
       // FINANCE & ACCOUNTING
@@ -148,12 +160,12 @@ const MainLayout: React.FC = () => {
       case 'invoices':
       case 'financial-reports':
       case 'fees-and-finance':
-        return <FeesView />;
+        return <FeesDeskView />;
       case 'accounting':
         return <AccountingView />;
       // OPERATIONS & SERVICES
       case 'admissions':
-        return <AdmissionsView />;
+        return <AdmissionsDeskView />;
       case 'library':
         return <LibraryView />;
       case 'transport':
@@ -204,10 +216,12 @@ const MainLayout: React.FC = () => {
       case 'auth-and-rbac':
       case 'tenants':
       case 'tenancy-and-campuses':
-      case 'workflows':
       case 'settings':
-      case 'reports':
         return <TenancyRBACView />;
+      case 'workflows':
+        return <WorkflowsView />;
+      case 'reports':
+        return <ReportsView />;
       default:
         return <DashboardView />;
     }

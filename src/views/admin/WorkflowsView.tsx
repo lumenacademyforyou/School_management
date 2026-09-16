@@ -143,9 +143,9 @@ const TABS: { id: Tab; label: string; icon: string; ids: string[] }[] = [
 const nowStamp = () =>
   new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
 
-export const WorkflowsView: React.FC = () => {
+export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'queue' }) => {
   const { addToast, currentUser } = useApp();
-  const [tab, setTab] = useState<Tab>('queue');
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [workflows, setWorkflows] = useState(WORKFLOWS);
   const [queue, setQueue] = useState(INITIAL_QUEUE);
   const [history, setHistory] = useState(INITIAL_HISTORY);
