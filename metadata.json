@@ -1,0 +1,6 @@
+{
+  "name": "LumenAcademy SMS",
+  "description": "Enterprise multi-tenant school management, campus operations, academics, and statutory compliance platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
