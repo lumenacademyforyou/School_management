@@ -1,452 +1,245 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { AdminView, Campus } from '../../types';
+import { AdminView } from '../../types';
+
+interface NavItem {
+  id: AdminView;
+  label: string;
+  icon: string;
+  /** Other view ids that should highlight this item */
+  aliases?: AdminView[];
+}
 
 interface NavGroup {
   id: string;
   label: string;
-  icon: string;
-  theme: 'purple' | 'teal' | 'coral';
-  items: {
-    id: AdminView;
-    label: string;
-    icon: string;
-    badge?: string;
-  }[];
+  items: NavItem[];
 }
 
-export const AdminSidebar: React.FC<{ collapsed?: boolean; onToggle?: () => void }> = ({
-  collapsed = false,
-  onToggle,
-}) => {
-  const { adminView, setAdminView, selectedCampus, setSelectedCampus, campuses, addToast } = useApp();
-  const [searchFilter, setSearchFilter] = useState('');
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
-    academics: true,
-    people: true,
-    finance: true,
-    operations: false,
-    engagement: false,
-    compliance: true,
-    foundation: false,
-  });
-  const [campusDropdownOpen, setCampusDropdownOpen] = useState(false);
+/** Baseline (P1 MVP) modules, plus the ID card studio. */
+const BASELINE_GROUPS: NavGroup[] = [
+  {
+    id: 'students',
+    label: 'Students',
+    items: [
+      { id: 'admissions', label: 'Admissions', icon: 'how_to_reg' },
+      { id: 'students', label: 'Students', icon: 'groups', aliases: ['student-360', 'parents'] },
+      { id: 'attendance', label: 'Attendance', icon: 'fact_check' },
+      { id: 'id-cards', label: 'ID Cards', icon: 'id_card' },
+    ],
+  },
+  {
+    id: 'academics',
+    label: 'Academics',
+    items: [
+      { id: 'curriculum', label: 'Curriculum', icon: 'menu_book', aliases: ['subjects'] },
+      { id: 'timetable', label: 'Timetable', icon: 'calendar_month' },
+    ],
+  },
+  {
+    id: 'finance',
+    label: 'Finance',
+    items: [{ id: 'fees', label: 'Fees', icon: 'payments', aliases: ['fees-and-finance', 'payments', 'invoices', 'financial-reports'] }],
+  },
+  {
+    id: 'engagement',
+    label: 'Communication',
+    items: [
+      { id: 'communication', label: 'Messages & Notices', icon: 'campaign', aliases: ['notifications', 'broadcast-sms'] },
+      { id: 'parent-app-preview', label: 'Parent App', icon: 'smartphone' },
+    ],
+  },
+  {
+    id: 'compliance',
+    label: 'Compliance',
+    items: [
+      { id: 'dpdpa-and-consent', label: 'Consent & Privacy', icon: 'verified_user' },
+      { id: 'udise-and-apaar', label: 'UDISE+ & APAAR', icon: 'fingerprint' },
+      { id: 'integrations', label: 'Integrations', icon: 'extension' },
+    ],
+  },
+  {
+    id: 'admin',
+    label: 'Administration',
+    items: [
+      { id: 'tenants', label: 'Campuses', icon: 'domain', aliases: ['tenancy-and-campuses', 'settings'] },
+      { id: 'users-and-roles', label: 'Users & Roles', icon: 'admin_panel_settings', aliases: ['auth-and-rbac'] },
+      { id: 'workflows', label: 'Approvals', icon: 'account_tree' },
+      { id: 'reports', label: 'Reports', icon: 'analytics' },
+      { id: 'documents', label: 'Documents', icon: 'folder_open' },
+      { id: 'audit-log', label: 'Audit Log', icon: 'history' },
+      { id: 'masters', label: 'Masters & Settings', icon: 'tune' },
+      { id: 'data-migration', label: 'Data Import', icon: 'upload_file' },
+    ],
+  },
+];
 
-  const campusSidebarRef = useRef<HTMLDivElement>(null);
+/** Screens for modules whose features start in phase 2 or later. Hidden by default. */
+const LATER_GROUPS: NavGroup[] = [
+  {
+    id: 'later-academics',
+    label: 'Academics · later phases',
+    items: [
+      { id: 'exams', label: 'Examinations', icon: 'quiz' },
+      { id: 'results', label: 'Report Cards', icon: 'grading', aliases: ['report-cards'] },
+      { id: 'academics', label: 'Day Order & Proxy', icon: 'today', aliases: ['classes'] },
+      { id: 'question-papers', label: 'Question Papers', icon: 'auto_awesome' },
+      { id: 'question-bank', label: 'Question Bank', icon: 'database' },
+      { id: 'lms', label: 'Digital Classroom', icon: 'play_lesson', aliases: ['lms-and-courses'] },
+      { id: 'assignments', label: 'Assignments', icon: 'assignment_turned_in', aliases: ['assignment-studio'] },
+    ],
+  },
+  {
+    id: 'later-people',
+    label: 'Staff · later phases',
+    items: [
+      { id: 'teacher-management', label: 'Teachers', icon: 'school', aliases: ['teachers'] },
+      { id: 'non-teaching-staff', label: 'Support Staff', icon: 'badge', aliases: ['employees'] },
+      { id: 'hr-and-payroll', label: 'HR & Payroll', icon: 'engineering', aliases: ['payroll'] },
+    ],
+  },
+  {
+    id: 'later-operations',
+    label: 'Operations · later phases',
+    items: [
+      { id: 'accounting', label: 'Accounting', icon: 'account_balance' },
+      { id: 'transport', label: 'Transport', icon: 'directions_bus' },
+      { id: 'hostel', label: 'Hostel', icon: 'night_shelter' },
+      { id: 'library', label: 'Library', icon: 'local_library' },
+      { id: 'inventory', label: 'Inventory', icon: 'inventory_2' },
+      { id: 'procurement', label: 'Procurement', icon: 'shopping_bag' },
+      { id: 'helpdesk', label: 'Helpdesk', icon: 'support_agent' },
+      { id: 'certificates', label: 'Certificates', icon: 'workspace_premium' },
+    ],
+  },
+];
+
+const LATER_KEY = 'lumen.sidebar.showLater';
+
+const readLaterPref = () => {
+  try {
+    return window.localStorage.getItem(LATER_KEY) === '1';
+  } catch {
+    return false;
+  }
+};
+
+const isItemActive = (item: NavItem, view: AdminView) => item.id === view || Boolean(item.aliases?.includes(view));
+
+export const AdminSidebar: React.FC<{ collapsed?: boolean; onToggle?: () => void }> = ({ collapsed = false }) => {
+  const { adminView, setAdminView } = useApp();
+  const [filter, setFilter] = useState('');
+  const [showLater, setShowLater] = useState<boolean>(readLaterPref);
+
+  const groupOf = (view: AdminView) => [...BASELINE_GROUPS, ...LATER_GROUPS].find(g => g.items.some(i => isItemActive(i, view)))?.id;
+  const [open, setOpen] = useState<Record<string, boolean>>(() => {
+    const active = groupOf(adminView);
+    return { students: true, ...(active ? { [active]: true } : {}) };
+  });
+
+  // Opening a screen from elsewhere (search, dashboard) expands its group and reveals later-phase screens
+  useEffect(() => {
+    const active = groupOf(adminView);
+    if (active) setOpen(prev => (prev[active] ? prev : { ...prev, [active]: true }));
+    if (LATER_GROUPS.some(g => g.id === active)) setShowLater(true);
+  }, [adminView]);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (campusSidebarRef.current && !campusSidebarRef.current.contains(e.target as Node)) {
-        setCampusDropdownOpen(false);
-      }
-    };
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setCampusDropdownOpen(false);
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEscape);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, []);
+    try {
+      window.localStorage.setItem(LATER_KEY, showLater ? '1' : '0');
+    } catch {
+      // Storage unavailable (private mode); the preference simply is not remembered
+    }
+  }, [showLater]);
 
-  const toggleGroup = (groupId: string) => {
-    setExpandedGroups(prev => ({ ...prev, [groupId]: !prev[groupId] }));
-  };
+  const groups = useMemo(() => {
+    const source = showLater || filter.trim() ? [...BASELINE_GROUPS, ...LATER_GROUPS] : BASELINE_GROUPS;
+    const q = filter.trim().toLowerCase();
+    return source.map(g => ({ ...g, items: q ? g.items.filter(i => i.label.toLowerCase().includes(q)) : g.items })).filter(g => g.items.length);
+  }, [showLater, filter]);
 
-  const navGroups: NavGroup[] = [
-    {
-      id: 'academics',
-      label: 'ACADEMICS & STUDENTS',
-      icon: 'school',
-      theme: 'teal',
-      items: [
-        { id: 'admissions', label: 'Admissions Pipeline (ADM)', icon: 'how_to_reg', badge: '126 Leads' },
-        { id: 'students', label: 'Students & 360° Profile (STU)', icon: 'badge', badge: '2,486' },
-        { id: 'curriculum', label: 'Curriculum & Syllabus (CUR)', icon: 'menu_book' },
-        { id: 'timetable', label: 'Timetable & Substitution (TTB)', icon: 'calendar_month', badge: 'Auto' },
-        { id: 'academics', label: 'Day Order & Proxy (TTB)', icon: 'today' },
-        { id: 'exams', label: 'Examinations & Results (EXM)', icon: 'quiz', badge: 'CBSE' },
-        { id: 'question-papers', label: 'Question Paper Generator (QPG)', icon: 'auto_awesome' },
-        { id: 'question-bank', label: 'Question Bank (QPG Bloom’s)', icon: 'database' },
-        { id: 'results', label: 'Report Cards & HPC 360° (RCD)', icon: 'grading', badge: 'NEP 2020' },
-        { id: 'attendance', label: 'Attendance Roll Call (ATT)', icon: 'fact_check', badge: '94.6%' },
-        { id: 'lms', label: 'LMS Digital Classroom (LMS)', icon: 'play_lesson' },
-        { id: 'assignments', label: 'Assignments Studio (LMS)', icon: 'assignment_turned_in' },
-      ],
-    },
-    {
-      id: 'people',
-      label: 'FACULTY & STAFF',
-      icon: 'groups',
-      theme: 'teal',
-      items: [
-        { id: 'teacher-management', label: 'Teacher Management (TCH)', icon: 'school', badge: '34 Feats' },
-        { id: 'non-teaching-staff', label: 'Non-Teaching Support (NTS)', icon: 'badge', badge: '30 Feats' },
-        { id: 'hr-and-payroll', label: 'HR & 7th CPC Payroll (HRM/PAY)', icon: 'engineering', badge: '174 Staff' },
-        { id: 'id-cards', label: 'ID Card Studio (STU/TCH/NTS)', icon: 'id_card', badge: 'Print' },
-      ],
-    },
-    {
-      id: 'finance',
-      label: 'FINANCE & ACCOUNTS',
-      icon: 'payments',
-      theme: 'purple',
-      items: [
-        { id: 'fees', label: 'Fees & Dual Ledger (FEE)', icon: 'payments', badge: '₹18.4L Due' },
-        { id: 'accounting', label: 'Accounting & Chart of Accts (ACC)', icon: 'account_balance', badge: 'ACC-20' },
-      ],
-    },
-    {
-      id: 'operations',
-      label: 'CAMPUS OPERATIONS',
-      icon: 'settings_suggest',
-      theme: 'teal',
-      items: [
-        { id: 'transport', label: 'Transport Fleet & AIS-140 (TRN)', icon: 'directions_bus', badge: 'Live GPS' },
-        { id: 'hostel', label: 'Hostel & Residential Halls (HST)', icon: 'night_shelter' },
-        { id: 'library', label: 'Library & RFID Catalog (LIB)', icon: 'local_library' },
-        { id: 'inventory', label: 'Store Inventory & 3-Way Match (INV)', icon: 'inventory_2' },
-        { id: 'procurement', label: 'Procurement & Purchase Orders (PRC)', icon: 'shopping_bag' },
-        { id: 'helpdesk', label: 'Helpdesk & Grievance SLA (HLP)', icon: 'support_agent', badge: 'SLA' },
-      ],
-    },
-    {
-      id: 'engagement',
-      label: 'COMMUNITY & ENGAGEMENT',
-      icon: 'campaign',
-      theme: 'purple',
-      items: [
-        { id: 'communication', label: 'Notices & DLT Broadcast (COM/NOT)', icon: 'campaign' },
-        { id: 'parent-app-preview', label: 'Parent Mobile App Companion (APP)', icon: 'smartphone' },
-      ],
-    },
-    {
-      id: 'compliance',
-      label: 'STATUTORY & COMPLIANCE',
-      icon: 'verified_user',
-      theme: 'coral',
-      items: [
-        { id: 'dpdpa-and-consent', label: 'DPDPA 2023 Consent Hub (CNS/DPD)', icon: 'security', badge: 'Mandatory' },
-        { id: 'udise-and-apaar', label: 'UDISE+ & APAAR Registry (GOV)', icon: 'fingerprint' },
-        { id: 'certificates', label: 'DigiLocker & Transfer Cert (CRT)', icon: 'verified' },
-        { id: 'integrations', label: 'Integrations & Telematics Hub (INT)', icon: 'webhook', badge: '17 APIs' },
-      ],
-    },
-    {
-      id: 'foundation',
-      label: 'PLATFORM GOVERNANCE',
-      icon: 'hub',
-      theme: 'purple',
-      items: [
-        { id: 'tenants', label: 'Tenancy & Campuses (TEN)', icon: 'domain', badge: '4 Sites' },
-        { id: 'users-and-roles', label: 'IAM & Dynamic RBAC (IAM/RBAC)', icon: 'admin_panel_settings', badge: '6 Roles' },
-        { id: 'workflows', label: 'Approval Workflows (WFL)', icon: 'account_tree' },
-        { id: 'reports', label: 'Reports & Analytics (RPT)', icon: 'analytics' },
-        { id: 'documents', label: 'Document Vault & Verify (DOC)', icon: 'folder_managed', badge: 'DOC-15' },
-        { id: 'audit-log', label: 'Immutable Audit Log (AUD)', icon: 'history_edu', badge: 'SHA-256' },
-        { id: 'masters', label: 'Masters & Config (MST)', icon: 'tune' },
-        { id: 'data-migration', label: 'Data Import & Migration (MIG)', icon: 'move_to_inbox', badge: 'Wizard' },
-      ],
-    },
-  ];
+  const laterCount = LATER_GROUPS.reduce((n, g) => n + g.items.length, 0);
 
-  const filteredGroups = navGroups.map(group => {
-    if (!searchFilter.trim()) return group;
-    const items = group.items.filter(item =>
-      item.label.toLowerCase().includes(searchFilter.toLowerCase())
+  const itemButton = (item: NavItem) => {
+    const active = isItemActive(item, adminView);
+    return (
+      <button
+        key={item.id}
+        onClick={() => setAdminView(item.id)}
+        title={collapsed ? item.label : undefined}
+        data-nav={item.id}
+        aria-current={active ? 'page' : undefined}
+        className={`w-full flex items-center gap-3 rounded-lg text-[13px] transition-colors ${collapsed ? 'justify-center p-2' : 'px-3 py-2'} ${
+          active ? 'bg-[#0e5d84] text-white font-semibold shadow-xs' : 'text-[#34495a] hover:bg-[#f0f7fb] hover:text-[#082b3d]'
+        }`}
+      >
+        <span className={`material-symbols-outlined text-[18px] ${active ? 'text-white' : 'text-[#6b8394]'}`}>{item.icon}</span>
+        {!collapsed && <span className="truncate">{item.label}</span>}
+      </button>
     );
-    return { ...group, items };
-  }).filter(group => group.items.length > 0);
-
-  const getThemeStyles = (theme: 'purple' | 'teal' | 'coral', isActive: boolean) => {
-    if (!isActive) return 'text-[#464555] hover:bg-[#f0f7fb] hover:text-[#082b3d]';
-    switch (theme) {
-      case 'coral':
-        return 'bg-orange-50 text-orange-900 font-semibold border border-orange-200 shadow-2xs';
-      case 'teal':
-        return 'bg-teal-50 text-teal-900 font-semibold border border-teal-200 shadow-2xs';
-      case 'purple':
-      default:
-        return 'bg-[#f0f7fb] text-[#0e5d84] font-semibold border border-[#cbe0ec] shadow-2xs';
-    }
-  };
-
-  const getIconColor = (theme: 'purple' | 'teal' | 'coral', isActive: boolean) => {
-    if (!isActive) return 'text-[#777587] group-hover:text-[#082b3d]';
-    switch (theme) {
-      case 'coral':
-        return 'text-orange-600';
-      case 'teal':
-        return 'text-teal-700';
-      case 'purple':
-      default:
-        return 'text-[#0e5d84]';
-    }
   };
 
   return (
-    <aside
-      className={`bg-white border-r border-[#e0ecf4] h-full overflow-y-auto select-none transition-all duration-200 flex flex-col justify-between ${
-        collapsed ? 'w-16' : 'w-72'
-      }`}
-    >
-      <div className="py-2">
-        {/* Multi-Tenant School Selector Header */}
-        {collapsed ? (
-          <div className="flex justify-center mb-3">
-            <img
-              src="/lumen-academy-logo.svg"
-              alt="Lumen Academy"
-              referrerPolicy="no-referrer"
-              className="w-9 h-9 object-contain drop-shadow-xs cursor-pointer hover:scale-105 transition-transform"
-              title={`${selectedCampus.name} (${selectedCampus.code})`}
-              onClick={() => onToggle?.()}
+    <aside className={`bg-white border-r border-[#e0ecf4] h-full flex flex-col select-none ${collapsed ? 'w-16' : 'w-64'}`}>
+      {!collapsed && (
+        <div className="p-3 pb-2">
+          <div className="relative">
+            <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[16px] text-[#8aa0ae]">search</span>
+            <input
+              value={filter}
+              onChange={e => setFilter(e.target.value)}
+              placeholder="Find a screen"
+              aria-label="Find a screen"
+              className="w-full bg-[#f5f8fb] border border-transparent focus:border-[#cbe0ec] focus:bg-white rounded-lg pl-8 pr-2 py-1.5 text-xs text-[#082b3d] placeholder-[#8aa0ae] outline-none"
             />
           </div>
-        ) : (
-          <div className="px-3 mb-2 relative" ref={campusSidebarRef}>
-            <div
-              onClick={() => setCampusDropdownOpen(!campusDropdownOpen)}
-              className="p-2 bg-[#f8f9ff] hover:bg-[#f0f7fb] border border-[#cbe0ec] rounded-xl cursor-pointer transition-all flex items-center justify-between"
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <img
-                  src="/lumen-academy-logo.svg"
-                  alt="Lumen Academy"
-                  referrerPolicy="no-referrer"
-                  className="w-8 h-8 rounded-lg object-contain shrink-0 drop-shadow-xs"
-                />
-                <div className="truncate">
-                  <div className="text-xs font-bold text-[#082b3d] truncate">
-                    {selectedCampus.name}
-                  </div>
-                  <div className="text-[10px] text-[#777587] flex items-center gap-1">
-                    <span>{selectedCampus.academicYear}</span>
-                    <span>•</span>
-                    <span className="text-emerald-600 font-semibold">Online</span>
-                  </div>
-                </div>
-              </div>
-              <span className="material-symbols-outlined text-sm text-[#777587]">
-                {campusDropdownOpen ? 'expand_less' : 'unfold_more'}
-              </span>
-            </div>
+        </div>
+      )}
 
-            {/* School Switcher Dropdown */}
-            {campusDropdownOpen && (
-              <div className="absolute left-3 right-3 top-13 bg-white border border-[#cbe0ec] rounded-xl shadow-lg p-1 z-50 space-y-1 animate-dropdown">
-                <div className="px-2 py-1 text-[10px] font-bold text-[#777587] uppercase">
-                  LumenAcademy Group Campuses
-                </div>
-                {campuses.map(c => (
-                  <button
-                    key={c.id}
-                    onClick={() => {
-                      setSelectedCampus(c);
-                      setCampusDropdownOpen(false);
-                      addToast(`Switched active tenant to ${c.name}`, 'info');
-                    }}
-                    className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
-                      selectedCampus.id === c.id
-                        ? 'bg-[#f0f7fb] text-[#0e5d84] font-bold'
-                        : 'hover:bg-slate-50 text-[#082b3d]'
-                    }`}
-                  >
-                    <div>
-                      <div className="font-semibold">{c.name}</div>
-                      <div className="text-[10px] text-[#777587]">{c.studentsCount} Students • {c.code}</div>
-                    </div>
-                    {selectedCampus.id === c.id && (
-                      <span className="material-symbols-outlined text-sm text-[#0e5d84]">check</span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+      <nav className="flex-1 overflow-y-auto px-2 pb-3 space-y-1" aria-label="Main">
+        {itemButton({ id: 'dashboard', label: 'Dashboard', icon: 'space_dashboard' })}
 
-        {/* Quick Menu Filter Search */}
-        {!collapsed && (
-          <div className="px-3 mb-2">
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-2.5 top-2 text-sm text-[#777587]">
-                search
-              </span>
-              <input
-                type="text"
-                value={searchFilter}
-                onChange={e => setSearchFilter(e.target.value)}
-                placeholder="Filter menu modules..."
-                className="w-full bg-[#f8f9ff] border border-[#e0ecf4] rounded-lg pl-8 pr-2.5 py-1.5 text-xs text-[#082b3d] placeholder-[#777587] focus:outline-hidden focus:border-[#0e5d84]"
-              />
-              {searchFilter && (
+        {groups.map(group => {
+          const expanded = collapsed || Boolean(filter.trim()) || open[group.id];
+          const hasActive = group.items.some(i => isItemActive(i, adminView));
+          return (
+            <div key={group.id} className="pt-2">
+              {!collapsed && (
                 <button
-                  onClick={() => setSearchFilter('')}
-                  className="absolute right-2 top-2 text-[#777587] hover:text-[#082b3d] text-xs"
+                  onClick={() => setOpen(prev => ({ ...prev, [group.id]: !prev[group.id] }))}
+                  aria-expanded={expanded}
+                  className="w-full flex items-center justify-between px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#8aa0ae] hover:text-[#082b3d]"
                 >
-                  ✕
+                  <span className={hasActive && !expanded ? 'text-[#0e5d84]' : ''}>{group.label}</span>
+                  <span className="material-symbols-outlined text-[16px]">{expanded ? 'expand_less' : 'expand_more'}</span>
                 </button>
               )}
+              {collapsed && <div className="h-px bg-[#e0ecf4] mx-2 my-1" />}
+              {expanded && <div className="space-y-0.5 mt-0.5">{group.items.map(itemButton)}</div>}
             </div>
-          </div>
-        )}
+          );
+        })}
 
-        {/* Top Direct Actions */}
-        <div className="px-2 mb-2 space-y-1">
-          <button
-            onClick={() => setAdminView('dashboard')}
-            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left group ${
-              adminView === 'dashboard'
-                ? 'bg-[#0e5d84] text-white shadow-xs'
-                : 'text-[#082b3d] hover:bg-[#f0f7fb]'
-            }`}
-          >
-            <span className="material-symbols-outlined text-base">
-              dashboard
+        {groups.length === 0 && <p className="px-3 py-4 text-xs text-[#8aa0ae]">No screen matches “{filter}”.</p>}
+      </nav>
+
+      {!collapsed && (
+        <div className="border-t border-[#e0ecf4] p-2 space-y-1">
+          <label className="flex items-center justify-between gap-2 px-3 py-1.5 text-xs text-[#34495a] cursor-pointer rounded-lg hover:bg-[#f5f8fb]">
+            <span>
+              Show later-phase modules <span className="text-[#8aa0ae]">({laterCount})</span>
             </span>
-            {!collapsed && (
-              <span className="flex-1 font-bold">Executive Overview</span>
-            )}
-          </button>
-
+            <input type="checkbox" checked={showLater} onChange={e => setShowLater(e.target.checked)} className="accent-[#0e5d84]" aria-label="Show later-phase modules" />
+          </label>
           <button
             onClick={() => setAdminView('feature-spec-matrix')}
-            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-left group ${
-              adminView === 'feature-spec-matrix'
-                ? 'bg-[#0e5d84] text-white shadow-xs'
-                : 'text-[#0e5d84] bg-[#f0f7fb] hover:bg-[#bae6fd]/70 border border-[#cbe0ec]/60'
+            className={`w-full flex items-center gap-3 px-3 py-1.5 rounded-lg text-xs ${
+              adminView === 'feature-spec-matrix' ? 'bg-[#f0f7fb] text-[#0e5d84] font-semibold' : 'text-[#6b8394] hover:bg-[#f5f8fb]'
             }`}
           >
-            <span className="material-symbols-outlined text-base text-[#0e5d84] group-hover:rotate-45 transition-transform">
-              fact_check
-            </span>
-            {!collapsed && (
-              <div className="flex-1 flex items-center justify-between min-w-0">
-                <span className="font-bold truncate">Master Spec (699)</span>
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#0e5d84] text-white font-bold shrink-0">
-                  LMN-001
-                </span>
-              </div>
-            )}
+            <span className="material-symbols-outlined text-[16px]">checklist</span>
+            Feature catalogue (699)
           </button>
-        </div>
-
-        {/* Modular Navigation Groups */}
-        <div className="space-y-1 px-2">
-          {filteredGroups.map(group => {
-            const isExpanded = expandedGroups[group.id] || !!searchFilter;
-            return (
-              <div key={group.id} className="pt-1">
-                {!collapsed ? (
-                  <button
-                    onClick={() => toggleGroup(group.id)}
-                    className="w-full flex items-center justify-between px-2.5 py-1 text-[11px] font-bold text-[#777587] hover:text-[#082b3d] uppercase tracking-wider rounded transition-colors"
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <span>{group.label}</span>
-                      <span className="text-[9px] font-normal text-[#94a3b8] lowercase font-mono">
-                        ({group.items.length})
-                      </span>
-                    </span>
-                    <span className="material-symbols-outlined text-xs text-[#777587]">
-                      {isExpanded ? 'expand_less' : 'expand_more'}
-                    </span>
-                  </button>
-                ) : (
-                  <div className="h-px bg-[#e0ecf4] my-1 mx-2" />
-                )}
-
-                {/* Sub-items */}
-                {(isExpanded || collapsed) && (
-                  <nav className="space-y-0.5 mt-0.5">
-                    {group.items.map(item => {
-                      const isActive =
-                        adminView === item.id ||
-                        (item.id === 'students' && (adminView === 'student-360' || adminView === 'students')) ||
-                        (item.id === 'tenants' && (adminView === 'tenancy-and-campuses' || adminView === 'tenants')) ||
-                        (item.id === 'users-and-roles' && (adminView === 'auth-and-rbac' || adminView === 'users-and-roles')) ||
-                        (item.id === 'fees' && (adminView === 'fees-and-finance' || adminView === 'fees' || adminView === 'payments' || adminView === 'invoices')) ||
-                        (item.id === 'lms' && (adminView === 'lms-and-courses' || adminView === 'lms')) ||
-                        (item.id === 'assignments' && (adminView === 'assignment-studio' || adminView === 'assignments')) ||
-                        (item.id === 'curriculum' && (adminView === 'subjects' || adminView === 'curriculum')) ||
-                        (item.id === 'academics' && (adminView === 'academics' || adminView === 'classes')) ||
-                        (item.id === 'timetable' && adminView === 'timetable') ||
-                        (item.id === 'exams' && adminView === 'exams') ||
-                        (item.id === 'results' && (adminView === 'report-cards' || adminView === 'results')) ||
-                        (item.id === 'teacher-management' && (adminView === 'teachers' || adminView === 'teacher-management')) ||
-                        (item.id === 'non-teaching-staff' && (adminView === 'employees' || adminView === 'non-teaching-staff')) ||
-                        (item.id === 'hr-and-payroll' && (adminView === 'payroll' || adminView === 'hr-and-payroll')) ||
-                        (item.id === 'communication' && (adminView === 'notifications' || adminView === 'broadcast-sms' || adminView === 'communication')) ||
-                        (item.id === 'question-bank' && adminView === 'question-bank');
-
-                      return (
-                        <button
-                          key={item.id}
-                          onClick={() => setAdminView(item.id)}
-                          className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-left group ${getThemeStyles(
-                            group.theme,
-                            isActive
-                          )}`}
-                          title={collapsed ? item.label : undefined}
-                        >
-                          <span
-                            className={`material-symbols-outlined text-base transition-colors ${getIconColor(
-                              group.theme,
-                              isActive
-                            )}`}
-                          >
-                            {item.icon}
-                          </span>
-                          {!collapsed && (
-                            <span className="flex-1 truncate">{item.label}</span>
-                          )}
-                          {!collapsed && item.badge && (
-                            <span
-                              className={`text-[9px] px-1.5 py-0.2 rounded-md font-bold shrink-0 ${
-                                item.badge === 'Live' || item.badge === 'Live GPS'
-                                  ? 'bg-emerald-100 text-emerald-800'
-                                  : item.badge === 'Mandatory' || item.badge === 'CBSE'
-                                  ? 'bg-rose-100 text-rose-800'
-                                  : item.badge.includes('₹')
-                                  ? 'bg-teal-100 text-teal-800'
-                                  : 'bg-slate-100 text-slate-700'
-                              }`}
-                            >
-                              {item.badge}
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </nav>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* System Status Footer */}
-      {!collapsed && (
-        <div className="p-3 m-2 bg-[#f8f9ff] rounded-xl border border-[#e0ecf4] text-xs">
-          <div className="flex items-center justify-between text-[#082b3d] font-semibold mb-1">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Central Cloud Sync</span>
-            </span>
-            <span className="text-[10px] text-emerald-700 bg-emerald-100 font-mono px-1 rounded">18ms</span>
-          </div>
-          <div className="text-[11px] text-[#464555] flex justify-between">
-            <span>UDISE+ Gateway</span>
-            <span className="font-mono text-[10px] text-emerald-700 font-bold">CONNECTED</span>
-          </div>
-          <div className="text-[11px] text-[#464555] flex justify-between mt-0.5">
-            <span>Merkle Tree Root</span>
-            <span className="font-mono text-[10px] text-[#0e5d84]">0x8F3C...A12</span>
-          </div>
         </div>
       )}
     </aside>

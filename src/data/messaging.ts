@@ -626,3 +626,104 @@ export const canBook = (slots: PtmSlot[], slotId: string, guardianId: string) =>
   if (slots.some(s => s.bookedBy === guardianId && s.start === slot.start)) return 'You already have a meeting at this time';
   return null;
 };
+
+// ---------------------------------------------------------------------------
+// Seed messages — produced by the router so the trails are consistent
+// ---------------------------------------------------------------------------
+
+const seedContext = (eventId: string, messageId: string, vars: Record<string, string>, sendTime: string): RouteContext => {
+  const event = INITIAL_EVENTS.find(e => e.id === eventId)!;
+  return {
+    event,
+    template: INITIAL_TEMPLATES.find(t => t.id === event.templateId)!,
+    vars,
+    messageId,
+    sendTime,
+    emergency: false,
+    quiet: DEFAULT_QUIET,
+    retry: DEFAULT_RETRY,
+    binding: INITIAL_BINDING,
+    asOf: MESSAGING_AS_OF,
+  };
+};
+
+const studentName = (id?: string) => INITIAL_ROSTER.find(s => s.id === id)?.name ?? '';
+
+const buildSeedMessages = (): Message[] => {
+  const students = liveStudents();
+  const circularAudience = resolveAudience({ ...EMPTY_AUDIENCE, classes: [8, 9, 10] }, INITIAL_GUARDIANS, students);
+  const circularTrails = circularAudience.map(r =>
+    routeMessage(seedContext('EV-NOTICE', 'MSG-0001', { title: 'Half-yearly examination', message: 'The timetable is on the notice board. Exams run 23–30 Sep.' }, '11:00'), r)
+  );
+  const feeAudience = resolveAudience({ ...EMPTY_AUDIENCE, feeStatus: ['Due', 'Overdue'] }, INITIAL_GUARDIANS, students);
+  const feeTrails = feeAudience.map(r =>
+    routeMessage(seedContext('EV-FEE-DUE', 'MSG-0002', { student: studentName(r.studentId), amount: '23,000', date: '10/07/2024', link: 'pay.lumenacademy.edu.in/l/Q2' }, '10:00'), r)
+  );
+  const absent = INITIAL_GUARDIANS.filter(g => g.primary && ['ros-03', 'ros-05'].includes(g.studentId!));
+  const absenceTrails = absent.map(r =>
+    routeMessage(seedContext('EV-ABSENCE', 'MSG-0003', { student: studentName(r.studentId), class: r.studentId === 'ros-03' ? '10-A' : '10-B', status: r.studentId === 'ros-03' ? 'absent' : 'on medical leave', date: '16/09/2024' }, '10:30'), r)
+  );
+  return [
+    {
+      id: 'MSG-0001',
+      eventId: 'EV-NOTICE',
+      title: 'Half-yearly examination',
+      body: 'The timetable is on the notice board. Exams run 23–30 Sep.',
+      sentBy: 'Examination Cell',
+      sentOn: '2024-09-10',
+      sentAt: '11:00',
+      audienceLabel: 'Guardians · Classes 8, 9, 10',
+      emergency: false,
+      circularNo: 'CIR/2024-25/041',
+      attachment: 'HY-Exam-Timetable.pdf',
+      ackRequired: true,
+      acknowledged: seedAcks(circularTrails, 2),
+      trails: circularTrails,
+    },
+    {
+      id: 'MSG-0002',
+      eventId: 'EV-FEE-DUE',
+      title: 'Q2 fee reminder',
+      body: 'Fee due reminder for Q2',
+      sentBy: 'Mrs. Lakshmi Narayanan',
+      sentOn: '2024-07-07',
+      sentAt: '10:00',
+      audienceLabel: 'Guardians · fee Due / Overdue',
+      emergency: false,
+      ackRequired: false,
+      acknowledged: [],
+      trails: feeTrails,
+    },
+    {
+      id: 'MSG-0003',
+      eventId: 'EV-ABSENCE',
+      title: 'Absence alerts · 16 Sep',
+      body: 'Automatic absence alert',
+      sentBy: 'Attendance (automatic)',
+      sentOn: '2024-09-16',
+      sentAt: '10:30',
+      audienceLabel: 'Guardians of absent students',
+      emergency: false,
+      ackRequired: false,
+      acknowledged: [],
+      trails: absenceTrails,
+    },
+  ];
+};
+
+export const INITIAL_MESSAGES: Message[] = buildSeedMessages();
+
+/** Earlier months, for the cost ledger (NOT-011). */
+export const HISTORIC_COSTS: { month: string; channel: Channel; messages: number; cost: number; branch: string }[] = [
+  { month: '2024-06', channel: 'WhatsApp', messages: 4120, cost: 473.8, branch: 'Chennai Campus' },
+  { month: '2024-06', channel: 'SMS', messages: 2210, cost: 312.4, branch: 'Chennai Campus' },
+  { month: '2024-06', channel: 'Email', messages: 1800, cost: 36, branch: 'Chennai Campus' },
+  { month: '2024-07', channel: 'WhatsApp', messages: 5380, cost: 618.7, branch: 'Chennai Campus' },
+  { month: '2024-07', channel: 'SMS', messages: 2960, cost: 419.9, branch: 'Chennai Campus' },
+  { month: '2024-07', channel: 'Email', messages: 2150, cost: 43, branch: 'Chennai Campus' },
+  { month: '2024-08', channel: 'WhatsApp', messages: 4870, cost: 560.1, branch: 'Chennai Campus' },
+  { month: '2024-08', channel: 'SMS', messages: 1990, cost: 281.5, branch: 'Chennai Campus' },
+  { month: '2024-08', channel: 'Email', messages: 1720, cost: 34.4, branch: 'Chennai Campus' },
+  { month: '2024-08', channel: 'WhatsApp', messages: 2210, cost: 254.2, branch: 'Kallakurichi Campus' },
+  { month: '2024-08', channel: 'SMS', messages: 1460, cost: 206.4, branch: 'Kallakurichi Campus' },
+];

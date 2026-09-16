@@ -37,7 +37,7 @@ import { HRPayrollView } from './views/admin/HRPayrollView';
 import { LibraryView } from './views/admin/LibraryView';
 import { InventoryView } from './views/admin/InventoryView';
 import { ProcurementView } from './views/admin/ProcurementView';
-import { CommunicationView } from './views/admin/CommunicationView';
+import { CommunicationDeskView } from './views/admin/CommunicationDeskView';
 import { DPDPAComplianceView } from './views/admin/DPDPAComplianceView';
 import { UDISEAPAARView } from './views/admin/UDISEAPAARView';
 import { DigiLockerCertificatesView } from './views/admin/DigiLockerCertificatesView';
@@ -191,7 +191,7 @@ const MainLayout: React.FC = () => {
       case 'communication':
       case 'broadcast-sms':
       case 'notifications':
-        return <CommunicationView />;
+        return <CommunicationDeskView />;
       case 'parent-app-preview':
         return <ParentHomeView />;
       // COMPLIANCE & INTEGRATIONS
