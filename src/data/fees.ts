@@ -146,7 +146,7 @@ export const INITIAL_CONCESSIONS: Concession[] = [
   { id: 'CON-0001', studentId: 'ros-07', type: 'Sibling', pct: 10, reason: 'Twin enrolled (Kavya R. Selvan)', requestedBy: 'Mrs. Lakshmi Narayanan', requestedOn: '2024-03-20', status: 'Approved', decidedBy: 'Dr. Arvind Swaminathan' },
   { id: 'CON-0002', studentId: 'ros-06', type: 'RTE', pct: 100, reason: 'RTE 12(1)(c) seat', requestedBy: 'Mrs. Lakshmi Narayanan', requestedOn: '2024-03-20', status: 'Approved', decidedBy: 'Dr. Arvind Swaminathan', scholarship: { scheme: 'RTE reimbursement (State)', sanctionNo: 'TN-RTE-24-11820' } },
   { id: 'CON-0003', studentId: 'ros-13', type: 'Hardship', pct: 30, reason: 'Loss of parental income', requestedBy: 'Mrs. Lakshmi Narayanan', requestedOn: '2024-09-10', status: 'Pending' },
-  { id: 'CON-0004', studentId: 'ros-11', type: 'Merit', pct: 25, reason: 'State rank in NTSE stage 1', requestedBy: 'Dr. Arvind Swaminathan', requestedOn: '2024-09-12', status: 'Pending' },
+  { id: 'CON-0004', studentId: 'ros-11', type: 'Merit', pct: 25, reason: 'State rank in NTSE stage 1', requestedBy: 'Mrs. Lakshmi Narayanan', requestedOn: '2024-09-12', status: 'Pending' },
 ];
 
 /** Approved concession percentage for a student on a date (highest applicable, not stacked). */
@@ -616,6 +616,8 @@ const due = (studentId: string, instalment: string) => {
 };
 
 const COUNTER = 'Mrs. Lakshmi Narayanan (Accounts)';
+/** Counter cashier who covered the April rush (before the current accountant took over the counter). */
+const CASHIER = 'Mr. Ravi Kumar (Cashier)';
 const GATEWAY = 'Payment gateway';
 
 type SeedPayment = Omit<Payment, 'id' | 'receiptNo'>;
@@ -627,8 +629,8 @@ const add = (p: SeedPayment) => {
 // Q1 — most paid on time
 INITIAL_ROSTER.filter(s => due(s.id, 'Q1') > 0).forEach((s, i) => {
   if (s.id === 'ros-13') return; // never paid
-  if (s.id === 'ros-03') return add({ studentId: s.id, date: '2024-04-25', mode: 'Cash', amount: due(s.id, 'Q1') + lateFeeOn('2024-04-10', '2024-04-25', DEFAULT_LATE_FEE), collectedBy: COUNTER, status: 'Success' });
-  if (s.id === 'ros-10') return add({ studentId: s.id, date: '2024-04-08', mode: 'Cash', amount: Math.round(due(s.id, 'Q1') / 2), collectedBy: COUNTER, status: 'Success' });
+  if (s.id === 'ros-03') return add({ studentId: s.id, date: '2024-04-25', mode: 'Cash', amount: due(s.id, 'Q1') + lateFeeOn('2024-04-10', '2024-04-25', DEFAULT_LATE_FEE), collectedBy: CASHIER, status: 'Success' });
+  if (s.id === 'ros-10') return add({ studentId: s.id, date: '2024-04-08', mode: 'Cash', amount: Math.round(due(s.id, 'Q1') / 2), collectedBy: CASHIER, status: 'Success' });
   const online = i % 2 === 0;
   add({
     studentId: s.id,

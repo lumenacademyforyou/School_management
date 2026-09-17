@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { SMS_LAYERS, SMS_MODULES, RAW_FEATURES_SPEC, TOTAL_SPEC_STATS, SMSModule } from '../../data/featureCatalog';
 import { AdminView } from '../../types';
+import { PARENT_APP_URL, canView } from '../../data/staffAccess';
 import { FEATURE_COVERAGE } from '../../data/featureCoverageScan';
 
 type CoverageStatus = 'On screen' | 'Deferred' | 'Not built';
@@ -13,7 +14,20 @@ const COVERAGE_STYLE: Record<CoverageStatus, string> = {
 };
 
 export const FeatureMasterView: React.FC = () => {
-  const { setAdminView, addToast } = useApp();
+  const { setAdminView, addToast, currentUser } = useApp();
+  /** Opens a module's screen: the parent app lives outside the console; other screens respect role allotment. */
+  const openModule = (mod?: SMSModule) => {
+    if (!mod) return;
+    if (mod.targetView === 'parent-app') {
+      window.open(PARENT_APP_URL, '_blank', 'noopener');
+      return;
+    }
+    if (!canView(currentUser.staffRole, mod.targetView as AdminView)) {
+      addToast(`${mod.name} is not allotted to your role`, 'warning');
+      return;
+    }
+    setAdminView(mod.targetView as AdminView);
+  };
   const [selectedLayer, setSelectedLayer] = useState<number | 'all'>('all');
   const [selectedModule, setSelectedModule] = useState<string | 'all'>('all');
   const [selectedPhase, setSelectedPhase] = useState<string>('all');
@@ -419,12 +433,7 @@ export const FeatureMasterView: React.FC = () => {
                         {/* Actions */}
                         <td className="py-3 px-4 text-right">
                           <button
-                            onClick={() => {
-                              if (mod?.targetView) {
-                                setAdminView(mod.targetView as AdminView);
-                                addToast(`Navigated to ${mod.name}`, 'info');
-                              }
-                            }}
+                            onClick={() => openModule(mod)}
                             className="text-xs bg-[#f0f7fb] hover:bg-[#0e5d84] text-[#0e5d84] hover:text-white px-2.5 py-1 rounded-lg font-semibold transition-all shadow-2xs"
                           >
                             Open →
@@ -466,10 +475,7 @@ export const FeatureMasterView: React.FC = () => {
                   {layerMods.map(mod => (
                     <div
                       key={mod.code}
-                      onClick={() => {
-                        setAdminView(mod.targetView as AdminView);
-                        addToast(`Opening ${mod.name}`, 'info');
-                      }}
+                      onClick={() => openModule(mod)}
                       className="p-3.5 rounded-xl border border-[#e0ecf4] hover:border-[#0e5d84] hover:shadow-xs transition-all cursor-pointer group bg-[#fdfefe] flex flex-col justify-between"
                     >
                       <div>

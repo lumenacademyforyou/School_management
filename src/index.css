@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@source "./";
+@source "../apps";
+@source "../index.html";
 
 @theme {
   --color-primary: #0e5d84;
@@ -377,4 +380,10 @@
     gap: 4mm;
     break-inside: avoid;
   }
+}
+
+/* Actions blocked for read-only roles (ReadOnlyGuard) */
+[data-readonly-blocked] {
+  opacity: 0.4;
+  cursor: not-allowed;
 }

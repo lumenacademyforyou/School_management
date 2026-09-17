@@ -2,6 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { FeatureTags, PhaseNotice, downloadCsv } from '../../components/common/FeatureTags';
 import { PrintPortal } from '../../components/common/PrintPortal';
+import { useSessionState } from '../../lib/sessionState';
+import { useGrants } from '../../hooks/useGrants';
+import { CONCESSION_APPROVAL_THRESHOLD_PCT, GRANT_ROLE_LABEL, Verb } from '../../data/permissions';
 import { INITIAL_ROSTER, RosterStudent, matchesSearch } from '../../data/students';
 import {
   ACADEMIC_YEAR,
@@ -124,21 +127,36 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
   const { addToast, currentUser, selectedCampus } = useApp();
   const asOf = FEES_AS_OF;
   const me = currentUser.name;
+  /** Records keep a desk suffix, e.g. "Mrs. Lakshmi Narayanan (Accounts)" — it is still the same person. */
+  const isMe = (name: string) => name.replace(/\s*\([^)]*\)\s*$/, '') === me;
   const students = INITIAL_ROSTER;
 
   const [tab, setTab] = useState<Tab>(initialTab);
-  const [invoices, setInvoices] = useState<Invoice[]>(INITIAL_INVOICES);
-  const [payments, setPayments] = useState<Payment[]>(INITIAL_PAYMENTS);
-  const [adjustments, setAdjustments] = useState<Adjustment[]>([]);
-  const [structures, setStructures] = useState<FeeStructure[]>(INITIAL_STRUCTURES);
-  const [concessions, setConcessions] = useState<Concession[]>(INITIAL_CONCESSIONS);
-  const [optIns, setOptIns] = useState<Record<string, string[]>>(INITIAL_OPT_INS);
-  const [lateRule, setLateRule] = useState<LateFeeRule>(DEFAULT_LATE_FEE);
-  const [plans, setPlans] = useState<PaymentPlan[]>([]);
-  const [doNotRemind, setDoNotRemind] = useState<Record<string, string>>(INITIAL_DO_NOT_REMIND);
-  const [refunds, setRefunds] = useState<RefundRequest[]>([]);
-  const [resolved, setResolved] = useState<Record<string, string>>({});
-  const [audit, setAudit] = useState<AuditLine[]>([]);
+  const [invoices, setInvoices] = useSessionState<Invoice[]>('fees.invoices', INITIAL_INVOICES);
+  const [payments, setPayments] = useSessionState<Payment[]>('fees.payments', INITIAL_PAYMENTS);
+  const [adjustments, setAdjustments] = useSessionState<Adjustment[]>('fees.adjustments', []);
+  const [structures, setStructures] = useSessionState<FeeStructure[]>('fees.structures', INITIAL_STRUCTURES);
+  const [concessions, setConcessions] = useSessionState<Concession[]>('fees.concessions', INITIAL_CONCESSIONS);
+  const [optIns, setOptIns] = useSessionState<Record<string, string[]>>('fees.optIns', INITIAL_OPT_INS);
+  const [lateRule, setLateRule] = useSessionState<LateFeeRule>('fees.lateRule', DEFAULT_LATE_FEE);
+  const [plans, setPlans] = useSessionState<PaymentPlan[]>('fees.plans', []);
+  const [doNotRemind, setDoNotRemind] = useSessionState<Record<string, string>>('fees.doNotRemind', INITIAL_DO_NOT_REMIND);
+  const [refunds, setRefunds] = useSessionState<RefundRequest[]>('fees.refunds', []);
+  const [resolved, setResolved] = useSessionState<Record<string, string>>('fees.resolved', {});
+  const [audit, setAudit] = useSessionState<AuditLine[]>('fees.audit', []);
+
+  const [revisionRequests, setRevisionRequests] = useSessionState<Record<string, { by: string; on: string }>>('fees.revisionRequests', {});
+
+  // Every action is checked against the signed-in role's grant for its feature (see Access Grants).
+  const g = useGrants();
+  const allowed = (id: string, verb: Verb) => {
+    if (g.can(id, verb)) return true;
+    addToast('Not permitted for your role', 'warning', g.why(id, verb));
+    return false;
+  };
+  const changesAnything = TABS.some(t => t.ids.some(id => g.can(id, 'C') || g.can(id, 'U') || g.can(id, 'D')));
+  const approvesAnything = TABS.some(t => t.ids.some(id => g.can(id, 'A')));
+  const exportsAnything = TABS.some(t => t.ids.some(id => g.can(id, 'E')));
 
   const log = (action: string, detail: string) => setAudit(prev => [{ at: new Date().toLocaleString('en-IN'), actor: me, action, detail }, ...prev]);
   const student = (id: string) => students.find(s => s.id === id)!;
@@ -186,6 +204,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
 
   const collect = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!allowed('FEE-017', 'C')) return;
     if (!amountValid) {
       addToast('Enter a whole-rupee amount greater than zero', 'warning');
       return;
@@ -217,6 +236,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
   };
 
   const startOnline = () => {
+    if (!allowed('FEE-015', 'C')) return;
     const amt = activeDue;
     if (amt <= 0) {
       addToast('Nothing is due for this student', 'info');
@@ -229,12 +249,14 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
   };
 
   const gatewayCallback = (p: Payment, ok: boolean) => {
+    if (!allowed('FEE-015', 'C')) return;
     setPayments(prev => prev.map(x => (x.id === p.id ? { ...x, status: ok ? 'Success' : 'Failed', receiptNo: ok ? nextReceiptNo(prev) : undefined } : x)));
     log(`Gateway ${ok ? 'success' : 'failure'}`, `${p.gatewayRef} · ${inr(p.amount)}`);
     addToast(ok ? 'Payment confirmed by gateway — receipt issued' : 'Gateway reported a failure — nothing was collected', ok ? 'success' : 'warning');
   };
 
   const makeLink = () => {
+    if (!allowed('FEE-026', 'C')) return;
     const open = activeStates.find(s => s.balance > 0);
     if (!open) {
       addToast('No open invoice to link', 'info');
@@ -247,6 +269,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
   };
 
   const requestRefund = () => {
+    if (!allowed('FEE-025', 'C')) return;
     const amt = Number(refundAmount);
     if (!Number.isInteger(amt) || amt <= 0 || amt > activeCredit) {
       addToast(`Refund must be between ₹1 and the credit of ${inr(activeCredit)}`, 'warning');
@@ -254,11 +277,12 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
     }
     setRefunds(prev => [...prev, { id: `REF-${String(prev.length + 1).padStart(3, '0')}`, studentId: activeId, amount: amt, reason: 'Excess payment', requestedBy: me, status: 'Pending' }]);
     setRefundAmount('');
-    addToast('Refund request raised', 'info', 'A different user must approve it');
+    addToast('Refund request raised', 'info', 'Sent to the Principal for approval');
   };
 
   const decideRefund = (r: RefundRequest, pay: boolean) => {
-    if (pay && r.requestedBy === me) {
+    if (!allowed('FEE-025', 'A')) return;
+    if (pay && isMe(r.requestedBy)) {
       addToast('You raised this refund, so you cannot approve it', 'error', 'Segregation of duties — RBAC-013');
       return;
     }
@@ -274,7 +298,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
   };
 
   const transferCredit = () => {
-    if (!transferTo || activeCredit <= 0) return;
+    if (!transferTo || activeCredit <= 0 || !allowed('FEE-024', 'C')) return;
     const n = adjustments.length;
     setAdjustments(prev => [
       ...prev,
@@ -298,12 +322,12 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
     .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
 
   const confirmCancel = () => {
-    if (!cancelling) return;
+    if (!cancelling || !allowed('FEE-021', 'D')) return;
     if (!cancelReason.trim()) {
       addToast('A cancellation reason is required', 'warning');
       return;
     }
-    if (cancelling.collectedBy === me) {
+    if (isMe(cancelling.collectedBy)) {
       addToast('You collected this payment, so another user must cancel it', 'error', 'Segregation of duties — RBAC-013');
       return;
     }
@@ -315,6 +339,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
   };
 
   const moveCheque = (p: Payment, status: 'Deposited' | 'Cleared' | 'Bounced') => {
+    if (!allowed('FEE-022', 'U')) return;
     setPayments(prev => prev.map(x => (x.id === p.id ? { ...x, cheque: { ...x.cheque!, status } } : x)));
     log(`Cheque ${status.toLowerCase()}`, `${p.cheque!.number} · ${inr(p.amount)}`);
     if (status === 'Bounced') {
@@ -333,7 +358,11 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
   const [structClass, setStructClass] = useState(10);
   const classStructures = structures.filter(s => s.classLevel === structClass).sort((a, b) => b.version - a.version);
 
+  const invoicingStarted = invoices.some(i => i.instalment !== 'BNC');
+  const canEditStructure = g.can('FEE-003', 'U');
+
   const reviseClass = () => {
+    if (!allowed('FEE-003', 'C')) return;
     const next = reviseStructure(structures, structClass, SCHEDULE[2].dueDate.slice(0, 8) + '01');
     if (next === structures) {
       addToast('A draft already exists for this class', 'info');
@@ -344,19 +373,53 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
   };
 
   const editDraft = (id: string, head: string, value: string) => {
+    if (!canEditStructure || revisionRequests[id]) return;
     const n = Number(value);
     if (!Number.isFinite(n) || n < 0) return;
     setStructures(prev => prev.map(s => (s.id === id && s.status === 'Draft' ? { ...s, amounts: { ...s.amounts, [head]: Math.round(n) } } : s)));
   };
 
-  const publish = (id: string) => {
+  const applyPublish = (id: string, detail: string) => {
     setStructures(prev => publishStructure(prev, id));
     const s = structures.find(x => x.id === id)!;
-    log('Structure published', `${id} effective ${s.effectiveFrom}`);
+    log('Structure published', `${id} effective ${s.effectiveFrom}${detail}`);
     addToast(`${id} published`, 'success', `Applies to demands due on or after ${fmt(s.effectiveFrom)}; earlier invoices are unchanged`);
   };
 
+  const publish = (id: string) => {
+    if (!allowed('FEE-003', 'U')) return;
+    if (!invoicingStarted) {
+      applyPublish(id, '');
+      return;
+    }
+    // Invoicing has started for the year: the structure is locked and a revision needs approval.
+    setRevisionRequests(prev => ({ ...prev, [id]: { by: me, on: asOf } }));
+    log('Mid-year revision submitted', `${id} for Principal approval`);
+    addToast(`${id} sent to the Principal`, 'info', 'Invoicing has started this year, so a revision needs approval (FEE-003)');
+  };
+
+  const decideRevision = (id: string, approve: boolean) => {
+    if (!allowed('FEE-003', 'A')) return;
+    const req = revisionRequests[id];
+    if (!req) return;
+    if (isMe(req.by)) {
+      addToast('You submitted this revision, so you cannot approve it', 'error', 'Segregation of duties — RBAC-013');
+      return;
+    }
+    setRevisionRequests(prev => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+    if (approve) applyPublish(id, ` · approved by ${me}`);
+    else {
+      log('Mid-year revision sent back', id);
+      addToast(`${id} sent back to ${req.by}`, 'info');
+    }
+  };
+
   const toggleOptIn = (sid: string, head: string) => {
+    if (!allowed('FEE-006', 'U')) return;
     setOptIns(prev => {
       const cur = prev[sid] ?? [];
       return { ...prev, [sid]: cur.includes(head) ? cur.filter(h => h !== head) : [...cur, head] };
@@ -374,24 +437,39 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
 
   const applyConcession = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!allowed('FEE-011', 'C')) return;
     if (!conReason.trim()) {
       addToast('Give a reason for the concession', 'warning');
       return;
     }
     const t = CONCESSION_TYPES.find(c => c.type === conType)!;
     const id = `CON-${String(concessions.length + 1).padStart(4, '0')}`;
+    const needsApproval = t.pct > CONCESSION_APPROVAL_THRESHOLD_PCT;
     setConcessions(prev => [
       ...prev,
-      { id, studentId: conStudent, type: conType, pct: t.pct, reason: conReason.trim(), requestedBy: me, requestedOn: asOf, status: 'Pending', scholarship: conScheme.trim() ? { scheme: conScheme.trim(), sanctionNo: 'Awaited' } : undefined },
+      {
+        id,
+        studentId: conStudent,
+        type: conType,
+        pct: t.pct,
+        reason: conReason.trim(),
+        requestedBy: me,
+        requestedOn: asOf,
+        status: needsApproval ? 'Pending' : 'Approved',
+        decidedBy: needsApproval ? undefined : `Rule: up to ${CONCESSION_APPROVAL_THRESHOLD_PCT}% needs no approval`,
+        scholarship: conScheme.trim() ? { scheme: conScheme.trim(), sanctionNo: 'Awaited' } : undefined,
+      },
     ]);
-    log('Concession requested', `${id} · ${nameOf(conStudent)} · ${conType} ${t.pct}%`);
-    addToast(`${id} submitted for approval`, 'success', t.needsDocument ? 'Attach the supporting document before approval' : undefined);
+    log(needsApproval ? 'Concession proposed' : 'Concession applied by rule', `${id} · ${nameOf(conStudent)} · ${conType} ${t.pct}%`);
+    if (needsApproval) addToast(`${id} sent to the Principal`, 'success', `Above ${CONCESSION_APPROVAL_THRESHOLD_PCT}% needs approval${t.needsDocument ? ' · attach the supporting document' : ''}`);
+    else addToast(`${id} applied`, 'success', `Up to ${CONCESSION_APPROVAL_THRESHOLD_PCT}% is applied without approval`);
     setConReason('');
     setConScheme('');
   };
 
   const decideConcession = (c: Concession, approve: boolean) => {
-    if (c.requestedBy === me) {
+    if (!allowed('FEE-011', 'A')) return;
+    if (isMe(c.requestedBy)) {
       addToast('You requested this concession, so you cannot decide it', 'error', 'Segregation of duties — RBAC-013');
       return;
     }
@@ -411,6 +489,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
   const [invoiceOpen, setInvoiceOpen] = useState<string | null>(null);
 
   const runDemand = () => {
+    if (!allowed('FEE-013', 'C')) return;
     if (!demandPreview.created.length) {
       addToast('Nothing to generate', 'info');
       return;
@@ -428,7 +507,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
   const [reminderDate, setReminderDate] = useState('2024-07-17');
   const [planFor, setPlanFor] = useState<string | null>(null);
   const [planParts, setPlanParts] = useState(3);
-  const [sentReminders, setSentReminders] = useState<string[]>([]);
+  const [sentReminders, setSentReminders] = useSessionState<string[]>('fees.sentReminders', []);
 
   const openStates = ledger.invoices.filter(s => s.balance > 0);
   const buckets = AGEING_BUCKETS.map(b => ({ label: b.label, total: openStates.filter(s => ageingBucket(s.daysOverdue) === b.label).reduce((t, s) => t + s.balance, 0) }));
@@ -438,6 +517,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
   const reminders = remindersFor(ledger, reminderDate, plans, concessions, doNotRemind);
 
   const sendReminders = () => {
+    if (!allowed('FEE-030', 'C')) return;
     const toSend = reminders.filter(r => !r.suppressed);
     setSentReminders(prev => [...prev, ...toSend.map(r => `${r.invoiceNo}@${r.sendOn}`)]);
     log('Reminders sent', `${reminderDate} · ${toSend.length} sent · ${reminders.length - toSend.length} suppressed`);
@@ -445,7 +525,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
   };
 
   const createPlan = () => {
-    if (!planFor) return;
+    if (!planFor || !allowed('FEE-032', 'C')) return;
     const total = overdueFor(planFor);
     const plan: PaymentPlan = { id: `PLN-${String(plans.length + 1).padStart(3, '0')}`, studentId: planFor, total, parts: buildPlan(total, planParts, addDays(asOf, 5)), createdOn: asOf, status: 'Active' };
     setPlans(prev => [...prev, plan]);
@@ -505,7 +585,26 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
     return { tuition, other };
   }, [ledger, invoices, certStudent]);
 
+  const exportLedger = () => {
+    if (!allowed('FEE-028', 'E')) return;
+    const sids = Array.from(new Set(openStates.map(s => s.invoice.studentId)));
+    downloadCsv(
+      `Outstanding_Ledger_${asOf}.csv`,
+      ['Student', 'Admission no', 'Class', ...AGEING_BUCKETS.map(b => b.label), 'Total'],
+      sids.map(sid => [
+        nameOf(sid),
+        student(sid).admissionNo,
+        `${student(sid).classLevel}-${student(sid).section}`,
+        ...AGEING_BUCKETS.map(b => statesFor(sid).filter(x => x.balance > 0 && ageingBucket(x.daysOverdue) === b.label).reduce((t, x) => t + x.balance, 0)),
+        balanceFor(sid),
+      ])
+    );
+    log('Ledger export', `${sids.length} students · ${GRANT_ROLE_LABEL[g.role]}`);
+    addToast('Outstanding ledger exported', 'success', 'Export event logged — FEE-028');
+  };
+
   const auditPack = () => {
+    if (!allowed('FEE-042', 'E')) return;
     downloadCsv(`Fee_Invoices_${asOf}.csv`, ['Invoice', 'Student', 'Instalment', 'Due', 'Head', 'Gross', 'Concession', 'GST', 'Net'], invoices.flatMap(i => i.lines.map(l => [i.invoiceNo, nameOf(i.studentId), i.instalment, i.dueDate, l.head, l.gross, l.concession, l.gst, l.net])));
     downloadCsv(`Fee_Receipts_${asOf}.csv`, ['Payment', 'Receipt', 'Student', 'Date', 'Mode', 'Amount', 'Status', 'Collected by', 'Cancel reason'], payments.map(p => [p.id, p.receiptNo ?? '', nameOf(p.studentId), p.date, p.mode, p.amount, p.cheque ? `${p.status} / cheque ${p.cheque.status}` : p.status, p.collectedBy, p.cancelReason ?? '']));
     downloadCsv(`Fee_Allocations_${asOf}.csv`, ['Payment', 'Invoice', 'Head', 'Amount', 'Date'], ledger.allocations.map(a => [a.paymentId, a.invoiceNo, a.head, a.amount, a.date]));
@@ -525,7 +624,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
     { label: 'Billed this year', value: inr(billedTotal) },
     { label: 'Collected', value: inr(collectedTotal), sub: `${billedTotal ? Math.round((collectedTotal / billedTotal) * 100) : 0}% of billed` },
     { label: 'Outstanding', value: inr(outstanding), sub: `${defaulters.length} defaulter(s) over ${threshold} days` },
-    { label: 'Pending approvals', value: String(concessions.filter(c => c.status === 'Pending').length + refunds.filter(r => r.status === 'Pending').length), sub: 'concessions and refunds' },
+    { label: 'Pending approvals', value: String(concessions.filter(c => c.status === 'Pending').length + refunds.filter(r => r.status === 'Pending').length + Object.keys(revisionRequests).length), sub: 'concessions, refunds, revisions' },
     { label: 'Open exceptions', value: String(exceptions.filter(x => !resolved[x.key]).length), sub: 'reconciliation' },
   ];
 
@@ -605,6 +704,10 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
           <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">Fees Desk · {ACADEMIC_YEAR}</h1>
           <p className="text-xs text-[#464555] mt-1">
             {selectedCampus.name} · balances as of {fmt(asOf)}
+          </p>
+          <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-lg bg-[#f0f7fb] text-[#0e5d84]" data-testid="fee-access">
+            <span className="material-symbols-outlined text-sm">{changesAnything ? 'edit_note' : 'visibility'}</span>
+            {GRANT_ROLE_LABEL[g.role]}: {[changesAnything ? 'records and proposes' : approvesAnything ? 'reads and approves' : 'read-only', exportsAnything && 'exports'].filter(Boolean).join(' · ')}
           </p>
         </div>
         <p className="text-[10px] text-[#777587] max-w-xs sm:text-right">
@@ -701,7 +804,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                     )}
                   </div>
                 )}
-                <button type="submit" disabled={!amountValid} className={`${btnPrimary} w-full`}>
+                <button type="submit" disabled={!amountValid || !g.can('FEE-017', 'C')} title={g.why('FEE-017', 'C')} className={`${btnPrimary} w-full`}>
                   Collect & issue receipt
                 </button>
                 <p className="text-[10px] text-[#777587]">Oldest invoice first; within an invoice, tuition first; the late fee is settled last. Extra money is kept as advance credit.</p>
@@ -718,10 +821,10 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
               }
               actions={
                 <div className="flex flex-wrap gap-1">
-                  <button onClick={makeLink} className={btnSoft}>
+                  <button onClick={makeLink} disabled={!g.can('FEE-026', 'C')} title={g.why('FEE-026', 'C')} className={btnSoft}>
                     Payment link
                   </button>
-                  <button onClick={startOnline} className={btnPrimary}>
+                  <button onClick={startOnline} disabled={!g.can('FEE-015', 'C')} title={g.why('FEE-015', 'C')} className={btnPrimary}>
                     Pay online ({inr(activeDue)})
                   </button>
                 </div>
@@ -762,10 +865,10 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                   Online payment {p.gatewayRef} · {inr(p.amount)} · waiting for the gateway
                 </span>
                 <span className="flex gap-1">
-                  <button onClick={() => gatewayCallback(p, false)} className={btnSoft}>
+                  <button onClick={() => gatewayCallback(p, false)} disabled={!g.can('FEE-015', 'C')} className={btnSoft}>
                     Gateway: failed
                   </button>
-                  <button onClick={() => gatewayCallback(p, true)} className={btnPrimary}>
+                  <button onClick={() => gatewayCallback(p, true)} disabled={!g.can('FEE-015', 'C')} className={btnPrimary}>
                     Gateway: success
                   </button>
                 </span>
@@ -777,7 +880,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                 <div className="p-3 space-y-2 text-xs">
                   <div className="flex gap-1">
                     <input value={refundAmount} onChange={e => setRefundAmount(e.target.value.replace(/[^\d]/g, ''))} placeholder={`Up to ${inr(activeCredit)}`} className={`${inputCls} flex-1`} aria-label="Refund amount" />
-                    <button onClick={requestRefund} disabled={activeCredit <= 0} className={btnSoft}>
+                    <button onClick={requestRefund} disabled={activeCredit <= 0 || !g.can('FEE-025', 'C')} title={g.why('FEE-025', 'C')} className={btnSoft}>
                       Request
                     </button>
                   </div>
@@ -786,7 +889,8 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                       <span>
                         {r.id} · {nameOf(r.studentId)} · {inr(r.amount)} · {r.status}
                       </span>
-                      {r.status === 'Pending' && (
+                      {r.status === 'Pending' && !g.can('FEE-025', 'A') && <span className="text-[10px] text-[#777587]">Awaiting Principal</span>}
+                      {r.status === 'Pending' && g.can('FEE-025', 'A') && (
                         <span className="flex gap-1">
                           <button onClick={() => decideRefund(r, false)} className={btnSoft}>
                             Reject
@@ -814,7 +918,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                           </option>
                         ))}
                       </select>
-                      <button onClick={transferCredit} disabled={!transferTo || activeCredit <= 0} className={btnPrimary}>
+                      <button onClick={transferCredit} disabled={!transferTo || activeCredit <= 0 || !g.can('FEE-024', 'C')} className={btnPrimary}>
                         Move {inr(activeCredit)}
                       </button>
                     </div>
@@ -875,12 +979,12 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                     <td className="p-2.5">{p.collectedBy}</td>
                     <td className="p-2.5 whitespace-nowrap text-right">
                       <span className="inline-flex gap-1">
-                        {p.cheque && p.status === 'Success' && p.cheque.status === 'Received' && (
+                        {g.can('FEE-022', 'U') && p.cheque && p.status === 'Success' && p.cheque.status === 'Received' && (
                           <button onClick={() => moveCheque(p, 'Deposited')} className={btnSoft}>
                             Deposit
                           </button>
                         )}
-                        {p.cheque && p.status === 'Success' && p.cheque.status === 'Deposited' && (
+                        {g.can('FEE-022', 'U') && p.cheque && p.status === 'Success' && p.cheque.status === 'Deposited' && (
                           <>
                             <button onClick={() => moveCheque(p, 'Bounced')} className={btnSoft}>
                               Bounced
@@ -895,7 +999,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                             View
                           </button>
                         )}
-                        {p.receiptNo && p.status === 'Success' && (
+                        {g.can('FEE-021', 'D') && p.receiptNo && p.status === 'Success' && (
                           <button onClick={() => setCancelling(p)} className={btnSoft}>
                             Cancel
                           </button>
@@ -952,9 +1056,11 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                       Class {c}
                     </button>
                   ))}
-                  <button onClick={reviseClass} className={btnSoft}>
-                    New revision
-                  </button>
+                  {g.can('FEE-003', 'C') && (
+                    <button onClick={reviseClass} className={btnSoft}>
+                      New revision
+                    </button>
+                  )}
                 </div>
               }
             >
@@ -976,7 +1082,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                         <td className="p-2.5">{h.name}</td>
                         {classStructures.map(s => (
                           <td key={s.id} className="p-2.5 text-right">
-                            {s.status === 'Draft' ? (
+                            {s.status === 'Draft' && canEditStructure && !revisionRequests[s.id] ? (
                               <input
                                 value={s.amounts[h.code] ?? 0}
                                 onChange={e => editDraft(s.id, h.code, e.target.value)}
@@ -995,11 +1101,26 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                       <td className="p-2.5" />
                       {classStructures.map(s => (
                         <td key={s.id} className="p-2.5 text-right">
-                          {s.status === 'Draft' && (
+                          {s.status === 'Draft' && revisionRequests[s.id] ? (
+                            g.can('FEE-003', 'A') ? (
+                              <span className="inline-flex gap-1">
+                                <button onClick={() => decideRevision(s.id, false)} className={btnSoft}>
+                                  Send back
+                                </button>
+                                <button onClick={() => decideRevision(s.id, true)} className={btnPrimary}>
+                                  Approve & publish
+                                </button>
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-semibold text-amber-700">Awaiting Principal approval</span>
+                            )
+                          ) : s.status === 'Draft' && canEditStructure ? (
                             <button onClick={() => publish(s.id)} className={btnPrimary}>
-                              Publish
+                              {invoicingStarted ? 'Submit for approval' : 'Publish'}
                             </button>
-                          )}
+                          ) : s.status === 'Draft' ? (
+                            <span className="text-[10px] text-[#777587]">Draft · not submitted</span>
+                          ) : null}
                         </td>
                       ))}
                     </tr>
@@ -1035,9 +1156,10 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                         value={lateRule[k]}
                         onChange={e => {
                           const n = Number(e.target.value);
-                          if (Number.isInteger(n) && n >= 0) setLateRule(prev => ({ ...prev, [k]: n }));
+                          if (Number.isInteger(n) && n >= 0 && allowed('FEE-008', 'U')) setLateRule(prev => ({ ...prev, [k]: n }));
                         }}
                         inputMode="numeric"
+                        readOnly={!g.can('FEE-008', 'U')}
                         className={`${inputCls} w-full font-mono`}
                         aria-label={label}
                       />
@@ -1076,7 +1198,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                 .filter(s => !s.mergedInto && s.status !== 'TC issued')
                 .map(s => (
                   <label key={s.id} className="flex items-center gap-1">
-                    <input type="checkbox" checked={(optIns[s.id] ?? []).includes('OLY')} onChange={() => toggleOptIn(s.id, 'OLY')} className="accent-[#0e5d84]" />
+                    <input type="checkbox" checked={(optIns[s.id] ?? []).includes('OLY')} onChange={() => toggleOptIn(s.id, 'OLY')} disabled={!g.can('FEE-006', 'U')} className="accent-[#0e5d84]" />
                     {s.name}
                   </label>
                 ))}
@@ -1104,7 +1226,8 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
               </table>
               <p className="p-3 text-[10px] text-[#777587]">Applies to tuition, development and lab fees. If a student has several, only the highest applies.</p>
             </Panel>
-            <Panel title="Apply for a concession">
+            {g.can('FEE-011', 'C') ? (
+            <Panel title="Propose a concession">
               <form onSubmit={applyConcession} className="p-3 space-y-2 text-xs">
                 <select value={conStudent} onChange={e => setConStudent(e.target.value)} className={`${inputCls} w-full`} aria-label="Concession student">
                   {students
@@ -1123,10 +1246,16 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                 <input value={conReason} onChange={e => setConReason(e.target.value)} placeholder="Reason" className={`${inputCls} w-full`} aria-label="Concession reason" />
                 <input value={conScheme} onChange={e => setConScheme(e.target.value)} placeholder="Scholarship scheme (optional)" className={`${inputCls} w-full`} aria-label="Scholarship scheme" />
                 <button type="submit" className={`${btnPrimary} w-full`}>
-                  Submit for approval
+                  Propose concession
                 </button>
+                <p className="text-[10px] text-[#777587]">Up to {CONCESSION_APPROVAL_THRESHOLD_PCT}% applies at once; anything higher goes to the Principal. You cannot approve your own proposal.</p>
               </form>
             </Panel>
+            ) : (
+              <p className="text-[11px] text-[#464555] p-3 rounded-xl border border-dashed border-[#cbe0ec]">
+                {GRANT_ROLE_LABEL[g.role]}: {g.grant('FEE-011')?.condition || 'no access to concession proposals'}.
+              </p>
+            )}
           </div>
           <Panel className="lg:col-span-2" title="Concessions & scholarships">
             <div className="overflow-x-auto">
@@ -1161,12 +1290,13 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                         {c.decidedBy && <span className="block text-[10px] text-[#777587]">by {c.decidedBy}</span>}
                       </td>
                       <td className="p-2.5 whitespace-nowrap text-right">
-                        {c.status === 'Pending' && (
+                        {c.status === 'Pending' && !g.can('FEE-011', 'A') && <span className="text-[10px] text-[#777587]">Awaiting Principal</span>}
+                        {c.status === 'Pending' && g.can('FEE-011', 'A') && (
                           <span className="inline-flex gap-1">
                             <button onClick={() => decideConcession(c, false)} className={btnSoft}>
                               Reject
                             </button>
-                            <button onClick={() => decideConcession(c, true)} disabled={c.requestedBy === me} title={c.requestedBy === me ? 'You raised this request' : undefined} className={btnPrimary}>
+                            <button onClick={() => decideConcession(c, true)} disabled={isMe(c.requestedBy)} title={isMe(c.requestedBy) ? 'You raised this request' : undefined} className={btnPrimary}>
                               Approve
                             </button>
                           </span>
@@ -1195,7 +1325,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                     </option>
                   ))}
                 </select>
-                <button onClick={runDemand} disabled={!demandPreview.created.length} className={btnPrimary}>
+                <button onClick={runDemand} disabled={!demandPreview.created.length || !g.can('FEE-013', 'C')} title={g.why('FEE-013', 'C')} className={btnPrimary}>
                   Generate {demandPreview.created.length} invoice(s)
                 </button>
               </div>
@@ -1287,11 +1417,12 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                           <Money value={d.balance} className="font-bold text-rose-600" />
                           <span className="block text-[10px] text-[#777587]">overdue</span>
                         </span>
-                        {!plan && (
+                        {!plan && g.can('FEE-032', 'C') && (
                           <button onClick={() => { setPlanFor(d.sid); setPlanParts(3); }} className={btnSoft}>
                             Payment plan
                           </button>
                         )}
+                        {g.can('FEE-031', 'U') && (
                         <button
                           onClick={() =>
                             setDoNotRemind(prev => {
@@ -1305,6 +1436,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                         >
                           {doNotRemind[d.sid] ? 'Resume reminders' : 'Pause reminders'}
                         </button>
+                        )}
                       </div>
                     </div>
                   );
@@ -1317,7 +1449,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
               actions={
                 <div className="flex gap-1">
                   <input type="date" value={reminderDate} onChange={e => setReminderDate(e.target.value)} className={inputCls} aria-label="Reminder date" />
-                  <button onClick={sendReminders} disabled={!reminders.some(r => !r.suppressed)} className={btnPrimary}>
+                  <button onClick={sendReminders} disabled={!reminders.some(r => !r.suppressed) || !g.can('FEE-030', 'C')} title={g.why('FEE-030', 'C')} className={btnPrimary}>
                     Send
                   </button>
                 </div>
@@ -1344,7 +1476,17 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
             </Panel>
           </div>
 
-          <Panel title="Outstanding ledger">
+          <Panel
+            title="Outstanding ledger"
+            actions={
+              <span className="flex items-center gap-2">
+                <span className="text-[10px] text-[#777587]">{g.grant('FEE-028')?.condition}</span>
+                <button onClick={exportLedger} disabled={!g.can('FEE-028', 'E')} title={g.why('FEE-028', 'E')} className={btnSoft}>
+                  Export ledger
+                </button>
+              </span>
+            }
+          >
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead className="bg-slate-50 text-[#464555]">
@@ -1414,10 +1556,12 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                         Save
                       </button>
                     </span>
-                  ) : (
+                  ) : g.can('FEE-035', 'U') ? (
                     <button onClick={() => setResolveKey(x.key)} className={btnSoft}>
                       Resolve
                     </button>
+                  ) : (
+                    <span className="text-[#777587]">Open</span>
                   )}
                 </div>
               ))}
@@ -1584,7 +1728,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                         </option>
                       ))}
                   </select>
-                  <button onClick={() => setPrintCert(true)} className={btnPrimary}>
+                  <button onClick={() => allowed('FEE-040', 'C') && setPrintCert(true)} disabled={!g.can('FEE-040', 'C')} title={g.why('FEE-040', 'C')} className={btnPrimary}>
                     Print
                   </button>
                 </div>
@@ -1597,7 +1741,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
           <Panel
             title={`Audit trail · ${audit.length} action(s) this session`}
             actions={
-              <button onClick={auditPack} className={btnPrimary}>
+              <button onClick={auditPack} disabled={!g.can('FEE-042', 'E')} title={g.why('FEE-042', 'E')} className={btnPrimary}>
                 Export audit pack
               </button>
             }

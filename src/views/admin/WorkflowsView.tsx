@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { FeatureTags } from '../../components/common/FeatureTags';
+import { canChangeModule } from '../../data/permissions';
+import type { StaffRole } from '../../data/staffAccess';
 
 type Role = 'AO' | 'BA' | 'PR' | 'AC' | 'CO' | 'HR';
 
@@ -54,6 +56,14 @@ const ROLE_NAMES: Record<Role, string> = {
   HR: 'HR Officer',
 };
 
+/** Stage owners each console role answers for. Class-teacher and HR stages are handled outside the console. */
+const STAGES_FOR: Record<StaffRole, Role[]> = {
+  principal: ['PR', 'BA'],
+  accountant: ['AC'],
+  admissions: ['AO'],
+  auditor: [],
+};
+
 const WORKFLOWS: WorkflowDef[] = [
   {
     id: 'wf-adm', name: 'Admission application', entity: 'Application', phase: 'P1', version: 3, mode: 'Sequential',
@@ -74,11 +84,8 @@ const WORKFLOWS: WorkflowDef[] = [
     ],
   },
   {
-    id: 'wf-con', name: 'Fee concession / waiver', entity: 'Concession', phase: 'P1', version: 4, mode: 'Parallel', quorum: 'Accountant and Principal both approve',
-    stages: [
-      { name: 'Finance review', owner: 'AC', slaHours: 48, requiredDocs: ['Income certificate'] },
-      { name: 'Principal sign-off', owner: 'PR', slaHours: 48, requiredDocs: [] },
-    ],
+    id: 'wf-con', name: 'Fee concession above 10%', entity: 'Concession', phase: 'P1', version: 5, mode: 'Sequential', quorum: 'Accountant proposes; Principal approves (FEE-011)',
+    stages: [{ name: 'Principal sign-off', owner: 'PR', slaHours: 48, requiredDocs: ['Income certificate'] }],
   },
   {
     id: 'wf-ref', name: 'Fee refund', entity: 'Refund', phase: 'P2', version: 1, mode: 'Sequential',
@@ -102,8 +109,8 @@ const WORKFLOWS: WorkflowDef[] = [
 
 const INITIAL_QUEUE: QueueItem[] = [
   { id: 'q1', workflowId: 'wf-adm', reference: 'APP-2025-0318', subject: 'Diya R. Krishnan · Class 1', submittedBy: 'Online portal', submittedById: 'portal', stageIndex: 1, hoursInStage: 81, status: 'Pending' },
-  { id: 'q2', workflowId: 'wf-con', reference: 'CON-2024-0091', subject: 'Sibling concession 10% · Ananya S. Iyer', submittedBy: 'Mrs. Lakshmi Narayanan (Accounts)', submittedById: 'user-acc-lakshmi', stageIndex: 1, hoursInStage: 20, status: 'Pending' },
-  { id: 'q3', workflowId: 'wf-con', reference: 'CON-2024-0094', subject: 'Staff ward waiver 50% · Ishaan A. Swaminathan', submittedBy: 'Dr. Arvind Swaminathan', submittedById: 'user-admin-arvind', stageIndex: 1, hoursInStage: 6, status: 'Pending' },
+  { id: 'q2', workflowId: 'wf-con', reference: 'CON-2024-0091', subject: 'Merit concession 25% · Ananya S. Iyer', submittedBy: 'Mrs. Lakshmi Narayanan (Accounts)', submittedById: 'user-acc-lakshmi', stageIndex: 0, hoursInStage: 20, status: 'Pending' },
+  { id: 'q3', workflowId: 'wf-con', reference: 'CON-2024-0094', subject: 'Staff ward waiver 50% · Ishaan A. Swaminathan', submittedBy: 'Mrs. Lakshmi Narayanan (Accounts)', submittedById: 'user-acc-lakshmi', stageIndex: 0, hoursInStage: 6, status: 'Pending' },
   { id: 'q4', workflowId: 'wf-tc', reference: 'TC-2024-0042', subject: 'Transfer certificate · Rohan P. Das (8-C)', submittedBy: 'Parent app', submittedById: 'parent-das', stageIndex: 1, hoursInStage: 30, status: 'Pending' },
   { id: 'q5', workflowId: 'wf-ref', reference: 'REF-2024-0017', subject: 'Transport fee refund ₹6,400 · Meera J. Pillai', submittedBy: 'Mrs. Lakshmi Narayanan (Accounts)', submittedById: 'user-acc-lakshmi', stageIndex: 1, hoursInStage: 12, status: 'Pending' },
   { id: 'q6', workflowId: 'wf-adm', reference: 'APP-2025-0321', subject: 'Kabir S. Menon · Class 6', submittedBy: 'Front desk (offline form)', submittedById: 'user-ao-front', stageIndex: 1, hoursInStage: 44, status: 'Pending' },
@@ -164,6 +171,9 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
   const stageOf = (item: QueueItem) => wf(item.workflowId).stages[item.stageIndex];
   const isBreached = (item: QueueItem) => item.status === 'Pending' && item.hoursInStage > stageOf(item).slaHours;
   const isOwnItem = (item: QueueItem) => item.submittedById === currentUser.id;
+  const myStages = STAGES_FOR[currentUser.staffRole];
+  const isMyStage = (item: QueueItem) => myStages.includes(stageOf(item).owner);
+  const canConfigure = canChangeModule(currentUser.staffRole, 'WFL');
 
   const pending = queue.filter(q => q.status === 'Pending' && (workflowFilter === 'all' || q.workflowId === workflowFilter));
   const breached = queue.filter(isBreached);
@@ -185,6 +195,10 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
   };
 
   const approve = (item: QueueItem, comment: string): boolean => {
+    if (!isMyStage(item)) {
+      addToast(`${item.reference} is waiting on the ${ROLE_NAMES[stageOf(item).owner]}`, 'warning', 'Only the stage owner can act on it');
+      return false;
+    }
     if (isOwnItem(item)) {
       addToast(`Blocked: you created ${item.reference}`, 'error', 'Segregation of duties — another approver must act (RBAC-013)');
       return false;
@@ -203,6 +217,10 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
     if (!rejecting) return;
     if (!rejectComment.trim()) {
       addToast('A comment is mandatory when rejecting', 'warning', 'WFL-004');
+      return;
+    }
+    if (!isMyStage(rejecting)) {
+      addToast('Only the stage owner can reject this', 'warning');
       return;
     }
     if (isOwnItem(rejecting)) {
@@ -246,6 +264,10 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
 
   const saveDelegation = (e: React.FormEvent) => {
     e.preventDefault();
+    if (myStages.length === 0) {
+      addToast('You have no approvals to delegate', 'info');
+      return;
+    }
     if (delegateUntil < delegateFrom) {
       addToast('End date must be on or after start date', 'error');
       return;
@@ -352,6 +374,7 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
               const stage = stageOf(item);
               const def = wf(item.workflowId);
               const own = isOwnItem(item);
+              const mine = isMyStage(item);
               return (
                 <div key={item.id} className="p-4 flex flex-col md:flex-row md:items-center gap-3 text-xs">
                   <input
@@ -374,6 +397,10 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
                     </p>
                   </div>
                   <div className="flex gap-1">
+                    {!mine ? (
+                      <span className="px-3 py-1.5 rounded-lg bg-slate-50 text-[#777587] font-semibold">Waiting on {ROLE_NAMES[stage.owner]}</span>
+                    ) : (
+                    <>
                     <button onClick={() => setRejecting(item)} disabled={own} className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 font-semibold disabled:opacity-40">
                       Reject
                     </button>
@@ -385,6 +412,8 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
                     >
                       Approve
                     </button>
+                    </>
+                    )}
                   </div>
                 </div>
               );
@@ -425,6 +454,7 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
                         min={1}
                         value={s.slaHours}
                         onChange={e => updateSla(w.id, i, Number(e.target.value))}
+                        disabled={!canConfigure}
                         className="w-14 border border-[#cbe0ec] rounded px-1 py-0.5 text-right font-mono"
                         aria-label={`${w.name} ${s.name} SLA hours`}
                       />
@@ -468,7 +498,7 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
 
       {tab === 'delegation' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <form onSubmit={saveDelegation} className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3 text-xs">
+          <form onSubmit={saveDelegation} aria-disabled={myStages.length === 0} className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3 text-xs">
             <p className="font-bold text-[#082b3d]">Delegate my approvals during leave</p>
             <label className="block">
               <span className="block font-semibold text-[#464555] mb-1">Delegate to</span>
@@ -511,7 +541,7 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
               <span className="text-xs font-bold text-[#082b3d]">SLA breaches → escalate to Principal</span>
               <button
                 onClick={escalateAll}
-                disabled={breached.length === 0}
+                disabled={breached.length === 0 || !canConfigure}
                 className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-50"
               >
                 Escalate ({breached.length})

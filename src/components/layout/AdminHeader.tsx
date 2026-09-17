@@ -13,8 +13,6 @@ export const AdminHeader: React.FC = () => {
     toggleSidebar,
     addToast,
     currentUser,
-    setShowLoginModal,
-    setShowUsageGuide,
     logout,
   } = useApp();
 
@@ -57,101 +55,99 @@ export const AdminHeader: React.FC = () => {
   const getViewMeta = () => {
     switch (adminView) {
       case 'dashboard':
-        return { label: 'Executive Overview', icon: 'dashboard', section: 'Leadership' };
+        return { label: 'Dashboard', icon: 'space_dashboard', section: 'Overview' };
       case 'feature-spec-matrix':
-        return { label: 'Master Specification (699)', icon: 'fact_check', section: 'Architecture' };
+        return { label: 'Feature catalogue', icon: 'checklist', section: 'Overview' };
       case 'admissions':
-        return { label: 'Admissions Pipeline (ADM)', icon: 'how_to_reg', section: 'Academics' };
+        return { label: 'Admissions', icon: 'how_to_reg', section: 'Students' };
       case 'students':
-        return { label: 'Students (STU)', icon: 'badge', section: 'Academics' };
+        return { label: 'Students', icon: 'groups', section: 'Students' };
       case 'student-360':
-        return { label: 'Student 360° Profile (STU)', icon: 'badge', section: 'Academics' };
+        return { label: 'Student profile', icon: 'badge', section: 'Students' };
       case 'subjects':
       case 'curriculum':
-        return { label: 'Curriculum & Syllabus (CUR)', icon: 'menu_book', section: 'Academics' };
+        return { label: 'Curriculum', icon: 'menu_book', section: 'Academics' };
       case 'classes':
       case 'academics':
-        return { label: 'Day Order & Proxy (TTB)', icon: 'today', section: 'Academics' };
+        return { label: 'Day Order & Proxy', icon: 'today', section: 'Academics' };
       case 'timetable':
-        return { label: 'Timetable & Substitution (TTB)', icon: 'calendar_month', section: 'Academics' };
+        return { label: 'Timetable', icon: 'calendar_month', section: 'Academics' };
       case 'exams':
-        return { label: 'Examinations & Results (EXM)', icon: 'quiz', section: 'Academics' };
+        return { label: 'Examinations', icon: 'quiz', section: 'Academics' };
       case 'question-papers':
-        return { label: 'Question Paper Generator (QPG)', icon: 'auto_awesome', section: 'Academics' };
+        return { label: 'Question Papers', icon: 'auto_awesome', section: 'Academics' };
       case 'question-bank':
-        return { label: 'Bloom’s Question Bank (QPG)', icon: 'database', section: 'Academics' };
+        return { label: 'Question Bank', icon: 'database', section: 'Academics' };
       case 'results':
       case 'report-cards':
-        return { label: 'Report Cards & HPC (RCD)', icon: 'grading', section: 'Academics' };
+        return { label: 'Report Cards', icon: 'grading', section: 'Academics' };
       case 'attendance':
-        return { label: 'Attendance Roll Call (ATT)', icon: 'fact_check', section: 'Academics' };
+        return { label: 'Attendance', icon: 'fact_check', section: 'Students' };
       case 'lms':
       case 'lms-and-courses':
-        return { label: 'LMS Digital Classroom (LMS)', icon: 'play_lesson', section: 'Academics' };
+        return { label: 'Digital Classroom', icon: 'play_lesson', section: 'Academics' };
       case 'assignments':
       case 'assignment-studio':
-        return { label: 'Assignments Studio (ASM)', icon: 'assignment_turned_in', section: 'Academics' };
+        return { label: 'Assignments', icon: 'assignment_turned_in', section: 'Academics' };
       case 'teacher-management':
       case 'teachers':
-        return { label: 'Teacher Workload & Allocation (TCH)', icon: 'school', section: 'People' };
+        return { label: 'Teachers', icon: 'school', section: 'Staff' };
       case 'non-teaching-staff':
       case 'employees':
-        return { label: 'Non-Teaching Support Staff (NTS)', icon: 'badge', section: 'People' };
+        return { label: 'Support Staff', icon: 'badge', section: 'Staff' };
       case 'hr-and-payroll':
       case 'payroll':
-        return { label: 'HR & 7th CPC Payroll (HRM/PAY)', icon: 'engineering', section: 'People' };
+        return { label: 'HR & Payroll', icon: 'engineering', section: 'Staff' };
       case 'id-cards':
-        return { label: 'ID Card Studio', icon: 'id_card', section: 'People' };
+        return { label: 'ID Cards', icon: 'id_card', section: 'Students' };
       case 'fees':
       case 'fees-and-finance':
-        return { label: 'Fees & Dual Ledger (FEE)', icon: 'payments', section: 'Finance' };
+        return { label: 'Fees', icon: 'payments', section: 'Finance' };
       case 'accounting':
-        return { label: 'Accounting & General Ledger (ACC)', icon: 'account_balance', section: 'Finance' };
+        return { label: 'Accounting', icon: 'account_balance', section: 'Finance' };
       case 'transport':
-        return { label: 'Transport Fleet & AIS-140 (TRN)', icon: 'directions_bus', section: 'Operations' };
+        return { label: 'Transport', icon: 'directions_bus', section: 'Operations' };
       case 'hostel':
-        return { label: 'Hostel & Residential Halls (HST)', icon: 'night_shelter', section: 'Operations' };
+        return { label: 'Hostel', icon: 'night_shelter', section: 'Operations' };
       case 'library':
-        return { label: 'Library & RFID Catalog (LIB)', icon: 'local_library', section: 'Operations' };
+        return { label: 'Library', icon: 'local_library', section: 'Operations' };
       case 'inventory':
-        return { label: 'Store Inventory & 3-Way Match (INV)', icon: 'inventory_2', section: 'Operations' };
+        return { label: 'Inventory', icon: 'inventory_2', section: 'Operations' };
       case 'procurement':
-        return { label: 'Procurement & Purchase Orders (PRC)', icon: 'shopping_bag', section: 'Operations' };
+        return { label: 'Procurement', icon: 'shopping_bag', section: 'Operations' };
       case 'helpdesk':
-        return { label: 'Helpdesk & Grievance SLA (HLP)', icon: 'support_agent', section: 'Operations' };
+        return { label: 'Helpdesk', icon: 'support_agent', section: 'Operations' };
       case 'communication':
       case 'notifications':
-        return { label: 'Notices & DLT Broadcast (COM/NOT)', icon: 'campaign', section: 'Community' };
-      case 'parent-app-preview':
-        return { label: 'Parent Mobile App Companion (APP)', icon: 'smartphone', section: 'Community' };
+        return { label: 'Messages & Notices', icon: 'campaign', section: 'Communication' };
       case 'dpdpa-and-consent':
-        return { label: 'DPDPA 2023 Consent Hub (CNS/DPD)', icon: 'security', section: 'Compliance' };
+        return { label: 'Consent & Privacy', icon: 'verified_user', section: 'Compliance' };
       case 'udise-and-apaar':
-        return { label: 'UDISE+ & APAAR Registry (GOV)', icon: 'fingerprint', section: 'Compliance' };
+        return { label: 'UDISE+ & APAAR', icon: 'fingerprint', section: 'Compliance' };
       case 'certificates':
-        return { label: 'DigiLocker & Transfer Cert (CRT)', icon: 'verified', section: 'Compliance' };
+        return { label: 'Certificates', icon: 'workspace_premium', section: 'Compliance' };
       case 'integrations':
-        return { label: 'Integrations & Telematics (INT)', icon: 'webhook', section: 'Compliance' };
+        return { label: 'Integrations', icon: 'extension', section: 'Compliance' };
       case 'tenants':
       case 'tenancy-and-campuses':
-        return { label: 'Tenancy & Campuses (TEN)', icon: 'domain', section: 'Governance' };
+        return { label: 'Campuses', icon: 'domain', section: 'Administration' };
       case 'users-and-roles':
       case 'auth-and-rbac':
-        return { label: 'IAM & Dynamic RBAC (IAM/RBAC)', icon: 'admin_panel_settings', section: 'Governance' };
+        return { label: 'Users & Roles', icon: 'admin_panel_settings', section: 'Administration' };
       case 'workflows':
-        return { label: 'Approval Workflows (WFL)', icon: 'account_tree', section: 'Governance' };
+        return { label: 'Approvals', icon: 'account_tree', section: 'Administration' };
       case 'reports':
-        return { label: 'Reports & Analytics (RPT)', icon: 'analytics', section: 'Governance' };
+        return { label: 'Reports', icon: 'analytics', section: 'Administration' };
       case 'documents':
-        return { label: 'Document Vault & Verify (DOC)', icon: 'folder_managed', section: 'Governance' };
+        return { label: 'Documents', icon: 'folder_open', section: 'Administration' };
       case 'audit-log':
-        return { label: 'Immutable Audit Log (AUD)', icon: 'history_edu', section: 'Governance' };
+        return { label: 'Audit Log', icon: 'history', section: 'Administration' };
       case 'masters':
-        return { label: 'Masters & Config (MST)', icon: 'tune', section: 'Governance' };
+        return { label: 'Masters & Settings', icon: 'tune', section: 'Administration' };
       case 'data-migration':
-        return { label: 'Data Import & Migration (MIG)', icon: 'move_to_inbox', section: 'Governance' };
+        return { label: 'Data Import', icon: 'upload_file', section: 'Administration' };
       default:
-        return { label: 'LumenAcademy Operations', icon: 'school', section: 'System' };
+        return { label: 'Lumen Academy', icon: 'school', section: 'Overview' };
     }
   };
 
@@ -254,7 +250,7 @@ export const AdminHeader: React.FC = () => {
         >
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-base text-[#0e5d84]">search</span>
-            <span>Search students, staff, roll numbers, invoices, fleet routes...</span>
+            <span>Search screens and students…</span>
           </div>
           <kbd className="bg-white border border-[#cbe0ec] text-[10px] font-mono px-1.5 py-0.5 rounded text-[#464555]">
             ⌘K
@@ -280,31 +276,15 @@ export const AdminHeader: React.FC = () => {
             title="Notifications"
           >
             <span className="material-symbols-outlined text-xl">notifications</span>
-            <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white animate-pulse"></span>
           </button>
 
           {notificationsOpen && (
             <div className="absolute right-0 mt-1.5 w-80 bg-white rounded-xl shadow-xl border border-[#cbe0ec] p-3 z-50 animate-dropdown">
               <div className="flex items-center justify-between pb-2 border-b border-[#f0f7fb]">
-                <span className="text-xs font-bold text-[#082b3d]">Operational Notifications</span>
-                <span className="text-[10px] text-[#0e5d84] font-semibold cursor-pointer">Mark all read</span>
+                <span className="text-xs font-bold text-[#082b3d]">Notifications</span>
+                
               </div>
-              <div className="divide-y divide-[#f0f7fb] mt-1 max-h-64 overflow-y-auto">
-                <div className="py-2 text-xs">
-                  <div className="font-semibold text-rose-600 flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm">warning</span> Fee Defaulter Trigger
-                  </div>
-                  <div className="text-[11px] text-[#464555] mt-0.5">8 students in Class 10-A cross 15-day notice threshold. SMS blast queued.</div>
-                  <span className="text-[9px] text-[#777587]">10 mins ago</span>
-                </div>
-                <div className="py-2 text-xs">
-                  <div className="font-semibold text-emerald-600 flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm">verified</span> DigiLocker Sync Complete
-                  </div>
-                  <div className="text-[11px] text-[#464555] mt-0.5">42 Grade 10 marksheets verified with CBSE central repository.</div>
-                  <span className="text-[9px] text-[#777587]">45 mins ago</span>
-                </div>
-              </div>
+              <p className="py-6 text-center text-xs text-[#777587]">You're all caught up.</p>
             </div>
           )}
         </div>
@@ -313,6 +293,7 @@ export const AdminHeader: React.FC = () => {
         <div className="relative pl-2 border-l border-[#e0ecf4] flex items-center gap-1.5" ref={profileRef}>
           <button
             onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+            aria-label="Account menu"
             className="flex items-center gap-2 p-1 rounded-xl hover:bg-[#f0f7fb] transition-colors text-left"
           >
             <img
@@ -357,33 +338,13 @@ export const AdminHeader: React.FC = () => {
               <div className="space-y-1">
                 <button
                   onClick={() => {
-                    setShowUsageGuide(true);
-                    setProfileDropdownOpen(false);
-                  }}
-                  className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold text-[#082b3d] hover:bg-[#f0f7fb] hover:text-[#0e5d84] flex items-center gap-2 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-base text-[#0e5d84]">menu_book</span>
-                  <span>How to Use Product Guide</span>
-                </button>
-                <button
-                  onClick={() => {
-                    logout();
-                    setProfileDropdownOpen(false);
-                  }}
-                  className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold text-[#082b3d] hover:bg-[#f0f7fb] hover:text-[#0e5d84] flex items-center gap-2 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-base text-[#0e5d84]">swap_horiz</span>
-                  <span>Switch Account / Return to Login</span>
-                </button>
-                <button
-                  onClick={() => {
                     logout();
                     setProfileDropdownOpen(false);
                   }}
                   className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold text-rose-600 hover:bg-rose-50 flex items-center gap-2 transition-colors"
                 >
                   <span className="material-symbols-outlined text-base">logout</span>
-                  <span>Sign Out of Session (IAM)</span>
+                  <span>Sign out</span>
                 </button>
               </div>
 

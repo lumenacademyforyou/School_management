@@ -5,8 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
-    "build": "vite build",
+    "dev:parent": "vite --mode parent --port=3001 --host=0.0.0.0",
+    "dev:teacher": "vite --mode teacher --port=3002 --host=0.0.0.0",
+    "dev:apps": "vite --mode apps --port=3003 --host=0.0.0.0",
+    "build": "vite build && vite build --mode parent && vite build --mode teacher",
+    "build:admin": "vite build",
+    "build:parent": "vite build --mode parent",
+    "build:teacher": "vite build --mode teacher",
     "preview": "vite preview",
+    "preview:parent": "vite preview --mode parent",
+    "preview:teacher": "vite preview --mode teacher",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit"
   },

@@ -378,6 +378,8 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
         {TABS.map(t => (
           <button
             key={t.id}
+            role="tab"
+            aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
               tab === t.id ? 'border-[#0e5d84] text-[#0e5d84]' : 'border-transparent text-[#777587] hover:text-[#082b3d]'

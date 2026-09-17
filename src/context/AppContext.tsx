@@ -1,10 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import {
-  PortalRole,
   AdminView,
-  ParentView,
-  FacultyView,
-  DriverView,
   Campus,
   Student,
   AttendanceRecord,
@@ -17,7 +13,7 @@ import {
   CLASS_10A_STUDENTS,
   FEE_INVOICES,
 } from '../data/mockData';
-import { DEMO_PARTICIPANTS, ParticipantPersona } from '../data/authUsers';
+import { HOME_VIEW, STAFF_ACCOUNTS, StaffAccount } from '../data/staffAccess';
 
 export interface ToastMessage {
   id: string;
@@ -30,23 +26,11 @@ interface AppContextType {
   // Authentication & Session
   isAuthenticated: boolean;
   currentUser: AuthUser;
-  loginAsPersona: (persona: ParticipantPersona) => void;
+  signIn: (account: StaffAccount) => void;
   logout: () => void;
-  showLoginModal: boolean;
-  setShowLoginModal: (open: boolean) => void;
-  showUsageGuide: boolean;
-  setShowUsageGuide: (open: boolean) => void;
 
-  role: PortalRole;
-  setRole: (role: PortalRole) => void;
   adminView: AdminView;
   setAdminView: (view: AdminView) => void;
-  parentView: ParentView;
-  setParentView: (view: ParentView) => void;
-  facultyView: FacultyView;
-  setFacultyView: (view: FacultyView) => void;
-  driverView: DriverView;
-  setDriverView: (view: DriverView) => void;
   
   // Navigation helper
   navigateToAdminView: (view: AdminView) => void;
@@ -67,9 +51,8 @@ interface AppContextType {
   updateStudentAttendance: (studentId: string, status: 'P' | 'L' | 'A' | 'E', notes?: string) => void;
   markAllPresent: () => void;
 
-  // Invoices & Payment
+  // Invoices (dashboard and report widgets)
   invoices: FeeInvoice[];
-  payInvoice: (invoiceId: string) => void;
 
   // Fleet & Stops
   driverCurrentStopIndex: number;
@@ -89,10 +72,6 @@ interface AppContextType {
   quickActionOpen: boolean;
   setQuickActionOpen: (open: boolean) => void;
 
-  // Simulator Mode
-  previewDevice: 'fluid' | 'mobile-mock';
-  setPreviewDevice: (device: 'fluid' | 'mobile-mock') => void;
-
   // Responsive Mobile Sidebar
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
@@ -106,37 +85,33 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+const toAuthUser = (a: StaffAccount): AuthUser => ({
+  id: a.id,
+  name: a.name,
+  staffRole: a.staffRole,
+  roleTitle: a.roleTitle,
+  email: a.email,
+  phone: a.phone,
+  avatar: a.avatar,
+  campusId: a.campusId,
+  campusName: a.campusName,
+  identifier: a.identifier,
+  mfaVerified: a.requiresMfa,
+});
+
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useState<AuthUser>({
-    id: DEMO_PARTICIPANTS[0].id,
-    name: DEMO_PARTICIPANTS[0].name,
-    role: DEMO_PARTICIPANTS[0].role,
-    roleTitle: DEMO_PARTICIPANTS[0].roleTitle,
-    email: DEMO_PARTICIPANTS[0].email,
-    phone: DEMO_PARTICIPANTS[0].phone,
-    avatar: DEMO_PARTICIPANTS[0].avatar,
-    campusId: DEMO_PARTICIPANTS[0].campusId,
-    campusName: DEMO_PARTICIPANTS[0].campusName,
-    identifier: DEMO_PARTICIPANTS[0].identifier,
-    mfaVerified: true,
-  });
+  const [currentUser, setCurrentUser] = useState<AuthUser>(() => toAuthUser(STAFF_ACCOUNTS[0]));
 
-  const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
-  const [showUsageGuide, setShowUsageGuide] = useState<boolean>(false);
 
-  const [role, setRole] = useState<PortalRole>('admin');
   const [adminView, setAdminView] = useState<AdminView>('dashboard');
-  const [parentView, setParentView] = useState<ParentView>('home');
-  const [facultyView, setFacultyView] = useState<FacultyView>('schedule-home');
-  const [driverView, setDriverView] = useState<DriverView>('live-route');
 
   const [campuses, setCampuses] = useState<Campus[]>(CAMPUSES);
   const [selectedCampus, setSelectedCampus] = useState<Campus>(CAMPUSES[0]);
   const [student, setStudent] = useState<Student>(PRIMARY_STUDENT);
 
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>(CLASS_10A_STUDENTS);
-  const [invoices, setInvoices] = useState<FeeInvoice[]>(FEE_INVOICES);
+  const [invoices] = useState<FeeInvoice[]>(FEE_INVOICES);
 
   const [driverCurrentStopIndex, setDriverCurrentStopIndex] = useState<number>(3);
   const [sosActive, setSosActive] = useState<boolean>(false);
@@ -146,7 +121,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [searchModalOpen, setSearchModalOpen] = useState<boolean>(false);
   const [quickActionOpen, setQuickActionOpen] = useState<boolean>(false);
 
-  const [previewDevice, setPreviewDevice] = useState<'fluid' | 'mobile-mock'>('fluid');
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
@@ -166,47 +140,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setToasts(prev => prev.filter(t => t.id !== id));
   }, []);
 
-  const loginAsPersona = useCallback((persona: ParticipantPersona) => {
-    setCurrentUser({
-      id: persona.id,
-      name: persona.name,
-      role: persona.role,
-      roleTitle: persona.roleTitle,
-      email: persona.email,
-      phone: persona.phone,
-      avatar: persona.avatar,
-      campusId: persona.campusId,
-      campusName: persona.campusName,
-      identifier: persona.identifier,
-      mfaVerified: true,
-    });
-
-    const targetCampus = CAMPUSES.find(c => c.id === persona.campusId) || CAMPUSES[0];
-    setSelectedCampus(targetCampus);
-    setRole(persona.role);
-    if (persona.defaultView) {
-      if (persona.role === 'admin') setAdminView(persona.defaultView as AdminView);
-      if (persona.role === 'parent') setParentView('home');
-      if (persona.role === 'faculty') setFacultyView('schedule-home');
-      if (persona.role === 'driver') setDriverView('live-route');
-    }
+  const signIn = useCallback((account: StaffAccount) => {
+    setCurrentUser(toAuthUser(account));
+    setSelectedCampus(CAMPUSES.find(c => c.id === account.campusId) || CAMPUSES[0]);
+    setAdminView(HOME_VIEW[account.staffRole]);
     setIsAuthenticated(true);
-    setShowLoginModal(false);
-    addToast(
-      `Authenticated: ${persona.name}`,
-      'success',
-      `Session established for ${persona.roleTitle} at ${targetCampus.name} (RLS Active).`
-    );
+    addToast(`Signed in as ${account.name}`, 'success', account.roleTitle);
   }, [addToast]);
 
   const logout = useCallback(() => {
     setIsAuthenticated(false);
-    setShowLoginModal(false);
-    addToast('Signed Out of Session', 'info', 'RLS connection closed. Please sign in to resume.');
+    setSidebarOpen(false);
+    addToast('Signed out', 'info');
   }, [addToast]);
 
   const navigateToAdminView = useCallback((view: AdminView) => {
-    setRole('admin');
     setAdminView(view);
   }, []);
 
@@ -239,16 +187,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     addToast('All 10 students marked Present', 'success', 'Class 10-A register synchronized to school central database.');
   }, [addToast]);
 
-  const payInvoice = useCallback((invoiceId: string) => {
-    setInvoices(prev =>
-      prev.map(inv =>
-        inv.id === invoiceId
-          ? { ...inv, status: 'Paid', receiptNo: `REC-${Date.now().toString().slice(-6)}` }
-          : inv
-      )
-    );
-    addToast('Payment Successful! ₹24,500', 'success', 'CBSE fee receipt REC-904128 generated & WhatsApp confirmation dispatched to father.');
-  }, [addToast]);
 
   const advanceDriverStop = useCallback(() => {
     setDriverCurrentStopIndex(prev => (prev < 5 ? prev + 1 : 0));
@@ -269,22 +207,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       value={{
         isAuthenticated,
         currentUser,
-        loginAsPersona,
+        signIn,
         logout,
-        showLoginModal,
-        setShowLoginModal,
-        showUsageGuide,
-        setShowUsageGuide,
-        role,
-        setRole,
         adminView,
         setAdminView,
-        parentView,
-        setParentView,
-        facultyView,
-        setFacultyView,
-        driverView,
-        setDriverView,
         navigateToAdminView,
         selectedCampus,
         setSelectedCampus,
@@ -297,7 +223,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateStudentAttendance,
         markAllPresent,
         invoices,
-        payInvoice,
         driverCurrentStopIndex,
         advanceDriverStop,
         sosActive,
@@ -312,8 +237,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSearchModalOpen,
         quickActionOpen,
         setQuickActionOpen,
-        previewDevice,
-        setPreviewDevice,
         sidebarOpen,
         setSidebarOpen,
         toggleSidebar,

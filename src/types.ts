@@ -1,9 +1,9 @@
-export type PortalRole = 'admin' | 'parent' | 'faculty' | 'driver' | 'student' | 'design-system';
+import type { StaffRole } from './data/staffAccess';
 
 export interface AuthUser {
   id: string;
   name: string;
-  role: PortalRole;
+  staffRole: StaffRole;
   roleTitle: string;
   email?: string;
   phone?: string;
@@ -14,11 +14,10 @@ export interface AuthUser {
   mfaVerified?: boolean;
 }
 
-export type LoginMode = 'password' | 'otp' | 'student' | 'mfa';
-
 export type AdminView =
   | 'dashboard'
   | 'feature-spec-matrix'
+  | 'access-grants'
   // LAYER 1: PLATFORM FOUNDATION
   | 'tenants'
   | 'users-and-roles'
@@ -57,7 +56,6 @@ export type AdminView =
   | 'procurement'
   // LAYER 4: ENGAGEMENT & LEARNING
   | 'communication'
-  | 'parent-app-preview'
   | 'notifications'
   | 'lms'
   | 'assignments'
@@ -83,25 +81,6 @@ export type AdminView =
   | 'assignment-studio'
   | 'broadcast-sms'
   | 'academics';
-
-export type ParentView =
-  | 'home'
-  | 'academics'
-  | 'bus'
-  | 'fees'
-  | 'ptm';
-
-export type FacultyView =
-  | 'schedule-home'
-  | 'attendance-roster'
-  | 'grades-gradebook'
-  | 'leave-faculty-profile';
-
-export type DriverView =
-  | 'live-route'
-  | 'student-roster'
-  | 'vehicle-inspection'
-  | 'sos-dispatch';
 
 export interface Campus {
   id: string;

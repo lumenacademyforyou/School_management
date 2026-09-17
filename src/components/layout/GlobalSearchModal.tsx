@@ -1,255 +1,107 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { AdminView, PortalRole } from '../../types';
+import { ALL_NAV_ITEMS } from '../../data/adminNav';
+import { canView } from '../../data/staffAccess';
+import { INITIAL_ROSTER, matchesSearch, toProfile } from '../../data/students';
 
+interface Result {
+  id: string;
+  title: string;
+  subtitle: string;
+  category: 'Screen' | 'Student';
+  icon: string;
+  open: () => void;
+}
+
+/** Ctrl/⌘ K search across the screens and records the signed-in role is allotted. */
 export const GlobalSearchModal: React.FC = () => {
-  const {
-    searchModalOpen,
-    setSearchModalOpen,
-    setRole,
-    setAdminView,
-    setParentView,
-    addToast,
-  } = useApp();
-
+  const { searchModalOpen, setSearchModalOpen, setAdminView, setStudent, currentUser } = useApp();
   const [query, setQuery] = useState('');
+  const role = currentUser.staffRole;
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setSearchModalOpen(!searchModalOpen);
       }
-      if (e.key === 'Escape' && searchModalOpen) {
-        setSearchModalOpen(false);
-      }
+      if (e.key === 'Escape' && searchModalOpen) setSearchModalOpen(false);
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, [searchModalOpen, setSearchModalOpen]);
+
+  const results = useMemo<Result[]>(() => {
+    const q = query.trim().toLowerCase();
+    const close = () => {
+      setSearchModalOpen(false);
+      setQuery('');
+    };
+    const screens: Result[] = ALL_NAV_ITEMS.filter(i => canView(role, i.id))
+      .filter(i => !q || i.label.toLowerCase().includes(q))
+      .map(i => ({ id: `screen-${i.id}`, title: i.label, subtitle: 'Open screen', category: 'Screen', icon: i.icon, open: () => { setAdminView(i.id); close(); } }));
+    const students: Result[] =
+      q.length >= 2 && canView(role, 'students')
+        ? INITIAL_ROSTER.filter(s => !s.mergedInto && matchesSearch(s, query))
+            .slice(0, 6)
+            .map(s => ({
+              id: `student-${s.id}`,
+              title: s.name,
+              subtitle: `Class ${s.classLevel}-${s.section} · ${s.admissionNo} · ${s.status}`,
+              category: 'Student',
+              icon: 'person',
+              open: () => {
+                setStudent(toProfile(s));
+                setAdminView('student-360');
+                close();
+              },
+            }))
+        : [];
+    return [...students, ...screens];
+  }, [query, role, setAdminView, setSearchModalOpen, setStudent]);
 
   if (!searchModalOpen) return null;
 
-  interface SearchItem {
-    id: string;
-    title: string;
-    subtitle: string;
-    category: string;
-    icon: string;
-    action: () => void;
-  }
-
-  const items: SearchItem[] = [
-    // Students
-    {
-      id: 'stu-aarav',
-      title: 'Aarav S. Ramanathan',
-      subtitle: 'Class 10-A • Roll 14 • APAAR: 9842-3310-8841',
-      category: 'Students',
-      icon: 'person',
-      action: () => {
-        setRole('admin');
-        setAdminView('student-360');
-        setSearchModalOpen(false);
-        addToast('Opened Student 360 profile for Aarav S. Ramanathan', 'info');
-      },
-    },
-    {
-      id: 'stu-bhavna',
-      title: 'Bhavna K. Menon',
-      subtitle: 'Class 10-A • Roll 04 • Boarding House Kaveri',
-      category: 'Students',
-      icon: 'person',
-      action: () => {
-        setRole('admin');
-        setAdminView('attendance');
-        setSearchModalOpen(false);
-      },
-    },
-    // Modules & Pages
-    {
-      id: 'page-attendance',
-      title: 'Classroom Roll Call & Biometric Registers',
-      subtitle: 'Real-time hardware sync, P/L/A marks & WhatsApp alerts',
-      category: 'Navigation',
-      icon: 'fact_check',
-      action: () => {
-        setRole('admin');
-        setAdminView('attendance');
-        setSearchModalOpen(false);
-      },
-    },
-    {
-      id: 'page-fees',
-      title: 'Fees & Dual-Entry Financial Ledger',
-      subtitle: 'Term 3 invoices, razorpay reconciliation & defaulter notices',
-      category: 'Navigation',
-      icon: 'account_balance_wallet',
-      action: () => {
-        setRole('admin');
-        setAdminView('fees-and-finance');
-        setSearchModalOpen(false);
-      },
-    },
-    {
-      id: 'page-transport',
-      title: 'Transport Fleet & AIS-140 Live Radar',
-      subtitle: 'Bus #12 (Route #14) with G. Murugan, speed 38 km/h',
-      category: 'Navigation',
-      icon: 'directions_bus',
-      action: () => {
-        setRole('admin');
-        setAdminView('transport');
-        setSearchModalOpen(false);
-      },
-    },
-    {
-      id: 'page-hostel',
-      title: 'Hostel & Campus Housing Command',
-      subtitle: 'Godavari, Kaveri, Yamuna, Ganga room allocation & 21:00 curfew',
-      category: 'Navigation',
-      icon: 'night_shelter',
-      action: () => {
-        setRole('admin');
-        setAdminView('hostel');
-        setSearchModalOpen(false);
-      },
-    },
-    ...([
-      ['page-id-cards', 'ID Card Studio', 'Design, generate, reissue and bulk print student, faculty and staff ID cards', 'id-cards', 'id_card'],
-      ['page-curriculum', 'Curriculum & Syllabus Coverage', 'Subject mapping, elective groups, syllabus coverage and lesson plans', 'curriculum', 'menu_book'],
-      ['page-exams', 'Examinations & Results', 'Marks entry, moderation, result computation and publishing', 'exams', 'quiz'],
-      ['page-workflows', 'Approval Workflows', 'Approval queue, delegation, escalation and stage analytics', 'workflows', 'account_tree'],
-      ['page-reports', 'Reports & Analytics', 'Role dashboards, report library, branch comparison and schedules', 'reports', 'analytics'],
-    ] as const).map(([id, title, subtitle, view, icon]) => ({
-      id,
-      title,
-      subtitle,
-      category: 'Navigation',
-      icon,
-      action: () => {
-        setRole('admin');
-        setAdminView(view);
-        setSearchModalOpen(false);
-      },
-    })),
-    {
-      id: 'page-question-paper',
-      title: 'AI Question Paper Studio & CBSE Blueprint',
-      subtitle: 'Bloom’s cognitive taxonomy, LaTeX equations & bilingual prints',
-      category: 'Navigation',
-      icon: 'quiz',
-      action: () => {
-        setRole('admin');
-        setAdminView('question-papers');
-        setSearchModalOpen(false);
-      },
-    },
-    {
-      id: 'page-dpdpa',
-      title: 'DPDPA 2023 Statutory Minor Consent Hub',
-      subtitle: 'Parental biometric & CCTV consent ledger with SHA-256 audit logs',
-      category: 'Compliance',
-      icon: 'verified_user',
-      action: () => {
-        setRole('admin');
-        setAdminView('dpdpa-and-consent');
-        setSearchModalOpen(false);
-      },
-    },
-    {
-      id: 'page-udise',
-      title: 'UDISE+ & APAAR National Student ID Command',
-      subtitle: 'DCF 41-section checklist & Aadhaar remediation queue',
-      category: 'Compliance',
-      icon: 'fingerprint',
-      action: () => {
-        setRole('admin');
-        setAdminView('udise-and-apaar');
-        setSearchModalOpen(false);
-      },
-    },
-    {
-      id: 'parent-portal',
-      title: 'Aarav’s Parent Portal Mobile App',
-      subtitle: 'Direct view into parent companion with fees, RFID gate-in & PTM',
-      category: 'Portals',
-      icon: 'family_restroom',
-      action: () => {
-        setRole('parent');
-        setParentView('home');
-        setSearchModalOpen(false);
-      },
-    },
-  ];
-
-  const filtered = query.trim()
-    ? items.filter(
-        i =>
-          i.title.toLowerCase().includes(query.toLowerCase()) ||
-          i.subtitle.toLowerCase().includes(query.toLowerCase()) ||
-          i.category.toLowerCase().includes(query.toLowerCase())
-      )
-    : items;
-
   return (
-    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-start justify-center pt-20 px-4 fade-in" onClick={() => setSearchModalOpen(false)}>
-      <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-[#cbe0ec] overflow-hidden zoom-in" onClick={e => e.stopPropagation()}>
-        {/* Search input bar */}
+    <div className="fixed inset-0 bg-slate-950/50 z-50 flex items-start justify-center pt-20 px-4" onClick={() => setSearchModalOpen(false)}>
+      <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-[#cbe0ec] overflow-hidden" onClick={e => e.stopPropagation()} role="dialog" aria-label="Search">
         <div className="p-3 border-b border-[#f0f7fb] flex items-center gap-3">
           <span className="material-symbols-outlined text-[#0e5d84] text-xl">search</span>
           <input
             type="text"
-            placeholder="Search students, staff, roll numbers, fees, modules, routes..."
+            placeholder={canView(role, 'students') ? 'Search screens, or a student by name, admission no. or mobile' : 'Search screens'}
             value={query}
             onChange={e => setQuery(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && results[0]) results[0].open();
+            }}
             autoFocus
             className="flex-1 text-sm outline-hidden text-[#082b3d] placeholder-[#777587]"
+            aria-label="Search"
           />
-          <button
-            onClick={() => setSearchModalOpen(false)}
-            className="text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded text-[#464555]"
-          >
-            ESC
+          <button onClick={() => setSearchModalOpen(false)} className="text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded text-[#464555]">
+            Esc
           </button>
         </div>
-
-        {/* Results List */}
-        <div className="max-h-96 overflow-y-auto p-2 divide-y divide-[#f0f7fb]">
-          {filtered.length === 0 ? (
-            <div className="py-8 text-center text-xs text-[#777587]">
-              No records match "{query}". Try searching "Aarav", "Fees", "Hostel", or "CBSE".
-            </div>
+        <div className="max-h-96 overflow-y-auto p-2">
+          {results.length === 0 ? (
+            <p className="py-8 text-center text-xs text-[#777587]">Nothing matches “{query}”.</p>
           ) : (
-            filtered.map(item => (
-              <button
-                key={item.id}
-                onClick={item.action}
-                className="w-full text-left p-2.5 rounded-xl hover:bg-[#f0f7fb] flex items-center justify-between group transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[#f0f7fb] text-[#0e5d84] flex items-center justify-center group-hover:bg-[#0e5d84] group-hover:text-white transition-colors">
-                    <span className="material-symbols-outlined text-lg">{item.icon}</span>
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-[#082b3d] group-hover:text-[#0e5d84]">
-                      {item.title}
-                    </div>
-                    <div className="text-[11px] text-[#464555]">{item.subtitle}</div>
-                  </div>
-                </div>
-                <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded font-medium text-[#777587]">
-                  {item.category}
+            results.map(r => (
+              <button key={r.id} onClick={r.open} className="w-full text-left p-2.5 rounded-xl hover:bg-[#f0f7fb] flex items-center justify-between gap-3">
+                <span className="flex items-center gap-3 min-w-0">
+                  <span className="w-8 h-8 rounded-lg bg-[#f0f7fb] text-[#0e5d84] flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-lg">{r.icon}</span>
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-xs font-bold text-[#082b3d] truncate">{r.title}</span>
+                    <span className="block text-[11px] text-[#464555] truncate">{r.subtitle}</span>
+                  </span>
                 </span>
+                <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded font-medium text-[#777587]">{r.category}</span>
               </button>
             ))
           )}
-        </div>
-
-        {/* Quick Tips */}
-        <div className="bg-[#f0f7fb] px-4 py-2 text-[11px] text-[#464555] flex items-center justify-between">
-          <span>Navigate with ↵ or click to open page instantly</span>
-          <span className="font-mono text-[#0e5d84]">LumenSearch v2.4</span>
         </div>
       </div>
     </div>
