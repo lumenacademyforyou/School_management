@@ -1,11 +1,10 @@
-/// <reference types="vite/client" />
 // Staff accounts for the admin console and the screens each role is allotted (RBAC-001, RBAC-003, RBAC-010).
 // Parents and teachers use their own apps (apps/parent, apps/teacher); they have no access here.
 import type { AdminView } from '../types';
 import { SMS_MODULES } from './featureCatalog';
 import { canChangeModule, hasModuleAccess } from './permissions';
 
-export type StaffRole = 'principal' | 'accountant' | 'admissions' | 'auditor';
+export type StaffRole = 'principal' | 'accountant' | 'admissions' | 'auditor' | 'exam-coordinator';
 
 export interface StaffAccount {
   id: string;
@@ -70,6 +69,20 @@ export const STAFF_ACCOUNTS: StaffAccount[] = [
     summary: 'Enquiries to enrolment, student records, documents, ID cards',
   },
   {
+    id: 'user-exam-arun',
+    name: 'Mr. Arun Prakash',
+    staffRole: 'exam-coordinator',
+    roleTitle: 'Exam Coordinator',
+    email: 'exams@lumenacademy.edu.in',
+    phone: '+91 94440 10048',
+    identifier: 'EXC-4102',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&auto=format&fit=crop&q=80',
+    campusId: 'chennai-main',
+    campusName: 'Chennai Campus (CHN-01)',
+    requiresMfa: true,
+    summary: 'Question papers, question bank and exam schedules',
+  },
+  {
     id: 'user-auditor-suresh',
     name: 'CA Suresh Ramanathan',
     staffRole: 'auditor',
@@ -85,47 +98,24 @@ export const STAFF_ACCOUNTS: StaffAccount[] = [
   },
 ];
 
-/** Alternate view ids that open the same screen. */
-const CANONICAL: Partial<Record<AdminView, AdminView>> = {
-  'student-360': 'students',
-  parents: 'students',
-  subjects: 'curriculum',
-  'fees-and-finance': 'fees',
-  payments: 'fees',
-  invoices: 'fees',
-  'financial-reports': 'fees',
-  notifications: 'communication',
-  'broadcast-sms': 'communication',
-  'tenancy-and-campuses': 'tenants',
-  settings: 'tenants',
-  'auth-and-rbac': 'users-and-roles',
-  'report-cards': 'results',
-  classes: 'academics',
-  'lms-and-courses': 'lms',
-  'assignment-studio': 'assignments',
-  teachers: 'teacher-management',
-  employees: 'non-teaching-staff',
-  payroll: 'hr-and-payroll',
-};
-
-export const canonicalView = (view: AdminView): AdminView => CANONICAL[view] ?? view;
-
 /** Which catalogue modules a screen serves. Screens that serve no module are for the Principal only. */
 const EXTRA_VIEW_MODULES: Partial<Record<AdminView, string[]>> = {
   'id-cards': ['CRT'],
+  'student-360': ['STU'],
+  'question-bank': ['QPG'],
 };
 
 const VIEW_MODULES: Partial<Record<AdminView, string[]>> = (() => {
   const map: Partial<Record<AdminView, string[]>> = {};
   for (const m of SMS_MODULES) {
-    const view = canonicalView(m.targetView as AdminView);
+    const view = m.targetView as AdminView;
     map[view] = [...(map[view] ?? []), m.code];
   }
   for (const [view, codes] of Object.entries(EXTRA_VIEW_MODULES)) map[view as AdminView] = [...(map[view as AdminView] ?? []), ...codes!];
   return map;
 })();
 
-export const viewModules = (view: AdminView): string[] => VIEW_MODULES[canonicalView(view)] ?? [];
+export const viewModules = (view: AdminView): string[] => VIEW_MODULES[view] ?? [];
 
 /**
  * A role may open a screen when the access-grant matrix gives it any verb on a feature the screen serves
@@ -151,6 +141,7 @@ export const ROLE_LABEL: Record<StaffRole, string> = {
   accountant: 'Accountant',
   admissions: 'Admissions Officer',
   auditor: 'Auditor',
+  'exam-coordinator': 'Exam Coordinator',
 };
 
 /** Where each role lands after signing in. */
@@ -159,6 +150,7 @@ export const HOME_VIEW: Record<StaffRole, AdminView> = {
   accountant: 'fees',
   admissions: 'admissions',
   auditor: 'audit-log',
+  'exam-coordinator': 'question-papers',
 };
 
 /** Links to the separate apps (configurable per deployment). */

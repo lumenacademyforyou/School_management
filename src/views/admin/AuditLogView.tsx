@@ -17,7 +17,6 @@ interface AuditEvent {
 export const AuditLogView: React.FC = () => {
   const { addToast } = useApp();
   const [verifyingMerkle, setVerifyingMerkle] = useState(false);
-  const [merkleVerified, setMerkleVerified] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<AuditEvent | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -128,7 +127,6 @@ export const AuditLogView: React.FC = () => {
               setVerifyingMerkle(true);
               setTimeout(() => {
                 setVerifyingMerkle(false);
-                setMerkleVerified(true);
                 addToast('Merkle Tree Root 0x8F3C...A12 re-verified against SHA-256 chain (AUD-005)', 'success');
               }, 1000);
             }}

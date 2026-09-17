@@ -1,23 +1,44 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# LumenAcademy SMS
 
-# Run and deploy your AI Studio app
+School management frontend for Lumen Academy: a staff admin console, a parent app and a teacher app. It is frontend only; demo data lives in the browser.
 
-This contains everything you need to run your app locally.
+View the app in AI Studio: https://ai.studio/apps/46116c09-7268-4640-821e-ee98be0b1dde
 
-View your app in AI Studio: https://ai.studio/apps/46116c09-7268-4640-821e-ee98be0b1dde
+## Run locally
 
-## Run Locally
-
-**Prerequisites:**  Node.js
-
+**Prerequisites:** Node.js
 
 1. Install dependencies:
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run all three apps (admin console on 3000, parent app on 3001, teacher app on 3002):
+2. Run all three apps (admin console on 3000, parent app on 3001, teacher app on 3002):
    `npm run dev`
+
+Run `npm run lint` to typecheck and `npm test` to run the logic tests (`tests/`, no extra packages: Vite loads the TypeScript and a small harness runs it).
+
+## Project layout
+
+```
+index.html              admin console entry page
+src/                    admin console
+  App.tsx               screen routing and the read-only guard
+  views/admin/          one file per screen; questionPapers/ holds the paper generator
+  views/auth/           staff sign-in
+  components/           layout, shared admin UI (common/ui.tsx), student identifier widgets
+  context/              signed-in user, current screen, toasts
+  data/                 seed data and pure business rules: fees, students, question papers,
+                        Term results and ranks, transport, hostel, feature catalogue, access grants
+  services/             mock APIs the screens call (question papers, students, results, transport, hostel)
+  hooks/, lib/          grant lookups, observable store, session state, barcode, app links
+apps/
+  parent/               parent app: ParentApp.tsx, StudentLife.tsx (Hall of Fame, transport, hostel, appearance)
+  teacher/              teacher app: TeacherApp.tsx, offline device store
+  shared/               both phone apps: demo backend, phone UI kit, i18n, timetable data, theme settings
+tests/                  logic tests (npm test)
+scripts/                dev.mjs starts all three dev servers; test.mjs runs the tests
+public/                 logos
+```
+
+The phone apps reuse the business rules in `src/data` (fees, attendance, messaging, permissions) but never import admin console screens.
 
 ## Apps in this repository
 
@@ -35,8 +56,11 @@ The admin console, parent app and teacher app are separate apps. Each has its ow
 
 ### Demo sign-in
 
-- **Admin console**: pick a staff account on the sign-in page. The password is `Lumen@2024`, and the authenticator code is `529148` for every account except the Admissions Officer.
-- **Parent app**: any demo mobile on the sign-in screen (for example `+91 90030 45521`, a parent of twins) with OTP `412890`.
+- **Admin console**: pick a staff account on the sign-in page. The password is `Lumen@2024`, and the authenticator code is `529148` for every account except the Admissions Officer. The Exam Coordinator (`exams@lumenacademy.edu.in`) lands on the Question Paper Generator.
+- **Parent app**: any demo mobile on the sign-in screen with OTP `412890`. Families with more than one child are listed first. Useful accounts:
+  - `+91 90030 45521`, parent of twins. Kavin ranks 1st in Mathematics (gold) and 3rd in Science, rides Route 3 and lives in the hostel. Kavya has no top-three place, rides Route 3 and is a day scholar.
+  - `+91 98401 23456`, Aarav's parent: 2nd in Science (silver).
+  - `+91 94001 04729`, Ananya's parent: 3rd in Mathematics (bronze), no school transport.
 - **Teacher app**: `malini.iyer@lumenacademy.edu.in`, `natarajan@lumenacademy.edu.in` or `clara@lumenacademy.edu.in`, with password `Lumen@2024`.
 
 ### Who can do what
@@ -68,13 +92,43 @@ The rest of the app is derived from the same table:
 | Accountant | Fees | Fees, accounting, payroll |
 | Admissions Officer | Admissions | Admissions, student records, documents, certificates and ID cards |
 | Auditor | Audit log | Nothing; reads and exports finance, audit, reports and compliance |
+| Exam Coordinator | Question Paper Generator | Question papers and the question bank; the Principal approves every paper, and no one approves their own |
 
 Class teachers mark attendance and enter marks in the teacher app. The console attendance desk is the Principal's read-and-approve view.
+
+## Features added in this release
+
+| Feature | Where | Notes |
+| --- | --- | --- |
+| Question Paper Generator (QPG-001–014, 017, 018) | Admin → Academics · later phases → Question Paper Generator (also linked from Examinations) | Dashboard, 8-step wizard (details, blueprint, bank, AI generation, builder, sets, answer key, approval), archive. The Question Bank screen uses the same bank. |
+| Hall of Fame (EXM-018, EXM-026) | Parent app home card, More → Hall of Fame, and ranks on Results | Top-three subject ranks across the whole class; gold, silver and bronze styles; nothing is shown for other children. |
+| Transport (APP-010, TRN-001–009) | Parent app home card and More → Transport | Route, vehicle, driver, attendant, stops and a map placeholder with a demo clock. |
+| Hostel (HST-001–009) | Parent app home card and More → Hostel | Block, room, bed, warden, residence, night roll call and outpasses. |
+| Appearance (APP-015) | Parent app Settings → Appearance (also in More) | Light, Dark, System and School themes with previews; saved in `localStorage`. |
+| EMIS number (STU-026) | Admin → Students and Student 360 | Optional column, search, status filter, copy, edit and add forms with Empty, Valid, Invalid and Duplicate states. |
+
+Screens switch by state, not by URL, so the new "routes" are screen ids (`question-papers`, `question-bank`) in the console and pages (`hall-of-fame`, `transport`, `hostel`, `appearance`) in the parent app.
+
+### Where a backend plugs in later
+
+Every screen reads through a service that returns Promises. Replace the body with HTTP calls and the screens stay the same.
+
+| Service | Replace with |
+| --- | --- |
+| `src/services/questionPaperService.ts` | Paper, bank and approval endpoints; the AI model call (`generateQuestions`); server-side PDF rendering (`exportDocument`) |
+| `src/services/studentService.ts` | Student record and identifier endpoints; the state EMIS registry check |
+| `src/services/hallOfFameService.ts` | Published results with ranks |
+| `src/services/transportService.ts` | Transport allocation and the vehicle's live GPS feed (`trip`) |
+| `src/services/hostelService.ts` | Hostel residence, roll call and outpass endpoints |
+| `apps/shared/settingsService.ts` | Syncing the theme to the parent's profile |
+
+Hiding a button in the browser is not security. The grant checks here only shape the interface; the server must enforce the same rules.
 
 ### Demo data
 
 There is no backend yet.
 
-- **Parent and teacher apps**: they share a demo store in the browser's local storage (`src/shared/demoBackend.ts`). A leave request, homework or notice sent from one app appears in the other only when both run on the same origin, so use `npm run dev:apps` for that. On 3001 and 3002 each app works on its own. "Reset demo data" in either app restores the seed data.
-- **Teacher app offline mode**: the teacher app keeps its own on-device cache and outbox (`src/apps/teacher/teacherDevice.ts`) and works offline. Use the Wi-Fi button in its header to simulate losing the connection.
-- **Admin console**: records created on the fees desk last until the page is reloaded. So an accountant can raise a request, sign out, and the Principal can sign in and decide it.
+- **Parent and teacher apps**: they share a demo store in the browser's local storage (`apps/shared/demoBackend.ts`). A leave request, homework or notice sent from one app appears in the other only when both run on the same origin, so use `npm run dev:apps` for that. On 3001 and 3002 each app works on its own. "Reset demo data" in either app restores the seed data.
+- **Teacher app offline mode**: the teacher app keeps its own on-device cache and outbox (`apps/teacher/teacherDevice.ts`) and works offline. Use the Wi-Fi button in its header to simulate losing the connection.
+- **Admin console**: records created on the fees desk, question papers and student identifier changes last until the page is reloaded. So one role can raise something, sign out, and the next role can sign in and act on it.
+- **Mock AI and GPS**: generated questions come from a fixed template, and the bus position comes from the timetable. Nothing leaves the browser.

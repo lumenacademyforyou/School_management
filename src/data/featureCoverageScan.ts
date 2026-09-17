@@ -1,8 +1,7 @@
-/// <reference types="vite/client" />
 import { classifyFeatureIds, FeatureCoverage } from './featureCoverage';
 
 // Raw source of every screen and shared component, bundled at build time.
-const SOURCES = import.meta.glob(['../views/**/*.tsx', '../components/**/*.tsx', '../apps/**/*.tsx'], {
+const SOURCES = import.meta.glob(['../views/**/*.tsx', '../components/**/*.tsx', '../../apps/**/*.tsx'], {
   query: '?raw',
   import: 'default',
   eager: true,

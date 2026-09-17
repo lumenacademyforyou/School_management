@@ -10,8 +10,6 @@ export const LMSCoursesView: React.FC = () => {
   const [pushNotes, setPushNotes] = useState('Observe spectrum dispersion at incidence angle 45°. Calculate minimum deviation.');
 
   // Refractive calculations
-  const mu = 1.52; // Crown glass index
-  const angleRad = (angle * Math.PI) / 180;
   const devAngle = (2 * angle - 60).toFixed(1);
 
   const lessons = [
@@ -86,7 +84,7 @@ export const LMSCoursesView: React.FC = () => {
           </button>
           <button
             onClick={() => {
-              setAdminView('assignment-studio');
+              setAdminView('assignments');
               addToast('Opening Submissions Studio for this lesson', 'info');
             }}
             className="flex items-center gap-1.5 bg-[#0e5d84] hover:bg-[#083a4f] text-white text-xs font-semibold px-3 py-2 rounded-xl shadow-xs transition-colors"

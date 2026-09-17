@@ -20,8 +20,8 @@ import {
   fmtDay,
   inputClass,
   useToasts,
-} from '../../shared/mobileUi';
-import { nowStamp, resetBackend, serverMark, updateBackend, useBackend } from '../../shared/demoBackend';
+} from '../shared/mobileUi';
+import { nowStamp, resetBackend, serverMark, updateBackend, useBackend } from '../shared/demoBackend';
 import {
   APP_NOW,
   APP_TODAY,
@@ -33,11 +33,11 @@ import {
   sectionOf,
   teacherDay,
   weekdayOf,
-} from '../../shared/schoolData';
-import { DEFAULT_STATUS_CODES, SECTION_CONFIG, StatusCode, markKey, plannedAbsence } from '../../data/attendance';
-import { moderationFlags } from '../../data/messaging';
-import { DEFAULT_LATE_FEE, FEES_AS_OF, INITIAL_CONCESSIONS, INITIAL_INVOICES, INITIAL_PAYMENTS, computeLedger } from '../../data/fees';
-import { grantFor } from '../../data/permissions';
+} from '../shared/schoolData';
+import { DEFAULT_STATUS_CODES, SECTION_CONFIG, StatusCode, markKey, plannedAbsence } from '../../src/data/attendance';
+import { moderationFlags } from '../../src/data/messaging';
+import { DEFAULT_LATE_FEE, FEES_AS_OF, INITIAL_CONCESSIONS, INITIAL_INVOICES, INITIAL_PAYMENTS, computeLedger } from '../../src/data/fees';
+import { grantFor } from '../../src/data/permissions';
 import { OutboxEntry, refreshSnapshot, resolveConflict, syncOutbox, useDevice } from './teacherDevice';
 
 type Tab = 'today' | 'attendance' | 'marks' | 'homework' | 'messages';
@@ -782,7 +782,7 @@ const HomeworkScreen: React.FC = () => {
 // ---------------------------------------------------------------------------
 
 const MessagesScreen: React.FC = () => {
-  const { teacher, push, myThreads } = useTeacher();
+  const { push, myThreads } = useTeacher();
   const [openId, setOpenId] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
   const thread = myThreads.find(t => t.id === openId);

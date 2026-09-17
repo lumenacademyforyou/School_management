@@ -9,10 +9,10 @@
 import { RAW_FEATURES_SPEC } from './featureCatalog';
 
 export type Verb = 'C' | 'R' | 'U' | 'D' | 'A' | 'E';
-export type GrantRole = 'principal' | 'accountant' | 'admissions' | 'auditor' | 'class-teacher' | 'parent';
+export type GrantRole = 'principal' | 'accountant' | 'admissions' | 'auditor' | 'exam-coordinator' | 'class-teacher' | 'parent';
 export type Scope = 'All branches' | 'Own branch' | 'Own section only' | 'Own children only' | '–';
 
-export const GRANT_ROLES: GrantRole[] = ['principal', 'accountant', 'admissions', 'auditor', 'class-teacher', 'parent'];
+export const GRANT_ROLES: GrantRole[] = ['principal', 'accountant', 'admissions', 'auditor', 'exam-coordinator', 'class-teacher', 'parent'];
 export const VERB_ORDER: Verb[] = ['C', 'R', 'U', 'D', 'A', 'E'];
 
 export const GRANT_ROLE_LABEL: Record<GrantRole, string> = {
@@ -20,6 +20,7 @@ export const GRANT_ROLE_LABEL: Record<GrantRole, string> = {
   accountant: 'Accountant',
   admissions: 'Admissions officer',
   auditor: 'Auditor',
+  'exam-coordinator': 'Exam coordinator',
   'class-teacher': 'Class teacher',
   parent: 'Parent',
 };
@@ -68,7 +69,7 @@ const MODULE_POLICY: Record<string, ModulePolicy> = {
   IAM: { owner: 'principal', others: [] },
   RBAC: { owner: 'principal', others: [r('auditor', 'All branches', 'Read-only review of who can do what')] },
   CNS: { owner: 'principal', others: [AUDITOR_RE, r('parent', 'Own children only')] },
-  WFL: { owner: 'principal', others: [r('accountant', OWN, 'Own requests only'), r('admissions', OWN, 'Own requests only'), r('auditor', 'All branches')] },
+  WFL: { owner: 'principal', others: [r('accountant', OWN, 'Own requests only'), r('admissions', OWN, 'Own requests only'), r('exam-coordinator', OWN, 'Own requests and coordinator stages'), r('auditor', 'All branches')] },
   DOC: { owner: 'admissions', others: [ra('principal'), r('parent', 'Own children only')] },
   NOT: { owner: 'principal', others: [r('accountant'), r('admissions'), r('class-teacher', 'Own section only')] },
   AUD: { owner: 'principal', others: [AUDITOR_RE] },
@@ -83,7 +84,11 @@ const MODULE_POLICY: Record<string, ModulePolicy> = {
   },
   CUR: { owner: 'principal', others: [r('class-teacher', 'Own section only'), r('parent', 'Own children only')] },
   TTB: { owner: 'principal', others: [r('class-teacher', 'Own section only'), r('parent', 'Own children only')] },
-  EXM: { owner: 'class-teacher', ownerScope: 'Own section only', others: [ra('principal', 'Marks lock after approval'), r('parent', 'Own children only', 'After results are published')] },
+  EXM: {
+    owner: 'class-teacher',
+    ownerScope: 'Own section only',
+    others: [ra('principal', 'Marks lock after approval'), r('exam-coordinator', OWN, 'Schedules and published results'), r('parent', 'Own children only', 'After results are published')],
+  },
   RCD: { owner: 'class-teacher', ownerScope: 'Own section only', others: [ra('principal', 'Report cards publish only after approval'), r('parent', 'Own children only', 'After results are published')] },
   ATT: {
     owner: 'class-teacher',
@@ -103,7 +108,10 @@ const MODULE_POLICY: Record<string, ModulePolicy> = {
   COM: { owner: 'principal', others: [r('accountant'), r('admissions'), r('class-teacher', 'Own section only'), r('parent', 'Own children only')] },
   APP: { owner: 'parent', ownerScope: 'Own children only', others: [r('principal')] },
   LMS: { owner: 'class-teacher', ownerScope: 'Own section only', others: [r('principal'), r('parent', 'Own children only')] },
-  QPG: { owner: 'class-teacher', ownerScope: 'Own section only', others: [ra('principal', 'Papers are locked after approval')] },
+  QPG: {
+    owner: 'exam-coordinator',
+    others: [ra('principal', 'Cannot approve a paper they created; papers lock once submitted'), r('class-teacher', 'Own section only', 'Published papers only')],
+  },
   HLP: { owner: 'principal', others: [r('parent', 'Own children only', 'Own tickets only')] },
   // Layer 5 — compliance
   DPD: { owner: 'principal', others: [AUDITOR_RE] },
@@ -137,6 +145,15 @@ const FEATURE_OVERRIDES: Record<string, Partial_[]> = {
     { role: 'accountant', verbs: ['R', 'E'], scope: OWN, condition: 'Export separately granted and logged' },
     { role: 'class-teacher', verbs: ['R'], scope: 'Own section only', condition: 'Amount visible, concession reason hidden' },
     { role: 'parent', verbs: ['R'], scope: 'Own children only', condition: 'Always' },
+  ],
+  'QPG-009': [{ role: 'exam-coordinator', verbs: ['C', 'R', 'U', 'D', 'E'], scope: OWN, condition: 'Answer keys leave the system only for the evaluation team' }],
+  'QPG-010': [
+    { role: 'exam-coordinator', verbs: ['C', 'R', 'U', 'D', 'E'], scope: OWN, condition: 'Print only after the paper is approved' },
+    { role: 'principal', verbs: ['R', 'A', 'E'], scope: OWN, condition: 'Can export a paper for inspection' },
+  ],
+  'QPG-012': [
+    { role: 'exam-coordinator', verbs: ['C', 'R'], scope: OWN, condition: 'Submits papers; cannot approve own paper' },
+    { role: 'principal', verbs: ['R', 'A'], scope: OWN, condition: 'Approves, rejects or sends back every paper' },
   ],
   'FEE-042': [{ role: 'accountant', verbs: ['C', 'R', 'E'], scope: OWN, condition: 'Prepares the pack for the auditor; export is logged' }],
 };

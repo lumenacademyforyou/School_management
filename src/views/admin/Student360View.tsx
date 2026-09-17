@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { EditIdentifiersModal, EmisDisplay } from '../../components/students/StudentIdentifiers';
+import { useGrants } from '../../hooks/useGrants';
+import { useRoster } from '../../services/studentService';
 
 export const Student360View: React.FC = () => {
   const { student, setAdminView, setPtmModalOpen, setLeaveModalOpen, addToast } = useApp();
+  const g = useGrants();
+  const roster = useRoster();
+  const record = roster.find(r => r.id === student.id);
+  const [editingIds, setEditingIds] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'overview' | 'academics' | 'attendance' | 'transport' | 'hostel' | 'compliance'>('overview');
 
@@ -101,6 +108,11 @@ Generated on: ${new Date().toLocaleString()}`;
                 <span>•</span>
                 <span>DOB: <strong>{student.dob}</strong></span>
               </div>
+              {record && (
+                <div className="mt-3 max-w-md">
+                  <EmisDisplay student={record} canEdit={g.can('STU-026', 'U')} editWhy={g.why('STU-026', 'U')} onEdit={() => setEditingIds(true)} />
+                </div>
+              )}
             </div>
           </div>
 
@@ -171,7 +183,7 @@ Generated on: ${new Date().toLocaleString()}`;
           <div className="bg-[#f0f7fb]/60 p-3 rounded-xl border border-[#cbe0ec]">
             <div className="text-[10px] uppercase font-bold text-[#777587]">Fee Status</div>
             <div className="text-xl font-bold text-amber-700 mt-0.5">₹24,500 Due</div>
-            <div className="text-[11px] text-amber-800 font-semibold cursor-pointer hover:underline" onClick={() => setAdminView('fees-and-finance')}>
+            <div className="text-[11px] text-amber-800 font-semibold cursor-pointer hover:underline" onClick={() => setAdminView('fees')}>
               Pay via Ledger →
             </div>
           </div>
@@ -483,6 +495,7 @@ Generated on: ${new Date().toLocaleString()}`;
           </div>
         </div>
       )}
+      {editingIds && record && <EditIdentifiersModal student={record} onClose={() => setEditingIds(false)} />}
     </div>
   );
 };

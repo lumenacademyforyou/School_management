@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 
 export const LeaveApplicationModal: React.FC = () => {
-  const { leaveModalOpen, setLeaveModalOpen, student, addToast } = useApp();
+  const { leaveModalOpen, setLeaveModalOpen, addToast } = useApp();
 
   const [leaveType, setLeaveType] = useState('Medical Leave');
   const [fromDate, setFromDate] = useState('2025-03-03');

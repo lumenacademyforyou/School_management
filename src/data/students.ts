@@ -108,6 +108,39 @@ export const digitsOnly = (v: string) => v.replace(/\D/g, '');
 export const isValidPen = (pen: string) => /^\d{11}$/.test(pen);
 export const isValidApaar = (apaar: string) => /^\d{12}$/.test(digitsOnly(apaar)) && /^[\d\s-]+$/.test(apaar);
 
+// ----- EMIS (STU-026) -----
+
+export const EMIS_HELP = 'EMIS number used for Tamil Nadu school/student records.';
+export const EMIS_FORMAT = '16 digits, starting with the Tamil Nadu state code 33 (demo rule).';
+
+export type EmisState = 'empty' | 'valid' | 'invalid' | 'duplicate';
+
+export interface EmisCheck {
+  state: EmisState;
+  message: string;
+  /** The other student holding the same number, when it is a duplicate within the school. */
+  conflictWith?: string;
+}
+
+export const normaliseEmis = (v: string) => v.replace(/[\s-]/g, '');
+export const isValidEmis = (v: string) => /^33\d{14}$/.test(normaliseEmis(v));
+export const formatEmis = (v: string) => normaliseEmis(v).replace(/(\d{4})(?=\d)/g, '$1 ');
+
+/** Numbers the (mock) state registry reports as issued to students of other schools. */
+export const STATE_EMIS_REGISTRY = new Set(['3302110400218841', '3302110400218842']);
+
+export const checkEmis = (value: string | undefined, studentId: string, roster: RosterStudent[]): EmisCheck => {
+  const v = normaliseEmis(value ?? '');
+  if (!v) return { state: 'empty', message: 'Not recorded yet. State returns need it.' };
+  if (!/^\d+$/.test(v)) return { state: 'invalid', message: 'Use digits only.' };
+  if (!v.startsWith('33')) return { state: 'invalid', message: 'Tamil Nadu EMIS numbers start with 33.' };
+  if (v.length !== 16) return { state: 'invalid', message: `Must be 16 digits; this has ${v.length}.` };
+  const other = roster.find(s => s.id !== studentId && !s.mergedInto && s.emis && normaliseEmis(s.emis) === v);
+  if (other) return { state: 'duplicate', message: `Already used by ${other.name} (${other.admissionNo}).`, conflictWith: other.id };
+  if (STATE_EMIS_REGISTRY.has(v)) return { state: 'duplicate', message: 'The state registry lists this number for a student of another school (mock check).' };
+  return { state: 'valid', message: 'Format and uniqueness checks passed.' };
+};
+
 export interface IdentifierIssue {
   studentId: string;
   field: 'PEN' | 'APAAR' | 'EMIS';
@@ -130,7 +163,9 @@ export const identifierIssues = (students: RosterStudent[]): IdentifierIssue[] =
     if (!s.apaar) issues.push({ studentId: s.id, field: 'APAAR', problem: 'APAAR ID not generated yet' });
     else if (!isValidApaar(s.apaar)) issues.push({ studentId: s.id, field: 'APAAR', problem: `“${s.apaar}” is not 12 digits` });
     else if (apaarCount.get(digitsOnly(s.apaar))! > 1) issues.push({ studentId: s.id, field: 'APAAR', problem: `APAAR ${s.apaar} is used by more than one student` });
-    if (!s.emis) issues.push({ studentId: s.id, field: 'EMIS', problem: 'State EMIS number missing' });
+    const emis = checkEmis(s.emis, s.id, live);
+    if (emis.state === 'empty') issues.push({ studentId: s.id, field: 'EMIS', problem: 'State EMIS number missing' });
+    else if (emis.state !== 'valid') issues.push({ studentId: s.id, field: 'EMIS', problem: emis.message });
   });
   return issues;
 };
@@ -150,12 +185,13 @@ export const editDistance = (a: string, b: string) => {
   return dp[a.length][b.length];
 };
 
-/** Matches name (typo-tolerant: one edit per word of 4+ letters), admission no, mobile, PEN or APAAR. */
+/** Matches name (typo-tolerant: one edit per word of 4+ letters), admission no, mobile, PEN, APAAR or EMIS. */
 export const matchesSearch = (s: RosterStudent, query: string) => {
   const q = normalise(query);
   if (!q) return true;
   const qDigits = digitsOnly(query);
   if (qDigits.length >= 4 && [s.guardianMobile, s.pen, s.apaar, s.admissionNo].some(v => digitsOnly(v).includes(qDigits))) return true;
+  if (qDigits.length >= 6 && s.emis && digitsOnly(s.emis).includes(qDigits)) return true;
   if (normalise(s.admissionNo).includes(q) || normalise(s.name).includes(q)) return true;
   const nameTokens = normalise(s.name).split(' ');
   const tokenMatches = (t: string, n: string) => n.startsWith(t) || (t.length >= 4 && (editDistance(t, n) <= 1 || editDistance(t, n.slice(0, t.length)) <= 1));
@@ -213,6 +249,7 @@ export const toProfile = (s: RosterStudent): Student => ({
   house: s.house,
   apaarId: s.apaar,
   pen: s.pen,
+  emis: s.emis,
   admissionNo: s.admissionNo,
   gender: s.gender,
   dob: s.dob,
@@ -261,7 +298,7 @@ const SEED_EXTRAS: Record<number, Partial<RosterStudent>> = {
   4: { healthNotes: 'Recovering from viral fever — medical leave till 30 Sep', apaar: '' },
   5: { pen: '2023109941', disciplineNotes: 'Counsellor sessions fortnightly (exam anxiety)' },
   6: { guardianMobile: '+91 90030 45521', guardianName: 'R. Selvan' },
-  7: { guardianMobile: '+91 90030 45521', guardianName: 'R. Selvan' },
+  7: { guardianMobile: '+91 90030 45521', guardianName: 'R. Selvan', transportRoute: 'Route 3' },
   9: { disciplineNotes: 'Suspended 10–20 Sep: repeated bullying incident; parents informed' },
   10: { apaar: '4410-2231-0099' },
   11: { apaar: '4410-2231-0099', guardianMobile: '+91 98840 90124', guardianName: 'Suresh Menon' },
@@ -324,6 +361,7 @@ export const EXPORT_COLUMNS: { key: string; label: string; restricted?: 'health'
   { key: 'status', label: 'Status', value: s => s.status },
   { key: 'pen', label: 'PEN', value: s => s.pen },
   { key: 'apaar', label: 'APAAR', value: s => s.apaar },
+  { key: 'emis', label: 'EMIS', value: s => s.emis ?? '' },
   { key: 'guardian', label: 'Guardian', value: s => s.guardianName },
   { key: 'mobile', label: 'Guardian mobile', value: s => s.guardianMobile },
   { key: 'fee', label: 'Fee status', value: s => s.feeStatus },

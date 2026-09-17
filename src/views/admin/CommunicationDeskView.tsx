@@ -27,7 +27,6 @@ import {
   Language,
   MESSAGING_AS_OF,
   Message,
-  NO_PHOTO_CONSENT,
   Notice,
   PTM_TEACHERS,
   PtmSlot,

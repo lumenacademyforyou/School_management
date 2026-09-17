@@ -56,12 +56,13 @@ const ROLE_NAMES: Record<Role, string> = {
   HR: 'HR Officer',
 };
 
-/** Stage owners each console role answers for. Class-teacher and HR stages are handled outside the console. */
+/** Stage owners each console role answers for. HR stages are handled outside the console. */
 const STAGES_FOR: Record<StaffRole, Role[]> = {
   principal: ['PR', 'BA'],
   accountant: ['AC'],
   admissions: ['AO'],
   auditor: [],
+  'exam-coordinator': ['CO'],
 };
 
 const WORKFLOWS: WorkflowDef[] = [

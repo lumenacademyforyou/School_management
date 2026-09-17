@@ -1,5 +1,5 @@
 // UI strings for the parent app (APP-019). English is complete; Tamil and Hindi fall back to English per key.
-import type { Language } from '../data/messaging';
+import type { Language } from '../../src/data/messaging';
 
 const EN = {
   home: 'Home',

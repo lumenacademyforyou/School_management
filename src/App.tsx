@@ -20,7 +20,7 @@ import { FeatureMasterView } from './views/admin/FeatureMasterView';
 import { Student360View } from './views/admin/Student360View';
 import { TransportView } from './views/admin/TransportView';
 import { HostelView } from './views/admin/HostelView';
-import { QuestionPapersView } from './views/admin/QuestionPapersView';
+import { QuestionPaperGeneratorView } from './views/admin/questionPapers/QuestionPaperGeneratorView';
 import { QuestionBankView } from './views/admin/QuestionBankView';
 import { LMSCoursesView } from './views/admin/LMSCoursesView';
 import { AssignmentStudioView } from './views/admin/AssignmentStudioView';
@@ -64,43 +64,32 @@ const renderView = (view: AdminView) => {
     case 'feature-spec-matrix':
       return <FeatureMasterView />;
     case 'students':
-    case 'parents':
       return <StudentDirectoryView />;
     case 'student-360':
       return <Student360View />;
     case 'teacher-management':
-    case 'teachers':
       return <TeacherManagementView />;
     case 'non-teaching-staff':
-    case 'employees':
       return <NonTeachingStaffView />;
     case 'hr-and-payroll':
-    case 'payroll':
       return <HRPayrollView />;
     case 'id-cards':
       return <IdCardStudioView />;
-    case 'classes':
     case 'academics':
       return <AcademicsView />;
-    case 'subjects':
     case 'curriculum':
       return <CurriculumView />;
     case 'timetable':
       return <TimetableSubstitutionView />;
     case 'results':
-    case 'report-cards':
       return <ReportCardsView />;
     case 'attendance':
       return <AttendanceDeskView />;
     case 'exams':
       return <ExaminationsView />;
     case 'question-papers':
-      return <QuestionPapersView />;
+      return <QuestionPaperGeneratorView />;
     case 'fees':
-    case 'payments':
-    case 'invoices':
-    case 'financial-reports':
-    case 'fees-and-finance':
       return <FeesDeskView />;
     case 'accounting':
       return <AccountingView />;
@@ -119,16 +108,12 @@ const renderView = (view: AdminView) => {
     case 'helpdesk':
       return <HelpdeskView />;
     case 'lms':
-    case 'lms-and-courses':
       return <LMSCoursesView />;
     case 'assignments':
-    case 'assignment-studio':
       return <AssignmentStudioView />;
     case 'question-bank':
       return <QuestionBankView />;
     case 'communication':
-    case 'broadcast-sms':
-    case 'notifications':
       return <CommunicationDeskView />;
     case 'dpdpa-and-consent':
       return <DPDPAComplianceView />;
@@ -147,10 +132,7 @@ const renderView = (view: AdminView) => {
     case 'documents':
       return <DocumentManagementView />;
     case 'users-and-roles':
-    case 'auth-and-rbac':
     case 'tenants':
-    case 'tenancy-and-campuses':
-    case 'settings':
       return <TenancyRBACView />;
     case 'workflows':
       return <WorkflowsView />;
@@ -181,7 +163,7 @@ const NotAllotted: React.FC = () => {
 };
 
 /** Screens that check each action against the grant matrix themselves, or only display data. */
-const SELF_ENFORCING: AdminView[] = ['dashboard', 'feature-spec-matrix', 'access-grants', 'fees', 'workflows', 'audit-log', 'reports'];
+const SELF_ENFORCING: AdminView[] = ['dashboard', 'feature-spec-matrix', 'access-grants', 'fees', 'workflows', 'audit-log', 'reports', 'question-papers', 'question-bank'];
 
 const Screen: React.FC<{ view: AdminView }> = ({ view }) => {
   const { currentUser } = useApp();
@@ -201,7 +183,7 @@ const Screen: React.FC<{ view: AdminView }> = ({ view }) => {
 };
 
 const Console: React.FC = () => {
-  const { adminView, currentUser, sidebarOpen, setSidebarOpen, isAuthenticated } = useApp();
+  const { adminView, sidebarOpen, setSidebarOpen, isAuthenticated } = useApp();
 
   if (!isAuthenticated) {
     return (

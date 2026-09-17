@@ -1,10 +1,10 @@
 // On-device store for the teacher app (local-first). Survives reloads and works offline;
 // the outbox is pushed to the demo backend when the device is online.
 import { useCallback, useEffect, useState } from 'react';
-import { INITIAL_REGISTER, Mark, StatusCode, markKey } from '../../data/attendance';
-import { INITIAL_ROSTER } from '../../data/students';
-import { APP_TODAY, sectionOf } from '../../shared/schoolData';
-import { BackendState, MarkHistory, ServerMark, getBackend, nowStamp, serverMark, updateBackend } from '../../shared/demoBackend';
+import { INITIAL_REGISTER, Mark, StatusCode, markKey } from '../../src/data/attendance';
+import { INITIAL_ROSTER } from '../../src/data/students';
+import { APP_TODAY, sectionOf } from '../shared/schoolData';
+import { BackendState, MarkHistory, ServerMark, getBackend, nowStamp, serverMark, updateBackend } from '../shared/demoBackend';
 
 export interface CachedMark {
   code: StatusCode;

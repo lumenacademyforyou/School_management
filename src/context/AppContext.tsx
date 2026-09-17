@@ -9,11 +9,11 @@ import {
 } from '../types';
 import {
   CAMPUSES,
-  PRIMARY_STUDENT,
   CLASS_10A_STUDENTS,
   FEE_INVOICES,
 } from '../data/mockData';
 import { HOME_VIEW, STAFF_ACCOUNTS, StaffAccount } from '../data/staffAccess';
+import { INITIAL_ROSTER, toProfile } from '../data/students';
 
 export interface ToastMessage {
   id: string;
@@ -23,18 +23,16 @@ export interface ToastMessage {
 }
 
 interface AppContextType {
-  // Authentication & Session
+  // Session
   isAuthenticated: boolean;
   currentUser: AuthUser;
   signIn: (account: StaffAccount) => void;
   logout: () => void;
 
+  // Navigation
   adminView: AdminView;
   setAdminView: (view: AdminView) => void;
-  
-  // Navigation helper
-  navigateToAdminView: (view: AdminView) => void;
-  
+
   // Campuses
   selectedCampus: Campus;
   setSelectedCampus: (campus: Campus) => void;
@@ -44,9 +42,8 @@ interface AppContextType {
   // Active student
   student: Student;
   setStudent: (student: Student) => void;
-  setSelectedStudent: (student: Student) => void;
 
-  // Live Attendance
+  // Class 10-A roll call (Attendance desk)
   attendanceRecords: AttendanceRecord[];
   updateStudentAttendance: (studentId: string, status: 'P' | 'L' | 'A' | 'E', notes?: string) => void;
   markAllPresent: () => void;
@@ -54,25 +51,23 @@ interface AppContextType {
   // Invoices (dashboard and report widgets)
   invoices: FeeInvoice[];
 
-  // Fleet & Stops
+  // Transport
   driverCurrentStopIndex: number;
   advanceDriverStop: () => void;
   sosActive: boolean;
   triggerSos: (active: boolean) => void;
 
-  // Modals & Drawers
+  // Modals and drawers
   ptmModalOpen: boolean;
   setPtmModalOpen: (open: boolean) => void;
-  setIsPtmModalOpen: (open: boolean) => void;
   leaveModalOpen: boolean;
   setLeaveModalOpen: (open: boolean) => void;
-  setIsLeaveModalOpen: (open: boolean) => void;
   searchModalOpen: boolean;
   setSearchModalOpen: (open: boolean) => void;
   quickActionOpen: boolean;
   setQuickActionOpen: (open: boolean) => void;
 
-  // Responsive Mobile Sidebar
+  // Mobile sidebar
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   toggleSidebar: () => void;
@@ -103,12 +98,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<AuthUser>(() => toAuthUser(STAFF_ACCOUNTS[0]));
 
-
   const [adminView, setAdminView] = useState<AdminView>('dashboard');
 
   const [campuses, setCampuses] = useState<Campus[]>(CAMPUSES);
   const [selectedCampus, setSelectedCampus] = useState<Campus>(CAMPUSES[0]);
-  const [student, setStudent] = useState<Student>(PRIMARY_STUDENT);
+  const [student, setStudent] = useState<Student>(() => toProfile(INITIAL_ROSTER[0]));
 
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>(CLASS_10A_STUDENTS);
   const [invoices] = useState<FeeInvoice[]>(FEE_INVOICES);
@@ -154,10 +148,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     addToast('Signed out', 'info');
   }, [addToast]);
 
-  const navigateToAdminView = useCallback((view: AdminView) => {
-    setAdminView(view);
-  }, []);
-
   const updateStudentAttendance = useCallback((studentId: string, status: 'P' | 'L' | 'A' | 'E', notes?: string) => {
     setAttendanceRecords(prev =>
       prev.map(item =>
@@ -187,7 +177,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     addToast('All 10 students marked Present', 'success', 'Class 10-A register synchronized to school central database.');
   }, [addToast]);
 
-
   const advanceDriverStop = useCallback(() => {
     setDriverCurrentStopIndex(prev => (prev < 5 ? prev + 1 : 0));
     addToast('Bus GPS Geofence Triggered', 'info', 'Next stop notification sent to 7 waiting parents on Route #14.');
@@ -211,14 +200,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         logout,
         adminView,
         setAdminView,
-        navigateToAdminView,
         selectedCampus,
         setSelectedCampus,
         campuses,
         setCampuses,
         student,
         setStudent,
-        setSelectedStudent: setStudent,
         attendanceRecords,
         updateStudentAttendance,
         markAllPresent,
@@ -229,10 +216,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         triggerSos,
         ptmModalOpen,
         setPtmModalOpen,
-        setIsPtmModalOpen: setPtmModalOpen,
         leaveModalOpen,
         setLeaveModalOpen,
-        setIsLeaveModalOpen: setLeaveModalOpen,
         searchModalOpen,
         setSearchModalOpen,
         quickActionOpen,

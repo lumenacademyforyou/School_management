@@ -271,7 +271,7 @@ const toMinutes = (hhmm: string) => {
 };
 
 export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'entry' }) => {
-  const { addToast } = useApp();
+  const { addToast, setAdminView } = useApp();
   const [tab, setTab] = useState<Tab>(initialTab);
   const [marks, setMarks] = useState<MarkRow[]>(INITIAL_MARKS);
   const [stage, setStage] = useState<EntryStage>('Draft');
@@ -451,6 +451,10 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
           </div>
           <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">Half-Yearly Examination · Class 10-A</h1>
           <p className="text-xs text-[#464555] mt-1">AY 2024–25 · CBSE · Science marks stage: {stage}</p>
+          <button onClick={() => setAdminView('question-papers')} className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-[#0e5d84] hover:underline">
+            <span className="material-symbols-outlined text-sm">description</span>
+            Question Paper Generator
+          </button>
         </div>
         <div className="flex items-center gap-1">
           {STAGES.map((s, i) => (

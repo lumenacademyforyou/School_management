@@ -1,9 +1,9 @@
 // Reference data shared by the parent and teacher apps.
 // Deterministic: everything is derived from fixed tables or a string hash.
-import { INITIAL_ROSTER, RosterStudent } from '../data/students';
-import { SECTION_CONFIG } from '../data/attendance';
-import { INITIAL_GUARDIANS, NO_PHOTO_CONSENT, Recipient } from '../data/messaging';
-import { CONSENT_PURPOSES } from '../data/admissions';
+import { INITIAL_ROSTER, RosterStudent } from '../../src/data/students';
+import { SECTION_CONFIG } from '../../src/data/attendance';
+import { INITIAL_GUARDIANS, NO_PHOTO_CONSENT, Recipient } from '../../src/data/messaging';
+import { CONSENT_PURPOSES } from '../../src/data/admissions';
 
 export const APP_TODAY = '2024-09-16';
 export const APP_NOW = '10:05';

@@ -3,9 +3,9 @@
 // see each other's writes (the `storage` event syncs other tabs). Without storage it falls back
 // to memory and still works in a single tab.
 import { useSyncExternalStore } from 'react';
-import { INITIAL_LEAVES, INITIAL_REGISTER, LeaveRequest, Mark, markKey, StatusCode } from '../data/attendance';
-import { INITIAL_THREADS, Thread } from '../data/messaging';
-import { Payment } from '../data/fees';
+import { INITIAL_LEAVES, INITIAL_REGISTER, LeaveRequest, Mark, markKey, StatusCode } from '../../src/data/attendance';
+import { INITIAL_THREADS, Thread } from '../../src/data/messaging';
+import { Payment } from '../../src/data/fees';
 import {
   APP_TODAY,
   ClassAnnouncement,
@@ -15,8 +15,7 @@ import {
   INITIAL_CONSENT,
   INITIAL_HOMEWORK,
 } from './schoolData';
-import type { Channel } from '../data/messaging';
-import type { Language } from '../data/messaging';
+import type { Channel, Language } from '../../src/data/messaging';
 
 export interface ServerMark extends Mark {
   /** Revision of this register cell; the seeded register is revision 1 */

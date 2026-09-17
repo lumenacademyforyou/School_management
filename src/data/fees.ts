@@ -600,8 +600,6 @@ export const linkToken = (invoiceNo: string) => {
 
 export const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
 
-export const studentsForFees = () => INITIAL_ROSTER;
-
 // ---------------------------------------------------------------------------
 // Seed data — derived from the rules above so every figure is consistent
 // ---------------------------------------------------------------------------

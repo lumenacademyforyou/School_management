@@ -1,20 +1,3 @@
-export interface SMSFeature {
-  id: string; // e.g. "TEN-001"
-  moduleCode: string; // e.g. "TEN"
-  moduleName: string;
-  layer: 1 | 2 | 3 | 4 | 5 | 6;
-  layerName: string;
-  code: string; // "001"
-  name: string;
-  phase: 'P1' | 'P2' | 'P3' | 'P4';
-  phaseName: string;
-  priority: 'M' | 'S' | 'C'; // Must, Should, Could
-  priorityName: 'Must Have' | 'Should Have' | 'Could Have';
-  targetView: string;
-  status: 'Implemented' | 'Live Ready' | 'Operational';
-  description: string;
-}
-
 export interface SMSModule {
   id: string;
   code: string;
@@ -57,14 +40,14 @@ export const SMS_MODULES: SMSModule[] = [
   { id: 'cur', code: 'CUR', number: 14, name: 'Academics — curriculum', layer: 2, layerName: 'Core Domain', count: 10, targetView: 'curriculum', icon: 'menu_book', description: 'Subject mapping, elective groups, syllabus coverage, and lesson plans' },
   { id: 'ttb', code: 'TTB', number: 15, name: 'Academics — timetable & substitution', layer: 2, layerName: 'Core Domain', count: 18, targetView: 'timetable', icon: 'calendar_month', description: 'Period matrix, clash detection, automatic generator, absence substitution, drag-and-drop' },
   { id: 'exm', code: 'EXM', number: 16, name: 'Academics — examination & assessment', layer: 2, layerName: 'Core Domain', count: 27, targetView: 'exams', icon: 'quiz', description: 'Exam definitions, marks entry moderation, board computation, and hall tickets' },
-  { id: 'rcd', code: 'RCD', number: 17, name: 'Academics — report cards', layer: 2, layerName: 'Core Domain', count: 14, targetView: 'report-cards', icon: 'grading', description: 'CBSE Holistic Progress Card (HPC), variable binding, and digital publishing' },
+  { id: 'rcd', code: 'RCD', number: 17, name: 'Academics — report cards', layer: 2, layerName: 'Core Domain', count: 14, targetView: 'results', icon: 'grading', description: 'CBSE Holistic Progress Card (HPC), variable binding, and digital publishing' },
   { id: 'att', code: 'ATT', number: 18, name: 'Attendance', layer: 2, layerName: 'Core Domain', count: 23, targetView: 'attendance', icon: 'fact_check', description: 'Teacher roll call, biometric/RFID ingestion, shortfall reports, and heatmap' },
   { id: 'fee', code: 'FEE', number: 19, name: 'Fees & finance', layer: 2, layerName: 'Core Domain', count: 42, targetView: 'fees', icon: 'payments', description: 'Dual-entry fee ledger, instalment schedule, concessions, and defaulter list' },
   { id: 'acc', code: 'ACC', number: 20, name: 'Accounting', layer: 2, layerName: 'Core Domain', count: 11, targetView: 'accounting', icon: 'account_balance', description: 'Chart of accounts, fee to GL mapping, expense approval, and Tally/Zoho export' },
 
   // Layer 3
   { id: 'hrm', code: 'HRM', number: 21, name: 'HR & staff management', layer: 3, layerName: 'Operations', count: 20, targetView: 'hr-and-payroll', icon: 'engineering', description: 'Staff directory, qualifications, statutory IDs, leave calendar, and appraisals' },
-  { id: 'pay', code: 'PAY', number: 22, name: 'Payroll', layer: 3, layerName: 'Operations', count: 14, targetView: 'payroll', icon: 'receipt_long', description: '7th CPC pay-bands, attendance-linked calculation, payslips, and bank transfer files' },
+  { id: 'pay', code: 'PAY', number: 22, name: 'Payroll', layer: 3, layerName: 'Operations', count: 14, targetView: 'hr-and-payroll', icon: 'receipt_long', description: '7th CPC pay-bands, attendance-linked calculation, payslips, and bank transfer files' },
   { id: 'lib', code: 'LIB', number: 23, name: 'Library', layer: 3, layerName: 'Operations', count: 15, targetView: 'library', icon: 'local_library', description: 'Dewey decimal catalogue, barcode/QR scanner, circulation, and fine integration' },
   { id: 'trn', code: 'TRN', number: 24, name: 'Transport', layer: 3, layerName: 'Operations', count: 17, targetView: 'transport', icon: 'directions_bus', description: 'AIS-140 GPS telematics, live route tracking, boarding RFID, and fuel logs' },
   { id: 'hst', code: 'HST', number: 25, name: 'Hostel', layer: 3, layerName: 'Operations', count: 15, targetView: 'hostel', icon: 'night_shelter', description: 'Block & bed allocation, mess attendance, outpass management, and occupancy' },

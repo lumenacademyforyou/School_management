@@ -31,13 +31,13 @@ export const AcademicsView: React.FC = () => {
     time: '02:00 - 02:45 PM',
   });
 
-  const [teachers, setTeachers] = useState([
+  const teachers = [
     { name: 'Mrs. Malini Iyer (PGT Physics)', load: '24 / 28', status: 'Optimal', activeNow: true },
     { name: 'Dr. V. Raghavan (HOD Mathematics)', load: '26 / 28', status: 'High', activeNow: false },
     { name: 'Mr. S. Balaji (PGT Chemistry)', load: '22 / 28', status: 'Optimal', activeNow: false },
     { name: 'Ms. Clara D’Souza (TGT English)', load: '22 / 28', status: 'Optimal', activeNow: false },
     { name: 'Coach R. Dinesh (PE & Sports)', load: '20 / 28', status: 'Available', activeNow: false },
-  ]);
+  ];
 
   const handleDispatchProxy = (e: React.FormEvent) => {
     e.preventDefault();

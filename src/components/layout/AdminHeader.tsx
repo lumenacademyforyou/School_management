@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import { viewMeta } from '../../data/adminNav';
 
 export const AdminHeader: React.FC = () => {
   const {
@@ -52,106 +53,7 @@ export const AdminHeader: React.FC = () => {
     };
   }, []);
 
-  const getViewMeta = () => {
-    switch (adminView) {
-      case 'dashboard':
-        return { label: 'Dashboard', icon: 'space_dashboard', section: 'Overview' };
-      case 'feature-spec-matrix':
-        return { label: 'Feature catalogue', icon: 'checklist', section: 'Overview' };
-      case 'admissions':
-        return { label: 'Admissions', icon: 'how_to_reg', section: 'Students' };
-      case 'students':
-        return { label: 'Students', icon: 'groups', section: 'Students' };
-      case 'student-360':
-        return { label: 'Student profile', icon: 'badge', section: 'Students' };
-      case 'subjects':
-      case 'curriculum':
-        return { label: 'Curriculum', icon: 'menu_book', section: 'Academics' };
-      case 'classes':
-      case 'academics':
-        return { label: 'Day Order & Proxy', icon: 'today', section: 'Academics' };
-      case 'timetable':
-        return { label: 'Timetable', icon: 'calendar_month', section: 'Academics' };
-      case 'exams':
-        return { label: 'Examinations', icon: 'quiz', section: 'Academics' };
-      case 'question-papers':
-        return { label: 'Question Papers', icon: 'auto_awesome', section: 'Academics' };
-      case 'question-bank':
-        return { label: 'Question Bank', icon: 'database', section: 'Academics' };
-      case 'results':
-      case 'report-cards':
-        return { label: 'Report Cards', icon: 'grading', section: 'Academics' };
-      case 'attendance':
-        return { label: 'Attendance', icon: 'fact_check', section: 'Students' };
-      case 'lms':
-      case 'lms-and-courses':
-        return { label: 'Digital Classroom', icon: 'play_lesson', section: 'Academics' };
-      case 'assignments':
-      case 'assignment-studio':
-        return { label: 'Assignments', icon: 'assignment_turned_in', section: 'Academics' };
-      case 'teacher-management':
-      case 'teachers':
-        return { label: 'Teachers', icon: 'school', section: 'Staff' };
-      case 'non-teaching-staff':
-      case 'employees':
-        return { label: 'Support Staff', icon: 'badge', section: 'Staff' };
-      case 'hr-and-payroll':
-      case 'payroll':
-        return { label: 'HR & Payroll', icon: 'engineering', section: 'Staff' };
-      case 'id-cards':
-        return { label: 'ID Cards', icon: 'id_card', section: 'Students' };
-      case 'fees':
-      case 'fees-and-finance':
-        return { label: 'Fees', icon: 'payments', section: 'Finance' };
-      case 'accounting':
-        return { label: 'Accounting', icon: 'account_balance', section: 'Finance' };
-      case 'transport':
-        return { label: 'Transport', icon: 'directions_bus', section: 'Operations' };
-      case 'hostel':
-        return { label: 'Hostel', icon: 'night_shelter', section: 'Operations' };
-      case 'library':
-        return { label: 'Library', icon: 'local_library', section: 'Operations' };
-      case 'inventory':
-        return { label: 'Inventory', icon: 'inventory_2', section: 'Operations' };
-      case 'procurement':
-        return { label: 'Procurement', icon: 'shopping_bag', section: 'Operations' };
-      case 'helpdesk':
-        return { label: 'Helpdesk', icon: 'support_agent', section: 'Operations' };
-      case 'communication':
-      case 'notifications':
-        return { label: 'Messages & Notices', icon: 'campaign', section: 'Communication' };
-      case 'dpdpa-and-consent':
-        return { label: 'Consent & Privacy', icon: 'verified_user', section: 'Compliance' };
-      case 'udise-and-apaar':
-        return { label: 'UDISE+ & APAAR', icon: 'fingerprint', section: 'Compliance' };
-      case 'certificates':
-        return { label: 'Certificates', icon: 'workspace_premium', section: 'Compliance' };
-      case 'integrations':
-        return { label: 'Integrations', icon: 'extension', section: 'Compliance' };
-      case 'tenants':
-      case 'tenancy-and-campuses':
-        return { label: 'Campuses', icon: 'domain', section: 'Administration' };
-      case 'users-and-roles':
-      case 'auth-and-rbac':
-        return { label: 'Users & Roles', icon: 'admin_panel_settings', section: 'Administration' };
-      case 'workflows':
-        return { label: 'Approvals', icon: 'account_tree', section: 'Administration' };
-      case 'reports':
-        return { label: 'Reports', icon: 'analytics', section: 'Administration' };
-      case 'documents':
-        return { label: 'Documents', icon: 'folder_open', section: 'Administration' };
-      case 'audit-log':
-        return { label: 'Audit Log', icon: 'history', section: 'Administration' };
-      case 'masters':
-        return { label: 'Masters & Settings', icon: 'tune', section: 'Administration' };
-      case 'data-migration':
-        return { label: 'Data Import', icon: 'upload_file', section: 'Administration' };
-      default:
-        return { label: 'Lumen Academy', icon: 'school', section: 'Overview' };
-    }
-  };
-
-  const viewMeta = getViewMeta();
+  const meta = viewMeta(adminView);
 
   return (
     <header className="bg-[#ffffff] border-b border-[#e0ecf4] px-3 md:px-4 py-2 flex items-center justify-between gap-3 shrink-0 z-40 shadow-2xs">
@@ -226,11 +128,11 @@ export const AdminHeader: React.FC = () => {
 
         {/* Section & Active Module Breadcrumb */}
         <div className="hidden lg:flex items-center gap-2 border-l border-[#e0ecf4] pl-3 text-xs">
-          <span className="text-[#777587] font-semibold text-[11px] uppercase tracking-wider">{viewMeta.section}</span>
+          <span className="text-[#777587] font-semibold text-[11px] uppercase tracking-wider">{meta.section}</span>
           <span className="text-[#c7c4d8]">/</span>
           <span className="font-bold text-[#082b3d] flex items-center gap-1">
-            <span className="material-symbols-outlined text-sm text-[#0e5d84]">{viewMeta.icon}</span>
-            <span>{viewMeta.label}</span>
+            <span className="material-symbols-outlined text-sm text-[#0e5d84]">{meta.icon}</span>
+            <span>{meta.label}</span>
           </span>
         </div>
 

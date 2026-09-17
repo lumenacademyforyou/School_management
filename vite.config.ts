@@ -16,12 +16,12 @@ const APPS = {
 } as const;
 type AppName = keyof typeof APPS;
 
-/** The admin dev server must not serve the parent or teacher apps. */
+/** The admin dev server must not serve the parent or teacher apps (only their raw source, for the feature-coverage scan). */
 const hideOtherApps = (): Plugin => ({
   name: 'lumen-hide-other-apps',
   configureServer(server) {
     server.middlewares.use((req, res, next) => {
-      if (req.url?.startsWith('/apps/')) {
+      if (req.url?.startsWith('/apps/') && !/[?&]raw(&|$)/.test(req.url)) {
         res.statusCode = 404;
         res.end('Not found');
         return;
@@ -45,11 +45,6 @@ export default defineConfig(({mode}) => {
     build: {
       outDir: path.resolve(__dirname, 'dist', app),
       emptyOutDir: true,
-    },
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, '.'),
-      },
     },
     server: {
       fs: {allow: [__dirname]},

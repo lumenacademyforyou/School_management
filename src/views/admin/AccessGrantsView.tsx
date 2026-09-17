@@ -141,7 +141,7 @@ export const AccessGrantsView: React.FC = () => {
           </span>
         </div>
 
-        <div className="p-3 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 border-b border-[#f0f7fb]">
+        <div className="p-3 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-2 border-b border-[#f0f7fb]">
           {summary.map(s => (
             <button
               key={s.role}

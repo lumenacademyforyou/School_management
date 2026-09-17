@@ -44,7 +44,6 @@ import {
   headByCode,
   inr,
   invoiceTotal,
-  isEffective,
   linkToken,
   nextReceiptNo,
   prorationFactor,

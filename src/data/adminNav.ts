@@ -5,7 +5,7 @@ export interface NavItem {
   id: AdminView;
   label: string;
   icon: string;
-  /** Other view ids that should highlight this item */
+  /** Sub-screens that should highlight this item */
   aliases?: AdminView[];
 }
 
@@ -22,7 +22,7 @@ export const BASELINE_GROUPS: NavGroup[] = [
     label: 'Students',
     items: [
       { id: 'admissions', label: 'Admissions', icon: 'how_to_reg' },
-      { id: 'students', label: 'Students', icon: 'groups', aliases: ['student-360', 'parents'] },
+      { id: 'students', label: 'Students', icon: 'groups', aliases: ['student-360'] },
       { id: 'attendance', label: 'Attendance', icon: 'fact_check' },
       { id: 'id-cards', label: 'ID Cards', icon: 'id_card' },
     ],
@@ -31,20 +31,20 @@ export const BASELINE_GROUPS: NavGroup[] = [
     id: 'academics',
     label: 'Academics',
     items: [
-      { id: 'curriculum', label: 'Curriculum', icon: 'menu_book', aliases: ['subjects'] },
+      { id: 'curriculum', label: 'Curriculum', icon: 'menu_book' },
       { id: 'timetable', label: 'Timetable', icon: 'calendar_month' },
     ],
   },
   {
     id: 'finance',
     label: 'Finance',
-    items: [{ id: 'fees', label: 'Fees', icon: 'payments', aliases: ['fees-and-finance', 'payments', 'invoices', 'financial-reports'] }],
+    items: [{ id: 'fees', label: 'Fees', icon: 'payments' }],
   },
   {
     id: 'engagement',
     label: 'Communication',
     items: [
-      { id: 'communication', label: 'Messages & Notices', icon: 'campaign', aliases: ['notifications', 'broadcast-sms'] },
+      { id: 'communication', label: 'Messages & Notices', icon: 'campaign' },
     ],
   },
   {
@@ -60,8 +60,8 @@ export const BASELINE_GROUPS: NavGroup[] = [
     id: 'admin',
     label: 'Administration',
     items: [
-      { id: 'tenants', label: 'Campuses', icon: 'domain', aliases: ['tenancy-and-campuses', 'settings'] },
-      { id: 'users-and-roles', label: 'Users & Roles', icon: 'manage_accounts', aliases: ['auth-and-rbac'] },
+      { id: 'tenants', label: 'Campuses', icon: 'domain' },
+      { id: 'users-and-roles', label: 'Users & Roles', icon: 'manage_accounts' },
       { id: 'access-grants', label: 'Access Grants', icon: 'admin_panel_settings' },
       { id: 'workflows', label: 'Approvals', icon: 'account_tree' },
       { id: 'reports', label: 'Reports', icon: 'analytics' },
@@ -80,21 +80,21 @@ export const LATER_GROUPS: NavGroup[] = [
     label: 'Academics · later phases',
     items: [
       { id: 'exams', label: 'Examinations', icon: 'quiz' },
-      { id: 'results', label: 'Report Cards', icon: 'grading', aliases: ['report-cards'] },
-      { id: 'academics', label: 'Day Order & Proxy', icon: 'today', aliases: ['classes'] },
-      { id: 'question-papers', label: 'Question Papers', icon: 'auto_awesome' },
+      { id: 'results', label: 'Report Cards', icon: 'grading' },
+      { id: 'academics', label: 'Day Order & Proxy', icon: 'today' },
+      { id: 'question-papers', label: 'Question Paper Generator', icon: 'quiz' },
       { id: 'question-bank', label: 'Question Bank', icon: 'database' },
-      { id: 'lms', label: 'Digital Classroom', icon: 'play_lesson', aliases: ['lms-and-courses'] },
-      { id: 'assignments', label: 'Assignments', icon: 'assignment_turned_in', aliases: ['assignment-studio'] },
+      { id: 'lms', label: 'Digital Classroom', icon: 'play_lesson' },
+      { id: 'assignments', label: 'Assignments', icon: 'assignment_turned_in' },
     ],
   },
   {
     id: 'later-people',
     label: 'Staff · later phases',
     items: [
-      { id: 'teacher-management', label: 'Teachers', icon: 'school', aliases: ['teachers'] },
-      { id: 'non-teaching-staff', label: 'Support Staff', icon: 'badge', aliases: ['employees'] },
-      { id: 'hr-and-payroll', label: 'HR & Payroll', icon: 'engineering', aliases: ['payroll'] },
+      { id: 'teacher-management', label: 'Teachers', icon: 'school' },
+      { id: 'non-teaching-staff', label: 'Support Staff', icon: 'badge' },
+      { id: 'hr-and-payroll', label: 'HR & Payroll', icon: 'engineering' },
     ],
   },
   {
@@ -114,3 +114,25 @@ export const LATER_GROUPS: NavGroup[] = [
 ];
 
 export const ALL_NAV_ITEMS: NavItem[] = [...BASELINE_GROUPS, ...LATER_GROUPS].flatMap(g => g.items);
+
+export interface ViewMeta {
+  label: string;
+  icon: string;
+  section: string;
+}
+
+const OVERVIEW: Partial<Record<AdminView, ViewMeta>> = {
+  dashboard: { label: 'Dashboard', icon: 'space_dashboard', section: 'Overview' },
+  'feature-spec-matrix': { label: 'Feature catalogue', icon: 'checklist', section: 'Overview' },
+  'student-360': { label: 'Student profile', icon: 'badge', section: 'Students' },
+};
+
+/** Breadcrumb label, icon and sidebar section for a screen. */
+export const viewMeta = (view: AdminView): ViewMeta => {
+  if (OVERVIEW[view]) return OVERVIEW[view]!;
+  for (const group of [...BASELINE_GROUPS, ...LATER_GROUPS]) {
+    const item = group.items.find(i => i.id === view);
+    if (item) return { label: item.label, icon: item.icon, section: group.label.replace(/ · later phases$/, '') };
+  }
+  return { label: 'Lumen Academy', icon: 'school', section: 'Overview' };
+};

@@ -14,73 +14,55 @@ export interface AuthUser {
   mfaVerified?: boolean;
 }
 
+/** One id per admin console screen. */
 export type AdminView =
   | 'dashboard'
   | 'feature-spec-matrix'
-  | 'access-grants'
-  // LAYER 1: PLATFORM FOUNDATION
+  // Platform foundation
   | 'tenants'
   | 'users-and-roles'
+  | 'access-grants'
   | 'workflows'
   | 'documents'
   | 'audit-log'
   | 'reports'
   | 'masters'
   | 'data-migration'
-  // LAYER 2: CORE DOMAIN
+  // Core domain
   | 'admissions'
   | 'students'
-  | 'parents'
-  | 'teachers'
-  | 'employees'
-  | 'classes'
-  | 'subjects'
+  | 'student-360'
+  | 'id-cards'
   | 'curriculum'
+  | 'academics'
   | 'timetable'
   | 'attendance'
   | 'exams'
-  | 'report-cards'
   | 'results'
   | 'fees'
-  | 'payments'
-  | 'invoices'
-  | 'financial-reports'
   | 'accounting'
-  // LAYER 3: OPERATIONS
+  // Operations
   | 'hr-and-payroll'
-  | 'payroll'
   | 'library'
   | 'transport'
   | 'hostel'
   | 'inventory'
   | 'procurement'
-  // LAYER 4: ENGAGEMENT & LEARNING
+  | 'helpdesk'
+  // Engagement & learning
   | 'communication'
-  | 'notifications'
   | 'lms'
   | 'assignments'
   | 'question-bank'
   | 'question-papers'
-  | 'helpdesk'
-  // LAYER 5: COMPLIANCE & INTEGRATIONS
+  // Compliance & integrations
   | 'dpdpa-and-consent'
   | 'udise-and-apaar'
   | 'certificates'
   | 'integrations'
-  | 'settings'
-  // LAYER 6: PEOPLE (MODULES 36 & 37)
+  // People
   | 'teacher-management'
-  | 'non-teaching-staff'
-  | 'id-cards'
-  // Legacy aliases
-  | 'student-360'
-  | 'tenancy-and-campuses'
-  | 'auth-and-rbac'
-  | 'fees-and-finance'
-  | 'lms-and-courses'
-  | 'assignment-studio'
-  | 'broadcast-sms'
-  | 'academics';
+  | 'non-teaching-staff';
 
 export interface Campus {
   id: string;
@@ -107,6 +89,7 @@ export interface Student {
   house: string;
   apaarId: string;
   pen: string;
+  emis?: string;
   admissionNo: string;
   gender: string;
   dob: string;
@@ -152,21 +135,4 @@ export interface FeeInvoice {
   channel: string;
   receiptNo?: string;
   balance?: number;
-}
-
-export interface QuestionItem {
-  id: string;
-  code: string;
-  chapter: string;
-  section: string;
-  marks: number;
-  bloomTier: string; // e.g. L3 Applying
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  stemEn: string;
-  stemHi?: string;
-  options?: string[];
-  correctAnswer?: string;
-  formulaLatex?: string;
-  diagramUrl?: string;
-  verifiedBy: string;
 }

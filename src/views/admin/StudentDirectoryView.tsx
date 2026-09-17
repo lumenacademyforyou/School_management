@@ -1,13 +1,15 @@
 import React, { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { FeatureTags, downloadCsv } from '../../components/common/FeatureTags';
+import { AddStudentModal, EditIdentifiersModal, EmisDisplay, EmisStatusBadge } from '../../components/students/StudentIdentifiers';
+import { useGrants } from '../../hooks/useGrants';
+import { rosterStore, useRoster } from '../../services/studentService';
 import {
   AuditEntry,
   EXPORT_COLUMNS,
   ChangeRequest,
   FIELD_VISIBILITY,
   INITIAL_CHANGE_REQUESTS,
-  INITIAL_ROSTER,
   RosterStudent,
   STATUS_EFFECTS,
   STATUS_TRANSITIONS,
@@ -15,7 +17,9 @@ import {
   StudentStatus,
   ViewerRole,
   canTransition,
+  checkEmis,
   duplicatePairs,
+  formatEmis,
   fieldValue,
   identifierIssues,
   matchesSearch,
@@ -77,14 +81,21 @@ interface Filters {
   fee: string;
   transport: string;
   house: string;
+  emis: string;
 }
 
-const EMPTY_FILTERS: Filters = { classLevel: 'All', section: 'All', gender: 'All', category: 'All', status: 'All', fee: 'All', transport: 'All', house: 'All' };
+const EMPTY_FILTERS: Filters = { classLevel: 'All', section: 'All', gender: 'All', category: 'All', status: 'All', fee: 'All', transport: 'All', house: 'All', emis: 'All' };
+const EMIS_FILTER: Record<string, string> = { Valid: 'valid', Missing: 'empty', Invalid: 'invalid', Duplicate: 'duplicate' };
 
 export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'directory' }) => {
   const { addToast, currentUser, campuses, setStudent, setAdminView } = useApp();
   const [tab, setTab] = useState<Tab>(initialTab);
-  const [roster, setRoster] = useState<RosterStudent[]>(INITIAL_ROSTER);
+  const roster = useRoster();
+  const setRoster = rosterStore.set;
+  const g = useGrants();
+  const [showEmis, setShowEmis] = useState(true);
+  const [editingIds, setEditingIds] = useState<RosterStudent | null>(null);
+  const [adding, setAdding] = useState(false);
   const [requests, setRequests] = useState<ChangeRequest[]>(INITIAL_CHANGE_REQUESTS);
   const [audit, setAudit] = useState<AuditEntry[]>([]);
   const [transfers, setTransfers] = useState<{ studentId: string; from: string; to: string; effective: string; kind: 'Section' | 'Branch' }[]>([
@@ -133,7 +144,8 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
             (filters.status === 'All' || s.status === filters.status) &&
             (filters.fee === 'All' || s.feeStatus === filters.fee) &&
             (filters.transport === 'All' || (filters.transport === 'School bus') === Boolean(s.transportRoute)) &&
-            (filters.house === 'All' || s.house === filters.house)
+            (filters.house === 'All' || s.house === filters.house) &&
+            (filters.emis === 'All' || checkEmis(s.emis, s.id, live).state === EMIS_FILTER[filters.emis])
         )
         .sort((a, b) => b.classLevel - a.classLevel || a.section.localeCompare(b.section) || a.rollNo - b.rollNo),
     [live, query, filters]
@@ -326,6 +338,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
     ['fee', 'Fee', ['All', 'Paid', 'Due', 'Overdue']],
     ['transport', 'Transport', ['All', 'School bus', 'Own transport']],
     ['house', 'House', ['All', ...houses]],
+    ['emis', 'EMIS', ['All', 'Valid', 'Missing', 'Invalid', 'Duplicate']],
   ];
 
   return (
@@ -341,7 +354,16 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
             {live.length} records · {issues.length} identifier issue(s) · {dups.length} probable duplicate(s) · {requests.filter(r => r.status === 'Pending').length} pending change request(s)
           </p>
         </div>
-        <label className="flex items-center gap-2 text-xs self-start sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+          <button
+            onClick={() => setAdding(true)}
+            disabled={!g.can('STU-001', 'C')}
+            title={g.why('STU-001', 'C')}
+            className={btnPrimary}
+          >
+            Add student
+          </button>
+        <label className="flex items-center gap-2 text-xs">
           <span className="font-semibold text-[#464555]">Viewing as</span>
           <select value={viewer} onChange={e => setViewer(e.target.value as ViewerRole)} className={inputCls}>
             {(Object.keys(FIELD_VISIBILITY) as ViewerRole[]).map(r => (
@@ -349,6 +371,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
             ))}
           </select>
         </label>
+        </div>
       </div>
 
       <div className="flex gap-1 overflow-x-auto border-b border-[#e0ecf4]">
@@ -373,11 +396,11 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
             <input
               value={query}
               onChange={e => setQuery(e.target.value)}
-              placeholder="Search by name (typos allowed), admission no, guardian mobile, PEN or APAAR"
+              placeholder="Search by name (typos allowed), admission no, guardian mobile, PEN, APAAR or EMIS"
               className={`${inputCls} w-full`}
               aria-label="Search students"
             />
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-9 gap-2">
               {filterOptions.map(([key, label, options]) => (
                 <label key={key} className="block">
                   <span className="block text-[10px] font-semibold text-[#464555]">{label}</span>
@@ -393,9 +416,15 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
               <span>
                 {rows.length} shown · {selected.size} selected
               </span>
-              <button onClick={() => { setFilters(EMPTY_FILTERS); setQuery(''); }} className="font-semibold text-[#0e5d84] hover:underline">
-                Clear filters
-              </button>
+              <span className="flex items-center gap-3">
+                <label className="flex items-center gap-1 cursor-pointer">
+                  <input type="checkbox" checked={showEmis} onChange={e => setShowEmis(e.target.checked)} className="accent-[#0e5d84]" aria-label="Show EMIS column" />
+                  Show EMIS column
+                </label>
+                <button onClick={() => { setFilters(EMPTY_FILTERS); setQuery(''); }} className="font-semibold text-[#0e5d84] hover:underline">
+                  Clear filters
+                </button>
+              </span>
             </div>
           </div>
 
@@ -470,7 +499,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                           aria-label="Select all shown"
                         />
                       </th>
-                      {['Student', 'Class', 'Admission no', 'Guardian', 'Fee', 'Status'].map(h => (
+                      {['Student', 'Class', 'Admission no', ...(showEmis ? ['EMIS no'] : []), 'Guardian', 'Fee', 'Status'].map(h => (
                         <th key={h} className="text-left p-2.5 font-semibold whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
@@ -492,6 +521,12 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                           {s.classLevel}-{s.section} · #{s.rollNo}
                         </td>
                         <td className="p-2.5 font-mono whitespace-nowrap">{s.admissionNo}</td>
+                        {showEmis && (
+                          <td className="p-2.5 whitespace-nowrap" data-emis-cell={s.id}>
+                            <p className="font-mono">{s.emis ? formatEmis(s.emis) : '—'}</p>
+                            <EmisStatusBadge check={checkEmis(s.emis, s.id, live)} />
+                          </td>
+                        )}
                         <td className="p-2.5">
                           <p>{s.guardianName}</p>
                           <p className="text-[10px] text-[#777587] font-mono">{s.guardianMobile}</p>
@@ -530,7 +565,6 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                   {[
                     ['PEN', open.pen],
                     ['APAAR', open.apaar || 'Not generated'],
-                    ['EMIS', open.emis ?? 'Missing'],
                     ['Date of birth', fmt(open.dob)],
                     ['Category', open.category],
                     ['Branch', campuses.find(c => c.id === open.campusId)?.name ?? open.campusId],
@@ -541,6 +575,11 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                     </div>
                   ))}
                 </div>
+
+                <EmisDisplay student={open} canEdit={g.can('STU-026', 'U')} editWhy={g.why('STU-026', 'U')} onEdit={() => setEditingIds(open)} />
+                <button onClick={() => setEditingIds(open)} disabled={!g.can('STU-026', 'U')} title={g.why('STU-026', 'U')} className={`${btnSoft} w-full`}>
+                  Edit identifiers
+                </button>
 
                 <div>
                   <p className="font-semibold text-[#082b3d] mb-1">Guardian & siblings</p>
@@ -938,6 +977,15 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
           </div>
         </div>
       )}
+      <EditIdentifiersModal student={editingIds} onClose={() => setEditingIds(null)} onSaved={saved => log(saved.id, 'Identifiers updated', '', `EMIS ${saved.emis ?? '—'} · APAAR ${saved.apaar || '—'}`)} />
+      <AddStudentModal
+        open={adding}
+        onClose={() => setAdding(false)}
+        onCreated={created => {
+          log(created.id, 'Student record created', '', `${created.admissionNo} · Class ${created.classLevel}-${created.section}`);
+          openDrawer(created);
+        }}
+      />
     </div>
   );
 };

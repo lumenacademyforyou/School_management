@@ -21,9 +21,12 @@ import {
   inputClass,
   inrWhole,
   PhaseNotice,
+  LoadingCard,
+  ErrorCard,
+  useAsync,
   useToasts,
-} from '../../shared/mobileUi';
-import { DEFAULT_PREFS, ParentPrefs, fullRegister, nowStamp, prefsFor, resetBackend, updateBackend, useBackend } from '../../shared/demoBackend';
+} from '../shared/mobileUi';
+import { DEFAULT_PREFS, ParentPrefs, fullRegister, nowStamp, prefsFor, resetBackend, updateBackend, useBackend } from '../shared/demoBackend';
 import {
   APP_TODAY,
   DEMO_OTP,
@@ -41,8 +44,8 @@ import {
   weekdayOf,
   WEEKDAYS,
   Weekday,
-} from '../../shared/schoolData';
-import { translator } from '../../shared/i18n';
+} from '../shared/schoolData';
+import { translator } from '../shared/i18n';
 import {
   DEFAULT_STATUS_CODES,
   HOLIDAYS,
@@ -52,13 +55,18 @@ import {
   dateRange,
   markKey,
   workingDays,
-} from '../../data/attendance';
-import { DEFAULT_LATE_FEE, FEES_AS_OF, INITIAL_INVOICES, INITIAL_PAYMENTS, Payment, computeLedger, headByCode, nextReceiptNo } from '../../data/fees';
-import { CONSENT_PURPOSES } from '../../data/admissions';
-import { Channel, INITIAL_MESSAGES, INITIAL_NOTICES, LANGUAGE_NAMES, Language, moderationFlags } from '../../data/messaging';
+} from '../../src/data/attendance';
+import { DEFAULT_LATE_FEE, FEES_AS_OF, INITIAL_INVOICES, INITIAL_PAYMENTS, Payment, computeLedger, headByCode, nextReceiptNo } from '../../src/data/fees';
+import { CONSENT_PURPOSES } from '../../src/data/admissions';
+import { Channel, INITIAL_MESSAGES, INITIAL_NOTICES, LANGUAGE_NAMES, Language, moderationFlags } from '../../src/data/messaging';
+import { ordinal } from '../../src/data/hallOfFame';
+import { hostelFor } from '../../src/data/hostel';
+import { hallOfFameService } from '../../src/services/hallOfFameService';
+import { useTheme } from '../shared/settingsService';
+import { AppearancePage, HallOfFameCard, HallOfFamePage, HostelCard, HostelPage, TransportCard, TransportPage } from './StudentLife';
 
 type Tab = 'home' | 'attendance' | 'fees' | 'messages' | 'more' | 'homework';
-type Page = null | 'results' | 'timetable' | 'homework' | 'notices' | 'profile' | 'consent' | 'settings' | 'later';
+type Page = null | 'results' | 'timetable' | 'homework' | 'notices' | 'profile' | 'consent' | 'settings' | 'appearance' | 'hall-of-fame' | 'transport' | 'hostel' | 'later';
 
 const STATUS_TONE: Record<string, 'green' | 'red' | 'amber' | 'blue' | 'grey'> = { P: 'green', L: 'amber', HD: 'amber', A: 'red', LV: 'blue', EX: 'blue', MD: 'blue' };
 const CODE_LABEL = Object.fromEntries(DEFAULT_STATUS_CODES.map(c => [c.code, c.label])) as Record<string, string>;
@@ -67,6 +75,11 @@ const CAL_COLOUR: Record<string, string> = { P: 'bg-emerald-500', L: 'bg-lime-50
 // ---------------------------------------------------------------------------
 // Login (IAM-002: mobile + OTP)
 // ---------------------------------------------------------------------------
+
+/** Families with more than one child first, so the multi-child features are easy to try. */
+const DEMO_ACCOUNTS = PARENT_ACCOUNTS.filter(a => a.children.length)
+  .sort((a, b) => b.children.length - a.children.length)
+  .slice(0, 6);
 
 const Login: React.FC<{ onLogin: (a: ParentAccount) => void }> = ({ onLogin }) => {
   const [mobile, setMobile] = useState(PARENT_ACCOUNTS[0].guardian.mobile);
@@ -83,7 +96,7 @@ const Login: React.FC<{ onLogin: (a: ParentAccount) => void }> = ({ onLogin }) =
         <h1 className="mt-5 text-[26px] font-bold leading-tight">Lumen Academy</h1>
         <p className="text-white/80 text-[14px]">Parent app · attendance, fees, homework and messages in one place</p>
       </div>
-      <div className="flex-1 bg-white rounded-t-[28px] p-6 space-y-4">
+      <div className="flex-1 bg-[var(--surface)] rounded-t-[28px] p-6 space-y-4">
         {step === 'mobile' ? (
           <>
             <Field label="Registered mobile number" hint="We send a one-time password by WhatsApp, or SMS if WhatsApp is not available.">
@@ -103,7 +116,7 @@ const Login: React.FC<{ onLogin: (a: ParentAccount) => void }> = ({ onLogin }) =
             </PrimaryButton>
             <div className="rounded-xl bg-slate-50 p-3 text-[12px] text-slate-600 space-y-1">
               <p className="font-semibold text-slate-800">Demo accounts</p>
-              {PARENT_ACCOUNTS.filter(a => a.children.length).slice(0, 6).map(a => (
+              {DEMO_ACCOUNTS.map(a => (
                 <button key={a.guardian.id} onClick={() => setMobile(a.guardian.mobile)} className="block text-left w-full hover:underline">
                   {a.guardian.mobile} · {a.guardian.name} ({a.children.map(c => c.name.split(' ')[0]).join(', ')})
                 </button>
@@ -146,11 +159,12 @@ const Login: React.FC<{ onLogin: (a: ParentAccount) => void }> = ({ onLogin }) =
 
 export const ParentApp: React.FC = () => {
   const [account, setAccount] = useState<ParentAccount | null>(null);
-  return <AppFrame accent="#0e5d84">{account ? <Signedin account={account} onSignOut={() => setAccount(null)} /> : <Login onLogin={setAccount} />}</AppFrame>;
+  const { applied } = useTheme();
+  return <AppFrame accent="#0e5d84" theme={applied}>{account ? <Signedin account={account} onSignOut={() => setAccount(null)} /> : <Login onLogin={setAccount} />}</AppFrame>;
 };
 
 const HomeScreen: React.FC = () => {
-  const { account, onSignOut, backend, push, guardian, prefs, t, setTab, setPage, child, section, setPrefs, register, days, pct, todayMark, payments, ledger, due, homework, pendingHomework, notices, acked, unackedCount, threads, studentMode, openPage, titles } = useParent();
+  const { guardian, t, setTab, child, section, pct, todayMark, ledger, due, pendingHomework, notices, acked, studentMode, openPage } = useParent();
   const today = weekdayOf(APP_TODAY);
   const periods = today ? timetableFor(section)[today] : [];
   return (
@@ -161,6 +175,7 @@ const HomeScreen: React.FC = () => {
           {child.name} · Class {section}
         </p>
       </div>
+      <HallOfFameCard child={child} onOpen={() => openPage('hall-of-fame')} />
       <div className="grid grid-cols-2 gap-3">
         <Card onClick={() => setTab('attendance')} className="!rounded-2xl">
           <p className="text-[12px] text-slate-500">{t('today')}</p>
@@ -185,7 +200,10 @@ const HomeScreen: React.FC = () => {
         )}
       </div>
 
-      <Card title={t('homework')} action={<button onClick={() => (studentMode ? setTab('homework') : openPage('homework'))} className="text-[12px] text-[var(--accent)] font-semibold">View all</button>}>
+      <TransportCard child={child} onOpen={() => openPage('transport')} />
+      <HostelCard child={child} onOpen={() => openPage('hostel')} />
+
+      <Card title={t('homework')} action={<button onClick={() => (studentMode ? setTab('homework') : openPage('homework'))} className="text-[12px] text-[var(--accent-ink)] font-semibold">View all</button>}>
         {pendingHomework.length === 0 ? (
           <p className="text-[13px] text-slate-500">Nothing pending.</p>
         ) : (
@@ -200,7 +218,7 @@ const HomeScreen: React.FC = () => {
         )}
       </Card>
 
-      <Card title={`${t('today')} · ${t('timetable')}`} action={<button onClick={() => openPage('timetable')} className="text-[12px] text-[var(--accent)] font-semibold">Week</button>}>
+      <Card title={`${t('today')} · ${t('timetable')}`} action={<button onClick={() => openPage('timetable')} className="text-[12px] text-[var(--accent-ink)] font-semibold">Week</button>}>
         {periods.map(p => (
           <div key={p.period} className="flex items-center gap-3 py-1.5">
             <span className="w-12 text-[12px] font-mono text-slate-500">{p.start}</span>
@@ -210,7 +228,7 @@ const HomeScreen: React.FC = () => {
         ))}
       </Card>
 
-      <Card title={t('notices')} action={<button onClick={() => openPage('notices')} className="text-[12px] text-[var(--accent)] font-semibold">View all</button>}>
+      <Card title={t('notices')} action={<button onClick={() => openPage('notices')} className="text-[12px] text-[var(--accent-ink)] font-semibold">View all</button>}>
         {notices.slice(0, 2).map(n => (
           <div key={n.id} className="py-2 border-b last:border-0 border-slate-100">
             <div className="flex items-center justify-between gap-2">
@@ -221,14 +239,14 @@ const HomeScreen: React.FC = () => {
           </div>
         ))}
       </Card>
-      <FeatureFooter ids={['APP-001', 'APP-002', 'APP-018']} />
+      <FeatureFooter ids={['APP-001', 'APP-002', 'APP-018', 'EXM-026']} />
     </Screen>
   );
 };
 
 
 const AttendanceScreen: React.FC = () => {
-  const { account, onSignOut, backend, push, guardian, prefs, t, setTab, setPage, child, section, setPrefs, register, days, pct, todayMark, payments, ledger, due, homework, pendingHomework, notices, acked, unackedCount, threads, studentMode, openPage, titles } = useParent();
+  const { backend, push, t, child, section, register, pct } = useParent();
   const [month, setMonth] = useState(APP_TODAY.slice(0, 7));
   const [leaveOpen, setLeaveOpen] = useState(false);
   const [form, setForm] = useState({ from: '2024-09-18', to: '2024-09-18', reason: '', document: '' });
@@ -359,7 +377,7 @@ const AttendanceScreen: React.FC = () => {
 
 
 const FeesScreen: React.FC = () => {
-  const { account, onSignOut, backend, push, guardian, prefs, t, setTab, setPage, child, section, setPrefs, register, days, pct, todayMark, payments, ledger, due, homework, pendingHomework, notices, acked, unackedCount, threads, studentMode, openPage, titles } = useParent();
+  const { backend, push, t, child, payments, ledger, due } = useParent();
   const [paying, setPaying] = useState(false);
   const [method, setMethod] = useState<'UPI' | 'Card' | 'Net banking'>('UPI');
   const [stage, setStage] = useState<'choose' | 'processing'>('choose');
@@ -457,7 +475,7 @@ const FeesScreen: React.FC = () => {
             {(['UPI', 'Card', 'Net banking'] as const).map(m => (
               <button key={m} onClick={() => setMethod(m)} className={cx('w-full flex items-center justify-between rounded-xl border px-3 py-3 text-[14px]', method === m ? 'border-[var(--accent)] bg-[var(--accent)]/5' : 'border-slate-200')}>
                 {m}
-                <Icon name={method === m ? 'radio_button_checked' : 'radio_button_unchecked'} className="text-[var(--accent)]" />
+                <Icon name={method === m ? 'radio_button_checked' : 'radio_button_unchecked'} className="text-[var(--accent-ink)]" />
               </button>
             ))}
             <p className="text-[12px] text-slate-500">The amount is settled against the oldest invoice first. A receipt is issued straight away.</p>
@@ -465,7 +483,7 @@ const FeesScreen: React.FC = () => {
           </>
         ) : (
           <div className="py-6 text-center text-[14px] text-slate-600">
-            <Icon name="progress_activity" className="text-[32px] animate-spin text-[var(--accent)]" />
+            <Icon name="progress_activity" className="text-[32px] animate-spin text-[var(--accent-ink)]" />
             <p className="mt-2">Waiting for {method} confirmation…</p>
           </div>
         )}
@@ -506,7 +524,7 @@ const FeesScreen: React.FC = () => {
 
 
 const MessagesScreen: React.FC = () => {
-  const { account, onSignOut, backend, push, guardian, prefs, t, setTab, setPage, child, section, setPrefs, register, days, pct, todayMark, payments, ledger, due, homework, pendingHomework, notices, acked, unackedCount, threads, studentMode, openPage, titles } = useParent();
+  const { account, backend, push, child, section, threads } = useParent();
   const [open, setOpen] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
   const [newOpen, setNewOpen] = useState(false);
@@ -541,7 +559,7 @@ const MessagesScreen: React.FC = () => {
   if (thread) {
     return (
       <div className="flex-1 flex flex-col min-h-0">
-        <div className="shrink-0 bg-white border-b border-slate-200 px-4 py-2 flex items-center gap-2">
+        <div className="shrink-0 bg-[var(--surface)] border-b border-slate-200 px-4 py-2 flex items-center gap-2">
           <button onClick={() => setOpen(null)} aria-label="Back to conversations" className="p-1 -ml-1">
             <Icon name="arrow_back" />
           </button>
@@ -552,7 +570,7 @@ const MessagesScreen: React.FC = () => {
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
           {thread.messages.map((m, i) => (
-            <div key={i} className={cx('max-w-[80%] rounded-2xl px-3 py-2 text-[14px]', m.from === 'Parent' ? 'ml-auto bg-[var(--accent)] text-white' : 'bg-white border border-slate-200')}>
+            <div key={i} className={cx('max-w-[80%] rounded-2xl px-3 py-2 text-[14px]', m.from === 'Parent' ? 'ml-auto bg-[var(--accent)] text-white' : 'bg-[var(--surface)] border border-slate-200')}>
               <p>{m.text}</p>
               <p className={cx('text-[10px] mt-0.5', m.from === 'Parent' ? 'text-white/70' : 'text-slate-400')}>
                 {m.at.slice(5)} · {m.status === 'Delivered' ? '✓' : m.status}
@@ -562,7 +580,7 @@ const MessagesScreen: React.FC = () => {
           {thread.messages.length === 0 && <p className="text-center text-[13px] text-slate-500">Say hello to {thread.teacher}.</p>}
           <p className="text-center text-[11px] text-slate-400">Your phone number is not shared with teachers.</p>
         </div>
-        <div className="shrink-0 bg-white border-t border-slate-200 p-2 flex gap-2">
+        <div className="shrink-0 bg-[var(--surface)] border-t border-slate-200 p-2 flex gap-2">
           <input value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Message" className={cx(inputClass, 'py-2')} aria-label="Message" />
           <button onClick={send} disabled={!draft.trim()} className="rounded-full bg-[var(--accent)] text-white w-11 h-11 flex items-center justify-center disabled:opacity-40" aria-label="Send message">
             <Icon name="send" />
@@ -617,7 +635,7 @@ const MessagesScreen: React.FC = () => {
 
 
 const HomeworkList: React.FC = () => {
-  const { account, onSignOut, backend, push, guardian, prefs, t, setTab, setPage, child, section, setPrefs, register, days, pct, todayMark, payments, ledger, due, homework, pendingHomework, notices, acked, unackedCount, threads, studentMode, openPage, titles } = useParent();
+  const { backend, push, t, child, homework } = useParent();
 return (
   <Screen>
     {homework.length === 0 && <EmptyState icon="menu_book" text="No homework posted." />}
@@ -656,10 +674,59 @@ return (
 );
 };
 
+const TermResultsCard: React.FC = () => {
+  const { prefs, child, openPage } = useParent();
+  const res = useAsync(() => hallOfFameService.termResults(child.id), [child.id]);
+  if (res.status === 'loading') return <LoadingCard label="Loading Term 1 results" lines={4} />;
+  if (res.status === 'error') return <ErrorCard onRetry={res.retry} />;
+  const { term, results } = res.data;
+  if (!results.length) return null;
+  const total = results.reduce((n, r) => n + r.marks, 0);
+  const max = results.reduce((n, r) => n + r.max, 0);
+  const p = Math.round((total / max) * 1000) / 10;
+  return (
+    <Card title={term.name} action={<Pill tone="blue">{gradeFor(p)}</Pill>}>
+      {results.map(r => (
+        <div key={r.subject} className="py-1.5" data-term-result={r.subject}>
+          <div className="flex justify-between gap-2 text-[13px]">
+            <span>{r.subject}</span>
+            <span className="flex items-center gap-2">
+              {r.rank <= 3 && <Pill tone="amber">{ordinal(r.rank)} in class</Pill>}
+              <span className="font-mono">
+                {r.marks}/{r.max}
+              </span>
+            </span>
+          </div>
+          {!prefs.lowData && (
+            <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+              <div className={cx('h-full', r.marks / r.max < 0.4 ? 'bg-rose-500' : 'bg-[var(--accent)]')} style={{ width: `${(r.marks / r.max) * 100}%` }} />
+            </div>
+          )}
+          <p className="text-[10px] text-slate-400">
+            Class rank {r.rank} of {r.classSize}
+          </p>
+        </div>
+      ))}
+      <p className="mt-2 text-[13px] font-semibold">
+        Total {total}/{max} · {p}%
+      </p>
+      <p className="text-[11px] text-slate-500">
+        {term.academicYear} · published {fmtDate(term.publishedOn)}
+      </p>
+      {results.some(r => r.rank <= 3) && (
+        <button onClick={() => openPage('hall-of-fame')} className="mt-2 text-[12px] font-semibold text-[var(--accent-ink)]">
+          View Hall of Fame →
+        </button>
+      )}
+    </Card>
+  );
+};
+
 const ResultsPage: React.FC = () => {
-  const { account, onSignOut, backend, push, guardian, prefs, t, setTab, setPage, child, section, setPrefs, register, days, pct, todayMark, payments, ledger, due, homework, pendingHomework, notices, acked, unackedCount, threads, studentMode, openPage, titles } = useParent();
+  const { prefs, child, section } = useParent();
 return (
   <Screen>
+    <TermResultsCard />
     {PUBLISHED_EXAMS.map(exam => {
       const rows = resultFor(child.id, section, exam.id);
       const total = rows.reduce((s, r) => s + r.marks, 0);
@@ -690,22 +757,22 @@ return (
       );
     })}
     <Card>
-      <p className="text-[13px] text-slate-600">Unit Test 3 and half-yearly results appear here once the Principal publishes them.</p>
+      <p className="text-[13px] text-slate-600">Unit Test 3 results appear here once the Principal publishes them.</p>
     </Card>
-    <FeatureFooter ids={['APP-005', 'EXM-019']} />
+    <FeatureFooter ids={['APP-005', 'EXM-018', 'EXM-019']} />
   </Screen>
 );
 };
 
 const TimetablePage: React.FC = () => {
-  const { account, onSignOut, backend, push, guardian, prefs, t, setTab, setPage, child, section, setPrefs, register, days, pct, todayMark, payments, ledger, due, homework, pendingHomework, notices, acked, unackedCount, threads, studentMode, openPage, titles } = useParent();
+  const { section } = useParent();
   const [day, setDay] = useState<Weekday>(weekdayOf(APP_TODAY) ?? 'Mon');
   const table = timetableFor(section);
   return (
     <Screen>
       <div className="flex gap-1 overflow-x-auto">
         {WEEKDAYS.map(d => (
-          <button key={d} onClick={() => setDay(d)} className={cx('px-3 py-1.5 rounded-full text-[13px] shrink-0', d === day ? 'bg-[var(--accent)] text-white' : 'bg-white border border-slate-200')}>
+          <button key={d} onClick={() => setDay(d)} className={cx('px-3 py-1.5 rounded-full text-[13px] shrink-0', d === day ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] border border-slate-200')}>
             {d}
           </button>
         ))}
@@ -734,7 +801,7 @@ const TimetablePage: React.FC = () => {
 
 
 const NoticesPage: React.FC = () => {
-  const { account, onSignOut, backend, push, guardian, prefs, t, setTab, setPage, child, section, setPrefs, register, days, pct, todayMark, payments, ledger, due, homework, pendingHomework, notices, acked, unackedCount, threads, studentMode, openPage, titles } = useParent();
+  const { push, guardian, t, notices, acked } = useParent();
 return (
   <Screen>
     {notices.map(n => (
@@ -767,7 +834,9 @@ return (
 };
 
 const ProfilePage: React.FC = () => {
-  const { account, onSignOut, backend, push, guardian, prefs, t, setTab, setPage, child, section, setPrefs, register, days, pct, todayMark, payments, ledger, due, homework, pendingHomework, notices, acked, unackedCount, threads, studentMode, openPage, titles } = useParent();
+  const { prefs, child, section } = useParent();
+  const stay = hostelFor(child.id);
+  const hostelLabel = stay ? `${stay.residence.block}, room ${stay.residence.room}` : 'Day scholar';
 return (
   <Screen>
     <Card>
@@ -793,6 +862,7 @@ return (
           ['APAAR', child.apaar || 'Being generated'],
           ['Class teacher', classTeacherFor(section)],
           ['Transport', child.transportRoute ?? 'Own transport'],
+          ['Hostel', hostelLabel],
         ].map(([k, v]) => (
           <div key={k}>
             <p className="text-slate-500">{k}</p>
@@ -823,7 +893,7 @@ return (
 };
 
 const ConsentPage: React.FC = () => {
-  const { account, onSignOut, backend, push, guardian, prefs, t, setTab, setPage, child, section, setPrefs, register, days, pct, todayMark, payments, ledger, due, homework, pendingHomework, notices, acked, unackedCount, threads, studentMode, openPage, titles } = useParent();
+  const { backend, push, guardian, child } = useParent();
   const rows = backend.consent.filter(r => r.studentId === child.id);
   const toggle = (purpose: string, grant: boolean) => {
     updateBackend(s => ({
@@ -887,7 +957,7 @@ const ConsentPage: React.FC = () => {
 
 
 const SettingsPage: React.FC = () => {
-  const { account, onSignOut, backend, push, guardian, prefs, t, setTab, setPage, child, section, setPrefs, register, days, pct, todayMark, payments, ledger, due, homework, pendingHomework, notices, acked, unackedCount, threads, studentMode, openPage, titles } = useParent();
+  const { push, prefs, t, setTab, setPage, setPrefs } = useParent();
   const categories: { key: keyof ParentPrefs['channels']; label: string }[] = [
     { key: 'attendance', label: 'Attendance alerts' },
     { key: 'fees', label: 'Fee reminders' },
@@ -907,6 +977,16 @@ const SettingsPage: React.FC = () => {
   );
   return (
     <Screen>
+      <Card onClick={() => setPage('appearance')}>
+        <div className="flex items-center gap-3" data-settings="appearance">
+          <Icon name="palette" className="text-[22px] text-[var(--accent-ink)]" />
+          <div className="flex-1">
+            <p className="text-[14px] font-medium">Appearance</p>
+            <p className="text-[11px] text-slate-500">Light, dark, system or school theme</p>
+          </div>
+          <Icon name="chevron_right" className="text-slate-400" />
+        </div>
+      </Card>
       <Card title={t('language')}>
         <div className="grid grid-cols-3 gap-2">
           {(Object.keys(LANGUAGE_NAMES) as Language[]).map(l => (
@@ -967,7 +1047,6 @@ const SettingsPage: React.FC = () => {
 const LaterPage: React.FC = () => (
   <Screen>
     {[
-      { icon: 'directions_bus', title: 'Live bus tracking' },
       { icon: 'support_agent', title: 'Helpdesk tickets' },
       { icon: 'cloud_off', title: 'Read notices and homework offline' },
     ].map(x => (
@@ -978,20 +1057,24 @@ const LaterPage: React.FC = () => (
         </div>
       </Card>
     ))}
-    <PhaseNotice ids={['APP-010', 'APP-014', 'APP-016']} phase="Phase 3" note="These arrive with the operations and offline release." />
+    <PhaseNotice ids={['APP-014', 'APP-016']} phase="Phase 3" note="These arrive with the operations and offline release, along with live GPS in place of the demo bus position." />
   </Screen>
 );
 
 const MoreScreen: React.FC = () => {
-  const { account, onSignOut, backend, push, guardian, prefs, t, setTab, setPage, child, section, setPrefs, register, days, pct, todayMark, payments, ledger, due, homework, pendingHomework, notices, acked, unackedCount, threads, studentMode, openPage, titles } = useParent();
+  const { onSignOut, push, guardian, t, pendingHomework, unackedCount, studentMode, openPage, titles } = useParent();
   const items: { page: Exclude<Page, null>; icon: string; badge?: number; hide?: boolean }[] = [
+    { page: 'hall-of-fame', icon: 'emoji_events' },
     { page: 'results', icon: 'grading' },
     { page: 'timetable', icon: 'calendar_month' },
+    { page: 'transport', icon: 'directions_bus' },
+    { page: 'hostel', icon: 'apartment' },
     { page: 'homework', icon: 'menu_book', badge: pendingHomework.length, hide: studentMode },
     { page: 'notices', icon: 'campaign', badge: unackedCount },
     { page: 'profile', icon: 'badge' },
     { page: 'consent', icon: 'verified_user', hide: studentMode },
     { page: 'settings', icon: 'settings' },
+    { page: 'appearance', icon: 'palette' },
     { page: 'later', icon: 'upcoming' },
   ];
   return (
@@ -1001,7 +1084,7 @@ const MoreScreen: React.FC = () => {
           .filter(i => !i.hide)
           .map(i => (
             <button key={i.page} onClick={() => openPage(i.page)} className="w-full flex items-center gap-3 py-3 border-b last:border-0 border-slate-100" data-page={i.page}>
-              <Icon name={i.icon} className="text-[22px] text-[var(--accent)]" />
+              <Icon name={i.icon} className="text-[22px] text-[var(--accent-ink)]" />
               <span className="flex-1 text-left text-[14px]">{titles[i.page]}</span>
               {Boolean(i.badge) && <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-rose-600 text-white text-[11px] font-bold leading-5 text-center">{i.badge}</span>}
               <Icon name="chevron_right" className="text-slate-400" />
@@ -1103,6 +1186,10 @@ const useParentSession = (account: ParentAccount, onSignOut: () => void) => {
     profile: t('profile'),
     consent: t('consent'),
     settings: t('settings'),
+    appearance: 'Appearance',
+    'hall-of-fame': 'Hall of Fame',
+    transport: 'Transport',
+    hostel: 'Hostel',
     later: 'Coming later',
   };
 
@@ -1161,6 +1248,14 @@ const ChildSession: React.FC<{ account: ParentAccount; onSignOut: () => void }> 
         return <ConsentPage />;
       case 'settings':
         return <SettingsPage />;
+      case 'appearance':
+        return <AppearancePage onSaved={text => session.push(text)} />;
+      case 'hall-of-fame':
+        return <HallOfFamePage child={child} lowData={prefs.lowData} onResults={() => setPage('results')} />;
+      case 'transport':
+        return <TransportPage child={child} />;
+      case 'hostel':
+        return <HostelPage child={child} />;
       case 'later':
         return <LaterPage />;
       default:

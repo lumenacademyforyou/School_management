@@ -156,7 +156,7 @@ export const DashboardView: React.FC = () => {
 
         {/* KPI 5: Teachers Present */}
         <div
-          onClick={() => setAdminView('teachers')}
+          onClick={() => setAdminView('teacher-management')}
           className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs hover:border-[#0e5d84] transition-all cursor-pointer group flex flex-col justify-between"
         >
           <div className="flex items-center justify-between text-xs text-[#777587]">
@@ -173,7 +173,7 @@ export const DashboardView: React.FC = () => {
 
         {/* KPI 6: Outstanding Fees */}
         <div
-          onClick={() => setAdminView('invoices')}
+          onClick={() => setAdminView('fees')}
           className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs hover:border-rose-500 transition-all cursor-pointer group flex flex-col justify-between"
         >
           <div className="flex items-center justify-between text-xs text-[#777587]">

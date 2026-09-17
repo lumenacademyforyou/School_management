@@ -15,8 +15,6 @@ const PATTERNS = [
   '114131', '311141', '411131', '211412', '211214', '211232', '2331112',
 ];
 
-export const CODE128_PATTERNS = PATTERNS;
-
 const START_B = 104;
 const STOP = 106;
 

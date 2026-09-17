@@ -1,4 +1,4 @@
-import { Campus, Student, AttendanceRecord, FeeInvoice, QuestionItem } from '../types';
+import { Campus, Student, AttendanceRecord, FeeInvoice } from '../types';
 
 export const CAMPUSES: Campus[] = [
   {
@@ -86,8 +86,6 @@ export const PRIMARY_STUDENT: Student = {
   address: 'Flat 4B, Emerald Isle, Velachery Bypass, Chennai - 600042',
   prevSchool: 'Vidya Mandir Senior Secondary School',
 };
-
-export const STUDENTS_MOCK: Student[] = [PRIMARY_STUDENT];
 
 export const CLASS_10A_STUDENTS: AttendanceRecord[] = [
   { studentId: 'stu-01', name: 'Aarav S. Ramanathan', rollNo: '01', avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=120&auto=format&fit=crop&q=80', status: 'P', telemetrySource: 'Gate Turnstile #03', time: '07:44 AM', streakDays: 24 },
@@ -186,32 +184,3 @@ export const BUS_ROUTE_14 = {
     { stopNo: 6, name: 'LumenAcademy Main Gate', time: '07:58 AM', status: 'Upcoming', studentCount: 0 },
   ],
 };
-
-export const CBSE_SAMPLE_QUESTIONS: QuestionItem[] = [
-  {
-    id: 'q-phy-101',
-    code: 'CBSE-X-PHY-CH10-042',
-    chapter: 'Light - Reflection and Refraction',
-    section: 'Section B (3 Marks)',
-    marks: 3,
-    bloomTier: 'L3 Applying',
-    difficulty: 'Medium',
-    stemEn: 'A convex lens of focal length 15 cm forms an image 30 cm from the lens on the other side. Find the position of the object and the magnification produced.',
-    stemHi: '15 सेमी फोकस दूरी वाला एक उत्तल लेंस लेंस के दूसरी ओर 30 सेमी पर एक प्रतिबिंब बनाता है। वस्तु की स्थिति और उत्पन्न आवर्धन ज्ञात कीजिए।',
-    formulaLatex: '\\frac{1}{f} = \\frac{1}{v} - \\frac{1}{u}',
-    verifiedBy: 'Mrs. Malini Iyer (PGT Physics)',
-  },
-  {
-    id: 'q-mat-202',
-    code: 'CBSE-X-MAT-CH08-019',
-    chapter: 'Introduction to Trigonometry',
-    section: 'Section C (4 Marks)',
-    marks: 4,
-    bloomTier: 'L4 Analyzing',
-    difficulty: 'Hard',
-    stemEn: 'Prove that: (sin θ - 2 sin³ θ) / (2 cos³ θ - cos θ) = tan θ.',
-    stemHi: 'सिद्ध कीजिए कि: (sin θ - 2 sin³ θ) / (2 cos³ θ - cos θ) = tan θ.',
-    formulaLatex: '\\frac{\\sin\\theta (1 - 2\\sin^2\\theta)}{\\cos\\theta (2\\cos^2\\theta - 1)} = \\tan\\theta',
-    verifiedBy: 'Dr. V. Raghavan (HOD Mathematics)',
-  },
-];
