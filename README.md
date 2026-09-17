@@ -2,8 +2,6 @@
 
 School management frontend for Lumen Academy: a staff admin console, a parent web app and a teacher web app. It is frontend only; demo data lives in the browser.
 
-View the app in AI Studio: https://ai.studio/apps/46116c09-7268-4640-821e-ee98be0b1dde
-
 ## Run locally
 
 **Prerequisites:** Node.js
