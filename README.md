@@ -16,7 +16,7 @@ View your app in AI Studio: https://ai.studio/apps/46116c09-7268-4640-821e-ee98b
 1. Install dependencies:
    `npm install`
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
+3. Run all three apps (admin console on 3000, parent app on 3001, teacher app on 3002):
    `npm run dev`
 
 ## Apps in this repository
@@ -25,12 +25,13 @@ The admin console, parent app and teacher app are separate apps. Each has its ow
 
 | App | Dev command | Dev URL | Build output |
 | --- | --- | --- | --- |
-| Admin console (staff) | `npm run dev` | http://localhost:3000/ | `dist/admin` |
+| All three at once | `npm run dev` | ports 3000, 3001, 3002 | – |
+| Admin console (staff) | `npm run dev:admin` | http://localhost:3000/ | `dist/admin` |
 | Parent app | `npm run dev:parent` | http://localhost:3001/ | `dist/parent` |
 | Teacher app | `npm run dev:teacher` | http://localhost:3002/ | `dist/teacher` |
 | Parent + teacher together (demo) | `npm run dev:apps` | http://localhost:3003/parent/ and /teacher/ | – |
 
-`npm run build` builds all three; `npm run build:admin`, `build:parent` and `build:teacher` build one. Set `VITE_PARENT_APP_URL` and `VITE_TEACHER_APP_URL` (see `.env.example`) so the staff sign-in page links to where the other apps are deployed.
+`npm run build` builds all three; `npm run build:admin`, `build:parent` and `build:teacher` build one. Set `VITE_PARENT_APP_URL` and `VITE_TEACHER_APP_URL` (see `.env.example`) so the staff sign-in page and the catalogue link to where the other apps are deployed. If a linked app isn't running, the console says so and names the command to start it.
 
 ### Demo sign-in
 

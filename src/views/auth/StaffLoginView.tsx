@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { DEMO_STAFF_PASSWORD, DEMO_TOTP, PARENT_APP_URL, STAFF_ACCOUNTS, StaffAccount, TEACHER_APP_URL } from '../../data/staffAccess';
+import { DEMO_STAFF_PASSWORD, DEMO_TOTP, STAFF_ACCOUNTS, StaffAccount } from '../../data/staffAccess';
+import { EXTERNAL_APPS, ExternalApp, openExternalApp } from '../../lib/externalApps';
 
 const MAX_ATTEMPTS = 5;
 
@@ -13,6 +14,7 @@ export const StaffLoginView: React.FC = () => {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [failures, setFailures] = useState(0);
+  const [appNotice, setAppNotice] = useState('');
   const locked = failures >= MAX_ATTEMPTS;
 
   const submitPassword = (e: React.FormEvent) => {
@@ -44,6 +46,12 @@ export const StaffLoginView: React.FC = () => {
     signIn(pending);
   };
 
+  const openApp = (e: React.MouseEvent, app: ExternalApp) => {
+    e.preventDefault();
+    setAppNotice('');
+    openExternalApp(app, (title, _type, message) => setAppNotice(`${title}. ${message}`));
+  };
+
   const input = 'w-full rounded-lg border border-[#cbe0ec] bg-white px-3 py-2 text-sm text-[#082b3d] outline-none focus:border-[#0e5d84] focus:ring-2 focus:ring-[#0e5d84]/20';
 
   return (
@@ -57,14 +65,19 @@ export const StaffLoginView: React.FC = () => {
           </div>
           <div className="space-y-2 text-sm">
             <p className="text-white/60 text-xs uppercase tracking-wide">Not school staff?</p>
-            <a href={PARENT_APP_URL} className="flex items-center gap-2 rounded-lg bg-white/10 hover:bg-white/15 px-3 py-2">
+            <a href={EXTERNAL_APPS.parent.url} onClick={e => openApp(e, 'parent')} className="flex items-center gap-2 rounded-lg bg-white/10 hover:bg-white/15 px-3 py-2">
               <span className="material-symbols-outlined text-lg">family_restroom</span>
               Parents — open the parent app
             </a>
-            <a href={TEACHER_APP_URL} className="flex items-center gap-2 rounded-lg bg-white/10 hover:bg-white/15 px-3 py-2">
+            <a href={EXTERNAL_APPS.teacher.url} onClick={e => openApp(e, 'teacher')} className="flex items-center gap-2 rounded-lg bg-white/10 hover:bg-white/15 px-3 py-2">
               <span className="material-symbols-outlined text-lg">school</span>
               Teachers — open the teacher app
             </a>
+            {appNotice && (
+              <p role="alert" className="rounded-lg bg-amber-100 text-amber-900 px-3 py-2 text-xs">
+                {appNotice}
+              </p>
+            )}
           </div>
         </div>
 

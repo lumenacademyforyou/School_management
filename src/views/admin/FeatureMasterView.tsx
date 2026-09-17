@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { SMS_LAYERS, SMS_MODULES, RAW_FEATURES_SPEC, TOTAL_SPEC_STATS, SMSModule } from '../../data/featureCatalog';
 import { AdminView } from '../../types';
-import { PARENT_APP_URL, canView } from '../../data/staffAccess';
+import { canView } from '../../data/staffAccess';
+import { openExternalApp } from '../../lib/externalApps';
 import { FEATURE_COVERAGE } from '../../data/featureCoverageScan';
 
 type CoverageStatus = 'On screen' | 'Deferred' | 'Not built';
@@ -19,7 +20,7 @@ export const FeatureMasterView: React.FC = () => {
   const openModule = (mod?: SMSModule) => {
     if (!mod) return;
     if (mod.targetView === 'parent-app') {
-      window.open(PARENT_APP_URL, '_blank', 'noopener');
+      openExternalApp('parent', addToast);
       return;
     }
     if (!canView(currentUser.staffRole, mod.targetView as AdminView)) {

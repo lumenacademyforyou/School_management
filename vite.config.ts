@@ -38,6 +38,8 @@ export default defineConfig(({mode}) => {
     root,
     base: './',
     envDir: __dirname,
+    // Each app keeps its own pre-bundle cache so running all three together doesn't thrash it.
+    cacheDir: path.resolve(__dirname, 'node_modules/.vite', app),
     publicDir: path.resolve(__dirname, 'public'),
     plugins: [react(), tailwindcss(), ...(app === 'admin' ? [hideOtherApps()] : [])],
     build: {

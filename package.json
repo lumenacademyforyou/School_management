@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3000 --host=0.0.0.0",
+    "dev": "node scripts/dev.mjs",
+    "dev:admin": "vite --port=3000 --host=0.0.0.0",
     "dev:parent": "vite --mode parent --port=3001 --host=0.0.0.0",
     "dev:teacher": "vite --mode teacher --port=3002 --host=0.0.0.0",
     "dev:apps": "vite --mode apps --port=3003 --host=0.0.0.0",
