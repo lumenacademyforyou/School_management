@@ -58,6 +58,7 @@ export type AdminView =
   // Compliance & integrations
   | 'dpdpa-and-consent'
   | 'udise-and-apaar'
+  | 'emis'
   | 'certificates'
   | 'integrations'
   // People

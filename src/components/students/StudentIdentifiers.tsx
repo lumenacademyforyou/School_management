@@ -169,10 +169,13 @@ export const EditIdentifiersModal: React.FC<{ student: RosterStudent | null; onC
 };
 
 /** STU-001: create a student record directly (admissions normally creates it on enrolment). */
-export const AddStudentModal: React.FC<{ open: boolean; onClose: () => void; onCreated?: (s: RosterStudent) => void }> = ({ open, onClose, onCreated }) => {
+export const AddStudentModal: React.FC<{ open: boolean; onClose: () => void; onCreated?: (s: RosterStudent) => void; initial?: Partial<NewStudent> }> = ({ open, onClose, onCreated, initial }) => {
   const { addToast } = useApp();
   const roster = useRoster();
-  const blank = (): NewStudent => ({ name: '', gender: 'Female', dob: '2011-01-01', classLevel: 8, section: 'A', admissionNo: suggestAdmissionNo(roster, 8), guardianName: '', guardianMobile: '', emis: '', apaar: '' });
+  const blank = (): NewStudent => {
+    const classLevel = initial?.classLevel ?? 8;
+    return { name: '', gender: 'Female', dob: '2011-01-01', section: 'A', guardianName: '', guardianMobile: '', emis: '', apaar: '', ...initial, classLevel, admissionNo: suggestAdmissionNo(roster, classLevel) };
+  };
   const [form, setForm] = useState<NewStudent>(blank);
   const [saving, setSaving] = useState(false);
   const [tried, setTried] = useState(false);

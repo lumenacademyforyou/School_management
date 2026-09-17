@@ -103,6 +103,7 @@ const EXTRA_VIEW_MODULES: Partial<Record<AdminView, string[]>> = {
   'id-cards': ['CRT'],
   'student-360': ['STU'],
   'question-bank': ['QPG'],
+  emis: ['GOV'],
 };
 
 const VIEW_MODULES: Partial<Record<AdminView, string[]>> = (() => {

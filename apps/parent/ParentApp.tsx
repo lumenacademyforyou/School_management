@@ -1,6 +1,7 @@
 import React, { useContext, useMemo, useState } from 'react';
 import {
   AppFrame,
+  AppShell,
   BottomNav,
   Card,
   EmptyState,
@@ -12,6 +13,8 @@ import {
   Screen,
   SecondaryButton,
   Sheet,
+  SideLink,
+  SideNav,
   TabDef,
   Toasts,
   TopBar,
@@ -25,7 +28,9 @@ import {
   ErrorCard,
   useAsync,
   useToasts,
+  LOGO_SRC,
 } from '../shared/mobileUi';
+import { InstallAppCard, InstallButton } from '../shared/webApp';
 import { DEFAULT_PREFS, ParentPrefs, fullRegister, nowStamp, prefsFor, resetBackend, updateBackend, useBackend } from '../shared/demoBackend';
 import {
   APP_TODAY,
@@ -90,13 +95,22 @@ const Login: React.FC<{ onLogin: (a: ParentAccount) => void }> = ({ onLogin }) =
   const account = PARENT_ACCOUNTS.find(a => digits(a.guardian.mobile) === digits(mobile));
 
   return (
-    <div className="flex-1 flex flex-col bg-[var(--accent)]">
-      <div className="px-6 pt-14 pb-10 text-white">
-        <img src="/lumen-academy-logo.png" alt="" className="w-16 h-16 rounded-2xl bg-white p-1" />
-        <h1 className="mt-5 text-[26px] font-bold leading-tight">Lumen Academy</h1>
-        <p className="text-white/80 text-[14px]">Parent app · attendance, fees, homework and messages in one place</p>
+    <div className="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row bg-[var(--accent)]">
+      <div className="px-6 pt-14 pb-10 text-white lg:flex-1 lg:flex lg:flex-col lg:justify-center lg:px-16 xl:px-24">
+        <img src={LOGO_SRC} alt="" className="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-white p-1" />
+        <h1 className="mt-5 text-[26px] lg:text-[40px] font-bold leading-tight">Lumen Academy</h1>
+        <p className="text-white/80 text-[14px] lg:text-[17px] lg:max-w-md">Parent app · attendance, fees, homework and messages in one place</p>
+        <ul className="hidden lg:block mt-8 space-y-3 text-[15px] text-white/90">
+          {['Daily attendance and leave requests', 'Fee dues, receipts and online payment', 'Homework, results and Hall of Fame', 'Bus, hostel and messages from teachers'].map(x => (
+            <li key={x} className="flex items-center gap-3">
+              <Icon name="check_circle" className="text-[20px]" />
+              {x}
+            </li>
+          ))}
+        </ul>
       </div>
-      <div className="flex-1 bg-[var(--surface)] rounded-t-[28px] p-6 space-y-4">
+      <div className="flex-1 lg:flex-none lg:w-[460px] lg:overflow-y-auto lg:flex lg:flex-col lg:justify-center bg-[var(--surface)] rounded-t-[28px] lg:rounded-none p-6 lg:p-10 space-y-4">
+        <h2 className="hidden lg:block text-[22px] font-bold text-slate-900">Sign in</h2>
         {step === 'mobile' ? (
           <>
             <Field label="Registered mobile number" hint="We send a one-time password by WhatsApp, or SMS if WhatsApp is not available.">
@@ -168,14 +182,16 @@ const HomeScreen: React.FC = () => {
   const today = weekdayOf(APP_TODAY);
   const periods = today ? timetableFor(section)[today] : [];
   return (
-    <Screen>
-      <div>
+    <Screen wide>
+      <div className="lg:col-span-2">
         <p className="text-[13px] text-slate-500">{t('greeting')}, {guardian.name.split(' ').slice(-1)[0]}</p>
         <p className="text-[18px] font-semibold text-slate-900">
           {child.name} · Class {section}
         </p>
       </div>
-      <HallOfFameCard child={child} onOpen={() => openPage('hall-of-fame')} />
+      <div className="lg:col-span-2 empty:hidden">
+        <HallOfFameCard child={child} onOpen={() => openPage('hall-of-fame')} />
+      </div>
       <div className="grid grid-cols-2 gap-3">
         <Card onClick={() => setTab('attendance')} className="!rounded-2xl">
           <p className="text-[12px] text-slate-500">{t('today')}</p>
@@ -987,6 +1003,7 @@ const SettingsPage: React.FC = () => {
           <Icon name="chevron_right" className="text-slate-400" />
         </div>
       </Card>
+      <InstallAppCard appName="Lumen Parent" onInstalled={() => push('Lumen Parent installed')} />
       <Card title={t('language')}>
         <div className="grid grid-cols-3 gap-2">
           {(Object.keys(LANGUAGE_NAMES) as Language[]).map(l => (
@@ -1061,27 +1078,32 @@ const LaterPage: React.FC = () => (
   </Screen>
 );
 
+/** Pages listed under More on phones and in the sidebar on desktop. */
+const morePages = ({ pendingHomework, unackedCount, studentMode }: Pick<ParentSession, 'pendingHomework' | 'unackedCount' | 'studentMode'>) =>
+  (
+    [
+      { page: 'hall-of-fame', icon: 'emoji_events' },
+      { page: 'results', icon: 'grading' },
+      { page: 'timetable', icon: 'calendar_month' },
+      { page: 'transport', icon: 'directions_bus' },
+      { page: 'hostel', icon: 'apartment' },
+      { page: 'homework', icon: 'menu_book', badge: pendingHomework.length, hide: studentMode },
+      { page: 'notices', icon: 'campaign', badge: unackedCount },
+      { page: 'profile', icon: 'badge' },
+      { page: 'consent', icon: 'verified_user', hide: studentMode },
+      { page: 'settings', icon: 'settings' },
+      { page: 'appearance', icon: 'palette' },
+      { page: 'later', icon: 'upcoming' },
+    ] as { page: Exclude<Page, null>; icon: string; badge?: number; hide?: boolean }[]
+  ).filter(i => !i.hide);
+
 const MoreScreen: React.FC = () => {
-  const { onSignOut, push, guardian, t, pendingHomework, unackedCount, studentMode, openPage, titles } = useParent();
-  const items: { page: Exclude<Page, null>; icon: string; badge?: number; hide?: boolean }[] = [
-    { page: 'hall-of-fame', icon: 'emoji_events' },
-    { page: 'results', icon: 'grading' },
-    { page: 'timetable', icon: 'calendar_month' },
-    { page: 'transport', icon: 'directions_bus' },
-    { page: 'hostel', icon: 'apartment' },
-    { page: 'homework', icon: 'menu_book', badge: pendingHomework.length, hide: studentMode },
-    { page: 'notices', icon: 'campaign', badge: unackedCount },
-    { page: 'profile', icon: 'badge' },
-    { page: 'consent', icon: 'verified_user', hide: studentMode },
-    { page: 'settings', icon: 'settings' },
-    { page: 'appearance', icon: 'palette' },
-    { page: 'later', icon: 'upcoming' },
-  ];
+  const session = useParent();
+  const { onSignOut, push, guardian, t, openPage, titles } = session;
   return (
     <Screen>
       <Card>
-        {items
-          .filter(i => !i.hide)
+        {morePages(session)
           .map(i => (
             <button key={i.page} onClick={() => openPage(i.page)} className="w-full flex items-center gap-3 py-3 border-b last:border-0 border-slate-100" data-page={i.page}>
               <Icon name={i.icon} className="text-[22px] text-[var(--accent-ink)]" />
@@ -1111,6 +1133,7 @@ const MoreScreen: React.FC = () => {
           </SecondaryButton>
         </div>
       </Card>
+      <InstallAppCard appName="Lumen Parent" onInstalled={() => push('Lumen Parent installed')} />
     </Screen>
   );
 };
@@ -1282,23 +1305,49 @@ const ChildSession: React.FC<{ account: ParentAccount; onSignOut: () => void }> 
 
   const tabTitle: Record<Tab, string> = { home: 'Lumen Academy', attendance: t('attendance'), fees: t('fees'), messages: t('messages'), more: t('more'), homework: t('homework') };
 
+  const sidebar = (
+    <SideNav<Tab>
+      tabs={tabs.filter(x => x.id !== 'more')}
+      active={page ? null : tab}
+      onChange={id => {
+        setPage(null);
+        setTab(id);
+      }}
+      title="Lumen Academy"
+      subtitle={studentMode ? 'Student view' : 'Parent app'}
+      footer={
+        <>
+          <InstallButton appName="Lumen Parent" />
+          <div className="flex items-center gap-2">
+            <span className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-[13px] font-bold text-slate-600">{account.guardian.name.split(' ').slice(-1)[0][0]}</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-semibold text-slate-800 truncate">{account.guardian.name}</p>
+              <p className="text-[11px] text-slate-500 truncate">{account.guardian.mobile}</p>
+            </div>
+            <button onClick={onSignOut} className="p-2 rounded-full hover:bg-slate-100 text-slate-600" aria-label="Sign out" title={t('signOut')}>
+              <Icon name="logout" className="text-[20px]" />
+            </button>
+          </div>
+        </>
+      }
+    >
+      <p className="px-3 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400">{t('more')}</p>
+      {morePages(session).map(i => (
+        <SideLink key={i.page} id={i.page} icon={i.icon} label={titles[i.page]} active={page === i.page} onClick={() => setPage(i.page)} />
+      ))}
+    </SideNav>
+  );
+
   return (
     <ParentCtx.Provider value={session}>
-      {page ? (
-        <TopBar title={titles[page]} subtitle={`${child.name} · ${section}`} onBack={back} />
-      ) : (
-        <TopBar title={tabTitle[tab]} subtitle={prefs.lowData ? 'Data saver on' : studentMode ? 'Student view' : undefined} right={childPicker} />
-      )}
-      {page ? pageBody() : tabBody()}
-      {!page && (
-        <BottomNav
-          tabs={tabs}
-          active={tab}
-          onChange={id => {
-            setTab(id);
-          }}
-        />
-      )}
+      <AppShell side={sidebar} bottom={!page && <BottomNav<Tab> tabs={tabs} active={tab} onChange={setTab} />}>
+        {page ? (
+          <TopBar title={titles[page]} subtitle={`${child.name} · ${section}`} onBack={back} right={childPicker} />
+        ) : (
+          <TopBar title={tabTitle[tab]} subtitle={prefs.lowData ? 'Data saver on' : studentMode ? 'Student view' : undefined} right={childPicker} />
+        )}
+        {page ? pageBody() : tabBody()}
+      </AppShell>
       <Sheet open={switcher} onClose={() => setSwitcher(false)} title="Switch child">
         {account.children.map(c => (
           <button

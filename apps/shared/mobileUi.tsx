@@ -22,17 +22,31 @@ export const Icon: React.FC<{ name: string; className?: string; filled?: boolean
   </span>
 );
 
-/** Phone-width frame on desktop, full screen on phones. `theme` switches the colour tokens (see index.css). */
+export const LOGO_SRC = '/lumen-academy-logo.png';
+
+/**
+ * Full-window web app frame: a phone layout on small screens and a sidebar layout from 1024px (see AppShell).
+ * `theme` switches the colour tokens (see index.css).
+ */
 export const AppFrame: React.FC<{ children: React.ReactNode; accent: string; theme?: 'light' | 'dark' | 'school' }> = ({ children, accent, theme = 'light' }) => (
-  <div data-app-theme={theme} className="app-surface-transition min-h-[100dvh] bg-[var(--app-outer)] sm:py-6 flex justify-center" style={{ ['--accent' as string]: accent }}>
-    <div className="app-surface-transition relative w-full sm:max-w-[420px] min-h-[100dvh] sm:min-h-0 sm:h-[860px] bg-[var(--app-bg)] sm:rounded-[28px] sm:shadow-2xl sm:border sm:border-slate-200 overflow-hidden flex flex-col">
+  <div data-app-theme={theme} className="app-surface-transition relative h-[100dvh] w-full bg-[var(--app-bg)] overflow-hidden flex flex-col" style={{ ['--accent' as string]: accent }}>
+    {children}
+  </div>
+);
+
+/** Signed-in layout: sidebar on desktop, bottom tabs on phones and tablets. */
+export const AppShell: React.FC<{ side: React.ReactNode; bottom?: React.ReactNode; children: React.ReactNode }> = ({ side, bottom, children }) => (
+  <div className="flex-1 min-h-0 flex">
+    {side}
+    <div className="relative flex-1 min-w-0 min-h-0 flex flex-col">
       {children}
+      {bottom}
     </div>
   </div>
 );
 
 export const TopBar: React.FC<{ title: React.ReactNode; subtitle?: React.ReactNode; onBack?: () => void; right?: React.ReactNode }> = ({ title, subtitle, onBack, right }) => (
-  <header className="app-surface-transition shrink-0 bg-[var(--bar)] border-b-2 border-[var(--bar-edge)] text-white px-4 pt-4 pb-3 flex items-center gap-3">
+  <header className="app-surface-transition shrink-0 bg-[var(--bar)] border-b-2 border-[var(--bar-edge)] text-white px-4 lg:px-8 pt-4 pb-3 flex items-center gap-3">
     {onBack && (
       <button onClick={onBack} className="-ml-1 p-1 rounded-full hover:bg-white/15" aria-label="Back">
         <Icon name="arrow_back" className="text-[22px]" />
@@ -53,8 +67,8 @@ export interface TabDef<T extends string> {
   badge?: number;
 }
 
-export const BottomNav = <T extends string>({ tabs, active, onChange }: { tabs: TabDef<T>[]; active: T; onChange: (t: T) => void }) => (
-  <nav className="shrink-0 bg-[var(--surface)] border-t border-slate-200 flex pb-[env(safe-area-inset-bottom)]" aria-label="App">
+export const BottomNav = <T extends string>({ tabs, active, onChange, className }: { tabs: TabDef<T>[]; active: T; onChange: (t: T) => void; className?: string }) => (
+  <nav className={cx('shrink-0 bg-[var(--surface)] border-t border-slate-200 flex pb-[env(safe-area-inset-bottom)] lg:hidden', className)} aria-label="App">
     {tabs.map(t => {
       const on = t.id === active;
       return (
@@ -70,8 +84,73 @@ export const BottomNav = <T extends string>({ tabs, active, onChange }: { tabs: 
   </nav>
 );
 
-export const Screen: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-  <main className={cx('flex-1 overflow-y-auto px-4 py-4 space-y-4', className)}>{children}</main>
+/** Desktop navigation (1024px and wider). Phones use BottomNav with the same tabs. */
+export const SideNav = <T extends string>({
+  tabs,
+  active,
+  onChange,
+  title,
+  subtitle,
+  children,
+  footer,
+}: {
+  tabs: TabDef<T>[];
+  active: T | null;
+  onChange: (t: T) => void;
+  title: string;
+  subtitle: string;
+  children?: React.ReactNode;
+  footer?: React.ReactNode;
+}) => (
+  <aside className="app-surface-transition hidden lg:flex w-64 shrink-0 flex-col bg-[var(--surface)] border-r border-slate-200" aria-label="Sidebar">
+    <div className="app-surface-transition flex items-center gap-3 px-5 py-4 bg-[var(--bar)] border-b-2 border-[var(--bar-edge)] text-white">
+      <img src={LOGO_SRC} alt="" className="w-10 h-10 rounded-xl bg-white p-0.5" />
+      <div className="min-w-0">
+        <p className="text-[15px] font-bold leading-tight truncate">{title}</p>
+        <p className="text-[12px] text-white/80 truncate">{subtitle}</p>
+      </div>
+    </div>
+    <nav className="flex-1 overflow-y-auto p-3 space-y-1" aria-label="Sections">
+      {tabs.map(t => {
+        const on = t.id === active;
+        return (
+          <button
+            key={t.id}
+            onClick={() => onChange(t.id)}
+            aria-current={on ? 'page' : undefined}
+            data-side-tab={t.id}
+            className={cx('w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] transition-colors', on ? 'bg-[var(--accent)]/15 text-[var(--accent-ink)] font-semibold' : 'text-slate-700 hover:bg-slate-100')}
+          >
+            <Icon name={t.icon} filled={on} className="text-[22px]" />
+            <span className="flex-1 text-left">{t.label}</span>
+            {Boolean(t.badge) && <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-rose-600 text-white text-[11px] font-bold leading-5 text-center">{t.badge}</span>}
+          </button>
+        );
+      })}
+      {children}
+    </nav>
+    {footer && <div className="border-t border-slate-200 p-3 space-y-2">{footer}</div>}
+  </aside>
+);
+
+/** A secondary sidebar link, for pages that are not tabs. */
+export const SideLink: React.FC<{ id: string; icon: string; label: string; active?: boolean; onClick: () => void }> = ({ id, icon, label, active, onClick }) => (
+  <button
+    onClick={onClick}
+    aria-current={active ? 'page' : undefined}
+    data-side-page={id}
+    className={cx('w-full flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] transition-colors', active ? 'bg-[var(--accent)]/15 text-[var(--accent-ink)] font-semibold' : 'text-slate-600 hover:bg-slate-100')}
+  >
+    <Icon name={icon} filled={active} className="text-[20px]" />
+    <span className="flex-1 text-left">{label}</span>
+  </button>
+);
+
+/** Scrolling page body. On desktop the content is centred; `wide` lays cards out in two columns (`lg:col-span-2` for full-width rows). */
+export const Screen: React.FC<{ children: React.ReactNode; className?: string; wide?: boolean }> = ({ children, className, wide }) => (
+  <main className="flex-1 overflow-y-auto">
+    <div className={cx('mx-auto w-full px-4 py-4 space-y-4 lg:px-8 lg:py-6', wide ? 'max-w-6xl lg:grid lg:grid-cols-2 lg:gap-5 lg:space-y-0 lg:items-start' : 'max-w-3xl', className)}>{children}</div>
+  </main>
 );
 
 export const Card: React.FC<{ children: React.ReactNode; className?: string; onClick?: () => void; title?: React.ReactNode; action?: React.ReactNode }> = ({ children, className, onClick, title, action }) => {
@@ -118,14 +197,22 @@ export const Field: React.FC<{ label: string; children: React.ReactNode; hint?: 
 
 export const inputClass = 'w-full rounded-xl border border-slate-300 bg-[var(--surface)] px-3 py-2.5 text-[14px] outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20';
 
-/** Bottom sheet for forms and details. */
+/** Bottom sheet for forms and details on phones; a centred dialog on desktop. Escape closes it. */
 export const Sheet: React.FC<{ open: boolean; onClose: () => void; title: string; children: React.ReactNode }> = ({ open, onClose, title, children }) => {
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
   if (!open) return null;
   return (
-    <div className="absolute inset-0 z-40 flex flex-col justify-end" role="dialog" aria-modal="true" aria-label={title}>
+    <div className="fixed inset-0 z-40 flex flex-col justify-end lg:justify-center lg:items-center lg:p-6" role="dialog" aria-modal="true" aria-label={title}>
       <button className="absolute inset-0 bg-black/40" onClick={onClose} aria-label="Close" />
-      <div className="relative bg-[var(--surface)] rounded-t-3xl max-h-[88%] overflow-y-auto p-4 pb-6 space-y-3">
-        <div className="mx-auto w-10 h-1 rounded-full bg-slate-300" />
+      <div className="relative bg-[var(--surface)] rounded-t-3xl max-h-[88%] overflow-y-auto p-4 pb-6 space-y-3 lg:w-full lg:max-w-lg lg:rounded-3xl lg:max-h-[85vh] lg:p-6 lg:shadow-2xl">
+        <div className="mx-auto w-10 h-1 rounded-full bg-slate-300 lg:hidden" />
         <div className="flex items-center justify-between">
           <h2 className="text-[16px] font-semibold text-slate-900">{title}</h2>
           <button onClick={onClose} className="p-1 rounded-full hover:bg-slate-100" aria-label="Close sheet">
@@ -155,7 +242,7 @@ export const useToasts = () => {
 };
 
 export const Toasts: React.FC<{ toasts: ToastItem[] }> = ({ toasts }) => (
-  <div className="absolute left-3 right-3 top-20 z-50 space-y-2 pointer-events-none" aria-live="polite">
+  <div className="fixed left-3 right-3 top-20 z-50 space-y-2 pointer-events-none lg:left-auto lg:right-6 lg:top-6 lg:w-96" aria-live="polite">
     {toasts.map(t => (
       <div
         key={t.id}
@@ -167,7 +254,7 @@ export const Toasts: React.FC<{ toasts: ToastItem[] }> = ({ toasts }) => (
   </div>
 );
 
-export const FeatureFooter: React.FC<{ ids: string[] }> = ({ ids }) => <p className="pt-2 text-center text-[10px] text-slate-400">{ids.join(' · ')}</p>;
+export const FeatureFooter: React.FC<{ ids: string[] }> = ({ ids }) => <p className="pt-2 text-center text-[10px] text-slate-400 lg:col-span-2">{ids.join(' · ')}</p>;
 
 /** A feature that is planned for a later release (the coverage scanner reads the ids as deferred). */
 export const PhaseNotice: React.FC<{ ids: string[]; phase: string; note: string }> = ({ ids, phase, note }) => (

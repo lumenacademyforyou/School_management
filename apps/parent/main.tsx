@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ParentApp } from './ParentApp';
+import { registerServiceWorker } from '../shared/webApp';
 import '../../src/index.css';
 
 createRoot(document.getElementById('root')!).render(
@@ -8,3 +9,5 @@ createRoot(document.getElementById('root')!).render(
     <ParentApp />
   </StrictMode>,
 );
+
+registerServiceWorker();

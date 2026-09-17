@@ -33,6 +33,7 @@ import { InventoryView } from './views/admin/InventoryView';
 import { ProcurementView } from './views/admin/ProcurementView';
 import { DPDPAComplianceView } from './views/admin/DPDPAComplianceView';
 import { UDISEAPAARView } from './views/admin/UDISEAPAARView';
+import { EmisView } from './views/admin/emis/EmisView';
 import { DigiLockerCertificatesView } from './views/admin/DigiLockerCertificatesView';
 import { AccountingView } from './views/admin/AccountingView';
 import { HelpdeskView } from './views/admin/HelpdeskView';
@@ -119,6 +120,8 @@ const renderView = (view: AdminView) => {
       return <DPDPAComplianceView />;
     case 'udise-and-apaar':
       return <UDISEAPAARView />;
+    case 'emis':
+      return <EmisView />;
     case 'certificates':
       return <DigiLockerCertificatesView />;
     case 'audit-log':
@@ -163,7 +166,7 @@ const NotAllotted: React.FC = () => {
 };
 
 /** Screens that check each action against the grant matrix themselves, or only display data. */
-const SELF_ENFORCING: AdminView[] = ['dashboard', 'feature-spec-matrix', 'access-grants', 'fees', 'workflows', 'audit-log', 'reports', 'question-papers', 'question-bank'];
+const SELF_ENFORCING: AdminView[] = ['dashboard', 'feature-spec-matrix', 'access-grants', 'fees', 'workflows', 'audit-log', 'reports', 'question-papers', 'question-bank', 'emis'];
 
 const Screen: React.FC<{ view: AdminView }> = ({ view }) => {
   const { currentUser } = useApp();

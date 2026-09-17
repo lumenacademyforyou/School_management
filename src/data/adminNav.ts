@@ -53,6 +53,7 @@ export const BASELINE_GROUPS: NavGroup[] = [
     items: [
       { id: 'dpdpa-and-consent', label: 'Consent & Privacy', icon: 'verified_user' },
       { id: 'udise-and-apaar', label: 'UDISE+ & APAAR', icon: 'fingerprint' },
+      { id: 'emis', label: 'TN EMIS', icon: 'id_card' },
       { id: 'integrations', label: 'Integrations', icon: 'extension' },
     ],
   },

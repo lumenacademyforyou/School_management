@@ -155,6 +155,11 @@ const FEATURE_OVERRIDES: Record<string, Partial_[]> = {
     { role: 'exam-coordinator', verbs: ['C', 'R'], scope: OWN, condition: 'Submits papers; cannot approve own paper' },
     { role: 'principal', verbs: ['R', 'A'], scope: OWN, condition: 'Approves, rejects or sends back every paper' },
   ],
+  'STU-026': [
+    { role: 'admissions', verbs: ['C', 'R', 'U', 'D', 'E'], scope: OWN, condition: 'EMIS operator: every portal upload and export is logged' },
+    { role: 'principal', verbs: ['R', 'A'], scope: OWN, condition: 'Reviews EMIS returns; does not upload' },
+    { role: 'auditor', verbs: ['R', 'E'], scope: 'All branches', condition: 'Read-only; every export is logged' },
+  ],
   'FEE-042': [{ role: 'accountant', verbs: ['C', 'R', 'E'], scope: OWN, condition: 'Prepares the pack for the auditor; export is logged' }],
 };
 

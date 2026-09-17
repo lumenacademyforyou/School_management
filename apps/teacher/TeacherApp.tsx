@@ -1,7 +1,10 @@
 import React, { useContext, useMemo, useState } from 'react';
 import {
   AppFrame,
+  AppShell,
   BottomNav,
+  LOGO_SRC,
+  SideNav,
   Card,
   EmptyState,
   FeatureFooter,
@@ -21,6 +24,7 @@ import {
   inputClass,
   useToasts,
 } from '../shared/mobileUi';
+import { InstallAppCard, InstallButton } from '../shared/webApp';
 import { nowStamp, resetBackend, serverMark, updateBackend, useBackend } from '../shared/demoBackend';
 import {
   APP_NOW,
@@ -78,19 +82,28 @@ const Login: React.FC<{ onLogin: (t: TeacherAccount) => void }> = ({ onLogin }) 
     onLogin(account);
   };
   return (
-    <div className="flex-1 flex flex-col bg-[var(--accent)]">
-      <div className="px-6 pt-14 pb-10 text-white">
-        <img src="/lumen-academy-logo.png" alt="" className="w-16 h-16 rounded-2xl bg-white p-1" />
-        <h1 className="mt-5 text-[26px] font-bold leading-tight">Lumen Teacher</h1>
-        <p className="text-white/80 text-[14px]">Attendance, marks, homework and parent messages — works offline</p>
+    <div className="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row bg-[var(--accent)]">
+      <div className="px-6 pt-14 pb-10 text-white lg:flex-1 lg:flex lg:flex-col lg:justify-center lg:px-16 xl:px-24">
+        <img src={LOGO_SRC} alt="" className="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-white p-1" />
+        <h1 className="mt-5 text-[26px] lg:text-[40px] font-bold leading-tight">Lumen Teacher</h1>
+        <p className="text-white/80 text-[14px] lg:text-[17px] lg:max-w-md">Attendance, marks, homework and parent messages — works offline</p>
+        <ul className="hidden lg:block mt-8 space-y-3 text-[15px] text-white/90">
+          {['Morning roll call in under a minute', 'Marks entry with validation', 'Homework and class notices', 'Keeps working when the network drops'].map(x => (
+            <li key={x} className="flex items-center gap-3">
+              <Icon name="check_circle" className="text-[20px]" />
+              {x}
+            </li>
+          ))}
+        </ul>
       </div>
       <form
         onSubmit={e => {
           e.preventDefault();
           submit();
         }}
-        className="flex-1 bg-white rounded-t-[28px] p-6 space-y-4"
+        className="flex-1 lg:flex-none lg:w-[460px] lg:overflow-y-auto lg:flex lg:flex-col lg:justify-center bg-white rounded-t-[28px] lg:rounded-none p-6 lg:p-10 space-y-4"
       >
+        <h2 className="hidden lg:block text-[22px] font-bold text-slate-900">Sign in</h2>
         <Field label="School email">
           <input value={email} onChange={e => { setEmail(e.target.value); setError(''); }} type="email" className={inputClass} aria-label="Email" />
         </Field>
@@ -184,13 +197,13 @@ const TodayScreen: React.FC = () => {
   };
 
   return (
-    <Screen>
-      <div>
+    <Screen wide>
+      <div className="lg:col-span-2">
         <p className="text-[13px] text-slate-500">{fmtDay(APP_TODAY)} · {APP_NOW}</p>
         <p className="text-[18px] font-semibold text-slate-900">Hello, {teacher.name.replace(/^(Mrs|Mr|Ms|Dr)\.\s*/, '')}</p>
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-2 lg:gap-4 lg:col-span-2">
         <Card onClick={() => setTab('attendance')}>
           <p className={cx('text-[18px] font-bold', marked ? 'text-emerald-600' : 'text-rose-600')}>{classSection ? (marked ? 'Done' : 'Due') : '—'}</p>
           <p className="text-[11px] text-slate-500">Attendance {classSection ?? ''}</p>
@@ -881,6 +894,14 @@ const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => v
   const titles: Record<Tab, string> = { today: 'Lumen Teacher', attendance: 'Attendance', marks: 'Marks entry', homework: 'Homework', messages: 'Parent messages' };
   const pending = device.outbox.length;
 
+  const signOut = () => {
+    if (pending) {
+      push(`${pending} unsynced list(s) — sync before signing out`, 'error');
+      return;
+    }
+    onSignOut();
+  };
+
   const toggleOnline = () => {
     const online = !device.online;
     setDevice({ ...device, online });
@@ -902,29 +923,57 @@ const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => v
     }
   }, [tab]);
 
-  return (
-    <TeacherCtx.Provider value={session}>
-      <TopBar
-        title={titles[tab]}
-        subtitle={device.online ? (pending ? `${pending} waiting to sync` : `Synced ${device.lastSync ?? device.snapshotAt}`) : `Offline · ${pending} waiting to sync`}
-        right={
-          <div className="flex items-center gap-1">
-            <button onClick={toggleOnline} className={cx('rounded-full p-1.5', device.online ? 'bg-white/15' : 'bg-amber-500')} aria-label={device.online ? 'Go offline' : 'Go online'} title="Simulate network">
-              <Icon name={device.online ? 'wifi' : 'wifi_off'} className="text-[20px]" />
+  const sidebar = (
+    <SideNav<Tab>
+      tabs={tabs}
+      active={tab}
+      onChange={setTab}
+      title="Lumen Teacher"
+      subtitle={teacher.classTeacherOf ? `Class teacher · ${teacher.classTeacherOf}` : teacher.designation}
+      footer={
+        <>
+          <InstallButton appName="Lumen Teacher" />
+          <div className="flex items-center gap-2">
+            <button onClick={() => setMenu(true)} className="flex-1 min-w-0 flex items-center gap-2 rounded-xl p-1 hover:bg-slate-100 text-left" aria-label="Open account">
+              <Icon name="account_circle" className="text-[32px] text-slate-500" />
+              <span className="min-w-0">
+                <span className="block text-[13px] font-semibold text-slate-800 truncate">{teacher.name}</span>
+                <span className="block text-[11px] text-slate-500 truncate">{teacher.email}</span>
+              </span>
             </button>
-            {pending > 0 && device.online && (
-              <button onClick={sync} className="rounded-full p-1.5 bg-white/15" aria-label="Sync now">
-                <Icon name="sync" className="text-[20px]" />
-              </button>
-            )}
-            <button onClick={() => setMenu(true)} className="rounded-full p-1.5 hover:bg-white/15" aria-label="Account menu">
-              <Icon name="account_circle" className="text-[22px]" />
+            <button onClick={signOut} className="p-2 rounded-full hover:bg-slate-100 text-slate-600" aria-label="Sign out" title="Sign out">
+              <Icon name="logout" className="text-[20px]" />
             </button>
           </div>
-        }
-      />
-      {body}
-      <BottomNav<Tab> tabs={tabs} active={tab} onChange={setTab} />
+        </>
+      }
+    />
+  );
+
+  return (
+    <TeacherCtx.Provider value={session}>
+      <AppShell side={sidebar} bottom={<BottomNav<Tab> tabs={tabs} active={tab} onChange={setTab} />}>
+        <TopBar
+          title={titles[tab]}
+          subtitle={device.online ? (pending ? `${pending} waiting to sync` : `Synced ${device.lastSync ?? device.snapshotAt}`) : `Offline · ${pending} waiting to sync`}
+          right={
+            <div className="flex items-center gap-1">
+              <button onClick={toggleOnline} className={cx('rounded-full p-1.5', device.online ? 'bg-white/15' : 'bg-amber-500')} aria-label={device.online ? 'Go offline' : 'Go online'} title="Simulate network">
+                <Icon name={device.online ? 'wifi' : 'wifi_off'} className="text-[20px]" />
+              </button>
+              {pending > 0 && device.online && (
+                <button onClick={sync} className="rounded-full p-1.5 bg-white/15" aria-label="Sync now">
+                  <Icon name="sync" className="text-[20px]" />
+                </button>
+              )}
+              <button onClick={() => setMenu(true)} className="rounded-full p-1.5 hover:bg-white/15" aria-label="Account menu">
+                <Icon name="account_circle" className="text-[22px]" />
+              </button>
+            </div>
+          }
+        />
+        {body}
+      </AppShell>
       <Sheet open={menu} onClose={() => setMenu(false)} title={teacher.name}>
         <p className="text-[13px] text-slate-600">{teacher.designation}</p>
         <p className="text-[12px] text-slate-500">{teacher.email}</p>
@@ -939,18 +988,10 @@ const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => v
         >
           Reset demo data
         </SecondaryButton>
-        <SecondaryButton
-          onClick={() => {
-            if (pending) {
-              push(`${pending} unsynced list(s) — sync before signing out`, 'error');
-              return;
-            }
-            onSignOut();
-          }}
-          className="w-full"
-        >
+        <SecondaryButton onClick={signOut} className="w-full">
           Sign out
         </SecondaryButton>
+        <InstallAppCard appName="Lumen Teacher" onInstalled={() => push('Lumen Teacher installed')} />
       </Sheet>
       <Toasts toasts={toasts} />
     </TeacherCtx.Provider>
