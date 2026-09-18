@@ -1,0 +1,50 @@
+{
+  "version": 1.1,
+  "atDirectives": [
+    {
+      "name": "@theme",
+      "description": "Tailwind CSS v4: defines design tokens (colours, fonts, shadows) as CSS variables and generates the matching utility classes.",
+      "references": [{ "name": "Tailwind CSS: Theme variables", "url": "https://tailwindcss.com/docs/theme" }]
+    },
+    {
+      "name": "@source",
+      "description": "Tailwind CSS v4: adds a folder or file for Tailwind to scan for class names.",
+      "references": [{ "name": "Tailwind CSS: Detecting classes", "url": "https://tailwindcss.com/docs/detecting-classes-in-source-files" }]
+    },
+    {
+      "name": "@utility",
+      "description": "Tailwind CSS v4: registers a custom utility class that works with variants such as hover: and lg:.",
+      "references": [{ "name": "Tailwind CSS: Adding custom utilities", "url": "https://tailwindcss.com/docs/adding-custom-styles#adding-custom-utilities" }]
+    },
+    {
+      "name": "@variant",
+      "description": "Tailwind CSS v4: applies a Tailwind variant (for example dark or hover) to styles inside a rule.",
+      "references": [{ "name": "Tailwind CSS: Functions and directives", "url": "https://tailwindcss.com/docs/functions-and-directives" }]
+    },
+    {
+      "name": "@custom-variant",
+      "description": "Tailwind CSS v4: defines a custom variant.",
+      "references": [{ "name": "Tailwind CSS: Functions and directives", "url": "https://tailwindcss.com/docs/functions-and-directives" }]
+    },
+    {
+      "name": "@apply",
+      "description": "Tailwind CSS: inlines existing utility classes into a rule.",
+      "references": [{ "name": "Tailwind CSS: Functions and directives", "url": "https://tailwindcss.com/docs/functions-and-directives" }]
+    },
+    {
+      "name": "@reference",
+      "description": "Tailwind CSS v4: imports a stylesheet for reference only, without emitting its CSS.",
+      "references": [{ "name": "Tailwind CSS: Functions and directives", "url": "https://tailwindcss.com/docs/functions-and-directives" }]
+    },
+    {
+      "name": "@plugin",
+      "description": "Tailwind CSS v4: loads a JavaScript plugin.",
+      "references": [{ "name": "Tailwind CSS: Functions and directives", "url": "https://tailwindcss.com/docs/functions-and-directives" }]
+    },
+    {
+      "name": "@config",
+      "description": "Tailwind CSS v4: loads a legacy JavaScript configuration file.",
+      "references": [{ "name": "Tailwind CSS: Functions and directives", "url": "https://tailwindcss.com/docs/functions-and-directives" }]
+    }
+  ]
+}

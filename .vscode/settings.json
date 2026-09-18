@@ -1,0 +1,4 @@
+{
+  // Teach the built-in CSS checker Tailwind v4's directives (@theme, @source, @utility…) so index.css shows no false problems.
+  "css.customData": [".vscode/tailwind.css-data.json"]
+}
