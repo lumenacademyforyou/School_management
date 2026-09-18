@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { Campus } from '../../types';
 import { FeatureTags, downloadCsv } from '../../components/common/FeatureTags';
 import { PrintPortal } from '../../components/common/PrintPortal';
-import { code128BModules, isCode128BEncodable } from '../../lib/code128';
+import { encodeQr, qrPath } from '../../lib/qrcode';
 import {
   CARD_HOLDERS,
   INITIAL_CARD_RECORDS,
@@ -17,6 +17,7 @@ import {
   HolderType,
   activeCardFor,
   addYears,
+  cardQrPayload,
   cardStateFor,
   isValidRfid,
   nextCardNumber,
@@ -96,22 +97,22 @@ const initialsOf = (name: string) =>
 // Card rendering (CR80: 85.6 × 54 mm)
 // ---------------------------------------------------------------------------
 
-const Barcode: React.FC<{ value: string; height?: number }> = ({ value, height = 28 }) => {
-  if (!isCode128BEncodable(value)) return null;
-  const { widths, total } = code128BModules(value);
-  const quiet = 10;
-  let x = quiet;
-  const bars: { x: number; w: number }[] = [];
-  widths.forEach((w, i) => {
-    if (i % 2 === 0) bars.push({ x, w });
-    x += w;
-  });
+/** Scannable QR code (error correction M, 4-module quiet zone), printed as vector so it stays sharp. */
+const QrCode: React.FC<{ value: string; sizeMm: number }> = ({ value, sizeMm }) => {
+  const qr = useMemo(() => encodeQr(value, 'M'), [value]);
+  const box = qr.size + 8;
   return (
-    <svg viewBox={`0 0 ${total + quiet * 2} ${height}`} preserveAspectRatio="none" className="w-full" style={{ height: `${height / 4}mm` }} role="img" aria-label={`Barcode ${value}`}>
-      <rect x={0} y={0} width={total + quiet * 2} height={height} fill="#fff" />
-      {bars.map(b => (
-        <rect key={b.x} x={b.x} y={0} width={b.w} height={height} fill="#000" />
-      ))}
+    <svg
+      viewBox={`0 0 ${box} ${box}`}
+      className="shrink-0"
+      style={{ width: `${sizeMm}mm`, height: `${sizeMm}mm` }}
+      shapeRendering="crispEdges"
+      role="img"
+      aria-label={`QR code ${value}`}
+      data-qr={value}
+    >
+      <rect width={box} height={box} fill="#fff" />
+      <path d={qrPath(qr)} fill="#000" />
     </svg>
   );
 };
@@ -129,6 +130,7 @@ export const IdCard: React.FC<CardProps> = ({ holder, card, template, campus, si
   const size = portrait ? { width: '54mm', height: '85.6mm' } : { width: '85.6mm', height: '54mm' };
   const band = holder.staffCategory ? STAFF_CATEGORY_COLOURS[holder.staffCategory] : template.accent;
   const cardNo = card?.cardNo ?? 'PREVIEW-0000';
+  const qrValue = cardQrPayload(cardNo, holder.identifier, card?.validUntil);
   const title = holder.type === 'Student' ? 'STUDENT IDENTITY CARD' : holder.type === 'Teacher' ? 'FACULTY IDENTITY CARD' : 'STAFF IDENTITY CARD';
 
   const photo = (
@@ -161,8 +163,11 @@ export const IdCard: React.FC<CardProps> = ({ holder, card, template, campus, si
             <p className="font-bold">{campus.name}</p>
             <p className="text-slate-600">{campus.location}</p>
             <p className="text-slate-600">Affiliation {campus.affiliationNumber}</p>
-            <Barcode value={cardNo} />
-            <p className="text-center font-mono text-[7px] tracking-wider">{cardNo}</p>
+            <div className="flex flex-col items-center gap-[0.5mm] pt-[1mm]">
+              <QrCode value={qrValue} sizeMm={18} />
+              <p className="text-center font-mono text-[7px] tracking-wider">{cardNo}</p>
+              <p className="text-center text-[5.5px] text-slate-500">Scan to verify this card</p>
+            </div>
           </div>
         </div>
       </div>
@@ -212,22 +217,20 @@ export const IdCard: React.FC<CardProps> = ({ holder, card, template, campus, si
       ) : (
         <div className="flex-1 min-h-0 flex gap-[2.5mm] px-[2.5mm] py-[1.5mm]">
           {photo}
-          {details}
+          <div className="flex-1 min-w-0">{details}</div>
+          <QrCode value={qrValue} sizeMm={13} />
         </div>
       )}
       {portrait ? (
-        <div className="px-[2.5mm] pb-[1.5mm] space-y-[1mm]">
-          <div className="ml-auto w-[16mm] text-center">
+        <div className="px-[2.5mm] pb-[1.5mm] flex items-end justify-between gap-[2mm]">
+          <QrCode value={qrValue} sizeMm={13} />
+          <div className="w-[16mm] text-center">
             <div className="border-b border-slate-400 h-[3mm]" />
             <p className="text-[5.5px] text-slate-500">{template.signatory}</p>
           </div>
-          <Barcode value={cardNo} height={20} />
         </div>
       ) : (
-        <div className="px-[2.5mm] pb-[1.5mm] flex items-end gap-[3mm]">
-          <div className="flex-1 min-w-0">
-            <Barcode value={cardNo} height={20} />
-          </div>
+        <div className="px-[2.5mm] pb-[1.5mm] flex items-end justify-end">
           <div className="w-[16mm] shrink-0 text-center">
             <div className="border-b border-slate-400 h-[3mm]" />
             <p className="text-[5.5px] text-slate-500">{template.signatory}</p>

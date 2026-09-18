@@ -18,6 +18,13 @@ export interface CardHolder {
   accessZones?: string[];
 }
 
+/**
+ * What the card's QR code carries: a fixed prefix, the card number, the holder's admission number or
+ * employee code, and the expiry date. A gate, library or bus scanner can check validity offline;
+ * with a backend it would also look the card number up to catch revoked cards.
+ */
+export const cardQrPayload = (cardNo: string, identifier: string, validUntil?: string) => `LUMEN-ID|${cardNo}|${identifier}|${validUntil ?? '-'}`;
+
 export interface CardRecord {
   cardNo: string;
   holderId: string;

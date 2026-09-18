@@ -26,7 +26,7 @@ src/                    admin console
   data/                 seed data and pure business rules: fees, students, TN EMIS, question papers,
                         Term results and ranks, transport, hostel, feature catalogue, access grants
   services/             mock APIs the screens call (question papers, students, EMIS, results, transport, hostel)
-  hooks/, lib/          grant lookups, observable store, session state, barcode, app links
+  hooks/, lib/          grant lookups, observable store, session state, QR codes, app links
 apps/
   parent/               parent app: ParentApp.tsx, StudentLife.tsx (Hall of Fame, transport, hostel, appearance)
   teacher/              teacher app: TeacherApp.tsx, offline device store
