@@ -220,6 +220,13 @@ describe('Question Paper Generator', () => {
       assert.equal(qpgStore.get().bank.find(q => q.id === qid)!.usageCount, before + 1);
       qpgStore.reset();
     });
+    test('new paper IDs continue after the highest saved paper', async () => {
+      qpgStore.reset();
+      qpgStore.set(s => ({ ...s, papers: [{ ...fullPaper(), id: 'QP-2024-125' }, ...s.papers] }));
+      const created = await questionPaperService.createPaper({ ...fullPaper(), id: undefined } as unknown as QuestionPaper);
+      assert.equal(created.id, 'QP-2024-126');
+      qpgStore.reset();
+    });
     test('a failed request rejects with the friendly message', async () => {
       failNextRequest();
       await assert.rejects(questionPaperService.listPapers(), /Something went wrong/);

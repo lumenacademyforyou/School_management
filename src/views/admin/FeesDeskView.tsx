@@ -873,7 +873,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                   <span className="font-mono">{link.url}</span> · expires {fmt(link.expires)} · send via WhatsApp or SMS
                 </p>
               )}
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto" data-export-title={`Fee ledger · ${active.name} · ${active.admissionNo}`}>
                 {renderInvoiceTable(activeStates)}
               </div>
               {activeStates.length === 0 && <EmptyNote>No invoices for this student.</EmptyNote>}

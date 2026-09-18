@@ -1,6 +1,7 @@
 // Mock question paper API. Every call returns a Promise so a real HTTP client can replace this
-// module without touching the screens. Records live in an in-memory store for the browser session.
-import { createStore, mockDelay, useStore } from '../lib/store';
+// module without touching the screens. The browser demo keeps records in localStorage, matching
+// the teacher-request service, so a refresh or another app tab sees the same papers and bank.
+import { createStore, mockDelay, Store, useStore } from '../lib/store';
 import {
   AiRequest,
   BankQuestion,
@@ -20,7 +21,60 @@ interface QpgState {
   papers: QuestionPaper[];
 }
 
-export const qpgStore = createStore<QpgState>(() => ({ bank: INITIAL_BANK, papers: INITIAL_PAPERS }));
+const STORAGE_KEY = 'lumen-question-papers';
+const STORAGE_SCHEMA = 1;
+
+interface StoredQpgState extends QpgState {
+  schema: number;
+}
+
+const seed = (): QpgState => ({ bank: INITIAL_BANK, papers: INITIAL_PAPERS });
+
+const read = (): QpgState => {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const stored = JSON.parse(raw) as StoredQpgState;
+      if (stored.schema === STORAGE_SCHEMA && Array.isArray(stored.bank) && Array.isArray(stored.papers)) {
+        return { bank: stored.bank, papers: stored.papers };
+      }
+    }
+  } catch {
+    // Storage is unavailable or stale. The demo can still operate from its seed data.
+  }
+  return seed();
+};
+
+const memoryStore = createStore<QpgState>(() => (typeof window === 'undefined' ? seed() : read()));
+
+const persist = () => {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ schema: STORAGE_SCHEMA, ...memoryStore.get() }));
+  } catch {
+    // Private windows and tests may not allow storage; retain the in-memory session instead.
+  }
+};
+
+/** Observable question-paper state, persisted for the single-origin demo and synced between tabs. */
+export const qpgStore: Store<QpgState> = {
+  get: memoryStore.get,
+  set: next => {
+    memoryStore.set(next);
+    persist();
+  },
+  subscribe: memoryStore.subscribe,
+  reset: () => {
+    memoryStore.set(seed());
+    persist();
+  },
+};
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', event => {
+    if (event.key === STORAGE_KEY) memoryStore.set(read());
+  });
+}
+
 export const useQpgState = () => useStore(qpgStore);
 
 /** Makes the next call fail, so screens can show their error state (used by tests and the demo). */
@@ -55,8 +109,14 @@ export const statsOf = ({ bank, papers }: QpgState): QpgStats => ({
   approved: papers.filter(p => p.status === 'Approved' || p.status === 'Published').length,
 });
 
-let paperSeq = 12;
-const nextPaperId = () => `QP-2024-${String(paperSeq++).padStart(3, '0')}`;
+/** Continue after the highest saved demo paper ID, including after a browser refresh. */
+const nextPaperId = (papers: QuestionPaper[]) => {
+  const highest = papers.reduce((max, paper) => {
+    const match = /^QP-2024-(\d+)$/.exec(paper.id);
+    return Math.max(max, match ? Number(match[1]) : 0);
+  }, 0);
+  return `QP-2024-${String(highest + 1).padStart(3, '0')}`;
+};
 
 export const questionPaperService = {
   loadDashboard: () => respond(() => statsOf(qpgStore.get())),
@@ -65,8 +125,9 @@ export const questionPaperService = {
 
   createPaper: (draft: Omit<QuestionPaper, 'id'>) =>
     respond(() => {
-      const paper = { ...draft, id: nextPaperId() };
-      qpgStore.set(s => ({ ...s, papers: [paper, ...s.papers] }));
+      const current = qpgStore.get();
+      const paper = { ...draft, id: nextPaperId(current.papers) };
+      qpgStore.set({ ...current, papers: [paper, ...current.papers] });
       return paper;
     }),
 
@@ -130,6 +191,5 @@ export const questionPaperService = {
 
   reset: () => {
     qpgStore.reset();
-    paperSeq = 12;
   },
 };

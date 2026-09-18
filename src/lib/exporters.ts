@@ -85,13 +85,24 @@ export const parseCell = (raw: string): XlsxCell => {
 
 const SKIP_HEADERS = /^(action|actions|select|)$/i;
 
-const cellText = (cell: Element) => {
-  const c = cell.cloneNode(true) as HTMLElement;
-  c.querySelectorAll('button, input, select, textarea, svg, .material-symbols-outlined, [aria-hidden="true"], .sr-only').forEach(n => n.remove());
-  // Separate block children so "Name\nAdmission" does not run together
-  c.querySelectorAll('p, div, br, li').forEach(n => n.insertAdjacentText('beforebegin', ' '));
-  return (c.textContent ?? '').replace(/\s+/g, ' ').trim();
+/** Visible text with a space between separate pieces, so "INV-0011" + "Paid" never runs together as "INV-0011Paid". */
+const spacedText = (el: Element) => {
+  const parts: string[] = [];
+  const walk = (n: Node) => {
+    if (n.nodeType === Node.TEXT_NODE) parts.push(n.textContent ?? '');
+    else if (n instanceof Element && !n.matches('button, input, select, textarea, svg, .material-symbols-outlined, [aria-hidden="true"], .sr-only')) {
+      // A unit (₹, %) belongs to its number, so no space is added around it
+      const glue = n.classList.contains('unit');
+      if (!glue) parts.push(' ');
+      n.childNodes.forEach(walk);
+      if (!glue) parts.push(' ');
+    }
+  };
+  el.childNodes.forEach(walk);
+  return parts.join('').replace(/\s+/g, ' ').trim();
 };
+
+const cellText = (cell: Element) => spacedText(cell);
 
 /** Reads a table as the user sees it: skips action and checkbox columns, and expanded detail rows. */
 export const tableData = (table: HTMLTableElement, title: string): ExportData => {
@@ -112,7 +123,7 @@ export const tableTitle = (table: HTMLTableElement, fallback: string) => {
   let node: Element | null = table;
   while (node && node.tagName !== 'MAIN') {
     const heading = node.querySelector(':scope > * h2, :scope > h2, :scope > * h3, :scope > h3, :scope > div > span.font-bold, :scope > div > span.text-xs.font-bold');
-    if (heading && !heading.contains(table)) return (heading.textContent ?? '').replace(/\(\d+\)$/, '').replace(/\s+/g, ' ').trim() || fallback;
+    if (heading && !heading.contains(table)) return spacedText(heading).replace(/\(\d+\)$/, '').trim() || fallback;
     node = node.parentElement;
   }
   return fallback;
