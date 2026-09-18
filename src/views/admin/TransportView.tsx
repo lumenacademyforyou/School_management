@@ -45,16 +45,16 @@ export const TransportView: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header & Status */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">directions_bus</span>
             <span>AIS-140 Certified Fleet Command (TRN-001..028)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">
             Live Transit Radar: {BUS_ROUTE_14.routeNumber} ({BUS_ROUTE_14.vehicleNumber})
           </h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <p className="text-xs text-ink-soft mt-1">
             Pilot: <strong>{BUS_ROUTE_14.driverName}</strong> • Conductor: {BUS_ROUTE_14.conductorName} • Speed: {BUS_ROUTE_14.speedKmh} km/h (Limit: 40 km/h)
           </p>
         </div>
@@ -62,7 +62,7 @@ export const TransportView: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleExportManifest}
-            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-[#082b3d] text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 transition-colors"
+            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-ink text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 transition-colors"
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Export Manifest</span>
@@ -76,7 +76,7 @@ export const TransportView: React.FC = () => {
           </button>
           <button
             onClick={advanceDriverStop}
-            className="flex items-center gap-1.5 bg-[#0e5d84] hover:bg-[#083a4f] text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-xs transition-colors"
+            className="flex items-center gap-1.5 bg-brand hover:bg-brand-strong text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-xs transition-colors"
           >
             <span className="material-symbols-outlined text-sm">flag</span>
             <span>Simulate Geofence Arrival</span>
@@ -97,32 +97,32 @@ export const TransportView: React.FC = () => {
 
       {/* Fleet Telemetry HUD */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[10px] uppercase font-bold text-[#777587]">Live GPS Speed</div>
-          <div className="text-2xl font-bold font-mono text-[#082b3d] mt-0.5">{BUS_ROUTE_14.speedKmh} km/h</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[10px] uppercase font-bold text-ink-muted">Live GPS Speed</div>
+          <div className="text-2xl font-bold font-mono text-ink mt-0.5">{BUS_ROUTE_14.speedKmh} km/h</div>
           <div className="text-[11px] text-emerald-700 font-semibold">Under 40 km/h limit</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[10px] uppercase font-bold text-[#777587]">Destination ETA</div>
-          <div className="text-2xl font-bold font-mono text-[#0e5d84] mt-0.5">{BUS_ROUTE_14.etaSchool}</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[10px] uppercase font-bold text-ink-muted">Destination ETA</div>
+          <div className="text-2xl font-bold font-mono text-brand mt-0.5">{BUS_ROUTE_14.etaSchool}</div>
           <div className="text-[11px] text-emerald-700 font-semibold">On Schedule (0 min delay)</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[10px] uppercase font-bold text-[#777587]">Diesel Tank Level</div>
-          <div className="text-2xl font-bold font-mono text-[#082b3d] mt-0.5">74%</div>
-          <div className="text-[11px] text-[#464555]">Est. Range: 310 km</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[10px] uppercase font-bold text-ink-muted">Diesel Tank Level</div>
+          <div className="text-2xl font-bold font-mono text-ink mt-0.5">74%</div>
+          <div className="text-[11px] text-ink-soft">Est. Range: 310 km</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[10px] uppercase font-bold text-[#777587]">Passenger Manifest</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[10px] uppercase font-bold text-ink-muted">Passenger Manifest</div>
           <div className="text-2xl font-bold font-mono text-emerald-700 mt-0.5">35 / 35</div>
           <div className="text-[11px] text-emerald-700 font-semibold">All Boarded via RFID</div>
         </div>
       </div>
 
       {/* Live Route Waypoints Tracker */}
-      <div className="bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-4">
-        <h2 className="text-sm font-bold text-[#082b3d] flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#0e5d84] text-base">alt_route</span>
+      <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-4">
+        <h2 className="text-sm font-bold text-ink flex items-center gap-2">
+          <span className="material-symbols-outlined text-brand text-base">alt_route</span>
           <span>Route #14 Transit Progress (Velachery - Guindy Corridor)</span>
         </h2>
 
@@ -135,7 +135,7 @@ export const TransportView: React.FC = () => {
                 key={stop.stopNo}
                 className={`p-3 rounded-xl border text-xs transition-all ${
                   isCurrent
-                    ? 'bg-[#0e5d84] text-white border-[#0e5d84] shadow-md ring-2 ring-[#0e5d84]/30'
+                    ? 'bg-brand text-white border-brand shadow-md ring-2 ring-brand/30'
                     : isCompleted
                     ? 'bg-emerald-50 text-emerald-900 border-emerald-300'
                     : 'bg-slate-50 text-slate-500 border-slate-200'
@@ -157,9 +157,9 @@ export const TransportView: React.FC = () => {
       </div>
 
       {/* Passenger Manifest Roster */}
-      <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-        <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex items-center justify-between">
-          <span className="text-xs font-bold text-[#082b3d]">Route #14 Passenger RFID Tap Log</span>
+      <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+        <div className="p-4 bg-subtle border-b border-line flex items-center justify-between">
+          <span className="text-xs font-bold text-ink">Route #14 Passenger RFID Tap Log</span>
           <span className="text-xs font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold">
             AIS-140 IRNSS SYNCED
           </span>
@@ -168,15 +168,15 @@ export const TransportView: React.FC = () => {
         <div className="p-4 space-y-2.5">
           <div className="flex items-center justify-between p-3 bg-emerald-50/70 rounded-xl border border-emerald-200 text-xs">
             <div className="flex items-center gap-3">
-              <span className="font-mono font-bold text-[#0e5d84]">Seat 12B</span>
+              <span className="font-mono font-bold text-brand">Seat 12B</span>
               <img
                 src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop&q=80"
                 alt="Aarav"
-                className="w-8 h-8 rounded-full object-cover border border-[#cbe0ec]"
+                className="w-8 h-8 rounded-full object-cover border border-line"
               />
               <div>
-                <div className="font-bold text-[#082b3d]">Aarav S. Ramanathan (Class 10-A)</div>
-                <div className="text-[11px] text-[#464555]">Velachery Bypass • Guardian: Sundar Ramanathan (+91 98401 23456)</div>
+                <div className="font-bold text-ink">Aarav S. Ramanathan (Class 10-A)</div>
+                <div className="text-[11px] text-ink-soft">Velachery Bypass • Guardian: Sundar Ramanathan (+91 98401 23456)</div>
               </div>
             </div>
             <span className="text-emerald-800 font-semibold bg-emerald-100 px-2 py-0.5 rounded text-[11px]">
@@ -186,15 +186,15 @@ export const TransportView: React.FC = () => {
 
           <div className="flex items-center justify-between p-3 bg-emerald-50/70 rounded-xl border border-emerald-200 text-xs">
             <div className="flex items-center gap-3">
-              <span className="font-mono font-bold text-[#0e5d84]">Seat 14A</span>
+              <span className="font-mono font-bold text-brand">Seat 14A</span>
               <img
                 src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80"
                 alt="Farah"
-                className="w-8 h-8 rounded-full object-cover border border-[#cbe0ec]"
+                className="w-8 h-8 rounded-full object-cover border border-line"
               />
               <div>
-                <div className="font-bold text-[#082b3d]">Farah N. Siddiqui (Class 10-A)</div>
-                <div className="text-[11px] text-[#464555]">Madipakkam Lake View • Guardian: N. Siddiqui (+91 98405 67890)</div>
+                <div className="font-bold text-ink">Farah N. Siddiqui (Class 10-A)</div>
+                <div className="text-[11px] text-ink-soft">Madipakkam Lake View • Guardian: N. Siddiqui (+91 98405 67890)</div>
               </div>
             </div>
             <span className="text-emerald-800 font-semibold bg-emerald-100 px-2 py-0.5 rounded text-[11px]">
@@ -206,12 +206,12 @@ export const TransportView: React.FC = () => {
 
       {/* MODAL: Delay Broadcast */}
       {showDelayModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-amber-600">warning</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Broadcast Route Delay Alert (TRN-018)</h3>
+                <h3 className="font-bold text-ink text-sm">Broadcast Route Delay Alert (TRN-018)</h3>
               </div>
               <button
                 onClick={() => setShowDelayModal(false)}
@@ -227,7 +227,7 @@ export const TransportView: React.FC = () => {
                 <select
                   value={delayMinutes}
                   onChange={e => setDelayMinutes(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
                 >
                   <option value="10">10 Minutes</option>
                   <option value="15">15 Minutes</option>
@@ -243,7 +243,7 @@ export const TransportView: React.FC = () => {
                   value={delayReason}
                   onChange={e => setDelayReason(e.target.value)}
                   placeholder="e.g. Heavy traffic or tyre puncture"
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-[#0e5d84]"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
                 />
               </div>
 

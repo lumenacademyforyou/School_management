@@ -45,12 +45,12 @@ export const SetsStep: React.FC<{ paper: QuestionPaper; editable: boolean; onCha
 
   return (
     <div className="space-y-4">
-      <section className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 flex flex-wrap items-end gap-3">
+      <section className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 flex flex-wrap items-end gap-3">
         <div>
-          <h2 className="text-sm font-bold text-[#082b3d]">Multiple sets</h2>
-          <p className="text-[11px] text-[#464555]">Give neighbouring candidates different papers of the same weight.</p>
+          <h2 className="text-sm font-bold text-ink">Multiple sets</h2>
+          <p className="text-[11px] text-ink-soft">Give neighbouring candidates different papers of the same weight.</p>
         </div>
-        <label className="text-[11px] font-semibold text-[#464555] ml-auto">
+        <label className="text-[11px] font-semibold text-ink-soft ml-auto">
           Number of sets
           <select value={count} onChange={e => setCount(Number(e.target.value))} disabled={!editable} className={`${inputCls} ml-2`} aria-label="Number of sets">
             {[2, 3, 4].map(n => (
@@ -69,9 +69,9 @@ export const SetsStep: React.FC<{ paper: QuestionPaper; editable: boolean; onCha
       </section>
       {blocking.length > 0 && <p className="text-xs text-rose-700">{blocking[0].text} Fix the paper before making sets.</p>}
 
-      <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-x-auto">
+      <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-x-auto">
         <table className="w-full text-xs" aria-label="Set comparison">
-          <thead className="bg-slate-50 text-[#464555]">
+          <thead className="bg-slate-50 text-ink-soft">
             <tr>
               {['Set', 'Questions', 'Marks', 'Easy / Medium / Hard', 'Same as Set A', 'Status', ''].map(h => (
                 <th key={h} className={`p-2.5 font-semibold ${['Questions', 'Marks', 'Same as Set A'].includes(h) ? 'text-right' : 'text-left'}`}>
@@ -80,11 +80,11 @@ export const SetsStep: React.FC<{ paper: QuestionPaper; editable: boolean; onCha
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f0f7fb]">
+          <tbody className="divide-y divide-subtle">
             {sets.map(s => {
               const st = paperStats(s.sections, bank);
               return (
-                <tr key={s.label} className={s.label === view ? 'bg-[#f0f7fb]' : ''}>
+                <tr key={s.label} className={s.label === view ? 'bg-subtle' : ''}>
                   <td className="p-2.5 font-bold">{s.label}</td>
                   <td className="p-2.5 text-right">{st.questions}</td>
                   <td className="p-2.5 text-right">{st.marks}</td>
@@ -105,11 +105,11 @@ export const SetsStep: React.FC<{ paper: QuestionPaper; editable: boolean; onCha
             })}
           </tbody>
         </table>
-        {sets.length < 2 && <p className="p-3 text-[11px] text-[#777587]">Only Set A exists. Generate sets to compare them.</p>}
+        {sets.length < 2 && <p className="p-3 text-[11px] text-ink-muted">Only Set A exists. Generate sets to compare them.</p>}
       </div>
 
       {current && (
-        <article className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 md:p-6 space-y-3" aria-label={`${current.label} preview`}>
+        <article className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 md:p-6 space-y-3" aria-label={`${current.label} preview`}>
           <PaperHeader paper={paper} setLabel={current.label} />
           <SetQuestions paper={paper} set={current} />
         </article>
@@ -179,10 +179,10 @@ export const AnswerKeyStep: React.FC<{ paper: QuestionPaper }> = ({ paper }) => 
 
   return (
     <div className="space-y-4">
-      <section className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 flex flex-wrap items-end gap-3">
+      <section className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 flex flex-wrap items-end gap-3">
         <div>
-          <h2 className="text-sm font-bold text-[#082b3d]">Answer key</h2>
-          <p className="text-[11px] text-[#464555]">Correct answers and the marking scheme for the evaluation team.</p>
+          <h2 className="text-sm font-bold text-ink">Answer key</h2>
+          <p className="text-[11px] text-ink-soft">Correct answers and the marking scheme for the evaluation team.</p>
         </div>
         <div className="ml-auto flex flex-wrap items-center gap-2">
           <select value={label} onChange={e => setLabel(e.target.value)} className={inputCls} aria-label="Answer key set">
@@ -210,24 +210,24 @@ export const AnswerKeyStep: React.FC<{ paper: QuestionPaper }> = ({ paper }) => 
       </section>
 
       {preview ? (
-        <article className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 md:p-8 space-y-3" aria-label="Answer Key Preview">
+        <article className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 md:p-8 space-y-3" aria-label="Answer Key Preview">
           <PaperHeader paper={paper} setLabel={set.label} subtitle="Answer key and marking scheme" />
           <p className="text-center text-[10px] font-bold text-rose-700 tracking-widest">CONFIDENTIAL · FOR EVALUATORS ONLY</p>
           <ol className="space-y-2 text-xs">
             {rows.map(r => (
-              <li key={r.number} className="border-b border-dashed border-[#e0ecf4] pb-2">
+              <li key={r.number} className="border-b border-dashed border-line-soft pb-2">
                 <p>
-                  <span className="font-bold">Q{r.number}.</span> <span className="font-semibold text-emerald-800">{r.correctAnswer}</span> <span className="text-[#777587]">[{r.marks}]</span>
+                  <span className="font-bold">Q{r.number}.</span> <span className="font-semibold text-emerald-800">{r.correctAnswer}</span> <span className="text-ink-muted">[{r.marks}]</span>
                 </p>
-                <p className="text-[#464555]">{r.markingScheme}</p>
+                <p className="text-ink-soft">{r.markingScheme}</p>
               </li>
             ))}
           </ol>
         </article>
       ) : (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-x-auto">
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-x-auto">
           <table className="w-full text-xs" aria-label="Answer key">
-            <thead className="bg-slate-50 text-[#464555]">
+            <thead className="bg-slate-50 text-ink-soft">
               <tr>
                 {['Q', 'Question', 'Correct answer', 'Marks', 'Expected answer / marking scheme'].map(h => (
                   <th key={h} className="p-2.5 text-left font-semibold whitespace-nowrap">
@@ -236,17 +236,17 @@ export const AnswerKeyStep: React.FC<{ paper: QuestionPaper }> = ({ paper }) => 
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#f0f7fb]">
+            <tbody className="divide-y divide-subtle">
               {rows.map(r => (
                 <tr key={r.number}>
                   <td className="p-2.5 font-bold align-top">
                     {r.number}
-                    <span className="block text-[9px] font-normal text-[#777587]">{r.section}</span>
+                    <span className="block text-[9px] font-normal text-ink-muted">{r.section}</span>
                   </td>
                   <td className="p-2.5 max-w-[320px] align-top">{r.question}</td>
                   <td className="p-2.5 font-semibold text-emerald-800 align-top">{r.correctAnswer}</td>
                   <td className="p-2.5 text-center align-top">{r.marks}</td>
-                  <td className="p-2.5 text-[#464555] align-top">{r.markingScheme}</td>
+                  <td className="p-2.5 text-ink-soft align-top">{r.markingScheme}</td>
                 </tr>
               ))}
             </tbody>

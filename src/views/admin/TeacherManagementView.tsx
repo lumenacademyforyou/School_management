@@ -176,18 +176,18 @@ export const TeacherManagementView: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded text-[11px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
               TCH · Module 36 · Layer 6 (People)
             </span>
-            <span className="text-xs text-[#777587]">34 Master Features</span>
+            <span className="text-xs text-ink-muted">34 Master Features</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#082b3d] mt-1">
+          <h1 className="text-xl md:text-2xl font-bold text-ink mt-1">
             Teacher Management & Academic Pedagogical Governance
           </h1>
-          <p className="text-xs md:text-sm text-[#464555]">
+          <p className="text-xs md:text-sm text-ink-soft">
             Class teacher allocations, teaching workload distribution, Notes of Lesson (planned vs actual), HOD approvals, and CBSE inspection packs.
           </p>
         </div>
@@ -195,7 +195,7 @@ export const TeacherManagementView: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowAssignModal(true)}
-            className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+            className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">assignment_ind</span>
             <span>Assign Load / Class</span>
@@ -205,37 +205,37 @@ export const TeacherManagementView: React.FC = () => {
 
       {/* KPI Stats Bar */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Total Teaching Faculty</div>
-          <div className="text-xl font-bold font-mono text-[#082b3d] mt-1">174 Faculty</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Total Teaching Faculty</div>
+          <div className="text-xl font-bold font-mono text-ink mt-1">174 Faculty</div>
           <div className="text-[11px] text-emerald-600 font-semibold mt-0.5">100% CTET / B.Ed Qualified</div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Avg Teaching Load (TCH-005)</div>
-          <div className="text-xl font-bold font-mono text-[#0e5d84] mt-1">23.4 / 28 hrs</div>
-          <div className="text-[11px] text-[#777587] mt-0.5">CBSE Max Cap: 28 periods/week</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Avg Teaching Load (TCH-005)</div>
+          <div className="text-xl font-bold font-mono text-brand mt-1">23.4 / 28 hrs</div>
+          <div className="text-[11px] text-ink-muted mt-0.5">CBSE Max Cap: 28 periods/week</div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Syllabus Coverage (TCH-015)</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Syllabus Coverage (TCH-015)</div>
           <div className="text-xl font-bold font-mono text-emerald-700 mt-1">86.8% Avg</div>
           <div className="text-[11px] text-emerald-600 mt-0.5">+4.2% ahead of term plan</div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Notes of Lesson Approval (TCH-016)</div>
-          <div className="text-xl font-bold font-mono text-[#082b3d] mt-1">96.2% Approved</div>
-          <div className="text-[11px] text-[#777587] mt-0.5">Reviewed weekly by HODs</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Notes of Lesson Approval (TCH-016)</div>
+          <div className="text-xl font-bold font-mono text-ink mt-1">96.2% Approved</div>
+          <div className="text-[11px] text-ink-muted mt-0.5">Reviewed weekly by HODs</div>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-[#e0ecf4] pb-2">
+      <div className="flex flex-wrap items-center gap-2 border-b border-line-soft pb-2">
         <button
           onClick={() => setActiveTab('roster')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'roster' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'roster' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">badge</span>
@@ -244,7 +244,7 @@ export const TeacherManagementView: React.FC = () => {
         <button
           onClick={() => setActiveTab('lesson-plans')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'lesson-plans' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'lesson-plans' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">menu_book</span>
@@ -253,7 +253,7 @@ export const TeacherManagementView: React.FC = () => {
         <button
           onClick={() => setActiveTab('competency')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'competency' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'competency' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">psychology</span>
@@ -262,7 +262,7 @@ export const TeacherManagementView: React.FC = () => {
         <button
           onClick={() => setActiveTab('cpd')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'cpd' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'cpd' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">school</span>
@@ -272,27 +272,27 @@ export const TeacherManagementView: React.FC = () => {
 
       {/* Tab 1: Faculty Directory & Workload */}
       {activeTab === 'roster' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-          <div className="p-4 border-b border-[#e0ecf4] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-line-soft flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="relative flex-1 max-w-sm">
-              <span className="material-symbols-outlined absolute left-3 top-2.5 text-sm text-[#777587]">search</span>
+              <span className="material-symbols-outlined absolute left-3 top-2.5 text-sm text-ink-muted">search</span>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search faculty by name, code, subject..."
-                className="w-full bg-[#f8f9ff] border border-[#e0ecf4] rounded-xl pl-9 pr-3 py-1.5 text-xs text-[#082b3d] placeholder-[#777587] focus:outline-hidden focus:border-[#0e5d84]"
+                className="w-full bg-wash border border-line-soft rounded-xl pl-9 pr-3 py-1.5 text-xs text-ink placeholder:text-ink-muted focus:outline-hidden focus:border-brand"
               />
             </div>
-            <div className="text-xs text-[#777587]">
-              Showing <span className="font-bold text-[#082b3d]">{filteredTeachers.length}</span> educators
+            <div className="text-xs text-ink-muted">
+              Showing <span className="font-bold text-ink">{filteredTeachers.length}</span> educators
             </div>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-[#464555] border-b border-[#e0ecf4] text-[11px] uppercase tracking-wider font-semibold">
+                <tr className="bg-slate-50 text-ink-soft border-b border-line-soft text-[11px] uppercase tracking-wider font-semibold">
                   <th className="py-3 px-4">Faculty Member</th>
                   <th className="py-3 px-4">Subject & Role</th>
                   <th className="py-3 px-4">Classes Assigned</th>
@@ -302,31 +302,31 @@ export const TeacherManagementView: React.FC = () => {
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f1f5f9]">
+              <tbody className="divide-y divide-line-soft">
                 {filteredTeachers.map(teacher => (
-                  <tr key={teacher.id} className="hover:bg-[#f8faff] transition-colors">
+                  <tr key={teacher.id} className="hover:bg-wash transition-colors">
                     <td className="py-3 px-4">
-                      <div className="font-bold text-[#082b3d]">{teacher.name}</div>
-                      <div className="text-[10px] text-[#777587] font-mono">{teacher.code} • {teacher.qualification}</div>
+                      <div className="font-bold text-ink">{teacher.name}</div>
+                      <div className="text-[10px] text-ink-muted font-mono">{teacher.code} • {teacher.qualification}</div>
                     </td>
                     <td className="py-3 px-4">
-                      <div className="font-semibold text-[#082b3d]">{teacher.subject}</div>
-                      <div className="text-[10px] text-[#0e5d84] font-semibold">{teacher.designation}</div>
+                      <div className="font-semibold text-ink">{teacher.subject}</div>
+                      <div className="text-[10px] text-brand font-semibold">{teacher.designation}</div>
                       {teacher.classTeacherOf && (
                         <span className="inline-block mt-0.5 text-[9px] font-bold px-1.5 py-0.2 bg-amber-50 text-amber-800 rounded border border-amber-200">
                           CT: {teacher.classTeacherOf}
                         </span>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-[#464555]">{teacher.classes}</td>
+                    <td className="py-3 px-4 text-ink-soft">{teacher.classes}</td>
                     <td className="py-3 px-4 text-center">
-                      <div className="font-mono font-bold text-[#082b3d]">
+                      <div className="font-mono font-bold text-ink">
                         {teacher.weeklyLoad} / {teacher.maxLoad}
                       </div>
                       <div className="w-16 h-1 bg-slate-100 rounded-full mx-auto mt-1 overflow-hidden">
                         <div
                           className={`h-full rounded-full ${
-                            teacher.weeklyLoad > 26 ? 'bg-amber-500' : 'bg-[#0e5d84]'
+                            teacher.weeklyLoad > 26 ? 'bg-amber-500' : 'bg-brand'
                           }`}
                           style={{ width: `${(teacher.weeklyLoad / teacher.maxLoad) * 100}%` }}
                         />
@@ -351,7 +351,7 @@ export const TeacherManagementView: React.FC = () => {
                     <td className="py-3 px-4 text-right space-x-1.5">
                       <button
                         onClick={() => handleGenerateInspectionPack(teacher)}
-                        className="px-2.5 py-1 bg-slate-100 hover:bg-[#0e5d84] hover:text-white text-[#082b3d] rounded text-xs font-bold transition-all"
+                        className="px-2.5 py-1 bg-slate-100 hover:bg-brand hover:text-white text-ink rounded text-xs font-bold transition-all"
                         title="Generate CBSE Inspection Dossier"
                       >
                         Inspection Pack
@@ -367,15 +367,15 @@ export const TeacherManagementView: React.FC = () => {
 
       {/* Tab 2: Notes of Lesson & Syllabus Tracking */}
       {activeTab === 'lesson-plans' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-[#e0ecf4] pb-3">
+        <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-line-soft pb-3">
             <div>
-              <h3 className="text-sm font-bold text-[#082b3d]">Notes of Lesson (NoL) & Planned vs. Actual Tracking (TCH-010..014)</h3>
-              <p className="text-xs text-[#777587]">Weekly pedagogical unit plans submitted for HOD review & NEP 2020 competency alignment</p>
+              <h3 className="text-sm font-bold text-ink">Notes of Lesson (NoL) & Planned vs. Actual Tracking (TCH-010..014)</h3>
+              <p className="text-xs text-ink-muted">Weekly pedagogical unit plans submitted for HOD review & NEP 2020 competency alignment</p>
             </div>
             <button
               onClick={handleExportAllPlans}
-              className="px-3 py-1.5 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold flex items-center gap-1 transition-all"
+              className="px-3 py-1.5 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold flex items-center gap-1 transition-all"
             >
               <span className="material-symbols-outlined text-sm">download</span>
               <span>Export All Unit Plans</span>
@@ -384,13 +384,13 @@ export const TeacherManagementView: React.FC = () => {
 
           <div className="space-y-3">
             {teachers.map(teacher => (
-              <div key={teacher.id} className="p-4 bg-[#f8faff] rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div key={teacher.id} className="p-4 bg-wash rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <div className="font-bold text-sm text-[#082b3d]">{teacher.name} — {teacher.subject}</div>
-                  <div className="text-xs text-[#777587] mt-0.5">
-                    Assigned: {teacher.classes} • Submitted Units: <span className="font-bold text-[#082b3d]">{teacher.lessonPlansSubmitted}</span> • Approved: <span className="font-bold text-emerald-700">{teacher.lessonPlansApproved}</span>
+                  <div className="font-bold text-sm text-ink">{teacher.name} — {teacher.subject}</div>
+                  <div className="text-xs text-ink-muted mt-0.5">
+                    Assigned: {teacher.classes} • Submitted Units: <span className="font-bold text-ink">{teacher.lessonPlansSubmitted}</span> • Approved: <span className="font-bold text-emerald-700">{teacher.lessonPlansApproved}</span>
                   </div>
-                  <div className="text-[11px] text-[#464555] mt-1 font-mono">
+                  <div className="text-[11px] text-ink-soft mt-1 font-mono">
                     Current Unit: "Trigonometric Functions & Vector Algebra" (Lesson 4 of 6 · Bloom: Analyze)
                   </div>
                 </div>
@@ -419,16 +419,16 @@ export const TeacherManagementView: React.FC = () => {
 
       {/* Tab 3: Competency Matrix */}
       {activeTab === 'competency' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs space-y-4">
+        <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm space-y-4">
           <div>
-            <h3 className="text-sm font-bold text-[#082b3d]">Subject Competency & Skill Matrix (TCH-002)</h3>
-            <p className="text-xs text-[#777587]">Verified faculty subject qualifications across Primary, Secondary, and Senior Secondary CBSE levels</p>
+            <h3 className="text-sm font-bold text-ink">Subject Competency & Skill Matrix (TCH-002)</h3>
+            <p className="text-xs text-ink-muted">Verified faculty subject qualifications across Primary, Secondary, and Senior Secondary CBSE levels</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
             <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
-              <div className="font-bold text-sm text-[#082b3d]">Science & Mathematics Dept</div>
-              <div className="text-[#777587]">28 Faculty Members • 12 Postgraduates • 4 Ph.D</div>
+              <div className="font-bold text-sm text-ink">Science & Mathematics Dept</div>
+              <div className="text-ink-muted">28 Faculty Members • 12 Postgraduates • 4 Ph.D</div>
               <div className="pt-2 border-t border-slate-200 space-y-1">
                 <div className="flex justify-between"><span>Advanced Calculus:</span> <span className="font-bold text-emerald-700">9 Qualified</span></div>
                 <div className="flex justify-between"><span>Quantum & Optics Lab:</span> <span className="font-bold text-emerald-700">7 Qualified</span></div>
@@ -437,8 +437,8 @@ export const TeacherManagementView: React.FC = () => {
             </div>
 
             <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
-              <div className="font-bold text-sm text-[#082b3d]">Languages & Humanities</div>
-              <div className="text-[#777587]">32 Faculty Members • English, Tamil, Hindi, Sanskrit</div>
+              <div className="font-bold text-sm text-ink">Languages & Humanities</div>
+              <div className="text-ink-muted">32 Faculty Members • English, Tamil, Hindi, Sanskrit</div>
               <div className="pt-2 border-t border-slate-200 space-y-1">
                 <div className="flex justify-between"><span>Creative Writing & Drama:</span> <span className="font-bold text-emerald-700">14 Qualified</span></div>
                 <div className="flex justify-between"><span>Linguistic Translation:</span> <span className="font-bold text-emerald-700">11 Qualified</span></div>
@@ -447,8 +447,8 @@ export const TeacherManagementView: React.FC = () => {
             </div>
 
             <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
-              <div className="font-bold text-sm text-[#082b3d]">Computer Science & AI Lab</div>
-              <div className="text-[#777587]">14 Faculty Members • Python, Robotics, Data Science</div>
+              <div className="font-bold text-sm text-ink">Computer Science & AI Lab</div>
+              <div className="text-ink-muted">14 Faculty Members • Python, Robotics, Data Science</div>
               <div className="pt-2 border-t border-slate-200 space-y-1">
                 <div className="flex justify-between"><span>Python & MySQL (Code 083):</span> <span className="font-bold text-emerald-700">12 Qualified</span></div>
                 <div className="flex justify-between"><span>AI & Robotics (Code 417):</span> <span className="font-bold text-emerald-700">8 Qualified</span></div>
@@ -461,19 +461,19 @@ export const TeacherManagementView: React.FC = () => {
 
       {/* Tab 4: CPD Training */}
       {activeTab === 'cpd' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs space-y-4">
+        <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-[#082b3d]">NEP 2020 Mandatory 50-Hour Continuous Professional Development (CPD) (TCH-028)</h3>
-              <p className="text-xs text-[#777587]">Compliance register tracking workshops, DIKSHA modules, and CBSE capacity building programmes</p>
+              <h3 className="text-sm font-bold text-ink">NEP 2020 Mandatory 50-Hour Continuous Professional Development (CPD) (TCH-028)</h3>
+              <p className="text-xs text-ink-muted">Compliance register tracking workshops, DIKSHA modules, and CBSE capacity building programmes</p>
             </div>
             <span className="text-xs font-mono font-bold bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg border border-emerald-200">
               Institutional Average: 44.6 / 50 hrs
             </span>
           </div>
 
-          <div className="p-4 bg-[#f0f7fb] rounded-xl border border-[#cbe0ec] text-xs text-[#464555] space-y-1">
-            <div className="font-bold text-[#0e5d84]">Recent Completed Institutional Workshops:</div>
+          <div className="p-4 bg-subtle rounded-xl border border-line text-xs text-ink-soft space-y-1">
+            <div className="font-bold text-brand">Recent Completed Institutional Workshops:</div>
             <div>• "Experiential Learning in Secondary Science" — CBSE COE Chennai (12 hrs)</div>
             <div>• "NEP 2020 Holistic Progress Card (HPC) Rubrics Implementation" (15 hrs)</div>
             <div>• "Cyber Security & Child Safety under DPDPA 2023" — LumenAcademy Legal Cell (8 hrs)</div>
@@ -483,12 +483,12 @@ export const TeacherManagementView: React.FC = () => {
 
       {/* MODAL 1: Assign Workload & Class Teacher Modal */}
       {showAssignModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">assignment_ind</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Assign Faculty Workload & Classes (TCH-002)</h3>
+                <span className="material-symbols-outlined text-brand">assignment_ind</span>
+                <h3 className="font-bold text-ink text-sm">Assign Faculty Workload & Classes (TCH-002)</h3>
               </div>
               <button
                 onClick={() => setShowAssignModal(false)}
@@ -504,7 +504,7 @@ export const TeacherManagementView: React.FC = () => {
                 <select
                   value={assignTeacherId}
                   onChange={e => setAssignTeacherId(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800"
                 >
                   {teachers.map(t => (
                     <option key={t.id} value={t.id}>
@@ -520,7 +520,7 @@ export const TeacherManagementView: React.FC = () => {
                   <select
                     value={assignClass}
                     onChange={e => setAssignClass(e.target.value)}
-                    className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800"
+                    className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800"
                   >
                     <option value="Grade 10-A">Grade 10-A</option>
                     <option value="Grade 10-B">Grade 10-B</option>
@@ -539,7 +539,7 @@ export const TeacherManagementView: React.FC = () => {
                     type="text"
                     value={assignSubject}
                     onChange={e => setAssignSubject(e.target.value)}
-                    className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2 text-xs font-semibold text-slate-800"
+                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs font-semibold text-slate-800"
                   />
                 </div>
               </div>
@@ -549,7 +549,7 @@ export const TeacherManagementView: React.FC = () => {
                 <select
                   value={assignPeriods}
                   onChange={e => setAssignPeriods(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800"
                 >
                   <option value="2">2 Periods / Week</option>
                   <option value="4">4 Periods / Week (Standard)</option>
@@ -563,7 +563,7 @@ export const TeacherManagementView: React.FC = () => {
                   type="checkbox"
                   checked={isClassTeacher}
                   onChange={e => setIsClassTeacher(e.target.checked)}
-                  className="accent-[#0e5d84] rounded"
+                  className="accent-brand rounded"
                 />
                 <span className="text-amber-950 font-semibold text-xs">
                   Designate as Official Class Teacher for {assignClass}
@@ -580,7 +580,7 @@ export const TeacherManagementView: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white font-bold rounded-xl text-xs shadow-xs"
+                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
                 >
                   Confirm Assignment
                 </button>
@@ -592,12 +592,12 @@ export const TeacherManagementView: React.FC = () => {
 
       {/* MODAL 2: CBSE Faculty Inspection Dossier Modal */}
       {selectedTeacher && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-5 ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">verified_user</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">CBSE Faculty Inspection Dossier (TCH-022)</h3>
+                <span className="material-symbols-outlined text-brand">verified_user</span>
+                <h3 className="font-bold text-ink text-sm">CBSE Faculty Inspection Dossier (TCH-022)</h3>
               </div>
               <button
                 onClick={() => setSelectedTeacher(null)}
@@ -608,7 +608,7 @@ export const TeacherManagementView: React.FC = () => {
             </div>
 
             {/* Dossier Content Sheet */}
-            <div className="border border-slate-300 rounded-xl p-5 bg-[#fafcff] space-y-4 text-xs text-[#082b3d]">
+            <div className="border border-slate-300 rounded-xl p-5 bg-wash space-y-4 text-xs text-ink">
               <div className="text-center border-b pb-3">
                 <div className="font-black text-base">LUMEN ACADEMY SENIOR SECONDARY SCHOOL</div>
                 <div className="text-[11px] text-slate-500">Board Affiliation No. 1930412 • Faculty Verification Record</div>
@@ -674,7 +674,7 @@ export const TeacherManagementView: React.FC = () => {
                   window.print();
                   addToast('Dispatched Faculty Dossier to print dialog', 'info');
                 }}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl text-xs font-bold flex items-center gap-1.5"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-bold flex items-center gap-1.5"
               >
                 <span className="material-symbols-outlined text-sm">print</span>
                 <span>Print Official Dossier</span>
@@ -692,7 +692,7 @@ export const TeacherManagementView: React.FC = () => {
                   addToast(`Downloaded CBSE Inspection Dossier for ${selectedTeacher.name}`, 'success');
                   setSelectedTeacher(null);
                 }}
-                className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5"
+                className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5"
               >
                 <span className="material-symbols-outlined text-sm">download</span>
                 <span>Download Dossier</span>

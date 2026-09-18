@@ -88,19 +88,19 @@ const Badge: React.FC<{ className: string; children: React.ReactNode }> = ({ cla
 );
 
 const Panel: React.FC<{ title: React.ReactNode; actions?: React.ReactNode; children: React.ReactNode; className?: string }> = ({ title, actions, children, className = '' }) => (
-  <div className={`bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden ${className}`}>
-    <div className="p-3 bg-[#f0f7fb] border-b border-[#cbe0ec] flex flex-wrap items-center justify-between gap-2">
-      <span className="text-xs font-bold text-[#082b3d]">{title}</span>
+  <div className={`bg-white rounded-2xl border border-line-soft shadow-xs overflow-hidden ${className}`}>
+    <div className="p-3 bg-subtle border-b border-line flex flex-wrap items-center justify-between gap-2">
+      <span className="text-xs font-bold text-ink">{title}</span>
       {actions}
     </div>
     {children}
   </div>
 );
 
-const inputCls = 'w-full text-xs border border-[#cbe0ec] rounded-lg px-2 py-1.5 bg-white';
+const inputCls = 'w-full text-xs border border-line rounded-lg px-2 py-1.5 bg-white';
 const btn = 'text-xs font-semibold px-3 py-1.5 rounded-lg disabled:opacity-40';
-const btnPrimary = `${btn} bg-[#0e5d84] text-white hover:bg-[#083a4f]`;
-const btnSoft = `${btn} bg-slate-100 hover:bg-slate-200 text-[#082b3d]`;
+const btnPrimary = `${btn} bg-brand text-white hover:bg-brand-strong`;
+const btnSoft = `${btn} bg-slate-100 hover:bg-slate-200 text-ink`;
 
 export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'pipeline' }) => {
   const { addToast, selectedCampus } = useApp();
@@ -502,12 +502,12 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">how_to_reg</span>
             <span>Module 12 · Admissions (ADM)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">Admissions Desk · AY 2025–26</h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">Admissions Desk · AY 2025–26</h1>
+          <p className="text-xs text-ink-soft mt-1">
             {selectedCampus.name} · status as of {fmt(asOf)}
           </p>
         </div>
@@ -519,21 +519,21 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         {kpis.map(k => (
-          <div key={k.label} className="bg-white rounded-2xl border border-[#e0ecf4] p-3 shadow-xs">
-            <p className="text-2xl font-bold text-[#082b3d]">{k.value}</p>
-            <p className="text-[11px] font-semibold text-[#082b3d]">{k.label}</p>
-            <p className="text-[10px] text-[#777587]">{k.sub}</p>
+          <div key={k.label} className="bg-surface rounded-2xl border border-line-soft p-3 shadow-sm">
+            <p className="text-2xl font-bold text-ink">{k.value}</p>
+            <p className="text-[11px] font-semibold text-ink">{k.label}</p>
+            <p className="text-[10px] text-ink-muted">{k.sub}</p>
           </div>
         ))}
       </div>
 
-      <div className="flex gap-1 overflow-x-auto border-b border-[#e0ecf4]">
+      <div className="flex gap-1 overflow-x-auto border-b border-line-soft">
         {TABS.map(t => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
-              tab === t.id ? 'border-[#0e5d84] text-[#0e5d84]' : 'border-transparent text-[#777587] hover:text-[#082b3d]'
+              tab === t.id ? 'border-brand text-brand' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
             <span className="material-symbols-outlined text-sm">{t.icon}</span>
@@ -550,10 +550,10 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
             {PIPELINE.map(stage => {
               const items = apps.filter(a => a.stage === stage);
               return (
-                <div key={stage} className="bg-slate-50 rounded-2xl border border-[#e0ecf4] p-2 space-y-2 min-h-[160px]">
+                <div key={stage} className="bg-slate-50 rounded-2xl border border-line-soft p-2 space-y-2 min-h-[160px]">
                   <div className="flex items-center justify-between px-1">
-                    <span className="text-[11px] font-bold text-[#082b3d]">{stage}</span>
-                    <span className="text-[10px] font-mono text-[#777587]">{items.length}</span>
+                    <span className="text-[11px] font-bold text-ink">{stage}</span>
+                    <span className="text-[10px] font-mono text-ink-muted">{items.length}</span>
                   </div>
                   {items.map(a => (
                     <button
@@ -563,14 +563,14 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                         setTab(a.stage === 'Offer' || a.stage === 'Enrolled' ? 'offers' : a.stage === 'Decision' || a.stage === 'Waitlisted' ? 'decisions' : 'applications');
                         if (a.stage === 'Decision' || a.stage === 'Waitlisted') setDecisionClass(a.classApplied);
                       }}
-                      className="w-full text-left bg-white rounded-xl border border-[#e0ecf4] p-2 hover:border-[#0e5d84] transition-colors"
+                      className="w-full text-left bg-surface rounded-xl border border-line-soft p-2 hover:border-brand transition-colors"
                     >
-                      <p className="text-xs font-semibold text-[#082b3d] truncate">{a.child}</p>
-                      <p className="text-[10px] text-[#777587]">
+                      <p className="text-xs font-semibold text-ink truncate">{a.child}</p>
+                      <p className="text-[10px] text-ink-muted">
                         {a.appNo} · {a.classApplied}
                       </p>
                       <div className="flex flex-wrap gap-1 mt-1">
-                        <Badge className="bg-white text-[#464555] border-[#e0ecf4]">{a.quota}</Badge>
+                        <Badge className="bg-white text-ink-soft border-line-soft">{a.quota}</Badge>
                         {a.origin === 'Offline' && <Badge className="bg-slate-100 text-slate-600 border-slate-200">Paper form</Badge>}
                         {a.pendingPrincipalApproval && <Badge className="bg-amber-50 text-amber-700 border-amber-200">Principal</Badge>}
                         {a.offer?.response === 'Accepted' && a.stage === 'Offer' && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200">Accepted</Badge>}
@@ -581,7 +581,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
               );
             })}
           </div>
-          <p className="text-[11px] text-[#777587]">
+          <p className="text-[11px] text-ink-muted">
             Closed: {apps.filter(a => a.stage === 'Rejected').length} rejected · {apps.filter(a => a.stage === 'Withdrawn').length} withdrawn or lapsed. Click a card to open it.
           </p>
         </div>
@@ -601,11 +601,11 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
               <input value={enqForm.child} onChange={e => setEnqForm({ ...enqForm, child: e.target.value })} placeholder="Child’s name" className={inputCls} aria-label="Child name" />
               <div className="grid grid-cols-2 gap-2">
                 <label className="block">
-                  <span className="block text-[10px] font-semibold text-[#464555]">Date of birth</span>
+                  <span className="block text-[10px] font-semibold text-ink-soft">Date of birth</span>
                   <input type="date" value={enqForm.dob} onChange={e => setEnqForm({ ...enqForm, dob: e.target.value })} className={inputCls} />
                 </label>
                 <label className="block">
-                  <span className="block text-[10px] font-semibold text-[#464555]">Class</span>
+                  <span className="block text-[10px] font-semibold text-ink-soft">Class</span>
                   <select value={enqForm.classApplied} onChange={e => setEnqForm({ ...enqForm, classApplied: e.target.value })} className={inputCls}>
                     {CLASS_CONFIG.map(c => (
                       <option key={c.classApplied}>{c.classApplied}</option>
@@ -620,7 +620,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
               <input value={enqForm.guardian} onChange={e => setEnqForm({ ...enqForm, guardian: e.target.value })} placeholder="Guardian’s name" className={inputCls} aria-label="Guardian name" />
               <input value={enqForm.mobile} onChange={e => setEnqForm({ ...enqForm, mobile: e.target.value })} placeholder="Guardian mobile" inputMode="tel" className={inputCls} aria-label="Guardian mobile" />
               <label className="block">
-                <span className="block text-[10px] font-semibold text-[#464555]">Source</span>
+                <span className="block text-[10px] font-semibold text-ink-soft">Source</span>
                 <select value={enqForm.source} onChange={e => setEnqForm({ ...enqForm, source: e.target.value as Source })} className={inputCls}>
                   {SOURCES.map(s => (
                     <option key={s}>{s}</option>
@@ -630,7 +630,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
               <button type="submit" className={`${btnPrimary} w-full`}>
                 Save enquiry
               </button>
-              <p className="text-[10px] text-[#777587]">Assigned automatically to the counsellor with the fewest open enquiries.</p>
+              <p className="text-[10px] text-ink-muted">Assigned automatically to the counsellor with the fewest open enquiries.</p>
             </form>
             {dupMatch && (
               <div className="m-3 p-3 rounded-xl border border-amber-300 bg-amber-50 text-xs space-y-2">
@@ -654,15 +654,15 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
             className="lg:col-span-2"
             title={`Enquiries · ${overdue} overdue follow-up(s)`}
             actions={
-              <select value={enqFilter} onChange={e => setEnqFilter(e.target.value as typeof enqFilter)} className="text-xs border border-[#cbe0ec] rounded-lg px-2 py-1 bg-white">
+              <select value={enqFilter} onChange={e => setEnqFilter(e.target.value as typeof enqFilter)} className="text-xs border border-line rounded-lg px-2 py-1 bg-white">
                 {['Open', 'Converted', 'Lost', 'All'].map(o => (
                   <option key={o}>{o}</option>
                 ))}
               </select>
             }
           >
-            <div className="divide-y divide-[#f0f7fb]">
-              {visibleEnquiries.length === 0 && <p className="p-4 text-xs text-[#777587]">No enquiries in this view.</p>}
+            <div className="divide-y divide-subtle">
+              {visibleEnquiries.length === 0 && <p className="p-4 text-xs text-ink-muted">No enquiries in this view.</p>}
               {visibleEnquiries.map(e => {
                 const isOverdue = e.status === 'Open' && e.nextFollowUp < asOf;
                 const open = expandedEnq === e.id;
@@ -671,14 +671,14 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                       <button onClick={() => setExpandedEnq(open ? null : e.id)} className="flex-1 text-left min-w-0">
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="font-mono font-bold text-[#0e5d84]">{e.id}</span>
-                          <span className="font-semibold text-[#082b3d]">{e.child}</span>
-                          <Badge className="bg-white text-[#464555] border-[#e0ecf4]">{e.source}</Badge>
+                          <span className="font-mono font-bold text-brand">{e.id}</span>
+                          <span className="font-semibold text-ink">{e.child}</span>
+                          <Badge className="bg-white text-ink-soft border-line-soft">{e.source}</Badge>
                           {isOverdue && <Badge className="bg-rose-50 text-rose-700 border-rose-200">Overdue</Badge>}
                           {e.status === 'Open' && e.nextFollowUp === asOf && <Badge className="bg-amber-50 text-amber-700 border-amber-200">Due today</Badge>}
                           {e.status !== 'Open' && <Badge className="bg-slate-100 text-slate-600 border-slate-200">{e.status}</Badge>}
                         </div>
-                        <p className="text-[11px] text-[#777587] mt-0.5">
+                        <p className="text-[11px] text-ink-muted mt-0.5">
                           {e.classApplied} · {e.guardian} · {e.mobile} · {e.counsellor}
                           {e.status === 'Open' && ` · follow up ${fmt(e.nextFollowUp)}`}
                           {e.lostReason && ` · ${e.lostReason}`}
@@ -696,17 +696,17 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                       )}
                     </div>
                     {open && (
-                      <div className="mt-2 ml-1 pl-3 border-l-2 border-[#cbe0ec] space-y-2">
+                      <div className="mt-2 ml-1 pl-3 border-l-2 border-line space-y-2">
                         {e.utm && (
-                          <p className="text-[11px] text-[#464555]">
+                          <p className="text-[11px] text-ink-soft">
                             UTM · campaign <span className="font-mono">{e.utm.campaign}</span> · medium <span className="font-mono">{e.utm.medium}</span> · source{' '}
                             <span className="font-mono">{e.utm.source}</span>
                           </p>
                         )}
-                        {e.interactions.length === 0 && <p className="text-[11px] text-[#777587]">No interactions yet.</p>}
+                        {e.interactions.length === 0 && <p className="text-[11px] text-ink-muted">No interactions yet.</p>}
                         {e.interactions.map((i, idx) => (
                           <p key={idx} className="text-[11px]">
-                            <span className="font-mono text-[#777587]">{fmt(i.at)}</span> · <span className="font-semibold">{i.channel}</span> · {i.outcome}
+                            <span className="font-mono text-ink-muted">{fmt(i.at)}</span> · <span className="font-semibold">{i.channel}</span> · {i.outcome}
                           </p>
                         ))}
                         {e.status === 'Open' && (
@@ -744,20 +744,20 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
               </button>
             }
           >
-            <div className="divide-y divide-[#f0f7fb] max-h-[640px] overflow-y-auto">
+            <div className="divide-y divide-subtle max-h-[640px] overflow-y-auto">
               {apps.map(a => {
                 const gate = documentGate(a, asOf);
                 return (
                   <button
                     key={a.appNo}
                     onClick={() => setSelectedApp(a.appNo)}
-                    className={`w-full text-left p-3 text-xs ${a.appNo === selectedApp ? 'bg-[#f0f7fb]' : 'hover:bg-[#f8f9ff]'}`}
+                    className={`w-full text-left p-3 text-xs ${a.appNo === selectedApp ? 'bg-subtle' : 'hover:bg-wash'}`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-semibold text-[#082b3d] truncate">{a.child}</span>
+                      <span className="font-semibold text-ink truncate">{a.child}</span>
                       <Badge className={STAGE_STYLE[a.stage]}>{a.stage}</Badge>
                     </div>
-                    <p className="text-[10px] text-[#777587]">
+                    <p className="text-[10px] text-ink-muted">
                       {a.appNo} · {a.classApplied} · {a.quota}
                       {!gate.passed && a.stage === 'Document check' && ` · ${gate.blocking.length} doc(s) pending`}
                     </p>
@@ -790,8 +790,8 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     ['Joining month', ACADEMIC_MONTHS[current.joiningMonth - 1]],
                   ].map(([k, v]) => (
                     <div key={k}>
-                      <p className="text-[10px] text-[#777587]">{k}</p>
-                      <p className="font-semibold text-[#082b3d]">{v}</p>
+                      <p className="text-[10px] text-ink-muted">{k}</p>
+                      <p className="font-semibold text-ink">{v}</p>
                     </div>
                   ))}
                 </div>
@@ -802,7 +802,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                 )}
                 <div className="px-3 pb-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                   <div className="p-2 rounded-lg bg-slate-50">
-                    <p className="font-semibold text-[#082b3d] mb-1">Consent captured at application</p>
+                    <p className="font-semibold text-ink mb-1">Consent captured at application</p>
                     {current.consent.map(c => (
                       <p key={c.purpose} className="flex items-center gap-1">
                         <span className={`material-symbols-outlined text-sm ${c.granted ? 'text-emerald-600' : 'text-slate-400'}`}>{c.granted ? 'check_circle' : 'cancel'}</span>
@@ -811,14 +811,14 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     ))}
                   </div>
                   <div className="p-2 rounded-lg bg-slate-50 space-y-1">
-                    <p className="font-semibold text-[#082b3d]">Declaration</p>
+                    <p className="font-semibold text-ink">Declaration</p>
                     <label className="flex items-center gap-1">
                       <input
                         type="checkbox"
                         checked={current.declarationAccepted}
                         onChange={e => updateApp(current.appNo, a => ({ ...a, declarationAccepted: e.target.checked }))}
                         disabled={current.stage !== 'Document check'}
-                        className="accent-[#0e5d84]"
+                        className="accent-brand"
                       />
                       Guardian confirmed the details are true
                     </label>
@@ -830,7 +830,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                           onChange={e =>
                             updateApp(current.appNo, a => ({ ...a, consent: a.consent.map(c => (c.purpose === 'Admission processing' ? { ...c, granted: e.target.checked } : c)) }))
                           }
-                          className="accent-[#0e5d84]"
+                          className="accent-brand"
                         />
                         Signed consent for admission processing received
                       </label>
@@ -854,7 +854,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                   </div>
                 }
               >
-                <div className="divide-y divide-[#f0f7fb]">
+                <div className="divide-y divide-subtle">
                   {requiredDocs(current.classApplied, current.quota).map(type => {
                     const d = current.docs.find(x => x.type === type) ?? { type, status: 'Missing' as const };
                     const conditional = d.status !== 'Verified' && d.deadline && d.deadline >= asOf;
@@ -862,7 +862,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     return (
                       <div key={type} className="p-2.5 flex flex-col md:flex-row md:items-center gap-2 text-xs">
                         <div className="flex-1">
-                          <p className="font-semibold text-[#082b3d]">{type}</p>
+                          <p className="font-semibold text-ink">{type}</p>
                           <p className={`text-[11px] ${DOC_STYLE[d.status]}`}>
                             {d.status}
                             {d.reason && ` · ${d.reason}`}
@@ -929,7 +929,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                   </div>
                 )}
                 {reminderLog.filter(r => r.appNo === current.appNo).map((r, i) => (
-                  <p key={i} className="px-3 pb-2 text-[11px] text-[#777587]">
+                  <p key={i} className="px-3 pb-2 text-[11px] text-ink-muted">
                     Reminder {fmt(r.at)}: {r.docs.join(', ')}
                   </p>
                 ))}
@@ -948,7 +948,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
               )}
             </div>
           ) : (
-            <p className="lg:col-span-2 text-xs text-[#777587]">Select an application.</p>
+            <p className="lg:col-span-2 text-xs text-ink-muted">Select an application.</p>
           )}
         </div>
       )}
@@ -974,8 +974,8 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                   return (
                     <div key={q} className="text-xs">
                       <div className="flex justify-between mb-1">
-                        <span className="font-semibold text-[#082b3d]">{q}</span>
-                        <span className={s.available <= 0 ? 'text-rose-600 font-bold' : 'text-[#464555]'}>
+                        <span className="font-semibold text-ink">{q}</span>
+                        <span className={s.available <= 0 ? 'text-rose-600 font-bold' : 'text-ink-soft'}>
                           {s.available} of {s.sanctioned} free
                         </span>
                       </div>
@@ -983,7 +983,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                         <div className="h-full bg-emerald-500" style={{ width: pct(s.filled) }} title={`Filled ${s.filled}`} />
                         <div className="h-full bg-amber-400" style={{ width: pct(s.offered) }} title={`Offered ${s.offered}`} />
                       </div>
-                      <p className="text-[10px] text-[#777587] mt-0.5">
+                      <p className="text-[10px] text-ink-muted mt-0.5">
                         Filled {s.filled} · offered {s.offered}
                       </p>
                     </div>
@@ -996,13 +996,13 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
               className="lg:col-span-2"
               title="Merit list (entrance test 70% + interaction 30%; ties go to the higher test score, then the earlier application)"
             >
-              <div className="p-3 flex flex-wrap items-center gap-2 border-b border-[#f0f7fb] text-xs">
-                <select value={bulkDecision} onChange={e => setBulkDecision(e.target.value as typeof bulkDecision)} className="border border-[#cbe0ec] rounded-lg px-2 py-1.5">
+              <div className="p-3 flex flex-wrap items-center gap-2 border-b border-subtle text-xs">
+                <select value={bulkDecision} onChange={e => setBulkDecision(e.target.value as typeof bulkDecision)} className="border border-line rounded-lg px-2 py-1.5">
                   <option>Select</option>
                   <option>Waitlist</option>
                   <option>Reject</option>
                 </select>
-                <select value={decisionReason} onChange={e => setDecisionReason(e.target.value)} className="border border-[#cbe0ec] rounded-lg px-2 py-1.5" aria-label="Reject reason">
+                <select value={decisionReason} onChange={e => setDecisionReason(e.target.value)} className="border border-line rounded-lg px-2 py-1.5" aria-label="Reject reason">
                   {REJECT_REASONS.map(r => (
                     <option key={r}>{r}</option>
                   ))}
@@ -1010,18 +1010,18 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                 <button onClick={runBulk} disabled={!bulkSel.size} className={btnPrimary}>
                   Apply to {bulkSel.size} selected
                 </button>
-                <span className="text-[10px] text-[#777587]">The reason is used for rejections.</span>
+                <span className="text-[10px] text-ink-muted">The reason is used for rejections.</span>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
-                  <thead className="bg-slate-50 text-[#464555]">
+                  <thead className="bg-slate-50 text-ink-soft">
                     <tr>
                       {['', 'Rank', 'Applicant', 'Quota', 'Test', 'Interaction', 'Merit', 'Stage', ''].map((h, i) => (
                         <th key={i} className="text-left p-2 font-semibold">{h}</th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#f0f7fb]">
+                  <tbody className="divide-y divide-subtle">
                     {classMerit.map(({ app: a, rank, score }) => (
                       <tr key={a.appNo}>
                         <td className="p-2">
@@ -1037,15 +1037,15 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                                   return n;
                                 })
                               }
-                              className="accent-[#0e5d84]"
+                              className="accent-brand"
                               aria-label={`Select ${a.child}`}
                             />
                           )}
                         </td>
                         <td className="p-2 font-mono">{rank}</td>
                         <td className="p-2">
-                          <p className="font-semibold text-[#082b3d]">{a.child}</p>
-                          <p className="text-[10px] text-[#777587]">{a.appNo}</p>
+                          <p className="font-semibold text-ink">{a.child}</p>
+                          <p className="text-[10px] text-ink-muted">{a.appNo}</p>
                         </td>
                         <td className="p-2">{a.quota}</td>
                         <td className="p-2 font-mono">{a.testScore}</td>
@@ -1081,7 +1081,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     ))}
                   </tbody>
                 </table>
-                {classMerit.length === 0 && <p className="p-4 text-xs text-[#777587]">No scored applicants in this class yet.</p>}
+                {classMerit.length === 0 && <p className="p-4 text-xs text-ink-muted">No scored applicants in this class yet.</p>}
               </div>
             </Panel>
           </div>
@@ -1093,16 +1093,16 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                 if (!list.length) return null;
                 return (
                   <div key={q}>
-                    <p className="font-semibold text-[#082b3d] mb-1">{q}</p>
+                    <p className="font-semibold text-ink mb-1">{q}</p>
                     {list.map((a, i) => (
                       <p key={a.appNo}>
-                        #{i + 1} {a.child} <span className="text-[#777587]">· since {fmt(a.waitlistedOn ?? a.submittedOn)}</span>
+                        #{i + 1} {a.child} <span className="text-ink-muted">· since {fmt(a.waitlistedOn ?? a.submittedOn)}</span>
                       </p>
                     ))}
                   </div>
                 );
               })}
-              {QUOTAS.every(q => waitlistFor(apps, decisionClass, q).length === 0) && <p className="text-[#777587]">Nobody is waitlisted in this class.</p>}
+              {QUOTAS.every(q => waitlistFor(apps, decisionClass, q).length === 0) && <p className="text-ink-muted">Nobody is waitlisted in this class.</p>}
             </div>
           </Panel>
         </div>
@@ -1120,14 +1120,14 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
         >
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
-              <thead className="bg-slate-50 text-[#464555]">
+              <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   {['Applicant', 'Offer', 'Response', 'Fee', 'Actions'].map(h => (
                     <th key={h} className="text-left p-2.5 font-semibold">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {offerRows.map(a => {
                   const o = a.offer!;
                   const daysLeft = daysBetween(asOf, o.deadline);
@@ -1135,8 +1135,8 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                   return (
                     <tr key={a.appNo} className="align-top">
                       <td className="p-2.5">
-                        <p className="font-semibold text-[#082b3d]">{a.child}</p>
-                        <p className="text-[10px] text-[#777587]">
+                        <p className="font-semibold text-ink">{a.child}</p>
+                        <p className="text-[10px] text-ink-muted">
                           {a.appNo} · {a.classApplied} · {a.quota}
                         </p>
                         {a.enrolment && (
@@ -1147,9 +1147,9 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                       </td>
                       <td className="p-2.5">
                         <p>Sent {fmt(o.sentOn)} via {o.channels.join(', ')}</p>
-                        <p className="text-[10px] text-[#777587]">{o.readOn ? `Read ${fmt(o.readOn)}` : 'Not read yet'}</p>
+                        <p className="text-[10px] text-ink-muted">{o.readOn ? `Read ${fmt(o.readOn)}` : 'Not read yet'}</p>
                         {!o.response && (
-                          <p className={`text-[10px] font-semibold ${daysLeft < 0 ? 'text-rose-600' : 'text-[#464555]'}`}>
+                          <p className={`text-[10px] font-semibold ${daysLeft < 0 ? 'text-rose-600' : 'text-ink-soft'}`}>
                             {daysLeft < 0 ? `Deadline passed ${fmt(o.deadline)}` : `${daysLeft} day(s) left · ${fmt(o.deadline)}`}
                           </p>
                         )}
@@ -1160,13 +1160,13 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                         ) : (
                           <Badge className="bg-amber-50 text-amber-700 border-amber-200">Awaiting</Badge>
                         )}
-                        {a.decisionReason && <p className="text-[10px] text-[#777587] mt-0.5">{a.decisionReason}</p>}
+                        {a.decisionReason && <p className="text-[10px] text-ink-muted mt-0.5">{a.decisionReason}</p>}
                       </td>
                       <td className="p-2.5">
                         <p className="font-mono">
                           {rupees(a.payment.paid)} / {rupees(due)}
                         </p>
-                        <p className="text-[10px] text-[#777587]">
+                        <p className="text-[10px] text-ink-muted">
                           {a.joiningMonth > 1 ? `Prorated from ${ACADEMIC_MONTHS[a.joiningMonth - 1]}` : 'Full year'} · {a.payment.status}
                         </p>
                       </td>
@@ -1229,17 +1229,17 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
           <Panel title="Funnel and cost by source (this cycle)">
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
-                <thead className="bg-slate-50 text-[#464555]">
+                <thead className="bg-slate-50 text-ink-soft">
                   <tr>
                     {['Source', 'Enquiries', 'Applications', 'Enrolled', 'Conversion', 'Spend', 'Cost per enrolment'].map(h => (
                       <th key={h} className="text-left p-2.5 font-semibold">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {analytics.sources.map(s => (
                     <tr key={s.source}>
-                      <td className="p-2.5 font-semibold text-[#082b3d]">{s.source}</td>
+                      <td className="p-2.5 font-semibold text-ink">{s.source}</td>
                       <td className="p-2.5 font-mono">{s.enquiries}</td>
                       <td className="p-2.5 font-mono">{s.applications}</td>
                       <td className="p-2.5 font-mono">{s.enrolled}</td>
@@ -1268,7 +1268,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                   const change = Math.round(((y.now - y.last) / y.last) * 1000) / 10;
                   return (
                     <div key={y.label} className="flex items-center justify-between p-2 rounded-lg bg-slate-50">
-                      <span className="font-semibold text-[#082b3d]">{y.label}</span>
+                      <span className="font-semibold text-ink">{y.label}</span>
                       <span className="font-mono">
                         {y.now} vs {y.last}{' '}
                         <span className={change >= 0 ? 'text-emerald-700' : 'text-rose-700'}>
@@ -1293,25 +1293,25 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                       </span>
                     </div>
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden relative">
-                      <div className="h-full bg-[#0e5d84]" style={{ width: `${(s.avgDays / 14) * 100}%` }} />
+                      <div className="h-full bg-brand" style={{ width: `${(s.avgDays / 14) * 100}%` }} />
                       <div className="absolute top-0 h-full w-0.5 bg-rose-500" style={{ left: `${(s.p90Days / 14) * 100}%` }} />
                     </div>
                   </div>
                 ))}
-                <p className="text-[10px] text-[#777587]">The red marker shows the 90th percentile. The longest stage is the bottleneck.</p>
+                <p className="text-[10px] text-ink-muted">The red marker shows the 90th percentile. The longest stage is the bottleneck.</p>
               </div>
             </Panel>
 
             <Panel title="Counsellor performance">
               <table className="w-full text-xs">
-                <thead className="bg-slate-50 text-[#464555]">
+                <thead className="bg-slate-50 text-ink-soft">
                   <tr>
                     {['Counsellor', 'Handled', 'Converted', 'Rate', 'Overdue'].map(h => (
                       <th key={h} className="text-left p-2.5 font-semibold">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {analytics.counsellors.map(c => (
                     <tr key={c.counsellor}>
                       <td className="p-2.5">{c.counsellor}</td>
@@ -1327,7 +1327,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
 
             <Panel title="Why we lose applicants">
               <div className="p-3 space-y-1.5 text-xs">
-                {analytics.lossList.length === 0 && <p className="text-[#777587]">No losses recorded yet.</p>}
+                {analytics.lossList.length === 0 && <p className="text-ink-muted">No losses recorded yet.</p>}
                 {analytics.lossList.map(([reason, count]) => (
                   <div key={reason} className="flex justify-between p-2 rounded-lg bg-slate-50">
                     <span>{reason}</span>
@@ -1344,9 +1344,9 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
 
       {/* ------------------------------------------------------------------ */}
       {losing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setLosing(null)}>
-          <div className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-[#082b3d]">Close {losing.id} as lost</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setLosing(null)}>
+          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
+            <h3 className="text-sm font-bold text-ink">Close {losing.id} as lost</h3>
             <select value={lostReason} onChange={e => setLostReason(e.target.value)} className={inputCls}>
               <option value="">Choose a reason…</option>
               {LOST_REASONS.map(r => (
@@ -1366,15 +1366,15 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
       )}
 
       {declining && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setDeclining(null)}>
-          <div className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-[#082b3d]">{declining.child} declines the offer</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setDeclining(null)}>
+          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
+            <h3 className="text-sm font-bold text-ink">{declining.child} declines the offer</h3>
             <select value={declineReason} onChange={e => setDeclineReason(e.target.value)} className={inputCls}>
               {DECLINE_REASONS.map(r => (
                 <option key={r}>{r}</option>
               ))}
             </select>
-            <p className="text-[#464555]">The seat goes back to the pool and the next waitlisted applicant in this quota gets an offer.</p>
+            <p className="text-ink-soft">The seat goes back to the pool and the next waitlisted applicant in this quota gets an offer.</p>
             <div className="flex justify-end gap-2">
               <button onClick={() => setDeclining(null)} className={btnSoft}>
                 Cancel
@@ -1388,9 +1388,9 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
       )}
 
       {showNewApp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setShowNewApp(false)}>
-          <form onSubmit={createOfflineApplication} className="bg-white rounded-2xl max-w-lg w-full p-5 space-y-2 shadow-2xl text-xs max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-[#082b3d]">Enter a paper application form</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setShowNewApp(false)}>
+          <form onSubmit={createOfflineApplication} className="bg-surface rounded-2xl max-w-lg w-full p-5 space-y-2 shadow-2xl text-xs max-h-[90vh] overflow-y-auto ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
+            <h3 className="text-sm font-bold text-ink">Enter a paper application form</h3>
             <div className="grid grid-cols-2 gap-2">
               <input value={newApp.child} onChange={e => setNewApp({ ...newApp, child: e.target.value })} placeholder="Child’s name" className={`${inputCls} col-span-2`} aria-label="Child name" />
               <input type="date" value={newApp.dob} onChange={e => setNewApp({ ...newApp, dob: e.target.value })} className={inputCls} aria-label="Date of birth" />
@@ -1411,7 +1411,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
               <input value={newApp.guardian} onChange={e => setNewApp({ ...newApp, guardian: e.target.value })} placeholder="Guardian’s name" className={inputCls} aria-label="Guardian name" />
               <input value={newApp.mobile} onChange={e => setNewApp({ ...newApp, mobile: e.target.value })} placeholder="Guardian mobile" className={inputCls} aria-label="Guardian mobile" />
               <label className="col-span-2 block">
-                <span className="block text-[10px] font-semibold text-[#464555]">Joining month (mid-year admissions are prorated)</span>
+                <span className="block text-[10px] font-semibold text-ink-soft">Joining month (mid-year admissions are prorated)</span>
                 <select value={newApp.joiningMonth} onChange={e => setNewApp({ ...newApp, joiningMonth: Number(e.target.value) })} className={inputCls}>
                   {ACADEMIC_MONTHS.map((m, i) => (
                     <option key={m} value={i + 1}>
@@ -1422,16 +1422,16 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
               </label>
             </div>
             <div className="p-2 rounded-lg bg-slate-50 space-y-1">
-              <p className="font-semibold text-[#082b3d]">Consent ticked on the paper form</p>
+              <p className="font-semibold text-ink">Consent ticked on the paper form</p>
               {CONSENT_PURPOSES.map(p => (
                 <label key={p} className="flex items-center gap-1">
-                  <input type="checkbox" checked={Boolean(newConsent[p])} onChange={e => setNewConsent({ ...newConsent, [p]: e.target.checked })} className="accent-[#0e5d84]" />
+                  <input type="checkbox" checked={Boolean(newConsent[p])} onChange={e => setNewConsent({ ...newConsent, [p]: e.target.checked })} className="accent-brand" />
                   {p}
                 </label>
               ))}
             </div>
             <label className="flex items-center gap-1">
-              <input type="checkbox" checked={newApp.declaration} onChange={e => setNewApp({ ...newApp, declaration: e.target.checked })} className="accent-[#0e5d84]" />
+              <input type="checkbox" checked={newApp.declaration} onChange={e => setNewApp({ ...newApp, declaration: e.target.checked })} className="accent-brand" />
               Guardian signed the declaration
             </label>
             <div className="flex justify-end gap-2 pt-1">
@@ -1447,10 +1447,10 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
       )}
 
       {letterFor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setLetterFor(null)}>
-          <div className="bg-white rounded-2xl max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="p-3 border-b border-[#e0ecf4] flex justify-between items-center">
-              <span className="text-sm font-bold text-[#082b3d]">Offer letter preview</span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setLetterFor(null)}>
+          <div className="bg-surface rounded-2xl max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
+            <div className="p-3 border-b border-line-soft flex justify-between items-center">
+              <span className="text-sm font-bold text-ink">Offer letter preview</span>
               <div className="flex gap-2">
                 <button onClick={() => setPrinting(true)} className={btnPrimary}>
                   Print / save PDF
@@ -1478,12 +1478,12 @@ const OfferLetter: React.FC<{ app: Application; campusName: string; campusAddres
   const due = feeDue(app);
   const offer = app.offer!;
   return (
-    <div className="p-8 text-[12px] leading-relaxed text-[#082b3d] bg-white">
-      <div className="flex items-center gap-3 border-b-2 border-[#0e5d84] pb-3">
+    <div className="p-8 text-[12px] leading-relaxed text-ink bg-white">
+      <div className="flex items-center gap-3 border-b-2 border-brand pb-3">
         <img src="/lumen-academy-logo.png" alt="" className="w-14 h-14 object-contain" />
         <div>
           <p className="text-lg font-extrabold tracking-wide">LUMEN ACADEMY</p>
-          <p className="text-[11px] text-[#464555]">
+          <p className="text-[11px] text-ink-soft">
             {campusName} · {campusAddress}
           </p>
         </div>
@@ -1521,7 +1521,7 @@ const OfferLetter: React.FC<{ app: Application; campusName: string; campusAddres
       </p>
       <p className="mt-6">Yours sincerely,</p>
       <p className="mt-8 font-bold">Principal</p>
-      <p className="text-[11px] text-[#464555]">{campusName}</p>
+      <p className="text-[11px] text-ink-soft">{campusName}</p>
     </div>
   );
 };

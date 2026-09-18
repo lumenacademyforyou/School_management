@@ -70,16 +70,16 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">gavel</span>
             <span>Statutory Privacy & Child Data Protection (CNS-001..020)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">
             DPDPA 2023 Section 9 Minor Consent Governance
           </h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <p className="text-xs text-ink-soft mt-1">
             Data Protection Officer (DPO): Adv. S. Venkataraman • Verifiable Parental Consent (VPC) • Zero-Ad Policy
           </p>
         </div>
@@ -87,14 +87,14 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setShowSarModal(true)}
-            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-[#082b3d] text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 transition-colors"
+            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-ink text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 transition-colors"
           >
             <span className="material-symbols-outlined text-sm">assignment_return</span>
             <span>Log SAR Request</span>
           </button>
           <button
             onClick={handleDownloadDpoDossier}
-            className="flex items-center gap-1.5 bg-[#0e5d84] hover:bg-[#083a4f] text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-xs transition-colors"
+            className="flex items-center gap-1.5 bg-brand hover:bg-brand-strong text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-xs transition-colors"
           >
             <span className="material-symbols-outlined text-sm">verified_user</span>
             <span>Download DPO Audit Dossier</span>
@@ -109,32 +109,32 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
           <div className="text-2xl font-bold font-display text-emerald-900 mt-0.5">100%</div>
           <div className="text-[11px] text-emerald-700 font-semibold">2,450 / 2,450 Verified</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[10px] uppercase font-bold text-[#777587]">Data Retention Cycle</div>
-          <div className="text-2xl font-bold font-display text-[#082b3d] mt-0.5">30 Days</div>
-          <div className="text-[11px] text-[#464555]">Auto-purge for CCTV & logs</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[10px] uppercase font-bold text-ink-muted">Data Retention Cycle</div>
+          <div className="text-2xl font-bold font-display text-ink mt-0.5">30 Days</div>
+          <div className="text-[11px] text-ink-soft">Auto-purge for CCTV & logs</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[10px] uppercase font-bold text-[#777587]">Targeted Advertising</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[10px] uppercase font-bold text-ink-muted">Targeted Advertising</div>
           <div className="text-2xl font-bold font-display text-rose-700 mt-0.5">0% BANNED</div>
-          <div className="text-[11px] text-[#464555]">Strict DPDPA compliance</div>
+          <div className="text-[11px] text-ink-soft">Strict DPDPA compliance</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[10px] uppercase font-bold text-[#777587]">Data Subject Requests (SAR)</div>
-          <div className="text-2xl font-bold font-display text-[#0e5d84] mt-0.5">0 Pending</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[10px] uppercase font-bold text-ink-muted">Data Subject Requests (SAR)</div>
+          <div className="text-2xl font-bold font-display text-brand mt-0.5">0 Pending</div>
           <div className="text-[11px] text-emerald-700 font-semibold">Average SLA: 4 hours</div>
         </div>
       </div>
 
       {/* Purpose Specific Consent Table */}
-      <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-        <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex items-center justify-between">
-          <span className="text-xs font-bold text-[#082b3d]">Purpose-Specific Parental Consent Ledger</span>
-          <span className="text-xs font-mono text-[#0e5d84]">Cryptographically Hashed & Immutable</span>
+      <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+        <div className="p-4 bg-subtle border-b border-line flex items-center justify-between">
+          <span className="text-xs font-bold text-ink">Purpose-Specific Parental Consent Ledger</span>
+          <span className="text-xs font-mono text-brand">Cryptographically Hashed & Immutable</span>
         </div>
 
         <table className="w-full text-xs text-left">
-          <thead className="bg-[#f0f7fb]/60 text-[#464555] font-semibold border-b border-[#cbe0ec]">
+          <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
             <tr>
               <th className="p-3">Processing Purpose</th>
               <th className="p-3">Statutory Legal Basis</th>
@@ -143,21 +143,21 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
               <th className="p-3 text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f0f7fb]">
+          <tbody className="divide-y divide-subtle">
             {consents.map(c => (
-              <tr key={c.purpose} className="hover:bg-[#f8f9ff]">
-                <td className="p-3 font-bold text-[#082b3d]">{c.purpose}</td>
-                <td className="p-3 text-[#464555]">{c.legalBasis}</td>
+              <tr key={c.purpose} className="hover:bg-wash">
+                <td className="p-3 font-bold text-ink">{c.purpose}</td>
+                <td className="p-3 text-ink-soft">{c.legalBasis}</td>
                 <td className="p-3">
                   <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">
                     {c.status}
                   </span>
                 </td>
-                <td className="p-3 text-[#464555]">{c.lastAudit}</td>
+                <td className="p-3 text-ink-soft">{c.lastAudit}</td>
                 <td className="p-3 text-right">
                   <button
                     onClick={() => setSelectedConsentForLogs(c)}
-                    className="text-[#0e5d84] font-semibold hover:underline"
+                    className="text-brand font-semibold hover:underline"
                   >
                     View Logs →
                   </button>
@@ -170,12 +170,12 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
 
       {/* MODAL 1: Consent Ledger Details */}
       {selectedConsentForLogs && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">receipt_long</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Consent Ledger Immutable Audit</h3>
+                <span className="material-symbols-outlined text-brand">receipt_long</span>
+                <h3 className="font-bold text-ink text-sm">Consent Ledger Immutable Audit</h3>
               </div>
               <button
                 onClick={() => setSelectedConsentForLogs(null)}
@@ -186,12 +186,12 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
             </div>
 
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 text-xs">
-              <div className="font-bold text-[#082b3d]">{selectedConsentForLogs.purpose}</div>
-              <div className="text-[11px] text-[#777587]">Basis: {selectedConsentForLogs.legalBasis}</div>
+              <div className="font-bold text-ink">{selectedConsentForLogs.purpose}</div>
+              <div className="text-[11px] text-ink-muted">Basis: {selectedConsentForLogs.legalBasis}</div>
             </div>
 
             <div className="space-y-2">
-              <div className="font-bold text-[#082b3d]">Recent Verifiable Consent Entries</div>
+              <div className="font-bold text-ink">Recent Verifiable Consent Entries</div>
               <div className="space-y-1.5 font-mono text-[11px]">
                 <div className="p-2.5 bg-emerald-50 rounded-lg border border-emerald-200 text-emerald-900 flex justify-between">
                   <span>Sundar Ramanathan (Father of Aarav S.)</span>
@@ -212,7 +212,7 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
               <button
                 type="button"
                 onClick={() => setSelectedConsentForLogs(null)}
-                className="px-4 py-2 bg-[#0e5d84] text-white font-bold rounded-xl text-xs"
+                className="px-4 py-2 bg-brand text-white font-bold rounded-xl text-xs"
               >
                 Close Audit View
               </button>
@@ -223,12 +223,12 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
 
       {/* MODAL 2: Subject Access Request */}
       {showSarModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">assignment_return</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Log Data Subject Request (DPDPA Sec 11)</h3>
+                <span className="material-symbols-outlined text-brand">assignment_return</span>
+                <h3 className="font-bold text-ink text-sm">Log Data Subject Request (DPDPA Sec 11)</h3>
               </div>
               <button
                 onClick={() => setShowSarModal(false)}
@@ -244,7 +244,7 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
                 <select
                   value={sarStudent}
                   onChange={e => setSarStudent(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
                 >
                   <option value="Aarav S. Ramanathan">Aarav S. Ramanathan (Class 10-A)</option>
                   <option value="Farah N. Siddiqui">Farah N. Siddiqui (Class 10-A)</option>
@@ -257,7 +257,7 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
                 <select
                   value={sarType}
                   onChange={e => setSarType(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
                 >
                   <option value="Access / Export Data">Right to Access / Export Personal Data Dossier</option>
                   <option value="Correction / Update">Right to Correction & Updating of Inaccurate Records</option>
@@ -280,7 +280,7 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#0e5d84] hover:bg-[#083a4f] text-white font-bold rounded-xl text-xs shadow-xs"
+                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
                 >
                   Register Request
                 </button>

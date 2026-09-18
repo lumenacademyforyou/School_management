@@ -3,71 +3,131 @@
 @source "../apps";
 @source "../index.html";
 
+/* ─── Lumen design tokens ───────────────────────────────────────────────────────────────────────
+   Every colour comes from the logo: the teal of the mountains and ring (#17667d), the navy of the
+   mortarboard (#0c3147), the gold of the sun and tassel (#dea02d) and the cream of the lettering band.
+
+   Colour grade: warm highlights, cool shadows. Light steps lean cream; dark steps lean teal-navy,
+   so a screen reads as warm paper with ink in the brand's own blue. Tailwind's slate scale is
+   regraded the same way, so every neutral in the product follows without per-screen edits.
+
+   Use the semantic names (ink, line, subtle, brand…) in components; the scales are for the few
+   places that need a specific step. */
 @theme {
-  --color-primary: #0e5d84;
-  --color-primary-dark: #082b3d;
-  --color-primary-container: #166d99;
-  --color-primary-fixed: #e0f2fe;
-  --color-primary-fixed-dim: #bae6fd;
-  --color-on-primary: #ffffff;
-  --color-on-primary-container: #d0ebf8;
-  --color-on-primary-fixed: #082b3d;
-  --color-on-primary-fixed-variant: #0e5d84;
+  /* Brand teal — logo mountains (600) to mortarboard navy (900) */
+  --color-lumen-50: #eef7f7;
+  --color-lumen-100: #d6ecee;
+  --color-lumen-200: #b0d9de;
+  --color-lumen-300: #80bfc8;
+  --color-lumen-400: #4f9fad;
+  --color-lumen-500: #2a8193;
+  --color-lumen-600: #17667d;
+  --color-lumen-700: #125569;
+  --color-lumen-800: #0f4557;
+  --color-lumen-900: #0c3147;
+  --color-lumen-950: #07202f;
 
-  --color-secondary: #d97706;
-  --color-secondary-container: #fef3c7;
-  --color-secondary-fixed: #fde68a;
-  --color-secondary-fixed-dim: #fcd34d;
-  --color-on-secondary: #ffffff;
-  --color-on-secondary-container: #92400e;
-  --color-on-secondary-fixed: #451a03;
-  --color-on-secondary-fixed-variant: #78350f;
+  /* Gold — sun rays (400) and tassel (500) */
+  --color-gold-50: #fef9ec;
+  --color-gold-100: #fcefcc;
+  --color-gold-200: #f8dd97;
+  --color-gold-300: #f5c85f;
+  --color-gold-400: #f0b43a;
+  --color-gold-500: #dea02d;
+  --color-gold-600: #b97e1b;
+  --color-gold-700: #936117;
+  --color-gold-800: #764d18;
+  --color-gold-900: #603f17;
 
-  --color-gold: #f59e0b;
-  --color-gold-dark: #b45309;
-  --color-gold-light: #fef3c7;
-  --color-gold-amber: #e88909;
+  /* Cream — lettering band and paper */
+  --color-cream-50: #fffdf8;
+  --color-cream-100: #fbf8f0;
+  --color-cream-200: #f5f0e3;
+  --color-cream-300: #ebe3cf;
+  --color-cream-400: #dcd0b3;
 
-  --color-tertiary: #b45309;
-  --color-tertiary-container: #fed7aa;
-  --color-tertiary-fixed: #ffedd5;
-  --color-tertiary-fixed-dim: #fed7aa;
-  --color-on-tertiary: #ffffff;
-  --color-on-tertiary-container: #7c2d12;
-  --color-on-tertiary-fixed: #431407;
-  --color-on-tertiary-fixed-variant: #9a3412;
+  /* Semantic roles */
+  --color-ink: #0c3147; /* headings, primary text */
+  --color-ink-soft: #3b5361; /* body and secondary text (7.4:1 on the canvas) */
+  --color-ink-muted: #5b6e78; /* captions and hints (4.8:1 on the canvas, 4.6:1 on subtle) */
+  --color-brand: #17667d; /* primary actions, links, selection */
+  --color-brand-strong: #0f4557; /* hover and pressed */
+  --color-accent: #dea02d; /* gold highlights, never body text */
+  --color-accent-ink: #936117; /* gold as text (5.3:1 on white) */
+  --color-canvas: #f7f4ec; /* page background */
+  --color-surface: #fffefb; /* cards and panels */
+  --color-wash: #faf7f0; /* quiet fills: table rows, inputs at rest */
+  --color-subtle: #f3eee2; /* panel headers, hover */
+  --color-line: #ddd4bf; /* borders, inputs */
+  --color-line-soft: #ebe5d6; /* dividers */
 
-  --color-error: #ba1a1a;
-  --color-error-container: #ffdad6;
-  --color-on-error: #ffffff;
-  --color-on-error-container: #93000a;
+  /* Neutral scale, regraded: cream highlights, teal-navy shadows */
+  --color-slate-50: #f8f5ee;
+  --color-slate-100: #f1ece1;
+  --color-slate-200: #e3dccc;
+  --color-slate-300: #cdc5b2;
+  --color-slate-400: #97a2a3;
+  --color-slate-500: #5f7079;
+  --color-slate-600: #4a5d67;
+  --color-slate-700: #354b57;
+  --color-slate-800: #1f3a48;
+  --color-slate-900: #0c3147;
+  --color-slate-950: #07202f;
 
-  --color-surface: #f8fafc;
-  --color-surface-bright: #f8fafc;
-  --color-surface-dim: #cbd5e1;
-  --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #f0f7fb;
-  --color-surface-container: #e0ecf4;
-  --color-surface-container-high: #d0e4f0;
-  --color-surface-container-highest: #cbe0ec;
-  --color-surface-variant: #cbe0ec;
-  --color-surface-tint: #0e5d84;
+  /* Information uses the brand teal instead of a separate blue */
+  --color-sky-50: #eef7f7;
+  --color-sky-100: #d6ecee;
+  --color-sky-200: #b0d9de;
+  --color-sky-300: #80bfc8;
+  --color-sky-400: #4f9fad;
+  --color-sky-500: #2a8193;
+  --color-sky-600: #17667d;
+  --color-sky-700: #125569;
+  --color-sky-800: #0f4557;
+  --color-sky-900: #0c3147;
+  --color-blue-50: #eef7f7;
+  --color-blue-100: #d6ecee;
+  --color-blue-200: #b0d9de;
+  --color-blue-300: #80bfc8;
+  --color-blue-400: #4f9fad;
+  --color-blue-500: #2a8193;
+  --color-blue-600: #17667d;
+  --color-blue-700: #125569;
+  --color-blue-800: #0f4557;
+  --color-blue-900: #0c3147;
+  --color-teal-50: #eef7f7;
+  --color-teal-100: #d6ecee;
+  --color-teal-200: #b0d9de;
+  --color-teal-300: #80bfc8;
+  --color-teal-400: #4f9fad;
+  --color-teal-500: #2a8193;
+  --color-teal-600: #17667d;
+  --color-teal-700: #125569;
+  --color-teal-800: #0f4557;
+  --color-teal-900: #0c3147;
 
-  --color-on-surface: #082b3d;
-  --color-on-surface-variant: #334e5e;
-  --color-outline: #64748b;
-  --color-outline-variant: #cbd5e1;
+  /* Warnings sit on the gold side of amber so they belong to the palette */
+  --color-amber-50: #fef8e8;
+  --color-amber-100: #fcecc4;
+  --color-amber-200: #f8d88c;
+  --color-amber-300: #f3c056;
+  --color-amber-400: #eca631;
+  --color-amber-500: #d98a1c;
+  --color-amber-600: #b86c14;
+  --color-amber-700: #935213;
+  --color-amber-800: #784316;
+  --color-amber-900: #633816;
 
-  --color-inverse-surface: #082b3d;
-  --color-inverse-on-surface: #f0fdf4;
-  --color-inverse-primary: #bae6fd;
-  --color-background: #f8fafc;
-  --color-on-background: #082b3d;
+  /* Elevation: shadows tinted with the navy, never grey */
+  --shadow-xs: 0 1px 2px rgb(12 49 71 / 0.05);
+  --shadow-sm: 0 1px 2px rgb(12 49 71 / 0.06), 0 1px 3px rgb(12 49 71 / 0.06);
+  --shadow-md: 0 2px 4px rgb(12 49 71 / 0.05), 0 6px 16px -4px rgb(12 49 71 / 0.1);
+  --shadow-lg: 0 4px 8px rgb(12 49 71 / 0.05), 0 16px 32px -8px rgb(12 49 71 / 0.16);
+  --shadow-xl: 0 8px 16px rgb(12 49 71 / 0.06), 0 24px 48px -12px rgb(12 49 71 / 0.22);
+  --shadow-2xl: 0 32px 64px -16px rgb(12 49 71 / 0.32);
 
-  --font-display: "Plus Jakarta Sans", sans-serif;
-  --font-title: "Plus Jakarta Sans", sans-serif;
+  --font-display: "Plus Jakarta Sans", "Inter", sans-serif;
   --font-body: "Inter", sans-serif;
-  --font-code: "Inter", monospace;
 }
 
 /* ─── Keyframe Animations ─── */
@@ -159,21 +219,33 @@
     vertical-align: middle;
   }
 
+  html {
+    background-color: var(--color-canvas);
+  }
+
   body {
     font-family: var(--font-body);
-    color: var(--color-on-surface);
-    background-color: var(--color-surface);
+    color: var(--color-ink);
+    background-color: var(--color-canvas);
+    font-feature-settings: 'cv11', 'ss03';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+    letter-spacing: -0.01em;
   }
 
-  /* Focus-visible accessibility rings */
+  ::selection {
+    background-color: var(--color-gold-200);
+    color: var(--color-lumen-950);
+  }
+
+  /* Focus: a teal ring with a cream gap reads on cream, white and navy alike */
   *:focus-visible {
-    outline: 2px solid #0e5d84;
+    outline: 2px solid var(--color-lumen-500);
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -183,9 +255,33 @@
   input:focus-visible,
   select:focus-visible,
   textarea:focus-visible {
-    outline: 2px solid #0e5d84;
+    outline: 2px solid var(--color-lumen-500);
     outline-offset: 2px;
   }
+}
+
+/* ─── Signature surfaces ───
+   lumen-night: the navy of the mortarboard lit by the logo's sun — a gold light leak from the top right,
+   a teal glow from the bottom left, over a navy-to-ink gradient. Used for the sidebar and sign-in panels. */
+@utility bg-lumen-night {
+  background-color: var(--color-lumen-900);
+  background-image:
+    radial-gradient(120% 70% at 100% 0%, rgb(240 180 58 / 0.16) 0%, transparent 42%),
+    radial-gradient(90% 60% at 0% 100%, rgb(42 129 147 / 0.28) 0%, transparent 60%),
+    linear-gradient(165deg, var(--color-lumen-800) 0%, var(--color-lumen-900) 48%, var(--color-lumen-950) 100%);
+}
+
+/* The logo's sun rays, as a faint conic texture anchored top right. */
+@utility bg-sunburst {
+  background-image: repeating-conic-gradient(from 0deg at 100% 0%, rgb(240 180 58 / 0.055) 0deg 4deg, transparent 4deg 11deg);
+}
+
+/* Paper: cream canvas with a barely-there warm vignette, so long pages don't feel flat. */
+@utility bg-paper {
+  background-color: var(--color-canvas);
+  background-image:
+    radial-gradient(100% 60% at 50% 0%, rgb(255 253 248 / 0.9) 0%, transparent 70%),
+    radial-gradient(80% 50% at 100% 100%, rgb(222 160 45 / 0.05) 0%, transparent 70%);
 }
 
 
@@ -198,7 +294,7 @@
 /* ─── Custom Scrollbar (Themed) ─── */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #cbe0ec transparent;
+  scrollbar-color: var(--color-slate-300) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -211,7 +307,7 @@
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #cbe0ec;
+  background-color: var(--color-slate-300);
   border-radius: 9999px;
   border: 1px solid transparent;
   background-clip: content-box;
@@ -219,7 +315,7 @@
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background-color: #0e5d84;
+  background-color: var(--color-lumen-400);
 }
 
 /* ─── Print portal (ID card sheets, offer letters) ─── */
@@ -275,12 +371,13 @@
    Surfaces use the tokens below; Tailwind's slate scale is remapped per theme so existing
    text, border and muted colours follow without per-component dark classes. */
 [data-app-theme] {
-  --app-bg: #f6f8fa;
-  --surface: #ffffff;
+  --app-bg: var(--color-canvas);
+  --surface: var(--color-surface);
   --accent-ink: var(--accent);
   --bar: var(--accent);
-  --bar-edge: transparent;
-  --gold: #b7791f;
+  --bar-image: linear-gradient(135deg, color-mix(in oklab, var(--accent) 88%, white) 0%, var(--accent) 45%, color-mix(in oklab, var(--accent) 70%, var(--color-lumen-950)) 100%);
+  --bar-edge: var(--color-gold-400);
+  --gold: var(--color-gold-600);
   color: var(--color-slate-900);
 }
 
@@ -289,40 +386,46 @@
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
+/* School: the logo itself — navy bar, gold edge, cream paper with a teal cast in the shadows */
 [data-app-theme='school'] {
-  --app-bg: #eef5f9;
-  --bar: #082b3d;
-  --bar-edge: #f59e0b;
-  --color-slate-50: #f0f7fb;
-  --color-slate-100: #e0ecf4;
-  --color-slate-200: #cbe0ec;
-  --color-slate-300: #b0cadb;
-  --color-slate-400: #7d9aac;
-  --color-slate-500: #52707f;
-  --color-slate-600: #3d5a6b;
-  --color-slate-700: #2a4758;
-  --color-slate-800: #173a4f;
-  --color-slate-900: #082b3d;
+  --app-bg: var(--color-cream-200);
+  --surface: var(--color-cream-50);
+  --bar: var(--color-lumen-900);
+  --bar-image: linear-gradient(135deg, var(--color-lumen-800) 0%, var(--color-lumen-900) 55%, var(--color-lumen-950) 100%);
+  --bar-edge: var(--color-gold-400);
+  --accent-ink: var(--color-lumen-700);
+  --color-slate-50: #f6f0e1;
+  --color-slate-100: #eee5d0;
+  --color-slate-200: #e0d4b8;
+  --color-slate-300: #c9bb98;
+  --color-slate-400: #8f9b95;
+  --color-slate-500: #566a72;
+  --color-slate-600: #435964;
+  --color-slate-700: #304955;
+  --color-slate-800: #1b3a49;
+  --color-slate-900: #0c3147;
 }
 
+/* Dark: deep teal-navy night, cream type, gold kept for emphasis only */
 [data-app-theme='dark'] {
   color-scheme: dark;
-  --app-bg: #0b1520;
-  --surface: #121e2a;
-  --accent-ink: #7cc4ea;
-  --bar: #0f2a3b;
-  --bar-edge: #1d3b50;
-  --gold: #f2c14e;
-  --color-slate-50: #16232f;
-  --color-slate-100: #1c2b38;
-  --color-slate-200: #2a3b4b;
-  --color-slate-300: #3b4e60;
-  --color-slate-400: #6f8397;
-  --color-slate-500: #98a9b9;
-  --color-slate-600: #b3c0cc;
-  --color-slate-700: #c9d3dc;
-  --color-slate-800: #dde4eb;
-  --color-slate-900: #eef2f6;
+  --app-bg: #061b26;
+  --surface: #0b2533;
+  --accent-ink: #8fcfd8;
+  --bar: #0a2230;
+  --bar-image: linear-gradient(135deg, #0f3446 0%, #0a2230 60%, #06182a 100%);
+  --bar-edge: rgb(240 180 58 / 0.55);
+  --gold: #f5c85f;
+  --color-slate-50: #0f2c3a;
+  --color-slate-100: #133443;
+  --color-slate-200: #1d4252;
+  --color-slate-300: #2d5465;
+  --color-slate-400: #6c8d98;
+  --color-slate-500: #9fb6bb;
+  --color-slate-600: #bccbcb;
+  --color-slate-700: #d6ddd6;
+  --color-slate-800: #e9e8dd;
+  --color-slate-900: #f7f3e7;
   --color-emerald-50: #0f2e28;
   --color-emerald-600: #34d399;
   --color-emerald-700: #6ee7b7;
@@ -331,7 +434,11 @@
   --color-amber-50: #3a2c12;
   --color-amber-800: #fcd34d;
   --color-sky-50: #0f2c3d;
-  --color-sky-700: #7dd3fc;
+  --color-sky-700: #8fcfd8;
+  --color-gold-50: #2e2410;
+  --color-gold-100: #3a2d12;
+  --color-gold-700: #f5c85f;
+  --color-gold-800: #f8dd97;
 }
 
 /* Hall of Fame reveal */

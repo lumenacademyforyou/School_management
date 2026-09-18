@@ -109,18 +109,18 @@ export const TimetableSubstitutionView: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#f0f7fb] text-[#0e5d84]">
+            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-subtle text-brand">
               TTB · Module 15
             </span>
-            <span className="text-xs text-[#777587]">17 Master Features (TTB-001..017)</span>
+            <span className="text-xs text-ink-muted">17 Master Features (TTB-001..017)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#082b3d] mt-1">
+          <h1 className="text-xl md:text-2xl font-bold text-ink mt-1">
             Timetable & Automated Absence Substitution
           </h1>
-          <p className="text-xs md:text-sm text-[#464555]">
+          <p className="text-xs md:text-sm text-ink-soft">
             Dynamic period matrix, clash detection, teacher workload balancer, and absence-driven morning substitution.
           </p>
         </div>
@@ -128,21 +128,21 @@ export const TimetableSubstitutionView: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleExportCSV}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Export Roster</span>
           </button>
           <button
             onClick={() => setShowManualModal(true)}
-            className="px-3.5 py-2 bg-[#f0f7fb] hover:bg-[#bae6fd] text-[#0e5d84] border border-[#cbe0ec] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-subtle hover:bg-lumen-200 text-brand border border-line rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">person_add</span>
             <span>Manual Override</span>
           </button>
           <button
             onClick={handleAutoAllocateAll}
-            className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+            className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">auto_fix_high</span>
             <span>Auto-Allocate Substitutions</span>
@@ -152,34 +152,34 @@ export const TimetableSubstitutionView: React.FC = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Absent Teachers Today</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Absent Teachers Today</div>
           <div className="text-xl font-bold font-mono text-amber-600 mt-1">3 Faculty</div>
-          <div className="text-[11px] text-[#777587] mt-0.5">Reported before 07:45 AM</div>
+          <div className="text-[11px] text-ink-muted mt-0.5">Reported before 07:45 AM</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Periods Requiring Coverage</div>
-          <div className="text-xl font-bold font-mono text-[#082b3d] mt-1">{substitutions.length} Periods</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Periods Requiring Coverage</div>
+          <div className="text-xl font-bold font-mono text-ink mt-1">{substitutions.length} Periods</div>
           <div className="text-[11px] text-emerald-600 mt-0.5">100% Covered by Substitutes</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Schedule Clashes</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Schedule Clashes</div>
           <div className="text-xl font-bold font-mono text-emerald-600 mt-1">0 Clashes</div>
-          <div className="text-[11px] text-[#777587] mt-0.5">Constraint solver verified</div>
+          <div className="text-[11px] text-ink-muted mt-0.5">Constraint solver verified</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Weekly Workload Balance</div>
-          <div className="text-xl font-bold font-mono text-[#0e5d84] mt-1">26.4 hrs / wk</div>
-          <div className="text-[11px] text-[#777587] mt-0.5">Target: 28 hrs maximum</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Weekly Workload Balance</div>
+          <div className="text-xl font-bold font-mono text-brand mt-1">26.4 hrs / wk</div>
+          <div className="text-[11px] text-ink-muted mt-0.5">Target: 28 hrs maximum</div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-[#e0ecf4] pb-2">
+      <div className="flex items-center gap-2 border-b border-line-soft pb-2">
         <button
           onClick={() => setActiveTab('substitution')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'substitution' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'substitution' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">published_with_changes</span>
@@ -188,7 +188,7 @@ export const TimetableSubstitutionView: React.FC = () => {
         <button
           onClick={() => setActiveTab('grid')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'grid' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'grid' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">grid_view</span>
@@ -197,7 +197,7 @@ export const TimetableSubstitutionView: React.FC = () => {
         <button
           onClick={() => setActiveTab('workload')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'workload' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'workload' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">equalizer</span>
@@ -207,15 +207,15 @@ export const TimetableSubstitutionView: React.FC = () => {
 
       {/* Tab 1: Substitution Engine */}
       {activeTab === 'substitution' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-          <div className="p-4 border-b border-[#e0ecf4] flex items-center justify-between">
-            <h3 className="text-sm font-bold text-[#082b3d]">Today's Automated Substitution Roster</h3>
-            <span className="text-xs text-[#777587]">Morning Run: 08:15 AM</span>
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-line-soft flex items-center justify-between">
+            <h3 className="text-sm font-bold text-ink">Today's Automated Substitution Roster</h3>
+            <span className="text-xs text-ink-muted">Morning Run: 08:15 AM</span>
           </div>
 
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-slate-50 text-[#464555] border-b border-[#e0ecf4] text-[11px] uppercase tracking-wider font-semibold">
+              <tr className="bg-slate-50 text-ink-soft border-b border-line-soft text-[11px] uppercase tracking-wider font-semibold">
                 <th className="py-3 px-4">Period & Class</th>
                 <th className="py-3 px-4">Subject</th>
                 <th className="py-3 px-4">Absent Regular Teacher</th>
@@ -225,17 +225,17 @@ export const TimetableSubstitutionView: React.FC = () => {
                 <th className="py-3 px-4 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#f1f5f9]">
+            <tbody className="divide-y divide-line-soft">
               {substitutions.map(sub => (
-                <tr key={sub.id} className="hover:bg-[#f8faff] transition-colors">
+                <tr key={sub.id} className="hover:bg-wash transition-colors">
                   <td className="py-3 px-4">
-                    <div className="font-bold text-[#082b3d]">{sub.period}</div>
-                    <div className="text-[10px] text-[#0e5d84] font-semibold">{sub.classSection}</div>
+                    <div className="font-bold text-ink">{sub.period}</div>
+                    <div className="text-[10px] text-brand font-semibold">{sub.classSection}</div>
                   </td>
-                  <td className="py-3 px-4 font-semibold text-[#082b3d]">{sub.subject}</td>
+                  <td className="py-3 px-4 font-semibold text-ink">{sub.subject}</td>
                   <td className="py-3 px-4 text-rose-700 font-medium">{sub.absentTeacher}</td>
                   <td className="py-3 px-4 text-emerald-800 font-bold">{sub.substituteTeacher}</td>
-                  <td className="py-3 px-4 text-[#777587] text-[11px]">{sub.reason}</td>
+                  <td className="py-3 px-4 text-ink-muted text-[11px]">{sub.reason}</td>
                   <td className="py-3 px-4 text-center">
                     <span
                       className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
@@ -251,7 +251,7 @@ export const TimetableSubstitutionView: React.FC = () => {
                     {sub.status === 'Pending Alert' ? (
                       <button
                         onClick={() => handleDispatchSubstitutionAlert(sub.id)}
-                        className="px-2.5 py-1 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded text-xs font-bold transition-all"
+                        className="px-2.5 py-1 bg-brand hover:bg-brand-strong text-white rounded text-xs font-bold transition-all"
                       >
                         Notify Staff
                       </button>
@@ -268,10 +268,10 @@ export const TimetableSubstitutionView: React.FC = () => {
 
       {/* Tab 2: Master Grid */}
       {activeTab === 'grid' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs space-y-4">
+        <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm space-y-4">
           <div className="flex items-center justify-between border-b pb-3">
-            <h3 className="text-sm font-bold text-[#082b3d]">Grade 10-A Weekly Timetable Matrix (CBSE Standard)</h3>
-            <span className="text-xs bg-[#f0f7fb] text-[#0e5d84] px-2.5 py-0.5 rounded-full font-bold">
+            <h3 className="text-sm font-bold text-ink">Grade 10-A Weekly Timetable Matrix (CBSE Standard)</h3>
+            <span className="text-xs bg-subtle text-brand px-2.5 py-0.5 rounded-full font-bold">
               8 Periods / Day
             </span>
           </div>
@@ -279,7 +279,7 @@ export const TimetableSubstitutionView: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-center border-collapse">
               <thead>
-                <tr className="bg-slate-100 text-[#082b3d] font-bold">
+                <tr className="bg-slate-100 text-ink font-bold">
                   <th className="p-2.5 border border-slate-200">Day</th>
                   <th className="p-2.5 border border-slate-200">P1 (08:30)</th>
                   <th className="p-2.5 border border-slate-200">P2 (09:15)</th>
@@ -300,7 +300,7 @@ export const TimetableSubstitutionView: React.FC = () => {
                   { day: 'Fri', p: ['Science (Chem)', 'Social Science', 'Mathematics', 'English', 'Hindi/Tamil', 'Robotics STEM', 'Music / Dance', 'Club Activity'] },
                 ].map(row => (
                   <tr key={row.day} className="hover:bg-slate-50">
-                    <td className="p-2.5 font-bold bg-slate-50 border border-slate-200 text-[#0e5d84]">{row.day}</td>
+                    <td className="p-2.5 font-bold bg-slate-50 border border-slate-200 text-brand">{row.day}</td>
                     {row.p.map((subject, idx) => (
                       <td key={idx} className="p-2 border border-slate-200 font-semibold text-slate-800">
                         {subject}
@@ -316,25 +316,25 @@ export const TimetableSubstitutionView: React.FC = () => {
 
       {/* Tab 3: Workload Fairness */}
       {activeTab === 'workload' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs space-y-4">
-          <h3 className="text-sm font-bold text-[#082b3d]">Teacher Workload & Fairness Index (TTB-013)</h3>
-          <p className="text-xs text-[#777587]">
+        <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm space-y-4">
+          <h3 className="text-sm font-bold text-ink">Teacher Workload & Fairness Index (TTB-013)</h3>
+          <p className="text-xs text-ink-muted">
             Ensures equitable distribution of emergency substitute periods without overloading faculty members.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <div className="font-bold text-xs text-[#082b3d]">PGT Mathematics Dept</div>
-              <div className="text-xs text-[#777587] mt-1">Average Load: 24.2 periods/wk</div>
+              <div className="font-bold text-xs text-ink">PGT Mathematics Dept</div>
+              <div className="text-xs text-ink-muted mt-1">Average Load: 24.2 periods/wk</div>
               <div className="text-[11px] text-emerald-600 font-bold mt-1">Optimal Balance</div>
             </div>
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <div className="font-bold text-xs text-[#082b3d]">PGT Physics & Chemistry</div>
-              <div className="text-xs text-[#777587] mt-1">Average Load: 25.0 periods/wk</div>
+              <div className="font-bold text-xs text-ink">PGT Physics & Chemistry</div>
+              <div className="text-xs text-ink-muted mt-1">Average Load: 25.0 periods/wk</div>
               <div className="text-[11px] text-emerald-600 font-bold mt-1">Optimal Balance</div>
             </div>
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <div className="font-bold text-xs text-[#082b3d]">TGT English & Languages</div>
-              <div className="text-xs text-[#777587] mt-1">Average Load: 23.8 periods/wk</div>
+              <div className="font-bold text-xs text-ink">TGT English & Languages</div>
+              <div className="text-xs text-ink-muted mt-1">Average Load: 23.8 periods/wk</div>
               <div className="text-[11px] text-emerald-600 font-bold mt-1">Optimal Balance</div>
             </div>
           </div>
@@ -343,12 +343,12 @@ export const TimetableSubstitutionView: React.FC = () => {
 
       {/* MODAL: Manual Substitute Assignment */}
       {showManualModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">person_add</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Assign Manual Substitute (TTB-014)</h3>
+                <span className="material-symbols-outlined text-brand">person_add</span>
+                <h3 className="font-bold text-ink text-sm">Assign Manual Substitute (TTB-014)</h3>
               </div>
               <button
                 onClick={() => setShowManualModal(false)}
@@ -364,7 +364,7 @@ export const TimetableSubstitutionView: React.FC = () => {
                 <select
                   value={formPeriod}
                   onChange={e => setFormPeriod(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
                 >
                   <option value="Period 1 (08:30 - 09:15 AM)">Period 1 (08:30 - 09:15 AM)</option>
                   <option value="Period 2 (09:15 - 10:00 AM)">Period 2 (09:15 - 10:00 AM)</option>
@@ -382,7 +382,7 @@ export const TimetableSubstitutionView: React.FC = () => {
                     type="text"
                     value={formClass}
                     onChange={e => setFormClass(e.target.value)}
-                    className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
+                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
                   />
                 </div>
                 <div>
@@ -391,7 +391,7 @@ export const TimetableSubstitutionView: React.FC = () => {
                     type="text"
                     value={formSubject}
                     onChange={e => setFormSubject(e.target.value)}
-                    className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
+                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
                   />
                 </div>
               </div>
@@ -402,7 +402,7 @@ export const TimetableSubstitutionView: React.FC = () => {
                   type="text"
                   value={formAbsent}
                   onChange={e => setFormAbsent(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
                 />
               </div>
 
@@ -411,7 +411,7 @@ export const TimetableSubstitutionView: React.FC = () => {
                 <select
                   value={formSub}
                   onChange={e => setFormSub(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
                 >
                   <option value="Mrs. V. Revathi (TGT Science)">Mrs. V. Revathi (TGT Science - Free)</option>
                   <option value="V. S. Raghavan (PGT Maths)">V. S. Raghavan (PGT Maths - Free)</option>
@@ -430,7 +430,7 @@ export const TimetableSubstitutionView: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#0e5d84] hover:bg-[#083a4f] text-white font-bold rounded-xl text-xs shadow-xs"
+                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
                 >
                   Confirm & Notify
                 </button>

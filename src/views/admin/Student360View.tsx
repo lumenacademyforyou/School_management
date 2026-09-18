@@ -69,8 +69,8 @@ Generated on: ${new Date().toLocaleString()}`;
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
       {/* Student 360 Hero Identity Card */}
-      <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 md:p-6 shadow-xs relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-[#f0f7fb] to-transparent rounded-full -mr-20 -mt-20 pointer-events-none"></div>
+      <div className="bg-surface rounded-2xl border border-line-soft p-5 md:p-6 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-subtle to-transparent rounded-full -mr-20 -mt-20 pointer-events-none"></div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="flex flex-col sm:flex-row sm:items-center gap-5">
@@ -78,7 +78,7 @@ Generated on: ${new Date().toLocaleString()}`;
               <img
                 src={student.avatar}
                 alt={student.name}
-                className="w-24 h-24 rounded-2xl object-cover border-4 border-[#f0f7fb] shadow-md"
+                className="w-24 h-24 rounded-2xl object-cover border-4 border-subtle shadow-md"
               />
               <span className="absolute -bottom-1 -right-1 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-white shadow-xs">
                 Active
@@ -87,8 +87,8 @@ Generated on: ${new Date().toLocaleString()}`;
 
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-1">
-                <h1 className="text-xl font-bold font-display text-[#082b3d]">{student.name}</h1>
-                <span className="bg-[#f0f7fb] text-[#0e5d84] text-xs font-bold px-2.5 py-0.5 rounded-full border border-[#cbe0ec]">
+                <h1 className="text-xl font-bold font-display text-ink">{student.name}</h1>
+                <span className="bg-subtle text-brand text-xs font-bold px-2.5 py-0.5 rounded-full border border-line">
                   {student.class} - Section {student.section}
                 </span>
                 <span className="bg-amber-100 text-amber-900 text-xs font-semibold px-2 py-0.5 rounded-full">
@@ -99,12 +99,12 @@ Generated on: ${new Date().toLocaleString()}`;
                 </span>
               </div>
 
-              <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-xs text-[#464555] mt-1.5">
-                <span>APAAR ID: <strong className="font-mono text-[#082b3d]">{student.apaarId}</strong></span>
+              <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-xs text-ink-soft mt-1.5">
+                <span>APAAR ID: <strong className="font-mono text-ink">{student.apaarId}</strong></span>
                 <span>•</span>
-                <span>PEN: <strong className="font-mono text-[#082b3d]">{student.pen}</strong></span>
+                <span>PEN: <strong className="font-mono text-ink">{student.pen}</strong></span>
                 <span>•</span>
-                <span>Adm No: <strong className="font-mono text-[#082b3d]">{student.admissionNo}</strong></span>
+                <span>Adm No: <strong className="font-mono text-ink">{student.admissionNo}</strong></span>
                 <span>•</span>
                 <span>DOB: <strong>{student.dob}</strong></span>
               </div>
@@ -122,35 +122,35 @@ Generated on: ${new Date().toLocaleString()}`;
                 window.print();
                 addToast(`Sent ${student.name}'s Student 360 profile to printer`, 'info');
               }}
-              className="flex items-center gap-1.5 bg-[#f0f7fb] hover:bg-[#e0ecf4] text-[#082b3d] text-xs font-semibold px-3 py-2 rounded-xl border border-[#cbe0ec] transition-colors"
+              className="flex items-center gap-1.5 bg-subtle hover:bg-line-soft text-ink text-xs font-semibold px-3 py-2 rounded-xl border border-line transition-colors"
             >
               <span className="material-symbols-outlined text-base">print</span>
               <span>Print Dossier</span>
             </button>
             <button
               onClick={handleDownloadDossier}
-              className="flex items-center gap-1.5 bg-[#f0f7fb] hover:bg-[#e0ecf4] text-[#0e5d84] text-xs font-semibold px-3 py-2 rounded-xl border border-[#cbe0ec] transition-colors"
+              className="flex items-center gap-1.5 bg-subtle hover:bg-line-soft text-brand text-xs font-semibold px-3 py-2 rounded-xl border border-line transition-colors"
             >
               <span className="material-symbols-outlined text-base">download</span>
               <span>Download Dossier</span>
             </button>
             <button
               onClick={() => setAdminView('id-cards')}
-              className="flex items-center gap-1.5 bg-[#f0f7fb] hover:bg-[#e0ecf4] text-[#0e5d84] text-xs font-semibold px-3 py-2 rounded-xl border border-[#cbe0ec] transition-colors"
+              className="flex items-center gap-1.5 bg-subtle hover:bg-line-soft text-brand text-xs font-semibold px-3 py-2 rounded-xl border border-line transition-colors"
             >
               <span className="material-symbols-outlined text-base">id_card</span>
               <span>ID Card</span>
             </button>
             <button
               onClick={() => setPtmModalOpen(true)}
-              className="flex items-center gap-1.5 bg-[#f0f7fb] hover:bg-[#e0ecf4] text-[#0e5d84] text-xs font-semibold px-3 py-2 rounded-xl border border-[#cbe0ec] transition-colors"
+              className="flex items-center gap-1.5 bg-subtle hover:bg-line-soft text-brand text-xs font-semibold px-3 py-2 rounded-xl border border-line transition-colors"
             >
               <span className="material-symbols-outlined text-base">event</span>
               <span>Schedule PTM</span>
             </button>
             <button
               onClick={() => setLeaveModalOpen(true)}
-              className="flex items-center gap-1.5 bg-[#f0f7fb] hover:bg-[#e0ecf4] text-[#0e5d84] text-xs font-semibold px-3 py-2 rounded-xl border border-[#cbe0ec] transition-colors"
+              className="flex items-center gap-1.5 bg-subtle hover:bg-line-soft text-brand text-xs font-semibold px-3 py-2 rounded-xl border border-line transition-colors"
             >
               <span className="material-symbols-outlined text-base">edit_calendar</span>
               <span>Record Leave</span>
@@ -160,7 +160,7 @@ Generated on: ${new Date().toLocaleString()}`;
                 setAdminView('certificates');
                 addToast('Generating CBSE Transfer Certificate in DigiLocker module', 'info');
               }}
-              className="flex items-center gap-1.5 bg-[#0e5d84] hover:bg-[#083a4f] text-white text-xs font-semibold px-3 py-2 rounded-xl shadow-sm transition-colors"
+              className="flex items-center gap-1.5 bg-brand hover:bg-brand-strong text-white text-xs font-semibold px-3 py-2 rounded-xl shadow-sm transition-colors"
             >
               <span className="material-symbols-outlined text-base">verified</span>
               <span>Issue TC / DigiLocker</span>
@@ -169,34 +169,34 @@ Generated on: ${new Date().toLocaleString()}`;
         </div>
 
         {/* Holistic Stats Banner */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-[#f0f7fb]">
-          <div className="bg-[#f0f7fb]/60 p-3 rounded-xl border border-[#cbe0ec]">
-            <div className="text-[10px] uppercase font-bold text-[#777587]">Cumulative GPA</div>
-            <div className="text-xl font-bold text-[#0e5d84] mt-0.5">{student.gpa} / 10.0</div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-subtle">
+          <div className="bg-subtle/60 p-3 rounded-xl border border-line">
+            <div className="text-[10px] uppercase font-bold text-ink-muted">Cumulative GPA</div>
+            <div className="text-xl font-bold text-brand mt-0.5">{student.gpa} / 10.0</div>
             <div className="text-[11px] text-emerald-700 font-semibold">Distinction Track (A1)</div>
           </div>
-          <div className="bg-[#f0f7fb]/60 p-3 rounded-xl border border-[#cbe0ec]">
-            <div className="text-[10px] uppercase font-bold text-[#777587]">Term 3 Attendance</div>
+          <div className="bg-subtle/60 p-3 rounded-xl border border-line">
+            <div className="text-[10px] uppercase font-bold text-ink-muted">Term 3 Attendance</div>
             <div className="text-xl font-bold text-emerald-700 mt-0.5">{student.attendancePct}%</div>
-            <div className="text-[11px] text-[#464555]">Above CBSE 75% quota</div>
+            <div className="text-[11px] text-ink-soft">Above CBSE 75% quota</div>
           </div>
-          <div className="bg-[#f0f7fb]/60 p-3 rounded-xl border border-[#cbe0ec]">
-            <div className="text-[10px] uppercase font-bold text-[#777587]">Fee Status</div>
+          <div className="bg-subtle/60 p-3 rounded-xl border border-line">
+            <div className="text-[10px] uppercase font-bold text-ink-muted">Fee Status</div>
             <div className="text-xl font-bold text-amber-700 mt-0.5">₹24,500 Due</div>
             <div className="text-[11px] text-amber-800 font-semibold cursor-pointer hover:underline" onClick={() => setAdminView('fees')}>
               Pay via Ledger →
             </div>
           </div>
-          <div className="bg-[#f0f7fb]/60 p-3 rounded-xl border border-[#cbe0ec]">
-            <div className="text-[10px] uppercase font-bold text-[#777587]">Transport & Boarding</div>
-            <div className="text-sm font-bold text-[#082b3d] mt-1 truncate">{student.transportRoute}</div>
-            <div className="text-[11px] text-[#464555]">{student.hostelRoom}</div>
+          <div className="bg-subtle/60 p-3 rounded-xl border border-line">
+            <div className="text-[10px] uppercase font-bold text-ink-muted">Transport & Boarding</div>
+            <div className="text-sm font-bold text-ink mt-1 truncate">{student.transportRoute}</div>
+            <div className="text-[11px] text-ink-soft">{student.hostelRoom}</div>
           </div>
         </div>
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex items-center gap-2 border-b border-[#e0ecf4] pb-2 overflow-x-auto">
+      <div className="flex items-center gap-2 border-b border-line-soft pb-2 overflow-x-auto">
         {[
           { id: 'overview', label: 'Holistic Overview', icon: 'person' },
           { id: 'academics', label: 'Academics & Scorecards', icon: 'auto_stories' },
@@ -210,8 +210,8 @@ Generated on: ${new Date().toLocaleString()}`;
             onClick={() => setActiveTab(tab.id as any)}
             className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
               activeTab === tab.id
-                ? 'bg-[#0e5d84] text-white shadow-xs'
-                : 'text-[#464555] hover:bg-[#f0f7fb] hover:text-[#082b3d]'
+                ? 'bg-brand text-white shadow-xs'
+                : 'text-ink-soft hover:bg-subtle hover:text-ink'
             }`}
           >
             <span className="material-symbols-outlined text-base">{tab.icon}</span>
@@ -224,36 +224,36 @@ Generated on: ${new Date().toLocaleString()}`;
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Guardian & Contact Dossier */}
-          <div className="bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-4">
-            <h2 className="text-sm font-bold text-[#082b3d] flex items-center gap-2">
-              <span className="material-symbols-outlined text-[#0e5d84] text-base">family_restroom</span>
+          <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-4">
+            <h2 className="text-sm font-bold text-ink flex items-center gap-2">
+              <span className="material-symbols-outlined text-brand text-base">family_restroom</span>
               <span>Guardians & Emergency Contacts</span>
             </h2>
 
-            <div className="p-3 bg-[#f0f7fb] rounded-xl border border-[#cbe0ec] space-y-1">
-              <div className="text-[10px] uppercase font-bold text-[#777587]">Primary Father / Guardian</div>
-              <div className="text-xs font-bold text-[#082b3d]">{student.guardianName}</div>
-              <div className="text-xs text-[#0e5d84] font-mono">{student.guardianPhone}</div>
-              <div className="text-[11px] text-[#464555]">VP, Cognizant Technology Solutions</div>
+            <div className="p-3 bg-subtle rounded-xl border border-line space-y-1">
+              <div className="text-[10px] uppercase font-bold text-ink-muted">Primary Father / Guardian</div>
+              <div className="text-xs font-bold text-ink">{student.guardianName}</div>
+              <div className="text-xs text-brand font-mono">{student.guardianPhone}</div>
+              <div className="text-[11px] text-ink-soft">VP, Cognizant Technology Solutions</div>
             </div>
 
-            <div className="p-3 bg-[#f0f7fb] rounded-xl border border-[#cbe0ec] space-y-1">
-              <div className="text-[10px] uppercase font-bold text-[#777587]">Secondary Mother / Guardian</div>
-              <div className="text-xs font-bold text-[#082b3d]">{student.guardianAltName}</div>
-              <div className="text-xs text-[#0e5d84] font-mono">{student.guardianAltPhone}</div>
-              <div className="text-[11px] text-[#464555]">Senior Consultant, Apollo Hospitals</div>
+            <div className="p-3 bg-subtle rounded-xl border border-line space-y-1">
+              <div className="text-[10px] uppercase font-bold text-ink-muted">Secondary Mother / Guardian</div>
+              <div className="text-xs font-bold text-ink">{student.guardianAltName}</div>
+              <div className="text-xs text-brand font-mono">{student.guardianAltPhone}</div>
+              <div className="text-[11px] text-ink-soft">Senior Consultant, Apollo Hospitals</div>
             </div>
 
             <div className="text-xs space-y-1 pt-1">
-              <div className="text-[11px] font-semibold text-[#777587]">Permanent Residence</div>
-              <div className="text-[#082b3d]">{student.address}</div>
+              <div className="text-[11px] font-semibold text-ink-muted">Permanent Residence</div>
+              <div className="text-ink">{student.address}</div>
             </div>
           </div>
 
           {/* Academic Strengths & Co-Curricular */}
-          <div className="bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-4">
-            <h2 className="text-sm font-bold text-[#082b3d] flex items-center gap-2">
-              <span className="material-symbols-outlined text-[#0e5d84] text-base">workspace_premium</span>
+          <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-4">
+            <h2 className="text-sm font-bold text-ink flex items-center gap-2">
+              <span className="material-symbols-outlined text-brand text-base">workspace_premium</span>
               <span>Co-Curricular & Special Accolades</span>
             </h2>
 
@@ -274,38 +274,38 @@ Generated on: ${new Date().toLocaleString()}`;
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-2.5 bg-[#f0f7fb] rounded-xl border border-[#cbe0ec]">
-                <span className="material-symbols-outlined text-[#0e5d84]">code</span>
+              <div className="flex items-center gap-3 p-2.5 bg-subtle rounded-xl border border-line">
+                <span className="material-symbols-outlined text-brand">code</span>
                 <div>
-                  <div className="text-xs font-bold text-[#082b3d]">Junior Robotics Club President</div>
-                  <div className="text-[11px] text-[#082b3d]">Designed automated campus trash sorter on Arduino</div>
+                  <div className="text-xs font-bold text-ink">Junior Robotics Club President</div>
+                  <div className="text-[11px] text-ink">Designed automated campus trash sorter on Arduino</div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Health & Medical Telemetry */}
-          <div className="bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-4">
-            <h2 className="text-sm font-bold text-[#082b3d] flex items-center gap-2">
+          <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-4">
+            <h2 className="text-sm font-bold text-ink flex items-center gap-2">
               <span className="material-symbols-outlined text-rose-600 text-base">health_and_safety</span>
               <span>Campus Health & Vitals</span>
             </h2>
 
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                <div className="text-[10px] text-[#777587]">Blood Group</div>
+                <div className="text-[10px] text-ink-muted">Blood Group</div>
                 <div className="font-bold text-rose-700 mt-0.5">{student.bloodGroup}</div>
               </div>
               <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                <div className="text-[10px] text-[#777587]">Vision / Spectacles</div>
-                <div className="font-bold text-[#082b3d] mt-0.5">-1.25 D (Both)</div>
+                <div className="text-[10px] text-ink-muted">Vision / Spectacles</div>
+                <div className="font-bold text-ink mt-0.5">-1.25 D (Both)</div>
               </div>
               <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                <div className="text-[10px] text-[#777587]">Allergies</div>
-                <div className="font-bold text-[#082b3d] mt-0.5">Penicillin (Mild)</div>
+                <div className="text-[10px] text-ink-muted">Allergies</div>
+                <div className="font-bold text-ink mt-0.5">Penicillin (Mild)</div>
               </div>
               <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                <div className="text-[10px] text-[#777587]">Emergency Inf.</div>
+                <div className="text-[10px] text-ink-muted">Emergency Inf.</div>
                 <div className="font-bold text-emerald-700 mt-0.5">Campus Sickbay OK</div>
               </div>
             </div>
@@ -319,12 +319,12 @@ Generated on: ${new Date().toLocaleString()}`;
 
       {/* Tab 2: Academics */}
       {activeTab === 'academics' && (
-        <div className="bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-4">
+        <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-[#082b3d]">Subject Master Scorecards (CBSE Class 10 Curriculum)</h2>
+            <h2 className="text-sm font-bold text-ink">Subject Master Scorecards (CBSE Class 10 Curriculum)</h2>
             <button
               onClick={handleExportMarksheet}
-              className="text-xs bg-[#f0f7fb] hover:bg-[#dbe7ff] text-[#0e5d84] font-semibold px-3 py-1.5 rounded-lg border border-[#cbe0ec] flex items-center gap-1 transition-colors"
+              className="text-xs bg-subtle hover:bg-lumen-100 text-brand font-semibold px-3 py-1.5 rounded-lg border border-line flex items-center gap-1 transition-colors"
             >
               <span className="material-symbols-outlined text-sm">download</span>
               <span>Export Term Marksheet (CSV)</span>
@@ -333,7 +333,7 @@ Generated on: ${new Date().toLocaleString()}`;
 
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
-              <thead className="bg-[#f0f7fb] text-[#464555] font-semibold border-b border-[#cbe0ec]">
+              <thead className="bg-subtle text-ink-soft font-semibold border-b border-line">
                 <tr>
                   <th className="p-3">Subject Code & Name</th>
                   <th className="p-3">Mentor / Faculty</th>
@@ -344,10 +344,10 @@ Generated on: ${new Date().toLocaleString()}`;
                   <th className="p-3">Grade</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 <tr>
-                  <td className="p-3 font-bold text-[#082b3d]">086 • Science (Physics, Chem, Bio)</td>
-                  <td className="p-3 text-[#464555]">Mrs. Malini Iyer</td>
+                  <td className="p-3 font-bold text-ink">086 • Science (Physics, Chem, Bio)</td>
+                  <td className="p-3 text-ink-soft">Mrs. Malini Iyer</td>
                   <td className="p-3 font-mono">94</td>
                   <td className="p-3 font-mono">96</td>
                   <td className="p-3 font-mono">76 / 80</td>
@@ -355,8 +355,8 @@ Generated on: ${new Date().toLocaleString()}`;
                   <td className="p-3"><span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">A1</span></td>
                 </tr>
                 <tr>
-                  <td className="p-3 font-bold text-[#082b3d]">041 • Mathematics Standard</td>
-                  <td className="p-3 text-[#464555]">Dr. V. Raghavan</td>
+                  <td className="p-3 font-bold text-ink">041 • Mathematics Standard</td>
+                  <td className="p-3 text-ink-soft">Dr. V. Raghavan</td>
                   <td className="p-3 font-mono">92</td>
                   <td className="p-3 font-mono">90</td>
                   <td className="p-3 font-mono">74 / 80</td>
@@ -364,8 +364,8 @@ Generated on: ${new Date().toLocaleString()}`;
                   <td className="p-3"><span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">A1</span></td>
                 </tr>
                 <tr>
-                  <td className="p-3 font-bold text-[#082b3d]">184 • English Language & Literature</td>
-                  <td className="p-3 text-[#464555]">Ms. Clara D’Souza</td>
+                  <td className="p-3 font-bold text-ink">184 • English Language & Literature</td>
+                  <td className="p-3 text-ink-soft">Ms. Clara D’Souza</td>
                   <td className="p-3 font-mono">88</td>
                   <td className="p-3 font-mono">91</td>
                   <td className="p-3 font-mono">71 / 80</td>
@@ -373,8 +373,8 @@ Generated on: ${new Date().toLocaleString()}`;
                   <td className="p-3"><span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">A1</span></td>
                 </tr>
                 <tr>
-                  <td className="p-3 font-bold text-[#082b3d]">087 • Social Science</td>
-                  <td className="p-3 text-[#464555]">Mrs. Priya Mohan</td>
+                  <td className="p-3 font-bold text-ink">087 • Social Science</td>
+                  <td className="p-3 text-ink-soft">Mrs. Priya Mohan</td>
                   <td className="p-3 font-mono">86</td>
                   <td className="p-3 font-mono">89</td>
                   <td className="p-3 font-mono">68 / 80</td>
@@ -389,9 +389,9 @@ Generated on: ${new Date().toLocaleString()}`;
 
       {/* Tab 3: Attendance Matrix */}
       {activeTab === 'attendance' && (
-        <div className="bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-4">
+        <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-[#082b3d]">February 2025 Biometric Punch Calendar</h2>
+            <h2 className="text-sm font-bold text-ink">February 2025 Biometric Punch Calendar</h2>
             <div className="flex items-center gap-2 text-xs">
               <span className="flex items-center gap-1"><span className="w-3 h-3 bg-emerald-500 rounded"></span> Present (21)</span>
               <span className="flex items-center gap-1"><span className="w-3 h-3 bg-amber-400 rounded"></span> Late (1)</span>
@@ -402,7 +402,7 @@ Generated on: ${new Date().toLocaleString()}`;
           {/* Mini Calendar Grid */}
           <div className="grid grid-cols-7 gap-2 text-center text-xs">
             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-              <div key={day} className="font-bold text-[#777587] py-1">{day}</div>
+              <div key={day} className="font-bold text-ink-muted py-1">{day}</div>
             ))}
             {Array.from({ length: 28 }, (_, i) => i + 1).map(d => {
               const isSunday = d % 7 === 0;
@@ -432,15 +432,15 @@ Generated on: ${new Date().toLocaleString()}`;
 
       {/* Tab 4: Transport & Hostel */}
       {(activeTab === 'transport' || activeTab === 'hostel') && (
-        <div className="bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-4">
-          <h2 className="text-sm font-bold text-[#082b3d]">Route #14 Transit Manifest & Residential Status</h2>
+        <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-4">
+          <h2 className="text-sm font-bold text-ink">Route #14 Transit Manifest & Residential Status</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-[#f0f7fb] rounded-xl border border-[#cbe0ec]">
-              <div className="text-xs font-bold text-[#082b3d] mb-2 flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-sm text-[#0e5d84]">directions_bus</span>
+            <div className="p-4 bg-subtle rounded-xl border border-line">
+              <div className="text-xs font-bold text-ink mb-2 flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-sm text-brand">directions_bus</span>
                 <span>Fleet Telemetry: Bus #12 (TN-07-BW-4821)</span>
               </div>
-              <div className="text-xs space-y-1 text-[#464555]">
+              <div className="text-xs space-y-1 text-ink-soft">
                 <div>Boarding Stop: <strong>Velachery Bypass Junction</strong> (07:44 AM)</div>
                 <div>Allocated Seat: <strong>Seat 12B (Window)</strong></div>
                 <div>Driver: <strong>G. Murugan (+91 94441 98765)</strong></div>
@@ -448,12 +448,12 @@ Generated on: ${new Date().toLocaleString()}`;
               </div>
             </div>
 
-            <div className="p-4 bg-[#f0f7fb] rounded-xl border border-[#cbe0ec]">
-              <div className="text-xs font-bold text-[#082b3d] mb-2 flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-sm text-[#0e5d84]">night_shelter</span>
+            <div className="p-4 bg-subtle rounded-xl border border-line">
+              <div className="text-xs font-bold text-ink mb-2 flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-sm text-brand">night_shelter</span>
                 <span>Residential Hostel Allocation</span>
               </div>
-              <div className="text-xs space-y-1 text-[#464555]">
+              <div className="text-xs space-y-1 text-ink-soft">
                 <div>Building Block: <strong>Godavari Hall (Senior Boys)</strong></div>
                 <div>Room Number: <strong>Room #204 (Air-Cooled 2-Sharing)</strong></div>
                 <div>Roommate: <strong>Chetan R. Varma (Class 10-A)</strong></div>
@@ -466,10 +466,10 @@ Generated on: ${new Date().toLocaleString()}`;
 
       {/* Tab 5: DPDPA Statutory Consent */}
       {activeTab === 'compliance' && (
-        <div className="bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-4">
+        <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-[#082b3d] flex items-center gap-2">
-              <span className="material-symbols-outlined text-[#0e5d84] text-base">verified_user</span>
+            <h2 className="text-sm font-bold text-ink flex items-center gap-2">
+              <span className="material-symbols-outlined text-brand text-base">verified_user</span>
               <span>DPDPA 2023 Statutory Minor Consent Ledger</span>
             </h2>
             <span className="text-xs font-mono bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">
@@ -486,7 +486,7 @@ Generated on: ${new Date().toLocaleString()}`;
             ].map((c, idx) => (
               <div key={idx} className="p-3 bg-emerald-50/70 rounded-xl border border-emerald-200 flex items-start justify-between">
                 <div>
-                  <div className="text-xs font-bold text-[#082b3d]">{c.purpose}</div>
+                  <div className="text-xs font-bold text-ink">{c.purpose}</div>
                   <div className="text-[11px] text-emerald-800 mt-0.5">{c.status}</div>
                 </div>
                 <span className="material-symbols-outlined text-emerald-700 text-base">check_circle</span>

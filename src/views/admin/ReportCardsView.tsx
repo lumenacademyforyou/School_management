@@ -89,18 +89,18 @@ export const ReportCardsView: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#f0f7fb] text-[#0e5d84]">
+            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-subtle text-brand">
               RCD · Module 17
             </span>
-            <span className="text-xs text-[#777587]">14 Master Features</span>
+            <span className="text-xs text-ink-muted">14 Master Features</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#082b3d] mt-1">
+          <h1 className="text-xl md:text-2xl font-bold text-ink mt-1">
             Report Cards & Holistic Progress Card (HPC)
           </h1>
-          <p className="text-xs md:text-sm text-[#464555]">
+          <p className="text-xs md:text-sm text-ink-soft">
             NEP 2020 360-degree holistic student evaluation, CBSE board templates, automated bulk rendering, and instant Parent App digital release.
           </p>
         </div>
@@ -109,7 +109,7 @@ export const ReportCardsView: React.FC = () => {
           {generatedBatch && (
             <button
               onClick={handleDownloadZipArchive}
-              className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+              className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
             >
               <span className="material-symbols-outlined text-sm">folder_zip</span>
               <span>Download Batch ZIP</span>
@@ -118,7 +118,7 @@ export const ReportCardsView: React.FC = () => {
           <button
             onClick={handleBulkGenerate}
             disabled={isGenerating}
-            className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+            className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">print</span>
             <span>{isGenerating ? 'Rendering PDFs...' : 'Bulk Render Report Cards'}</span>
@@ -134,14 +134,14 @@ export const ReportCardsView: React.FC = () => {
       </div>
 
       {/* Selectors Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-[#e0ecf4] shadow-xs flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-surface p-4 rounded-2xl border border-line-soft shadow-sm flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div>
-            <label className="block text-[10px] font-bold text-[#777587] uppercase mb-1">Class / Grade</label>
+            <label className="block text-[10px] font-bold text-ink-muted uppercase mb-1">Class / Grade</label>
             <select
               value={selectedGrade}
               onChange={e => setSelectedGrade(e.target.value)}
-              className="bg-[#f8f9ff] border border-[#e0ecf4] rounded-xl px-3 py-1.5 text-xs font-semibold text-[#082b3d]"
+              className="bg-wash border border-line-soft rounded-xl px-3 py-1.5 text-xs font-semibold text-ink"
             >
               <option value="Grade 10">Grade 10 (Secondary Board)</option>
               <option value="Grade 12">Grade 12 (Senior Secondary)</option>
@@ -151,11 +151,11 @@ export const ReportCardsView: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-[10px] font-bold text-[#777587] uppercase mb-1">Evaluation Term</label>
+            <label className="block text-[10px] font-bold text-ink-muted uppercase mb-1">Evaluation Term</label>
             <select
               value={selectedTerm}
               onChange={e => setSelectedTerm(e.target.value)}
-              className="bg-[#f8f9ff] border border-[#e0ecf4] rounded-xl px-3 py-1.5 text-xs font-semibold text-[#082b3d]"
+              className="bg-wash border border-line-soft rounded-xl px-3 py-1.5 text-xs font-semibold text-ink"
             >
               <option value="Term 2 / Pre-Board">Term 2 / Pre-Board Examination</option>
               <option value="Mid-Term">Mid-Term Assessment</option>
@@ -168,7 +168,7 @@ export const ReportCardsView: React.FC = () => {
           <button
             onClick={() => setActiveTab('hpc')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              activeTab === 'hpc' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+              activeTab === 'hpc' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
             }`}
           >
             HPC 360° Evaluation (RCD-003)
@@ -176,7 +176,7 @@ export const ReportCardsView: React.FC = () => {
           <button
             onClick={() => setActiveTab('marksheet')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              activeTab === 'marksheet' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+              activeTab === 'marksheet' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
             }`}
           >
             Consolidated Marksheet (RCD-013)
@@ -188,15 +188,15 @@ export const ReportCardsView: React.FC = () => {
       {activeTab === 'hpc' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Student Roster (2 cols) */}
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-            <div className="p-4 border-b border-[#e0ecf4] flex items-center justify-between">
-              <h3 className="text-sm font-bold text-[#082b3d]">Students Roster & HPC Readiness</h3>
-              <span className="text-xs text-[#777587]">{students.length} Evaluated</span>
+          <div className="lg:col-span-2 bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+            <div className="p-4 border-b border-line-soft flex items-center justify-between">
+              <h3 className="text-sm font-bold text-ink">Students Roster & HPC Readiness</h3>
+              <span className="text-xs text-ink-muted">{students.length} Evaluated</span>
             </div>
 
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-[#464555] border-b border-[#e0ecf4] text-[11px] uppercase tracking-wider font-semibold">
+                <tr className="bg-slate-50 text-ink-soft border-b border-line-soft text-[11px] uppercase tracking-wider font-semibold">
                   <th className="py-3 px-4">Roll No</th>
                   <th className="py-3 px-4">Student Name</th>
                   <th className="py-3 px-4 text-center">Score</th>
@@ -205,14 +205,14 @@ export const ReportCardsView: React.FC = () => {
                   <th className="py-3 px-4 text-right">Preview</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f1f5f9]">
+              <tbody className="divide-y divide-line-soft">
                 {students.map(s => (
-                  <tr key={s.rollNo} className="hover:bg-[#f8faff] transition-colors">
-                    <td className="py-3 px-4 font-mono font-bold text-[#0e5d84]">{s.rollNo}</td>
-                    <td className="py-3 px-4 font-bold text-[#082b3d]">{s.name}</td>
-                    <td className="py-3 px-4 text-center font-mono font-bold text-[#082b3d]">{s.totalScore}</td>
+                  <tr key={s.rollNo} className="hover:bg-wash transition-colors">
+                    <td className="py-3 px-4 font-mono font-bold text-brand">{s.rollNo}</td>
+                    <td className="py-3 px-4 font-bold text-ink">{s.name}</td>
+                    <td className="py-3 px-4 text-center font-mono font-bold text-ink">{s.totalScore}</td>
                     <td className="py-3 px-4 text-center">
-                      <span className="px-2 py-0.5 rounded bg-[#f0f7fb] text-[#0e5d84] font-mono font-bold text-xs">
+                      <span className="px-2 py-0.5 rounded bg-subtle text-brand font-mono font-bold text-xs">
                         {s.grade}
                       </span>
                     </td>
@@ -230,7 +230,7 @@ export const ReportCardsView: React.FC = () => {
                     <td className="py-3 px-4 text-right">
                       <button
                         onClick={() => setSelectedStudent(s)}
-                        className="text-xs text-[#0e5d84] font-bold hover:underline"
+                        className="text-xs text-brand font-bold hover:underline"
                       >
                         View HPC Card →
                       </button>
@@ -242,10 +242,10 @@ export const ReportCardsView: React.FC = () => {
           </div>
 
           {/* HPC Rubric Summary Canvas (1 col) */}
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs space-y-4">
-            <div className="border-b border-[#e0ecf4] pb-3">
-              <h3 className="text-sm font-bold text-[#082b3d]">NEP 2020 Holistic Progress Card Structure</h3>
-              <p className="text-xs text-[#777587]">Multidimensional evaluation model</p>
+          <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm space-y-4">
+            <div className="border-b border-line-soft pb-3">
+              <h3 className="text-sm font-bold text-ink">NEP 2020 Holistic Progress Card Structure</h3>
+              <p className="text-xs text-ink-muted">Multidimensional evaluation model</p>
             </div>
 
             <div className="space-y-3 text-xs">
@@ -282,7 +282,7 @@ export const ReportCardsView: React.FC = () => {
 
             <button
               onClick={() => setShowRubricDesigner(true)}
-              className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl text-xs font-bold transition-all"
+              className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-bold transition-all"
             >
               Configure HPC Rubric Parameters
             </button>
@@ -292,15 +292,15 @@ export const ReportCardsView: React.FC = () => {
 
       {/* Tab 2: Marksheet */}
       {activeTab === 'marksheet' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs space-y-4">
+        <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-[#082b3d]">Consolidated Class Marksheet Matrix (RCD-013)</h3>
-              <p className="text-xs text-[#777587]">Board format with theory, practical, and internal assessment splits</p>
+              <h3 className="text-sm font-bold text-ink">Consolidated Class Marksheet Matrix (RCD-013)</h3>
+              <p className="text-xs text-ink-muted">Board format with theory, practical, and internal assessment splits</p>
             </div>
             <button
               onClick={handleExportMarksheet}
-              className="px-3.5 py-1.5 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all"
+              className="px-3.5 py-1.5 bg-brand hover:bg-brand-strong text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all"
             >
               <span className="material-symbols-outlined text-sm">download</span>
               <span>Export Marksheet (CSV)</span>
@@ -316,12 +316,12 @@ export const ReportCardsView: React.FC = () => {
 
       {/* MODAL 1: Interactive Holistic Progress Card (HPC) Modal */}
       {selectedStudent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-5 ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">assignment</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">NEP 2020 Holistic Progress Card (HPC)</h3>
+                <span className="material-symbols-outlined text-brand">assignment</span>
+                <h3 className="font-bold text-ink text-sm">NEP 2020 Holistic Progress Card (HPC)</h3>
               </div>
               <button
                 onClick={() => setSelectedStudent(null)}
@@ -332,11 +332,11 @@ export const ReportCardsView: React.FC = () => {
             </div>
 
             {/* HPC Printable Sheet */}
-            <div className="border border-slate-300 rounded-xl p-6 bg-[#fafcff] space-y-5 text-xs text-[#082b3d]">
+            <div className="border border-slate-300 rounded-xl p-6 bg-wash space-y-5 text-xs text-ink">
               <div className="text-center border-b pb-3 space-y-0.5">
-                <div className="font-black text-base text-[#082b3d]">LUMEN ACADEMY SENIOR SECONDARY SCHOOL</div>
-                <div className="text-[11px] text-[#464555]">(Affiliated to CBSE, New Delhi • Affiliation No. 1930412 • School Code 55192)</div>
-                <div className="inline-block mt-1 px-3 py-0.5 bg-[#f0f7fb] text-[#0e5d84] border border-[#cbe0ec] rounded text-[11px] font-bold">
+                <div className="font-black text-base text-ink">LUMEN ACADEMY SENIOR SECONDARY SCHOOL</div>
+                <div className="text-[11px] text-ink-soft">(Affiliated to CBSE, New Delhi • Affiliation No. 1930412 • School Code 55192)</div>
+                <div className="inline-block mt-1 px-3 py-0.5 bg-subtle text-brand border border-line rounded text-[11px] font-bold">
                   HOLISTIC PROGRESS CARD (HPC) • {selectedTerm.toUpperCase()}
                 </div>
               </div>
@@ -353,7 +353,7 @@ export const ReportCardsView: React.FC = () => {
 
               {/* 360 Evaluation Radar Scores */}
               <div className="space-y-3">
-                <div className="font-bold text-xs uppercase tracking-wider text-[#0e5d84]">1. Multidimensional 360° Review</div>
+                <div className="font-bold text-xs uppercase tracking-wider text-brand">1. Multidimensional 360° Review</div>
                 <div className="grid grid-cols-3 gap-2 text-center text-xs">
                   <div className="p-3 bg-amber-50 rounded-xl border border-amber-200">
                     <div className="text-[10px] uppercase font-bold text-amber-800">Self Review ({selfWeight}%)</div>
@@ -375,7 +375,7 @@ export const ReportCardsView: React.FC = () => {
 
               {/* Subject Academic Scores */}
               <div className="space-y-2">
-                <div className="font-bold text-xs uppercase tracking-wider text-[#0e5d84]">2. Scholastic Performance (CBSE Standards)</div>
+                <div className="font-bold text-xs uppercase tracking-wider text-brand">2. Scholastic Performance (CBSE Standards)</div>
                 <table className="w-full text-xs text-left border border-slate-200 rounded-lg overflow-hidden">
                   <thead className="bg-slate-100 text-slate-700 font-semibold">
                     <tr>
@@ -414,7 +414,7 @@ export const ReportCardsView: React.FC = () => {
                   window.print();
                   addToast('Dispatched HPC to system print dialog', 'info');
                 }}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl text-xs font-bold flex items-center gap-1.5"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-bold flex items-center gap-1.5"
               >
                 <span className="material-symbols-outlined text-sm">print</span>
                 <span>Print Official Card</span>
@@ -431,7 +431,7 @@ export const ReportCardsView: React.FC = () => {
                   addToast(`Downloaded Card Document for ${selectedStudent.name}`, 'success');
                   setSelectedStudent(null);
                 }}
-                className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5"
+                className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5"
               >
                 <span className="material-symbols-outlined text-sm">download</span>
                 <span>Download Card File</span>
@@ -443,10 +443,10 @@ export const ReportCardsView: React.FC = () => {
 
       {/* MODAL 2: Rubric Parameter Designer */}
       {showRubricDesigner && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="font-bold text-[#082b3d] text-sm">Configure NEP 2020 Rubric Weights</h3>
+              <h3 className="font-bold text-ink text-sm">Configure NEP 2020 Rubric Weights</h3>
               <button
                 onClick={() => setShowRubricDesigner(false)}
                 className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
@@ -463,7 +463,7 @@ export const ReportCardsView: React.FC = () => {
               <div>
                 <div className="flex justify-between font-semibold text-slate-700 mb-1">
                   <span>1. Student Self-Assessment:</span>
-                  <span className="font-mono font-bold text-[#0e5d84]">{selfWeight}%</span>
+                  <span className="font-mono font-bold text-brand">{selfWeight}%</span>
                 </div>
                 <input
                   type="range"
@@ -472,14 +472,14 @@ export const ReportCardsView: React.FC = () => {
                   step="5"
                   value={selfWeight}
                   onChange={e => setSelfWeight(Number(e.target.value))}
-                  className="w-full accent-[#0e5d84]"
+                  className="w-full accent-brand"
                 />
               </div>
 
               <div>
                 <div className="flex justify-between font-semibold text-slate-700 mb-1">
                   <span>2. Peer Assessment:</span>
-                  <span className="font-mono font-bold text-[#0e5d84]">{peerWeight}%</span>
+                  <span className="font-mono font-bold text-brand">{peerWeight}%</span>
                 </div>
                 <input
                   type="range"
@@ -488,14 +488,14 @@ export const ReportCardsView: React.FC = () => {
                   step="5"
                   value={peerWeight}
                   onChange={e => setPeerWeight(Number(e.target.value))}
-                  className="w-full accent-[#0e5d84]"
+                  className="w-full accent-brand"
                 />
               </div>
 
               <div>
                 <div className="flex justify-between font-semibold text-slate-700 mb-1">
                   <span>3. Teacher Assessment:</span>
-                  <span className="font-mono font-bold text-[#0e5d84]">{teacherWeight}%</span>
+                  <span className="font-mono font-bold text-brand">{teacherWeight}%</span>
                 </div>
                 <input
                   type="range"
@@ -504,7 +504,7 @@ export const ReportCardsView: React.FC = () => {
                   step="5"
                   value={teacherWeight}
                   onChange={e => setTeacherWeight(Number(e.target.value))}
-                  className="w-full accent-[#0e5d84]"
+                  className="w-full accent-brand"
                 />
               </div>
 
@@ -522,7 +522,7 @@ export const ReportCardsView: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#0e5d84] hover:bg-[#083a4f] text-white text-xs font-bold rounded-xl shadow-xs"
+                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white text-xs font-bold rounded-xl shadow-xs"
                 >
                   Save Rubric Settings
                 </button>

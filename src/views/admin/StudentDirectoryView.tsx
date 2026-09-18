@@ -53,19 +53,19 @@ const fmt = (iso: string) => {
   return `${d}/${m}/${y}`;
 };
 
-const inputCls = 'text-xs border border-[#cbe0ec] rounded-lg px-2 py-1.5 bg-white';
+const inputCls = 'text-xs border border-line rounded-lg px-2 py-1.5 bg-white';
 const btn = 'text-xs font-semibold px-3 py-1.5 rounded-lg disabled:opacity-40';
-const btnPrimary = `${btn} bg-[#0e5d84] text-white hover:bg-[#083a4f]`;
-const btnSoft = `${btn} bg-slate-100 hover:bg-slate-200 text-[#082b3d]`;
+const btnPrimary = `${btn} bg-brand text-white hover:bg-brand-strong`;
+const btnSoft = `${btn} bg-slate-100 hover:bg-slate-200 text-ink`;
 
 const Badge: React.FC<{ className: string; children: React.ReactNode }> = ({ className, children }) => (
   <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap ${className}`}>{children}</span>
 );
 
 const Panel: React.FC<{ title: React.ReactNode; actions?: React.ReactNode; children: React.ReactNode; className?: string }> = ({ title, actions, children, className = '' }) => (
-  <div className={`bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden ${className}`}>
-    <div className="p-3 bg-[#f0f7fb] border-b border-[#cbe0ec] flex flex-wrap items-center justify-between gap-2">
-      <span className="text-xs font-bold text-[#082b3d]">{title}</span>
+  <div className={`bg-white rounded-2xl border border-line-soft shadow-xs overflow-hidden ${className}`}>
+    <div className="p-3 bg-subtle border-b border-line flex flex-wrap items-center justify-between gap-2">
+      <span className="text-xs font-bold text-ink">{title}</span>
       {actions}
     </div>
     {children}
@@ -345,12 +345,12 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">badge</span>
             <span>Module 13 · Student 360 (STU)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">Students</h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">Students</h1>
+          <p className="text-xs text-ink-soft mt-1">
             {live.length} records · {issues.length} identifier issue(s) · {dups.length} probable duplicate(s) · {requests.filter(r => r.status === 'Pending').length} pending change request(s)
           </p>
         </div>
@@ -364,7 +364,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
             Add student
           </button>
         <label className="flex items-center gap-2 text-xs">
-          <span className="font-semibold text-[#464555]">Viewing as</span>
+          <span className="font-semibold text-ink-soft">Viewing as</span>
           <select value={viewer} onChange={e => setViewer(e.target.value as ViewerRole)} className={inputCls}>
             {(Object.keys(FIELD_VISIBILITY) as ViewerRole[]).map(r => (
               <option key={r}>{r}</option>
@@ -374,13 +374,13 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
         </div>
       </div>
 
-      <div className="flex gap-1 overflow-x-auto border-b border-[#e0ecf4]">
+      <div className="flex gap-1 overflow-x-auto border-b border-line-soft">
         {TABS.map(t => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
-              tab === t.id ? 'border-[#0e5d84] text-[#0e5d84]' : 'border-transparent text-[#777587] hover:text-[#082b3d]'
+              tab === t.id ? 'border-brand text-brand' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
             <span className="material-symbols-outlined text-sm">{t.icon}</span>
@@ -392,7 +392,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
 
       {tab === 'directory' && (
         <div className="space-y-4">
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-3 space-y-2">
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-3 space-y-2">
             <input
               value={query}
               onChange={e => setQuery(e.target.value)}
@@ -403,7 +403,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
             <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-9 gap-2">
               {filterOptions.map(([key, label, options]) => (
                 <label key={key} className="block">
-                  <span className="block text-[10px] font-semibold text-[#464555]">{label}</span>
+                  <span className="block text-[10px] font-semibold text-ink-soft">{label}</span>
                   <select value={filters[key]} onChange={e => setFilter(key, e.target.value)} className={`${inputCls} w-full`} aria-label={`Filter ${label}`}>
                     {options.map(o => (
                       <option key={o}>{o}</option>
@@ -412,16 +412,16 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                 </label>
               ))}
             </div>
-            <div className="flex items-center justify-between text-[11px] text-[#777587]">
+            <div className="flex items-center justify-between text-[11px] text-ink-muted">
               <span>
                 {rows.length} shown · {selected.size} selected
               </span>
               <span className="flex items-center gap-3">
                 <label className="flex items-center gap-1 cursor-pointer">
-                  <input type="checkbox" checked={showEmis} onChange={e => setShowEmis(e.target.checked)} className="accent-[#0e5d84]" aria-label="Show EMIS column" />
+                  <input type="checkbox" checked={showEmis} onChange={e => setShowEmis(e.target.checked)} className="accent-brand" aria-label="Show EMIS column" />
                   Show EMIS column
                 </label>
-                <button onClick={() => { setFilters(EMPTY_FILTERS); setQuery(''); }} className="font-semibold text-[#0e5d84] hover:underline">
+                <button onClick={() => { setFilters(EMPTY_FILTERS); setQuery(''); }} className="font-semibold text-brand hover:underline">
                   Clear filters
                 </button>
               </span>
@@ -429,9 +429,9 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
           </div>
 
           {selected.size > 0 && (
-            <div className="bg-[#f0f7fb] rounded-2xl border border-[#cbe0ec] p-3 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 text-xs">
+            <div className="bg-subtle rounded-2xl border border-line p-3 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 text-xs">
               <div className="space-y-1">
-                <p className="font-semibold text-[#082b3d]">Change section</p>
+                <p className="font-semibold text-ink">Change section</p>
                 <div className="flex gap-1">
                   <select value={bulkSection} onChange={e => setBulkSection(e.target.value)} className={inputCls} aria-label="Target section">
                     {SECTIONS.map(s => (
@@ -445,7 +445,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="font-semibold text-[#082b3d]">Change status</p>
+                <p className="font-semibold text-ink">Change status</p>
                 <div className="flex gap-1">
                   <select value={bulkStatus} onChange={e => setBulkStatus(e.target.value as StudentStatus)} className={inputCls} aria-label="Target status">
                     {STATUSES.map(s => (
@@ -458,7 +458,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="font-semibold text-[#082b3d]">Message guardians</p>
+                <p className="font-semibold text-ink">Message guardians</p>
                 <div className="flex gap-1">
                   <input value={bulkMessage} onChange={e => setBulkMessage(e.target.value)} placeholder="Message" className={`${inputCls} flex-1 min-w-0`} aria-label="Bulk message" />
                   <button onClick={bulkSend} className={btnPrimary}>
@@ -467,7 +467,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="font-semibold text-[#082b3d]">Export</p>
+                <p className="font-semibold text-ink">Export</p>
                 <button onClick={exportSelected} disabled={!visibility.export} title={visibility.export ? undefined : `${viewer} cannot export`} className={btnPrimary}>
                   Export {selected.size} selected
                 </button>
@@ -479,10 +479,10 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
           )}
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-            <div className={`bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden ${open ? 'xl:col-span-2' : 'xl:col-span-3'}`}>
+            <div className={`bg-white rounded-2xl border border-line-soft shadow-xs overflow-hidden ${open ? 'xl:col-span-2' : 'xl:col-span-3'}`}>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
-                  <thead className="bg-slate-50 text-[#464555]">
+                  <thead className="bg-slate-50 text-ink-soft">
                     <tr>
                       <th className="p-2.5 w-8">
                         <input
@@ -495,7 +495,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                               return n;
                             })
                           }
-                          className="accent-[#0e5d84]"
+                          className="accent-brand"
                           aria-label="Select all shown"
                         />
                       </th>
@@ -504,15 +504,15 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#f0f7fb]">
+                  <tbody className="divide-y divide-subtle">
                     {rows.map(s => (
-                      <tr key={s.id} className={`cursor-pointer ${openId === s.id ? 'bg-[#f0f7fb]' : 'hover:bg-[#f8f9ff]'}`} onClick={() => openDrawer(s)}>
+                      <tr key={s.id} className={`cursor-pointer ${openId === s.id ? 'bg-subtle' : 'hover:bg-wash'}`} onClick={() => openDrawer(s)}>
                         <td className="p-2.5" onClick={e => e.stopPropagation()}>
-                          <input type="checkbox" checked={selected.has(s.id)} onChange={() => toggle(s.id)} className="accent-[#0e5d84]" aria-label={`Select ${s.name} ${s.admissionNo}`} />
+                          <input type="checkbox" checked={selected.has(s.id)} onChange={() => toggle(s.id)} className="accent-brand" aria-label={`Select ${s.name} ${s.admissionNo}`} />
                         </td>
                         <td className="p-2.5">
-                          <p className="font-semibold text-[#082b3d]">{s.name}</p>
-                          <p className="text-[10px] text-[#777587]">
+                          <p className="font-semibold text-ink">{s.name}</p>
+                          <p className="text-[10px] text-ink-muted">
                             {s.gender} · {s.house}
                             {s.transportRoute ? ` · ${s.transportRoute}` : ''}
                           </p>
@@ -529,7 +529,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                         )}
                         <td className="p-2.5">
                           <p>{s.guardianName}</p>
-                          <p className="text-[10px] text-[#777587] font-mono">{s.guardianMobile}</p>
+                          <p className="text-[10px] text-ink-muted font-mono">{s.guardianMobile}</p>
                         </td>
                         <td className={`p-2.5 ${s.feeStatus === 'Overdue' ? 'text-rose-600 font-semibold' : ''}`}>{s.feeStatus}</td>
                         <td className="p-2.5">
@@ -539,21 +539,21 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                     ))}
                   </tbody>
                 </table>
-                {rows.length === 0 && <p className="p-6 text-center text-xs text-[#777587]">No students match.</p>}
+                {rows.length === 0 && <p className="p-6 text-center text-xs text-ink-muted">No students match.</p>}
               </div>
             </div>
 
             {open && (
-              <div className="bg-white rounded-2xl border border-[#cbe0ec] shadow-xs p-4 space-y-4 text-xs self-start">
+              <div className="bg-white rounded-2xl border border-line shadow-xs p-4 space-y-4 text-xs self-start">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-bold text-[#082b3d]">{open.name}</p>
-                    <p className="text-[11px] text-[#777587]">
+                    <p className="text-sm font-bold text-ink">{open.name}</p>
+                    <p className="text-[11px] text-ink-muted">
                       {open.admissionNo} · Class {open.classLevel}-{open.section} · Roll {open.rollNo}
                     </p>
                     <Badge className={STATUS_STYLE[open.status]}>{open.status}</Badge>
                   </div>
-                  <button onClick={() => setOpenId(null)} className="text-[#777587] hover:text-[#082b3d]" aria-label="Close details">
+                  <button onClick={() => setOpenId(null)} className="text-ink-muted hover:text-ink" aria-label="Close details">
                     <span className="material-symbols-outlined text-base">close</span>
                   </button>
                 </div>
@@ -570,8 +570,8 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                     ['Branch', campuses.find(c => c.id === open.campusId)?.name ?? open.campusId],
                   ].map(([k, v]) => (
                     <div key={k}>
-                      <p className="text-[10px] text-[#777587]">{k}</p>
-                      <p className="font-mono font-semibold text-[#082b3d] break-all">{v}</p>
+                      <p className="text-[10px] text-ink-muted">{k}</p>
+                      <p className="font-mono font-semibold text-ink break-all">{v}</p>
                     </div>
                   ))}
                 </div>
@@ -582,24 +582,24 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                 </button>
 
                 <div>
-                  <p className="font-semibold text-[#082b3d] mb-1">Guardian & siblings</p>
+                  <p className="font-semibold text-ink mb-1">Guardian & siblings</p>
                   <p>
                     {open.guardianName} · <span className="font-mono">{open.guardianMobile}</span>
                   </p>
                   {live
                     .filter(x => x.id !== open.id && x.guardianMobile === open.guardianMobile)
                     .map(x => (
-                      <button key={x.id} onClick={() => openDrawer(x)} className="block text-[#0e5d84] hover:underline">
+                      <button key={x.id} onClick={() => openDrawer(x)} className="block text-brand hover:underline">
                         Sibling: {x.name} ({x.classLevel}-{x.section}, {campuses.find(c => c.id === x.campusId)?.name})
                       </button>
                     ))}
                 </div>
 
                 <div>
-                  <p className="font-semibold text-[#082b3d] mb-1">Emergency contacts (call in this order)</p>
+                  <p className="font-semibold text-ink mb-1">Emergency contacts (call in this order)</p>
                   {open.emergencyContacts.map((c, i) => (
                     <div key={c.name} className="flex items-center gap-1 py-0.5">
-                      <span className="w-4 font-mono text-[#777587]">{i + 1}.</span>
+                      <span className="w-4 font-mono text-ink-muted">{i + 1}.</span>
                       <span className="flex-1">
                         {c.name} · {c.relation} · <span className="font-mono">{c.phone}</span>
                       </span>
@@ -614,19 +614,19 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                 </div>
 
                 <div className="p-2 rounded-lg bg-slate-50 space-y-1">
-                  <p className="font-semibold text-[#082b3d]">Restricted notes</p>
+                  <p className="font-semibold text-ink">Restricted notes</p>
                   <p>
-                    <span className="text-[#777587]">Health: </span>
-                    {visibility.health ? open.healthNotes ?? 'None recorded' : <span className="italic text-[#777587]">Hidden for {viewer}</span>}
+                    <span className="text-ink-muted">Health: </span>
+                    {visibility.health ? open.healthNotes ?? 'None recorded' : <span className="italic text-ink-muted">Hidden for {viewer}</span>}
                   </p>
                   <p>
-                    <span className="text-[#777587]">Discipline & counselling: </span>
-                    {visibility.discipline ? open.disciplineNotes ?? 'None recorded' : <span className="italic text-[#777587]">Hidden for {viewer}</span>}
+                    <span className="text-ink-muted">Discipline & counselling: </span>
+                    {visibility.discipline ? open.disciplineNotes ?? 'None recorded' : <span className="italic text-ink-muted">Hidden for {viewer}</span>}
                   </p>
                 </div>
 
                 <div className="space-y-1">
-                  <p className="font-semibold text-[#082b3d]">Change status</p>
+                  <p className="font-semibold text-ink">Change status</p>
                   <div className="flex gap-1">
                     <select value={drawerStatus} onChange={e => setDrawerStatus(e.target.value as StudentStatus)} className={`${inputCls} flex-1`} aria-label="New status">
                       <option value="">Choose…</option>
@@ -639,11 +639,11 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                     </button>
                   </div>
                   {drawerStatus && <p className="text-[10px] text-amber-700">{STATUS_EFFECTS[drawerStatus]}</p>}
-                  {STATUS_TRANSITIONS[open.status].length === 0 && <p className="text-[10px] text-[#777587]">No further status changes allowed.</p>}
+                  {STATUS_TRANSITIONS[open.status].length === 0 && <p className="text-[10px] text-ink-muted">No further status changes allowed.</p>}
                 </div>
 
                 <div className="space-y-1">
-                  <p className="font-semibold text-[#082b3d]">Section transfer</p>
+                  <p className="font-semibold text-ink">Section transfer</p>
                   <div className="flex gap-1">
                     <select value={drawerSection} onChange={e => setDrawerSection(e.target.value)} className={inputCls} aria-label="New section">
                       {SECTIONS.map(s => (
@@ -658,7 +658,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                 </div>
 
                 <div className="space-y-1">
-                  <p className="font-semibold text-[#082b3d]">Branch transfer</p>
+                  <p className="font-semibold text-ink">Branch transfer</p>
                   <div className="flex gap-1">
                     <select value={drawerCampus} onChange={e => setDrawerCampus(e.target.value)} className={`${inputCls} flex-1`} aria-label="New branch">
                       {campuses.map(c => (
@@ -674,8 +674,8 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                 </div>
 
                 <div>
-                  <p className="font-semibold text-[#082b3d] mb-1">Transfer history</p>
-                  {transfers.filter(t => t.studentId === open.id).length === 0 && <p className="text-[#777587]">No transfers.</p>}
+                  <p className="font-semibold text-ink mb-1">Transfer history</p>
+                  {transfers.filter(t => t.studentId === open.id).length === 0 && <p className="text-ink-muted">No transfers.</p>}
                   {transfers
                     .filter(t => t.studentId === open.id)
                     .map((t, i) => (
@@ -688,8 +688,8 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
             )}
           </div>
 
-          <details className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-3 text-xs">
-            <summary className="font-semibold text-[#082b3d] cursor-pointer">Export columns & field visibility</summary>
+          <details className="bg-surface rounded-2xl border border-line-soft shadow-sm p-3 text-xs">
+            <summary className="font-semibold text-ink cursor-pointer">Export columns & field visibility</summary>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
               <div className="flex flex-wrap gap-2">
                 {EXPORT_COLUMNS.map(c => {
@@ -708,7 +708,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                             return n;
                           })
                         }
-                        className="accent-[#0e5d84]"
+                        className="accent-brand"
                       />
                       {c.label}
                     </label>
@@ -716,7 +716,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                 })}
               </div>
               <table className="w-full">
-                <thead className="text-[#464555]">
+                <thead className="text-ink-soft">
                   <tr>
                     <th className="text-left">Role</th>
                     <th>Health</th>
@@ -745,15 +745,15 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
       {tab === 'quality' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Panel title={`Identifier problems · ${issues.length}`}>
-            <div className="divide-y divide-[#f0f7fb]">
-              {issues.length === 0 && <p className="p-4 text-xs text-[#777587]">All PEN, APAAR and EMIS numbers are present and valid.</p>}
+            <div className="divide-y divide-subtle">
+              {issues.length === 0 && <p className="p-4 text-xs text-ink-muted">All PEN, APAAR and EMIS numbers are present and valid.</p>}
               {issues.map((i, idx) => {
                 const s = byId(i.studentId);
                 return (
                   <div key={idx} className="p-3 flex items-center justify-between gap-2 text-xs">
                     <div>
-                      <p className="font-semibold text-[#082b3d]">
-                        {s.name} <span className="font-mono text-[#777587]">{s.admissionNo}</span>
+                      <p className="font-semibold text-ink">
+                        {s.name} <span className="font-mono text-ink-muted">{s.admissionNo}</span>
                       </p>
                       <p className="text-rose-700">
                         <span className="font-bold">{i.field}:</span> {i.problem}
@@ -772,25 +772,25 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                 );
               })}
             </div>
-            <p className="p-3 text-[10px] text-[#777587] border-t border-[#f0f7fb]">
+            <p className="p-3 text-[10px] text-ink-muted border-t border-subtle">
               Rules: PEN is 11 digits and APAAR is 12 digits, and each must be unique. A missing APAAR never blocks admission; it is only flagged here.
             </p>
           </Panel>
 
           <Panel title={`Probable duplicates · ${dups.length}`}>
-            <div className="divide-y divide-[#f0f7fb]">
-              {dups.length === 0 && <p className="p-4 text-xs text-[#777587]">No duplicates. Twins with different names are never flagged.</p>}
+            <div className="divide-y divide-subtle">
+              {dups.length === 0 && <p className="p-4 text-xs text-ink-muted">No duplicates. Twins with different names are never flagged.</p>}
               {dups.map(([a, b]) => {
                 const keep = a.status === 'Active' ? a : b.status === 'Active' ? b : a;
                 const drop = keep === a ? b : a;
                 return (
                   <div key={`${a.id}-${b.id}`} className="p-3 text-xs space-y-2">
-                    <p className="font-semibold text-[#082b3d]">
+                    <p className="font-semibold text-ink">
                       {a.name} · born {fmt(a.dob)} · guardian {a.guardianMobile}
                     </p>
                     <div className="grid grid-cols-2 gap-2">
                       {[a, b].map(s => (
-                        <div key={s.id} className={`p-2 rounded-lg border ${s === keep ? 'border-emerald-300 bg-emerald-50' : 'border-[#e0ecf4]'}`}>
+                        <div key={s.id} className={`p-2 rounded-lg border ${s === keep ? 'border-emerald-300 bg-emerald-50' : 'border-line-soft'}`}>
                           <p className="font-mono">{s.admissionNo}</p>
                           <p>
                             Class {s.classLevel}-{s.section} · {s.status}
@@ -814,29 +814,29 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
         <Panel title="Profile changes requested by parents">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
-              <thead className="bg-slate-50 text-[#464555]">
+              <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   {['Student', 'Field', 'Current', 'Requested', 'From', 'Status', ''].map(h => (
                     <th key={h} className="text-left p-2.5 font-semibold">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {requests.map(r => {
                   const s = byId(r.studentId);
                   return (
                     <tr key={r.id}>
-                      <td className="p-2.5 font-semibold text-[#082b3d]">{s.name}</td>
+                      <td className="p-2.5 font-semibold text-ink">{s.name}</td>
                       <td className="p-2.5">{r.label}</td>
                       <td className="p-2.5 font-mono">{fieldValue(s, r.field)}</td>
-                      <td className="p-2.5 font-mono text-[#0e5d84]">{r.after}</td>
+                      <td className="p-2.5 font-mono text-brand">{r.after}</td>
                       <td className="p-2.5">
                         {r.requestedBy}
-                        <p className="text-[10px] text-[#777587]">{fmt(r.requestedOn)}</p>
+                        <p className="text-[10px] text-ink-muted">{fmt(r.requestedOn)}</p>
                       </td>
                       <td className="p-2.5">
                         {r.status}
-                        {r.reason && <p className="text-[10px] text-[#777587]">{r.reason}</p>}
+                        {r.reason && <p className="text-[10px] text-ink-muted">{r.reason}</p>}
                       </td>
                       <td className="p-2.5 whitespace-nowrap text-right">
                         {r.status === 'Pending' && (
@@ -875,23 +875,23 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
           </div>
           <Panel title={`Class ${promoClass} · ${plan.filter(l => l.outcome === 'Promote').length} promote · ${plan.filter(l => l.outcome === 'Detain').length} detain · ${plan.filter(l => l.outcome === 'Hold').length} hold`}>
             <table className="w-full text-xs">
-              <thead className="bg-slate-50 text-[#464555]">
+              <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   {['Student', 'Section', 'Outcome', 'Moves to', 'Note', 'Exception'].map(h => (
                     <th key={h} className="text-left p-2.5 font-semibold">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {plan.map(l => (
                   <tr key={l.student.id}>
-                    <td className="p-2.5 font-semibold text-[#082b3d]">{l.student.name}</td>
+                    <td className="p-2.5 font-semibold text-ink">{l.student.name}</td>
                     <td className="p-2.5">
                       {l.student.section} · #{l.student.rollNo}
                     </td>
                     <td className={`p-2.5 font-bold ${l.outcome === 'Promote' ? 'text-emerald-700' : l.outcome === 'Detain' ? 'text-rose-700' : 'text-amber-700'}`}>{l.outcome}</td>
                     <td className="p-2.5">Class {l.toClass}</td>
-                    <td className="p-2.5 text-[#464555]">{l.note}</td>
+                    <td className="p-2.5 text-ink-soft">{l.note}</td>
                     <td className="p-2.5">
                       {l.student.yearResult === 'Pass' && !promoted.has(promoClass) && (
                         <select
@@ -918,11 +918,11 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                 ))}
               </tbody>
             </table>
-            {plan.length === 0 && <p className="p-4 text-xs text-[#777587]">No active students in this class are awaiting promotion.</p>}
+            {plan.length === 0 && <p className="p-4 text-xs text-ink-muted">No active students in this class are awaiting promotion.</p>}
             {alreadyMoved > 0 && (
-              <p className="px-3 pb-2 text-[11px] text-[#464555]">{alreadyMoved} student(s) promoted into this class earlier this year are excluded from this run.</p>
+              <p className="px-3 pb-2 text-[11px] text-ink-soft">{alreadyMoved} student(s) promoted into this class earlier this year are excluded from this run.</p>
             )}
-            <p className="p-3 text-[10px] text-[#777587] border-t border-[#f0f7fb]">
+            <p className="p-3 text-[10px] text-ink-muted border-t border-subtle">
               A pass moves the student up a class. Detained students stay in their class. Compartment results are held until the supplementary exam. Each class can be promoted once per year, and every outcome is written to the audit trail.
             </p>
           </Panel>
@@ -932,25 +932,25 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
       {tab === 'audit' && (
         <Panel title={`Audit trail · ${audit.length} change(s) this session`}>
           {audit.length === 0 ? (
-            <p className="p-4 text-xs text-[#777587]">No changes yet.</p>
+            <p className="p-4 text-xs text-ink-muted">No changes yet.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
-                <thead className="bg-slate-50 text-[#464555]">
+                <thead className="bg-slate-50 text-ink-soft">
                   <tr>
                     {['When', 'Who', 'Student', 'Action', 'Before', 'After'].map(h => (
                       <th key={h} className="text-left p-2.5 font-semibold whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {audit.map((a, i) => (
                     <tr key={i}>
                       <td className="p-2.5 font-mono whitespace-nowrap">{a.at}</td>
                       <td className="p-2.5">{a.actor}</td>
                       <td className="p-2.5">{a.studentId === '—' ? '—' : byId(a.studentId).name}</td>
                       <td className="p-2.5 font-semibold">{a.action}</td>
-                      <td className="p-2.5 text-[#777587]">{a.before}</td>
+                      <td className="p-2.5 text-ink-muted">{a.before}</td>
                       <td className="p-2.5">{a.after}</td>
                     </tr>
                   ))}
@@ -962,9 +962,9 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
       )}
 
       {rejecting && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setRejecting(null)}>
-          <div className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-[#082b3d]">Reject change: {rejecting.label}</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setRejecting(null)}>
+          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
+            <h3 className="text-sm font-bold text-ink">Reject change: {rejecting.label}</h3>
             <input value={rejectReason} onChange={e => setRejectReason(e.target.value)} placeholder="Reason shown to the parent" className={`${inputCls} w-full`} />
             <div className="flex justify-end gap-2">
               <button onClick={() => setRejecting(null)} className={btnSoft}>

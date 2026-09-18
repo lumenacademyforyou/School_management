@@ -16,14 +16,8 @@ export const ToastContainer: React.FC = () => {
         return (
           <div
             key={toast.id}
-            className={`pointer-events-auto flex flex-col rounded-xl shadow-xl border text-xs transition-all duration-200 slide-in-from-bottom-2 overflow-hidden ${
-              isError
-                ? 'bg-rose-950 text-rose-100 border-rose-800'
-                : isWarning
-                ? 'bg-amber-950 text-amber-100 border-amber-800'
-                : isSuccess
-                ? 'bg-emerald-950 text-emerald-100 border-emerald-800'
-                : 'bg-[#082b3d] text-[#e0f2fe] border-[#213145]'
+            className={`pointer-events-auto flex flex-col rounded-xl shadow-xl ring-1 text-xs transition-all duration-200 slide-in-from-bottom-2 overflow-hidden ${
+              isError ? 'bg-rose-950 text-rose-50 ring-rose-800' : 'bg-lumen-900 text-cream-100 ring-white/10'
             }`}
           >
             <div className="flex items-start gap-3 p-3.5">
@@ -32,18 +26,18 @@ export const ToastContainer: React.FC = () => {
                   isError
                     ? 'text-rose-400'
                     : isWarning
-                    ? 'text-amber-400'
+                    ? 'text-gold-300'
                     : isSuccess
-                    ? 'text-emerald-400'
-                    : 'text-[#f59e0b]'
+                    ? 'text-emerald-300'
+                    : 'text-lumen-300'
                 }`}
               >
                 {isError ? 'report' : isWarning ? 'warning' : isSuccess ? 'check_circle' : 'info'}
               </span>
               <div className="flex-1">
-                <div className="font-bold">{toast.title}</div>
+                <div className="font-semibold text-white">{toast.title}</div>
                 {toast.description && (
-                  <div className="text-[11px] opacity-90 mt-0.5 leading-relaxed">{toast.description}</div>
+                  <div className="text-[11px] text-cream-200/80 mt-0.5 leading-relaxed">{toast.description}</div>
                 )}
               </div>
               <button
@@ -60,10 +54,10 @@ export const ToastContainer: React.FC = () => {
                   isError
                     ? 'bg-rose-500/60'
                     : isWarning
-                    ? 'bg-amber-500/60'
+                    ? 'bg-gold-400/70'
                     : isSuccess
-                    ? 'bg-emerald-500/60'
-                    : 'bg-[#f59e0b]/60'
+                    ? 'bg-emerald-400/60'
+                    : 'bg-lumen-400/60'
                 }`}
               />
             </div>

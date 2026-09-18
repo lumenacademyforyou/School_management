@@ -141,18 +141,18 @@ export const AccountingView: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#f0f7fb] text-[#0e5d84]">
+            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-subtle text-brand">
               ACC · Module 20 · Layer 4 (Finance)
             </span>
-            <span className="text-xs text-[#777587]">11 Master Features</span>
+            <span className="text-xs text-ink-muted">11 Master Features</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#082b3d] mt-1">
+          <h1 className="text-xl md:text-2xl font-bold text-ink mt-1">
             Accounting & General Ledger
           </h1>
-          <p className="text-xs md:text-sm text-[#464555]">
+          <p className="text-xs md:text-sm text-ink-soft">
             Chart of accounts, fee-head GL mapping, petty cash, voucher approvals, and Tally Prime / Zoho Books synchronization.
           </p>
         </div>
@@ -160,14 +160,14 @@ export const AccountingView: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleExportCOA}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border border-slate-300"
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border border-slate-300"
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Export COA</span>
           </button>
           <button
             onClick={handleExportTally}
-            className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+            className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">sync_alt</span>
             <span>Export to Tally XML</span>
@@ -177,38 +177,38 @@ export const AccountingView: React.FC = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Total Fee Inflow (YTD)</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Total Fee Inflow (YTD)</div>
           <div className="text-xl font-bold font-mono text-emerald-600 mt-1">₹2,42,50,000</div>
-          <div className="text-[11px] text-[#777587] mt-0.5">100% Fee Head GL Mapped</div>
+          <div className="text-[11px] text-ink-muted mt-0.5">100% Fee Head GL Mapped</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Total Operating Expenses</div>
-          <div className="text-xl font-bold font-mono text-[#082b3d] mt-1">₹1,08,10,000</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Total Operating Expenses</div>
+          <div className="text-xl font-bold font-mono text-ink mt-1">₹1,08,10,000</div>
           <div className="text-[11px] text-emerald-600 mt-0.5">Within 84% Annual Budget</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Pending Vouchers</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Pending Vouchers</div>
           <div className="text-xl font-bold font-mono text-amber-600 mt-1">
             {expenses.filter(e => e.status === 'Pending Approval').length}
           </div>
-          <div className="text-[11px] text-[#777587] mt-0.5">Awaiting Principal Signoff</div>
+          <div className="text-[11px] text-ink-muted mt-0.5">Awaiting Principal Signoff</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Escrow Bank Balance</div>
-          <div className="text-xl font-bold font-mono text-[#0e5d84] mt-1">₹62,75,000</div>
-          <div className="text-[11px] text-[#777587] mt-0.5">HDFC Escrow + SBI Current</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Escrow Bank Balance</div>
+          <div className="text-xl font-bold font-mono text-brand mt-1">₹62,75,000</div>
+          <div className="text-[11px] text-ink-muted mt-0.5">HDFC Escrow + SBI Current</div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-[#e0ecf4] pb-2">
+      <div className="flex flex-wrap items-center gap-2 border-b border-line-soft pb-2">
         <button
           onClick={() => setActiveTab('chart-of-accounts')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
             activeTab === 'chart-of-accounts'
-              ? 'bg-[#0e5d84] text-white shadow-xs'
-              : 'text-[#464555] hover:bg-[#f0f7fb]'
+              ? 'bg-brand text-white shadow-xs'
+              : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">account_tree</span>
@@ -218,8 +218,8 @@ export const AccountingView: React.FC = () => {
           onClick={() => setActiveTab('expenses')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
             activeTab === 'expenses'
-              ? 'bg-[#0e5d84] text-white shadow-xs'
-              : 'text-[#464555] hover:bg-[#f0f7fb]'
+              ? 'bg-brand text-white shadow-xs'
+              : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">receipt</span>
@@ -229,8 +229,8 @@ export const AccountingView: React.FC = () => {
           onClick={() => setActiveTab('day-book')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
             activeTab === 'day-book'
-              ? 'bg-[#0e5d84] text-white shadow-xs'
-              : 'text-[#464555] hover:bg-[#f0f7fb]'
+              ? 'bg-brand text-white shadow-xs'
+              : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">calendar_view_day</span>
@@ -240,8 +240,8 @@ export const AccountingView: React.FC = () => {
           onClick={() => setActiveTab('tally-export')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
             activeTab === 'tally-export'
-              ? 'bg-[#0e5d84] text-white shadow-xs'
-              : 'text-[#464555] hover:bg-[#f0f7fb]'
+              ? 'bg-brand text-white shadow-xs'
+              : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">hub</span>
@@ -251,16 +251,16 @@ export const AccountingView: React.FC = () => {
 
       {/* Tab 1: Chart of Accounts */}
       {activeTab === 'chart-of-accounts' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-          <div className="p-4 border-b border-[#e0ecf4] flex items-center justify-between">
-            <h3 className="text-sm font-bold text-[#082b3d]">General Ledger Heads & Mapping (ACC-001 & ACC-002)</h3>
-            <span className="text-xs text-[#777587]">11 Ledger Codes Active</span>
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-line-soft flex items-center justify-between">
+            <h3 className="text-sm font-bold text-ink">General Ledger Heads & Mapping (ACC-001 & ACC-002)</h3>
+            <span className="text-xs text-ink-muted">11 Ledger Codes Active</span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-[#464555] border-b border-[#e0ecf4] text-[11px] uppercase tracking-wider font-semibold">
+                <tr className="bg-slate-50 text-ink-soft border-b border-line-soft text-[11px] uppercase tracking-wider font-semibold">
                   <th className="py-3 px-4">GL Code</th>
                   <th className="py-3 px-4">Account Title</th>
                   <th className="py-3 px-4">Type</th>
@@ -269,11 +269,11 @@ export const AccountingView: React.FC = () => {
                   <th className="py-3 px-4 text-center">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f1f5f9]">
+              <tbody className="divide-y divide-line-soft">
                 {accounts.map(acc => (
-                  <tr key={acc.code} className="hover:bg-[#f8faff] transition-colors">
-                    <td className="py-3 px-4 font-mono font-bold text-[#0e5d84]">{acc.code}</td>
-                    <td className="py-3 px-4 font-semibold text-[#082b3d]">{acc.name}</td>
+                  <tr key={acc.code} className="hover:bg-wash transition-colors">
+                    <td className="py-3 px-4 font-mono font-bold text-brand">{acc.code}</td>
+                    <td className="py-3 px-4 font-semibold text-ink">{acc.name}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`text-[10px] px-2 py-0.5 rounded-md font-medium ${
@@ -289,17 +289,17 @@ export const AccountingView: React.FC = () => {
                         {acc.type}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-[#464555]">
+                    <td className="py-3 px-4 text-ink-soft">
                       {acc.mappedFeeHead ? (
-                        <span className="inline-flex items-center gap-1 font-mono text-[#0e5d84] bg-[#f0f7fb] px-2 py-0.5 rounded">
+                        <span className="inline-flex items-center gap-1 font-mono text-brand bg-subtle px-2 py-0.5 rounded">
                           <span className="material-symbols-outlined text-[12px]">link</span>
                           {acc.mappedFeeHead}
                         </span>
                       ) : (
-                        <span className="text-[#94a3b8] italic">General Operations</span>
+                        <span className="text-slate-400 italic">General Operations</span>
                       )}
                     </td>
-                    <td className="py-3 px-4 font-mono font-bold text-right text-[#082b3d]">
+                    <td className="py-3 px-4 font-mono font-bold text-right text-ink">
                       ₹{acc.balance.toLocaleString('en-IN')}
                     </td>
                     <td className="py-3 px-4 text-center">
@@ -318,12 +318,12 @@ export const AccountingView: React.FC = () => {
 
       {/* Tab 2: Expenses & Vouchers */}
       {activeTab === 'expenses' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-          <div className="p-4 border-b border-[#e0ecf4] flex items-center justify-between">
-            <h3 className="text-sm font-bold text-[#082b3d]">Expense Vouchers & Multi-Step Approvals (ACC-003 & ACC-004)</h3>
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-line-soft flex items-center justify-between">
+            <h3 className="text-sm font-bold text-ink">Expense Vouchers & Multi-Step Approvals (ACC-003 & ACC-004)</h3>
             <button
               onClick={() => setShowVoucherModal(true)}
-              className="px-3.5 py-1.5 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-xs transition-colors"
+              className="px-3.5 py-1.5 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-xs transition-colors"
             >
               <span className="material-symbols-outlined text-sm">add</span>
               <span>Create Payment Voucher</span>
@@ -333,7 +333,7 @@ export const AccountingView: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-[#464555] border-b border-[#e0ecf4] text-[11px] uppercase tracking-wider font-semibold">
+                <tr className="bg-slate-50 text-ink-soft border-b border-line-soft text-[11px] uppercase tracking-wider font-semibold">
                   <th className="py-3 px-4">Voucher No</th>
                   <th className="py-3 px-4">Date</th>
                   <th className="py-3 px-4">Payee / Vendor</th>
@@ -343,14 +343,14 @@ export const AccountingView: React.FC = () => {
                   <th className="py-3 px-4 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f1f5f9]">
+              <tbody className="divide-y divide-line-soft">
                 {expenses.map(exp => (
-                  <tr key={exp.id} className="hover:bg-[#f8faff] transition-colors">
-                    <td className="py-3 px-4 font-mono font-bold text-[#0e5d84]">{exp.voucherNo}</td>
-                    <td className="py-3 px-4 text-[#464555]">{exp.date}</td>
-                    <td className="py-3 px-4 font-semibold text-[#082b3d]">{exp.payee}</td>
-                    <td className="py-3 px-4 text-[#464555]">{exp.category}</td>
-                    <td className="py-3 px-4 font-mono font-bold text-right text-[#082b3d]">
+                  <tr key={exp.id} className="hover:bg-wash transition-colors">
+                    <td className="py-3 px-4 font-mono font-bold text-brand">{exp.voucherNo}</td>
+                    <td className="py-3 px-4 text-ink-soft">{exp.date}</td>
+                    <td className="py-3 px-4 font-semibold text-ink">{exp.payee}</td>
+                    <td className="py-3 px-4 text-ink-soft">{exp.category}</td>
+                    <td className="py-3 px-4 font-mono font-bold text-right text-ink">
                       ₹{exp.amount.toLocaleString('en-IN')}
                     </td>
                     <td className="py-3 px-4 text-center">
@@ -373,7 +373,7 @@ export const AccountingView: React.FC = () => {
                           Authorize
                         </button>
                       ) : (
-                        <span className="text-[11px] text-[#777587]">Authorized by {exp.approvedBy}</span>
+                        <span className="text-[11px] text-ink-muted">Authorized by {exp.approvedBy}</span>
                       )}
                     </td>
                   </tr>
@@ -386,11 +386,11 @@ export const AccountingView: React.FC = () => {
 
       {/* Tab 3: Daily Cash-Book */}
       {activeTab === 'day-book' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs space-y-4">
+        <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-[#082b3d]">Daily Cash & Bank Register (ACC-005 & FEE-036)</h3>
-              <p className="text-xs text-[#777587]">Closing balance verified daily at 5:00 PM</p>
+              <h3 className="text-sm font-bold text-ink">Daily Cash & Bank Register (ACC-005 & FEE-036)</h3>
+              <p className="text-xs text-ink-muted">Closing balance verified daily at 5:00 PM</p>
             </div>
             <span className="font-mono text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg font-bold border border-emerald-200">
               Cash Drawer Balanced: ₹45,000.00
@@ -439,35 +439,35 @@ export const AccountingView: React.FC = () => {
 
       {/* Tab 4: Tally / Zoho Export */}
       {activeTab === 'tally-export' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs space-y-4">
-          <h3 className="text-sm font-bold text-[#082b3d]">Automated Accounting Software Export (ACC-009)</h3>
-          <p className="text-xs text-[#464555]">
+        <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm space-y-4">
+          <h3 className="text-sm font-bold text-ink">Automated Accounting Software Export (ACC-009)</h3>
+          <p className="text-xs text-ink-soft">
             Generate seamless double-entry XML and CSV payloads compliant with Tally Prime 4.0 and Zoho Books API schema.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-            <div className="p-4 rounded-xl border border-[#e0ecf4] bg-[#f8faff] space-y-3">
+            <div className="p-4 rounded-xl border border-line-soft bg-wash space-y-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-xl text-[#0e5d84]">description</span>
-                <span className="text-sm font-bold text-[#082b3d]">Tally Prime XML Export</span>
+                <span className="material-symbols-outlined text-xl text-brand">description</span>
+                <span className="text-sm font-bold text-ink">Tally Prime XML Export</span>
               </div>
-              <p className="text-xs text-[#777587]">
+              <p className="text-xs text-ink-muted">
                 Exports complete Chart of Accounts, student fee collections, and journal vouchers in Tally XML format.
               </p>
               <button
                 onClick={handleExportTally}
-                className="w-full py-2 bg-[#0e5d84] text-white rounded-xl text-xs font-bold shadow-xs hover:bg-[#2c1ea8] transition-all"
+                className="w-full py-2 bg-brand text-white rounded-xl text-xs font-bold shadow-xs hover:bg-brand-strong transition-all"
               >
                 Download Tally XML Package
               </button>
             </div>
 
-            <div className="p-4 rounded-xl border border-[#e0ecf4] bg-[#f8faff] space-y-3">
+            <div className="p-4 rounded-xl border border-line-soft bg-wash space-y-3">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-xl text-emerald-600">cloud_sync</span>
-                <span className="text-sm font-bold text-[#082b3d]">Zoho Books Direct API Sync</span>
+                <span className="text-sm font-bold text-ink">Zoho Books Direct API Sync</span>
               </div>
-              <p className="text-xs text-[#777587]">
+              <p className="text-xs text-ink-muted">
                 Direct automated synchronization with school Zoho Books organization ID using OAuth2 token.
               </p>
               <button
@@ -483,12 +483,12 @@ export const AccountingView: React.FC = () => {
 
       {/* MODAL: Create Payment Voucher */}
       {showVoucherModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">receipt</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Record New Payment Voucher (ACC-003)</h3>
+                <span className="material-symbols-outlined text-brand">receipt</span>
+                <h3 className="font-bold text-ink text-sm">Record New Payment Voucher (ACC-003)</h3>
               </div>
               <button
                 onClick={() => setShowVoucherModal(false)}
@@ -506,7 +506,7 @@ export const AccountingView: React.FC = () => {
                   value={newPayee}
                   onChange={e => setNewPayee(e.target.value)}
                   placeholder="e.g., Godrej Locks & Hardware Depot"
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-[#0e5d84]"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
                 />
               </div>
 
@@ -515,7 +515,7 @@ export const AccountingView: React.FC = () => {
                 <select
                   value={newCategory}
                   onChange={e => setNewCategory(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
                 >
                   <option value="Campus Maintenance">Campus Maintenance</option>
                   <option value="Fleet Fuel & Service">Fleet Fuel & Service</option>
@@ -533,7 +533,7 @@ export const AccountingView: React.FC = () => {
                   value={newAmount}
                   onChange={e => setNewAmount(e.target.value)}
                   placeholder="e.g. 24500"
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-[#0e5d84]"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
                 />
               </div>
 
@@ -547,7 +547,7 @@ export const AccountingView: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white font-bold rounded-xl text-xs shadow-xs"
+                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
                 >
                   Submit for Authorization
                 </button>

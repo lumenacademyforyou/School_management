@@ -220,25 +220,25 @@ export const IntegrationsView: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#f0f7fb] text-[#0e5d84]">
+            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-subtle text-brand">
               INT · Module 35
             </span>
-            <span className="text-xs text-[#777587]">17 Master Features</span>
+            <span className="text-xs text-ink-muted">17 Master Features</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#082b3d] mt-1">
+          <h1 className="text-xl md:text-2xl font-bold text-ink mt-1">
             Integrations & Hardware Telematics Hub
           </h1>
-          <p className="text-xs md:text-sm text-[#464555]">
+          <p className="text-xs md:text-sm text-ink-soft">
             Unified API gateway connecting Payment Gateways, WhatsApp Cloud, TRAI DLT, Biometrics, GPS Telematics, and DigiLocker.
           </p>
         </div>
 
         <button
           onClick={() => setShowApiKeyModal(true)}
-          className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 self-start sm:self-auto"
+          className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 self-start sm:self-auto"
         >
           <span className="material-symbols-outlined text-sm">key</span>
           <span>Manage API Keys</span>
@@ -246,15 +246,15 @@ export const IntegrationsView: React.FC = () => {
       </div>
 
       {/* Categories Bar */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-[#e0ecf4] pb-3">
+      <div className="flex flex-wrap items-center gap-2 border-b border-line-soft pb-3">
         {['all', 'Payments', 'Messaging', 'Hardware', 'Government & Identity'].map(cat => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
               activeCategory === cat
-                ? 'bg-[#0e5d84] text-white shadow-xs'
-                : 'text-[#464555] bg-slate-100 hover:bg-[#f0f7fb]'
+                ? 'bg-brand text-white shadow-xs'
+                : 'text-ink-soft bg-slate-100 hover:bg-subtle'
             }`}
           >
             {cat === 'all' ? 'All Integrations (17)' : cat}
@@ -267,11 +267,11 @@ export const IntegrationsView: React.FC = () => {
         {filteredIntegrations.map(item => (
           <div
             key={item.id}
-            className="p-4 bg-white rounded-2xl border border-[#e0ecf4] shadow-xs flex flex-col justify-between hover:border-[#0e5d84] transition-all"
+            className="p-4 bg-surface rounded-2xl border border-line-soft shadow-sm flex flex-col justify-between hover:border-brand transition-all"
           >
             <div>
               <div className="flex items-center justify-between">
-                <span className="font-mono text-xs font-bold text-[#0e5d84] bg-[#f0f7fb] px-2 py-0.5 rounded">
+                <span className="font-mono text-xs font-bold text-brand bg-subtle px-2 py-0.5 rounded">
                   {item.code}
                 </span>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
@@ -280,19 +280,19 @@ export const IntegrationsView: React.FC = () => {
                 </span>
               </div>
 
-              <h3 className="text-sm font-bold text-[#082b3d] mt-2.5">
+              <h3 className="text-sm font-bold text-ink mt-2.5">
                 {item.name}
               </h3>
-              <div className="text-xs font-semibold text-[#777587] mt-0.5">
+              <div className="text-xs font-semibold text-ink-muted mt-0.5">
                 Provider: {item.provider}
               </div>
-              <p className="text-xs text-[#464555] mt-2 line-clamp-2">
+              <p className="text-xs text-ink-soft mt-2 line-clamp-2">
                 {item.details}
               </p>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-[#f1f5f9] flex items-center justify-between text-xs">
-              <span className="font-mono text-[11px] text-[#777587]">
+            <div className="mt-4 pt-3 border-t border-line-soft flex items-center justify-between text-xs">
+              <span className="font-mono text-[11px] text-ink-muted">
                 {item.latencyOrQuota}
               </span>
               <div className="flex items-center gap-2">
@@ -301,13 +301,13 @@ export const IntegrationsView: React.FC = () => {
                     setSelectedService({ ...item });
                     setShowConfigModal(true);
                   }}
-                  className="text-slate-600 hover:text-[#082b3d] text-xs font-semibold"
+                  className="text-slate-600 hover:text-ink text-xs font-semibold"
                 >
                   Configure
                 </button>
                 <button
                   onClick={() => addToast(`Testing connection to ${item.name}... Success! (Ping: 38ms, SSL TLSv1.3 OK)`, 'success')}
-                  className="text-[#0e5d84] hover:underline font-bold text-xs"
+                  className="text-brand hover:underline font-bold text-xs"
                 >
                   Ping →
                 </button>
@@ -318,15 +318,15 @@ export const IntegrationsView: React.FC = () => {
       </div>
 
       {/* Webhooks & Event Streaming Configuration (INT-016) */}
-      <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs space-y-4">
+      <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h3 className="text-sm font-bold text-[#082b3d]">Outbound Webhooks & Event Streaming (INT-016)</h3>
-            <p className="text-xs text-[#777587]">
+            <h3 className="text-sm font-bold text-ink">Outbound Webhooks & Event Streaming (INT-016)</h3>
+            <p className="text-xs text-ink-muted">
               Real-time HMAC-SHA256 signed event dispatch for attendance, fee receipts, and student admissions.
             </p>
           </div>
-          <span className="text-xs font-mono bg-[#f0f7fb] text-[#0e5d84] px-2.5 py-1 rounded-lg font-bold self-start sm:self-auto">
+          <span className="text-xs font-mono bg-subtle text-brand px-2.5 py-1 rounded-lg font-bold self-start sm:self-auto">
             Payload Format: JSON
           </span>
         </div>
@@ -336,27 +336,27 @@ export const IntegrationsView: React.FC = () => {
             type="text"
             value={webhookUrl}
             onChange={e => setWebhookUrl(e.target.value)}
-            className="flex-1 w-full bg-[#f8f9ff] border border-[#e0ecf4] rounded-xl px-3 py-2 text-xs font-mono text-[#082b3d] focus:outline-hidden focus:border-[#0e5d84]"
+            className="flex-1 w-full bg-wash border border-line-soft rounded-xl px-3 py-2 text-xs font-mono text-ink focus:outline-hidden focus:border-brand"
           />
           <button
             onClick={handleTestWebhook}
-            className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold transition-all shrink-0"
+            className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold transition-all shrink-0"
           >
             Dispatch Test Ping Payload
           </button>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-[11px]">
-          <span className="p-2 bg-slate-50 rounded-lg border border-slate-200 text-[#464555]">
+          <span className="p-2 bg-slate-50 rounded-lg border border-slate-200 text-ink-soft">
             ✓ <code>fee.payment.success</code>
           </span>
-          <span className="p-2 bg-slate-50 rounded-lg border border-slate-200 text-[#464555]">
+          <span className="p-2 bg-slate-50 rounded-lg border border-slate-200 text-ink-soft">
             ✓ <code>attendance.student.absent</code>
           </span>
-          <span className="p-2 bg-slate-50 rounded-lg border border-slate-200 text-[#464555]">
+          <span className="p-2 bg-slate-50 rounded-lg border border-slate-200 text-ink-soft">
             ✓ <code>transport.sos.triggered</code>
           </span>
-          <span className="p-2 bg-slate-50 rounded-lg border border-slate-200 text-[#464555]">
+          <span className="p-2 bg-slate-50 rounded-lg border border-slate-200 text-ink-soft">
             ✓ <code>exam.reportcard.published</code>
           </span>
         </div>
@@ -364,14 +364,14 @@ export const IntegrationsView: React.FC = () => {
 
       {/* Modal: API Key Management */}
       {showApiKeyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-[#cbe0ec] space-y-5 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto ring-1 ring-lumen-950/10">
+            <div className="flex items-center justify-between border-b border-subtle pb-3">
               <div>
-                <h3 className="font-bold text-base text-[#082b3d]">Institutional API Key Governance</h3>
-                <span className="text-xs text-[#777587]">HMAC signature tokens for external subsystems & client apps</span>
+                <h3 className="font-bold text-base text-ink">Institutional API Key Governance</h3>
+                <span className="text-xs text-ink-muted">HMAC signature tokens for external subsystems & client apps</span>
               </div>
-              <button onClick={() => setShowApiKeyModal(false)} className="text-[#777587] hover:text-[#082b3d]">
+              <button onClick={() => setShowApiKeyModal(false)} className="text-ink-muted hover:text-ink">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -392,7 +392,7 @@ export const IntegrationsView: React.FC = () => {
                     <span>Copy</span>
                   </button>
                 </div>
-                <code className="block p-2 bg-white rounded border border-emerald-200 font-mono text-xs text-[#082b3d] break-all">
+                <code className="block p-2 bg-white rounded border border-emerald-200 font-mono text-xs text-ink break-all">
                   {newGeneratedSecret}
                 </code>
               </div>
@@ -400,21 +400,21 @@ export const IntegrationsView: React.FC = () => {
 
             {/* Create API Key Form */}
             <form onSubmit={handleCreateApiKey} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3 text-xs">
-              <span className="font-bold text-[#082b3d] block">Generate New API Key</span>
+              <span className="font-bold text-ink block">Generate New API Key</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-[#464555] mb-1">Key Description / Client Name</label>
+                  <label className="block font-semibold text-ink-soft mb-1">Key Description / Client Name</label>
                   <input
                     type="text"
                     placeholder="e.g. ERP Biometric Proxy Daemon"
                     value={newKeyName}
                     onChange={e => setNewKeyName(e.target.value)}
-                    className="w-full bg-white border border-[#cbe0ec] rounded-xl p-2 text-xs"
+                    className="w-full bg-white border border-line rounded-xl p-2 text-xs"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-[#464555] mb-1">Select Scopes</label>
+                  <label className="block font-semibold text-ink-soft mb-1">Select Scopes</label>
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {['read:students', 'write:attendance', 'read:fees', 'write:transport_gps'].map(scope => (
                       <label key={scope} className="inline-flex items-center gap-1 text-[11px] bg-white px-2 py-1 rounded border border-slate-200 cursor-pointer">
@@ -438,7 +438,7 @@ export const IntegrationsView: React.FC = () => {
               <div className="flex justify-end pt-2">
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl font-bold text-xs"
+                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold text-xs"
                 >
                   Generate Key
                 </button>
@@ -447,16 +447,16 @@ export const IntegrationsView: React.FC = () => {
 
             {/* Active Keys List */}
             <div className="space-y-2">
-              <span className="text-xs font-bold text-[#464555] uppercase">Active Institutional API Keys</span>
+              <span className="text-xs font-bold text-ink-soft uppercase">Active Institutional API Keys</span>
               <div className="space-y-2">
                 {apiKeys.map(k => (
                   <div key={k.id} className="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between text-xs">
                     <div>
-                      <div className="font-bold text-[#082b3d]">{k.name}</div>
-                      <div className="font-mono text-[#777587] text-[11px]">{k.prefix} • Created {k.created}</div>
+                      <div className="font-bold text-ink">{k.name}</div>
+                      <div className="font-mono text-ink-muted text-[11px]">{k.prefix} • Created {k.created}</div>
                       <div className="flex gap-1 mt-1 flex-wrap">
                         {k.scopes.map(s => (
-                          <span key={s} className="px-1.5 py-0.5 rounded bg-slate-100 text-[#464555] text-[10px] font-mono">
+                          <span key={s} className="px-1.5 py-0.5 rounded bg-slate-100 text-ink-soft text-[10px] font-mono">
                             {s}
                           </span>
                         ))}
@@ -479,10 +479,10 @@ export const IntegrationsView: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-end pt-3 border-t border-[#f0f7fb]">
+            <div className="flex justify-end pt-3 border-t border-subtle">
               <button
                 onClick={() => setShowApiKeyModal(false)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl text-xs font-semibold"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-semibold"
               >
                 Close
               </button>
@@ -493,35 +493,35 @@ export const IntegrationsView: React.FC = () => {
 
       {/* Modal: Configure Service */}
       {showConfigModal && selectedService && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#cbe0ec] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
+            <div className="flex items-center justify-between border-b border-subtle pb-3">
               <div>
-                <h3 className="font-bold text-base text-[#082b3d]">Configure {selectedService.name}</h3>
-                <span className="text-xs text-[#777587]">Provider: {selectedService.provider}</span>
+                <h3 className="font-bold text-base text-ink">Configure {selectedService.name}</h3>
+                <span className="text-xs text-ink-muted">Provider: {selectedService.provider}</span>
               </div>
-              <button onClick={() => setShowConfigModal(false)} className="text-[#777587] hover:text-[#082b3d]">
+              <button onClick={() => setShowConfigModal(false)} className="text-ink-muted hover:text-ink">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <form onSubmit={handleSaveServiceConfig} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Service Endpoint URL</label>
+                <label className="block font-bold text-ink-soft mb-1">Service Endpoint URL</label>
                 <input
                   type="text"
                   value={selectedService.endpoint || ''}
                   onChange={e => setSelectedService({ ...selectedService, endpoint: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs font-mono text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs font-mono text-ink"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Status Mode</label>
+                <label className="block font-bold text-ink-soft mb-1">Status Mode</label>
                 <select
                   value={selectedService.status}
                   onChange={e => setSelectedService({ ...selectedService, status: e.target.value as any })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2 text-xs"
+                  className="w-full bg-wash border border-line rounded-xl p-2 text-xs"
                 >
                   <option value="Connected">Connected (Production Live)</option>
                   <option value="Configured">Configured (Sandbox Staging)</option>
@@ -530,26 +530,26 @@ export const IntegrationsView: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Latency SLA / Quota Note</label>
+                <label className="block font-bold text-ink-soft mb-1">Latency SLA / Quota Note</label>
                 <input
                   type="text"
                   value={selectedService.latencyOrQuota}
                   onChange={e => setSelectedService({ ...selectedService, latencyOrQuota: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#f0f7fb]">
+              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
                 <button
                   type="button"
                   onClick={() => setShowConfigModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl font-semibold"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl font-bold"
+                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
                 >
                   Save Changes
                 </button>
@@ -561,21 +561,21 @@ export const IntegrationsView: React.FC = () => {
 
       {/* Modal: Webhook Test Payload Inspector */}
       {showPayloadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#cbe0ec] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
+            <div className="flex items-center justify-between border-b border-subtle pb-3">
               <div>
-                <h3 className="font-bold text-base text-[#082b3d]">Outbound Webhook Dispatch Inspector</h3>
-                <span className="text-xs text-[#777587]">Dispatched to {webhookUrl}</span>
+                <h3 className="font-bold text-base text-ink">Outbound Webhook Dispatch Inspector</h3>
+                <span className="text-xs text-ink-muted">Dispatched to {webhookUrl}</span>
               </div>
-              <button onClick={() => setShowPayloadModal(false)} className="text-[#777587] hover:text-[#082b3d]">
+              <button onClick={() => setShowPayloadModal(false)} className="text-ink-muted hover:text-ink">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <div className="space-y-3 text-xs">
               <div>
-                <span className="font-bold text-[#464555] block mb-1">HTTP Headers:</span>
+                <span className="font-bold text-ink-soft block mb-1">HTTP Headers:</span>
                 <pre className="p-2.5 bg-slate-900 text-emerald-400 rounded-xl font-mono text-[11px] overflow-x-auto">
 {`POST /api/v1/events/webhook HTTP/1.1
 Content-Type: application/json
@@ -585,7 +585,7 @@ X-Lumen-Timestamp: ${Date.now()}`}
               </div>
 
               <div>
-                <span className="font-bold text-[#464555] block mb-1">Payload JSON Body:</span>
+                <span className="font-bold text-ink-soft block mb-1">Payload JSON Body:</span>
                 <pre className="p-2.5 bg-slate-900 text-slate-100 rounded-xl font-mono text-[11px] overflow-x-auto">
 {JSON.stringify({
   event: "fee.payment.success",
@@ -604,20 +604,20 @@ X-Lumen-Timestamp: ${Date.now()}`}
               </div>
             </div>
 
-            <div className="flex justify-between items-center pt-3 border-t border-[#f0f7fb]">
+            <div className="flex justify-between items-center pt-3 border-t border-subtle">
               <button
                 onClick={() => {
                   navigator.clipboard?.writeText(`curl -X POST "${webhookUrl}" -H "Content-Type: application/json" -d '{"event":"ping"}'`);
                   addToast('cURL test snippet copied', 'success');
                 }}
-                className="text-xs font-bold text-[#0e5d84] hover:underline flex items-center gap-1"
+                className="text-xs font-bold text-brand hover:underline flex items-center gap-1"
               >
                 <span className="material-symbols-outlined text-sm">terminal</span>
                 <span>Copy cURL</span>
               </button>
               <button
                 onClick={() => setShowPayloadModal(false)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl text-xs font-semibold"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-semibold"
               >
                 Dismiss
               </button>

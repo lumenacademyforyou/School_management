@@ -141,18 +141,18 @@ export const DocumentManagementView: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#f0f7fb] text-[#0e5d84]">
+            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-subtle text-brand">
               DOC · Module 6
             </span>
-            <span className="text-xs text-[#777587]">15 Master Features (DOC-001..015)</span>
+            <span className="text-xs text-ink-muted">15 Master Features (DOC-001..015)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#082b3d] mt-1">
+          <h1 className="text-xl md:text-2xl font-bold text-ink mt-1">
             Enterprise Document Management & Verification
           </h1>
-          <p className="text-xs md:text-sm text-[#464555]">
+          <p className="text-xs md:text-sm text-ink-soft">
             Secure document repositories, in-browser watermarked preview, verification queues, signed expiring URLs, and expiry alerts.
           </p>
         </div>
@@ -160,14 +160,14 @@ export const DocumentManagementView: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleExportCSV}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Export Ledger</span>
           </button>
           <button
             onClick={() => setShowUploadModal(true)}
-            className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+            className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">upload_file</span>
             <span>Upload Document</span>
@@ -177,41 +177,41 @@ export const DocumentManagementView: React.FC = () => {
 
       {/* Storage Quota & Virus Scan Banner */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Cloud Storage Quota (DOC-014)</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Cloud Storage Quota (DOC-014)</div>
           <div className="flex items-baseline justify-between mt-1">
-            <span className="text-lg font-bold font-mono text-[#082b3d]">42.8 GB / 100 GB</span>
+            <span className="text-lg font-bold font-mono text-ink">42.8 GB / 100 GB</span>
             <span className="text-xs font-bold text-emerald-600">42.8% used</span>
           </div>
           <div className="w-full h-1.5 bg-slate-100 rounded-full mt-2 overflow-hidden">
-            <div className="h-full bg-[#0e5d84] rounded-full w-[42.8%]"></div>
+            <div className="h-full bg-brand rounded-full w-[42.8%]"></div>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Malware & Virus Defense (DOC-012)</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Malware & Virus Defense (DOC-012)</div>
           <div className="text-lg font-bold font-mono text-emerald-700 mt-1 flex items-center gap-1.5">
             <span className="material-symbols-outlined text-emerald-600 text-base">verified_user</span>
             <span>ClamAV Engine Clean</span>
           </div>
-          <div className="text-[11px] text-[#777587] mt-1">100% of uploaded files scanned before preview</div>
+          <div className="text-[11px] text-ink-muted mt-1">100% of uploaded files scanned before preview</div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Verification Queue (DOC-004)</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Verification Queue (DOC-004)</div>
           <div className="text-lg font-bold font-mono text-amber-600 mt-1">
             {documents.filter(d => d.verificationStatus === 'Pending Scrutiny').length} Documents Pending
           </div>
-          <div className="text-[11px] text-[#777587] mt-1">Average verification turnaround: 3.2 hours</div>
+          <div className="text-[11px] text-ink-muted mt-1">Average verification turnaround: 3.2 hours</div>
         </div>
       </div>
 
       {/* Filters Bar */}
-      <div className="flex items-center gap-2 border-b border-[#e0ecf4] pb-2">
+      <div className="flex items-center gap-2 border-b border-line-soft pb-2">
         <button
           onClick={() => setActiveFilter('all')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-            activeFilter === 'all' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeFilter === 'all' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           All Documents ({documents.length})
@@ -219,7 +219,7 @@ export const DocumentManagementView: React.FC = () => {
         <button
           onClick={() => setActiveFilter('pending')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-            activeFilter === 'pending' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeFilter === 'pending' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           Pending Scrutiny ({documents.filter(d => d.verificationStatus === 'Pending Scrutiny').length})
@@ -227,7 +227,7 @@ export const DocumentManagementView: React.FC = () => {
         <button
           onClick={() => setActiveFilter('verified')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-            activeFilter === 'verified' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeFilter === 'verified' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           Verified Safe ({documents.filter(d => d.verificationStatus === 'Verified').length})
@@ -237,10 +237,10 @@ export const DocumentManagementView: React.FC = () => {
       {/* Table & In-Browser Preview Drawer */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Table (2 cols) */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
+        <div className="lg:col-span-2 bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
-              <thead className="bg-[#f0f7fb]/60 text-[#464555] font-semibold border-b border-[#cbe0ec]">
+              <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
                 <tr>
                   <th className="p-3">Doc Code</th>
                   <th className="p-3">Candidate / Vehicle</th>
@@ -250,19 +250,19 @@ export const DocumentManagementView: React.FC = () => {
                   <th className="p-3 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {filteredDocs.map(doc => (
-                  <tr key={doc.id} className="hover:bg-[#f8f9ff]">
-                    <td className="p-3 font-mono font-bold text-[#0e5d84]">{doc.docCode}</td>
+                  <tr key={doc.id} className="hover:bg-wash">
+                    <td className="p-3 font-mono font-bold text-brand">{doc.docCode}</td>
                     <td className="p-3">
-                      <div className="font-bold text-[#082b3d]">{doc.studentOrStaffName}</div>
-                      <div className="text-[10px] text-[#777587] font-mono">{doc.admissionOrEmpNo}</div>
+                      <div className="font-bold text-ink">{doc.studentOrStaffName}</div>
+                      <div className="text-[10px] text-ink-muted font-mono">{doc.admissionOrEmpNo}</div>
                     </td>
-                    <td className="p-3 text-[#464555]">
+                    <td className="p-3 text-ink-soft">
                       <div>{doc.type}</div>
-                      <div className="text-[10px] text-[#777587]">{doc.fileSize}</div>
+                      <div className="text-[10px] text-ink-muted">{doc.fileSize}</div>
                     </td>
-                    <td className="p-3 text-[#777587]">{doc.uploadDate}</td>
+                    <td className="p-3 text-ink-muted">{doc.uploadDate}</td>
                     <td className="p-3">
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded ${
@@ -279,7 +279,7 @@ export const DocumentManagementView: React.FC = () => {
                     <td className="p-3 text-right">
                       <button
                         onClick={() => handleOpenSignedPreview(doc)}
-                        className="px-2.5 py-1 bg-[#f0f7fb] text-[#0e5d84] font-bold rounded-lg hover:bg-[#bae6fd] transition-all text-xs"
+                        className="px-2.5 py-1 bg-subtle text-brand font-bold rounded-lg hover:bg-lumen-200 transition-all text-xs"
                       >
                         Preview & Audit
                       </button>
@@ -292,14 +292,14 @@ export const DocumentManagementView: React.FC = () => {
         </div>
 
         {/* Right Col: Watermarked Preview Drawer */}
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs">
+        <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm">
           {selectedDoc ? (
             <div className="space-y-4">
-              <div className="border-b border-[#e0ecf4] pb-3">
-                <span className="text-[10px] font-bold font-mono text-[#0e5d84] uppercase">{selectedDoc.docCode}</span>
-                <h3 className="text-sm font-bold text-[#082b3d] mt-1">{selectedDoc.type}</h3>
-                <div className="text-xs text-[#777587]">
-                  Target: <span className="font-semibold text-[#082b3d]">{selectedDoc.studentOrStaffName}</span>
+              <div className="border-b border-line-soft pb-3">
+                <span className="text-[10px] font-bold font-mono text-brand uppercase">{selectedDoc.docCode}</span>
+                <h3 className="text-sm font-bold text-ink mt-1">{selectedDoc.type}</h3>
+                <div className="text-xs text-ink-muted">
+                  Target: <span className="font-semibold text-ink">{selectedDoc.studentOrStaffName}</span>
                 </div>
               </div>
 
@@ -312,16 +312,16 @@ export const DocumentManagementView: React.FC = () => {
                   </span>
                 </div>
 
-                <span className="material-symbols-outlined text-5xl text-[#0e5d84]">description</span>
-                <div className="font-mono text-xs font-bold text-[#082b3d] mt-2">{selectedDoc.type}</div>
-                <div className="text-[11px] text-[#777587] mt-0.5">Scanned High-Res PDF (Verified ClamAV Clean)</div>
+                <span className="material-symbols-outlined text-5xl text-brand">description</span>
+                <div className="font-mono text-xs font-bold text-ink mt-2">{selectedDoc.type}</div>
+                <div className="text-[11px] text-ink-muted mt-0.5">Scanned High-Res PDF (Verified ClamAV Clean)</div>
                 <div className="mt-3 text-[10px] bg-white px-3 py-1 rounded-full border border-slate-200 text-slate-600 font-mono">
                   SHA-256: e3b0c44298fc1c149afbf4c8996fb924...
                 </div>
               </div>
 
               {/* Verification Actions */}
-              <div className="space-y-2 pt-2 border-t border-[#e0ecf4]">
+              <div className="space-y-2 pt-2 border-t border-line-soft">
                 <button
                   onClick={() => handleVerify(selectedDoc.id, 'Verified')}
                   className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
@@ -331,14 +331,14 @@ export const DocumentManagementView: React.FC = () => {
                 </button>
                 <button
                   onClick={() => handleVerify(selectedDoc.id, 'Re-upload Requested')}
-                  className="w-full py-2 bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-[#464555] rounded-xl text-xs font-bold transition-all"
+                  className="w-full py-2 bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-ink-soft rounded-xl text-xs font-bold transition-all"
                 >
                   Request Parent Re-upload (Blurry / Invalid)
                 </button>
               </div>
             </div>
           ) : (
-            <div className="text-center py-16 text-[#777587] space-y-2">
+            <div className="text-center py-16 text-ink-muted space-y-2">
               <span className="material-symbols-outlined text-4xl text-slate-300">visibility</span>
               <p className="text-xs">Click "Preview & Audit" on any document to open secure watermarked viewer and record scrutiny verdict.</p>
             </div>
@@ -348,12 +348,12 @@ export const DocumentManagementView: React.FC = () => {
 
       {/* MODAL: Upload Document */}
       {showUploadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">upload_file</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Upload Student / Staff Document (DOC-001)</h3>
+                <span className="material-symbols-outlined text-brand">upload_file</span>
+                <h3 className="font-bold text-ink text-sm">Upload Student / Staff Document (DOC-001)</h3>
               </div>
               <button
                 onClick={() => setShowUploadModal(false)}
@@ -371,7 +371,7 @@ export const DocumentManagementView: React.FC = () => {
                   value={uploadName}
                   onChange={e => setUploadName(e.target.value)}
                   placeholder="e.g. Siddharth Raghavan"
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-[#0e5d84]"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
                 />
               </div>
 
@@ -382,7 +382,7 @@ export const DocumentManagementView: React.FC = () => {
                   value={uploadId}
                   onChange={e => setUploadId(e.target.value)}
                   placeholder="e.g. LMN-2026-112"
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-[#0e5d84]"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
                 />
               </div>
 
@@ -391,7 +391,7 @@ export const DocumentManagementView: React.FC = () => {
                 <select
                   value={uploadType}
                   onChange={e => setUploadType(e.target.value as DocumentRecord['type'])}
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
                 >
                   <option value="Birth Certificate">Birth Certificate</option>
                   <option value="Aadhaar Card">Aadhaar Card</option>
@@ -428,7 +428,7 @@ export const DocumentManagementView: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#0e5d84] hover:bg-[#083a4f] text-white font-bold rounded-xl text-xs shadow-xs"
+                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
                 >
                   Submit for Scrutiny
                 </button>

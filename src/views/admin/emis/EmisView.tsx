@@ -109,18 +109,18 @@ export const EmisView: React.FC = () => {
         <FeatureTags ids={['STU-026', 'GOV-010', 'GOV-011']} className="mt-2" />
       </PageHeader>
 
-      <section className="rounded-2xl border border-[#cbe0ec] bg-[#f0f7fb] p-4 grid gap-3 md:grid-cols-[1fr_auto] items-start" aria-label="School on the EMIS portal">
+      <section className="rounded-2xl border border-line bg-subtle p-4 grid gap-3 md:grid-cols-[1fr_auto] items-start" aria-label="School on the EMIS portal">
         <div className="space-y-1 min-w-0">
-          <p className="text-sm font-bold text-[#082b3d]">{SCHOOL_EMIS.name}</p>
-          <p className="text-xs text-[#464555]">
-            UDISE / EMIS school code <span className="font-mono font-semibold text-[#082b3d]">{SCHOOL_EMIS.udiseCode}</span> · {SCHOOL_EMIS.block} block, {SCHOOL_EMIS.district} district · {SCHOOL_EMIS.management}
+          <p className="text-sm font-bold text-ink">{SCHOOL_EMIS.name}</p>
+          <p className="text-xs text-ink-soft">
+            UDISE / EMIS school code <span className="font-mono font-semibold text-ink">{SCHOOL_EMIS.udiseCode}</span> · {SCHOOL_EMIS.block} block, {SCHOOL_EMIS.district} district · {SCHOOL_EMIS.management}
           </p>
-          <p className="text-[11px] text-[#777587]">
+          <p className="text-[11px] text-ink-muted">
             Every Tamil Nadu student has a 16-digit EMIS number that follows them from school to school. The state uses it for enrolment, transfers, attendance, exams and welfare schemes, so each record
             here must match the portal.
           </p>
         </div>
-        <div className="text-[11px] text-[#464555] md:text-right space-y-1">
+        <div className="text-[11px] text-ink-soft md:text-right space-y-1">
           <p className="inline-flex items-center gap-1 font-semibold text-emerald-700">
             <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true" />
             Connected to {SCHOOL_EMIS.portal} (demo)
@@ -147,7 +147,7 @@ export const EmisView: React.FC = () => {
             <StatCard label="Staff linked" value={`${summary.staffLinked} / ${summary.staff}`} icon="badge" tone={summary.staffLinked === summary.staff ? 'green' : 'amber'} hint="Teacher EMIS IDs" onClick={() => setTab('staff')} />
           </div>
 
-          <div className="flex gap-1 border-b border-[#e0ecf4] overflow-x-auto" role="tablist" aria-label="EMIS views">
+          <div className="flex gap-1 border-b border-line-soft overflow-x-auto" role="tablist" aria-label="EMIS views">
             {tabs.map(t => (
               <button key={t.id} role="tab" aria-selected={tab === t.id} onClick={() => setTab(t.id)} className={tabBtn(tab === t.id)} data-emis-tab={t.id}>
                 <Icon name={t.icon} className="text-base" />
@@ -221,7 +221,7 @@ const StudentsTab: React.FC<{ canUpdate: boolean; why?: string; onPool: () => vo
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-xs" data-testid="emis-students">
-            <thead className="bg-slate-50 border-b border-[#e0ecf4]">
+            <thead className="bg-slate-50 border-b border-line-soft">
               <tr>
                 {['Student', 'Class', 'EMIS number', 'Number check', 'Portal', 'Action'].map(h => (
                   <th key={h} className={th}>
@@ -230,25 +230,25 @@ const StudentsTab: React.FC<{ canUpdate: boolean; why?: string; onPool: () => vo
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#e0ecf4]">
+            <tbody className="divide-y divide-line-soft">
               {rows.map(({ s, st }) => (
-                <tr key={s.id} data-emis-row={s.id} className="hover:bg-[#f8fbfd]">
+                <tr key={s.id} data-emis-row={s.id} className="hover:bg-wash">
                   <td className={td}>
-                    <p className="font-semibold text-[#082b3d]">{s.name}</p>
-                    <p className="text-[10px] text-[#777587]">
+                    <p className="font-semibold text-ink">{s.name}</p>
+                    <p className="text-[10px] text-ink-muted">
                       {s.admissionNo} · {s.status}
                     </p>
                   </td>
                   <td className={`${td} whitespace-nowrap`}>
                     {s.classLevel}-{s.section}
                   </td>
-                  <td className={`${td} font-mono whitespace-nowrap`}>{s.emis ? formatEmis(s.emis) : <span className="text-[#777587] font-sans">Not recorded</span>}</td>
+                  <td className={`${td} font-mono whitespace-nowrap`}>{s.emis ? formatEmis(s.emis) : <span className="text-ink-muted font-sans">Not recorded</span>}</td>
                   <td className={td}>
                     <EmisStatusBadge check={checkEmis(s.emis, s.id, roster)} />
                   </td>
                   <td className={`${td} max-w-xs`}>
                     <PortalBadge state={st.state} />
-                    <p className="mt-1 text-[10px] text-[#464555]">{st.detail}</p>
+                    <p className="mt-1 text-[10px] text-ink-soft">{st.detail}</p>
                   </td>
                   <td className={`${td} whitespace-nowrap`}>
                     <RowAction student={s} status={st} canUpdate={canUpdate} why={why} onEdit={() => setEditing(s)} onReview={() => setReviewing(s)} onPool={onPool} />
@@ -296,7 +296,7 @@ const RowAction: React.FC<{ student: RosterStudent; status: PortalStatus; canUpd
         </Gate>
       </div>
     );
-  if (status.state === 'released') return <span className="text-[10px] text-[#777587]">No action</span>;
+  if (status.state === 'released') return <span className="text-[10px] text-ink-muted">No action</span>;
   return (
     <Gate allowed={canUpdate} why={why}>
       <button onClick={onEdit} className={btnSoft} aria-label={`Edit EMIS of ${student.name}`}>
@@ -335,14 +335,14 @@ const MismatchModal: React.FC<{ student: RosterStudent | null; canUpdate: boolea
         </button>
       }
     >
-      <p className="text-[#464555]">
+      <p className="text-ink-soft">
         EMIS {student.emis ? formatEmis(student.emis) : '—'} · Class {student.classLevel}-{student.section}. If the school record is right, send it to the portal. If the portal is right, raise a
         change request in Students so the school record is corrected with approval.
       </p>
       {st.diffs.length === 0 ? (
         <EmptyState icon="task_alt" title="Records match." text="Nothing differs any more." />
       ) : (
-        <table className="w-full text-xs border border-[#e0ecf4] rounded-lg overflow-hidden">
+        <table className="w-full text-xs border border-line-soft rounded-lg overflow-hidden">
           <thead className="bg-slate-50">
             <tr>
               {['Field', 'School record', 'EMIS portal', ''].map(h => (
@@ -352,7 +352,7 @@ const MismatchModal: React.FC<{ student: RosterStudent | null; canUpdate: boolea
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#e0ecf4]">
+          <tbody className="divide-y divide-line-soft">
             {st.diffs.map(d => (
               <tr key={d.field}>
                 <td className={`${td} font-semibold`}>{d.field}</td>

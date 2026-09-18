@@ -36,8 +36,8 @@ export const DetailsStep: React.FC<{ details: ExamDetails; errors: DetailsErrors
   const set = (patch: Partial<ExamDetails>) => onChange({ ...details, ...patch });
   const dis = !editable;
   return (
-    <section className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3" aria-labelledby="details-h">
-      <h2 id="details-h" className="text-sm font-bold text-[#082b3d]">
+    <section className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3" aria-labelledby="details-h">
+      <h2 id="details-h" className="text-sm font-bold text-ink">
         Exam details
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -151,7 +151,7 @@ export const BlueprintStep: React.FC<{ sections: BlueprintSection[]; details: Ex
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
       <div className="xl:col-span-2 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-bold text-[#082b3d]">Blueprint</h2>
+          <h2 className="text-sm font-bold text-ink">Blueprint</h2>
           <div className="flex flex-wrap gap-2">
             <button onClick={() => onChange(presetBlueprint(details.board))} disabled={!editable} className={btnSoft}>
               <Icon name="restart_alt" className="text-sm" />
@@ -163,7 +163,7 @@ export const BlueprintStep: React.FC<{ sections: BlueprintSection[]; details: Ex
             </button>
           </div>
         </div>
-        {sections.length === 0 && <p className="rounded-xl border border-dashed border-[#cbe0ec] p-6 text-center text-xs text-[#464555]">No sections yet. Add a section or apply the board pattern.</p>}
+        {sections.length === 0 && <p className="rounded-xl border border-dashed border-line p-6 text-center text-xs text-ink-soft">No sections yet. Add a section or apply the board pattern.</p>}
         <ol className="space-y-3">
           {sections.map((s, i) => {
             const available = availableFor(bank, s, details).length;
@@ -171,13 +171,13 @@ export const BlueprintStep: React.FC<{ sections: BlueprintSection[]; details: Ex
             const sectionIssues = issues.filter(x => x.sectionId === s.id);
             const topics = [...new Set(bank.filter(q => q.subject === details.subject && q.classLevel === details.classLevel && (s.chapter === 'Any' || q.chapter === s.chapter)).map(q => q.topic))].sort();
             return (
-              <li key={s.id} className={`bg-white rounded-2xl border p-3 space-y-2 ${sectionIssues.some(x => x.level === 'error') ? 'border-rose-300' : 'border-[#e0ecf4]'}`} data-section={s.title}>
+              <li key={s.id} className={`bg-white rounded-2xl border p-3 space-y-2 ${sectionIssues.some(x => x.level === 'error') ? 'border-rose-300' : 'border-line-soft'}`} data-section={s.title}>
                 <div className="flex flex-wrap items-center gap-2">
                   <input value={s.title} disabled={!editable} onChange={e => update(s.id, { title: e.target.value })} className={`${inputCls} font-bold w-32`} aria-label={`Section ${i + 1} title`} />
                   <Badge tone={short ? 'amber' : 'green'}>
                     {available} in bank for {s.count}
                   </Badge>
-                  <span className="ml-auto text-xs font-semibold text-[#082b3d]">{sectionMarks(s)} marks</span>
+                  <span className="ml-auto text-xs font-semibold text-ink">{sectionMarks(s)} marks</span>
                   <div className="flex gap-1">
                     <button onClick={() => move(i, -1)} disabled={!editable || i === 0} className={btnSoft} aria-label={`Move ${s.title} up`}>
                       <Icon name="arrow_upward" className="text-sm" />
@@ -256,8 +256,8 @@ export const BlueprintStep: React.FC<{ sections: BlueprintSection[]; details: Ex
             {state === 'match' ? 'matches the maximum' : state === 'under' ? `${details.maxMarks - totals.marks} marks short` : `${totals.marks - details.maxMarks} marks over`}
           </p>
         </div>
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-4">
-          <p className="text-xs font-bold text-[#082b3d] mb-2">Marks by section</p>
+        <div className="bg-surface rounded-2xl border border-line-soft p-4">
+          <p className="text-xs font-bold text-ink mb-2">Marks by section</p>
           {sections.map(s => (
             <div key={s.id} className="py-1">
               <div className="flex justify-between text-[11px]">
@@ -267,7 +267,7 @@ export const BlueprintStep: React.FC<{ sections: BlueprintSection[]; details: Ex
                 <span className="font-mono">{sectionMarks(s)}</span>
               </div>
               <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
-                <div className="h-full bg-[#0e5d84]" style={{ width: `${Math.min(100, (sectionMarks(s) / Math.max(1, details.maxMarks)) * 100)}%` }} />
+                <div className="h-full bg-brand" style={{ width: `${Math.min(100, (sectionMarks(s) / Math.max(1, details.maxMarks)) * 100)}%` }} />
               </div>
             </div>
           ))}

@@ -31,7 +31,7 @@ export const fmtStamp = (stamp: string) => {
 };
 
 export const tabBtn = (on: boolean) =>
-  `flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border-b-2 -mb-px whitespace-nowrap ${on ? 'border-[#0e5d84] text-[#0e5d84]' : 'border-transparent text-[#777587] hover:text-[#082b3d]'}`;
+  `flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border-b-2 -mb-px whitespace-nowrap ${on ? 'border-brand text-brand' : 'border-transparent text-ink-muted hover:text-ink'}`;
 
-export const th = 'px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-[#464555]';
+export const th = 'px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-ink-soft';
 export const td = 'px-3 py-2 align-top';

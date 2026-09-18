@@ -73,16 +73,16 @@ export const InventoryView: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">inventory_2</span>
             <span>Fixed Assets & Central Warehouse (INV-001..012)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">
             Campus Asset Registry & QR Depreciation Tracking
           </h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <p className="text-xs text-ink-soft mt-1">
             Total Capitalized Asset Value: ₹4.85 Cr • Straight-Line Depreciation • Automated Stock Alerts
           </p>
         </div>
@@ -90,7 +90,7 @@ export const InventoryView: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-[#082b3d] text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 transition-colors"
+            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-ink text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 transition-colors"
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Export CSV</span>
@@ -104,7 +104,7 @@ export const InventoryView: React.FC = () => {
           </button>
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 bg-[#0e5d84] hover:bg-[#083a4f] text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-xs transition-colors"
+            className="flex items-center gap-1.5 bg-brand hover:bg-brand-strong text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-xs transition-colors"
           >
             <span className="material-symbols-outlined text-sm">add</span>
             <span>Add Asset</span>
@@ -113,14 +113,14 @@ export const InventoryView: React.FC = () => {
       </div>
 
       {/* Asset Register Table */}
-      <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-        <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex items-center justify-between">
-          <span className="text-xs font-bold text-[#082b3d]">High-Value Scientific & Academic Equipment</span>
-          <span className="text-xs font-mono text-[#0e5d84]">100% Barcoded & RFID Tagged</span>
+      <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+        <div className="p-4 bg-subtle border-b border-line flex items-center justify-between">
+          <span className="text-xs font-bold text-ink">High-Value Scientific & Academic Equipment</span>
+          <span className="text-xs font-mono text-brand">100% Barcoded & RFID Tagged</span>
         </div>
 
         <table className="w-full text-xs text-left">
-          <thead className="bg-[#f0f7fb]/60 text-[#464555] font-semibold border-b border-[#cbe0ec]">
+          <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
             <tr>
               <th className="p-3">SKU & Code</th>
               <th className="p-3">Asset Description</th>
@@ -130,22 +130,22 @@ export const InventoryView: React.FC = () => {
               <th className="p-3 text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f0f7fb]">
+          <tbody className="divide-y divide-subtle">
             {assets.map(a => (
-              <tr key={a.sku} className="hover:bg-[#f8f9ff]">
-                <td className="p-3 font-mono font-bold text-[#0e5d84]">{a.sku}</td>
-                <td className="p-3 font-bold text-[#082b3d]">{a.name}</td>
-                <td className="p-3 text-[#464555]">{a.category}</td>
+              <tr key={a.sku} className="hover:bg-wash">
+                <td className="p-3 font-mono font-bold text-brand">{a.sku}</td>
+                <td className="p-3 font-bold text-ink">{a.name}</td>
+                <td className="p-3 text-ink-soft">{a.category}</td>
                 <td className="p-3">
                   <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">
                     {a.stock} units
                   </span>
                 </td>
-                <td className="p-3 font-mono font-bold text-[#082b3d]">{a.value}</td>
+                <td className="p-3 font-mono font-bold text-ink">{a.value}</td>
                 <td className="p-3 text-right">
                   <button
                     onClick={() => setShowQrModal(a)}
-                    className="text-[#0e5d84] font-semibold hover:underline flex items-center gap-1 ml-auto"
+                    className="text-brand font-semibold hover:underline flex items-center gap-1 ml-auto"
                   >
                     <span className="material-symbols-outlined text-xs">qr_code</span>
                     <span>Print Tag</span>
@@ -159,12 +159,12 @@ export const InventoryView: React.FC = () => {
 
       {/* MODAL 1: Add New Asset */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">inventory_2</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Register Capitalized Asset (INV-001)</h3>
+                <span className="material-symbols-outlined text-brand">inventory_2</span>
+                <h3 className="font-bold text-ink text-sm">Register Capitalized Asset (INV-001)</h3>
               </div>
               <button
                 onClick={() => setShowAddModal(false)}
@@ -182,7 +182,7 @@ export const InventoryView: React.FC = () => {
                   value={newName}
                   onChange={e => setNewName(e.target.value)}
                   placeholder="e.g., Olympus CX21i Binocular Microscope"
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-[#0e5d84]"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
                 />
               </div>
 
@@ -192,7 +192,7 @@ export const InventoryView: React.FC = () => {
                   <select
                     value={newCategory}
                     onChange={e => setNewCategory(e.target.value)}
-                    className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
+                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
                   >
                     <option value="Physics Lab">Physics Lab</option>
                     <option value="Chemistry Lab">Chemistry Lab</option>
@@ -209,7 +209,7 @@ export const InventoryView: React.FC = () => {
                     value={newSku}
                     onChange={e => setNewSku(e.target.value)}
                     placeholder="Auto-generated if blank"
-                    className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
+                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
                   />
                 </div>
               </div>
@@ -221,7 +221,7 @@ export const InventoryView: React.FC = () => {
                     type="number"
                     value={newStock}
                     onChange={e => setNewStock(e.target.value)}
-                    className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
+                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
                   />
                 </div>
                 <div>
@@ -231,7 +231,7 @@ export const InventoryView: React.FC = () => {
                     value={newValue}
                     onChange={e => setNewValue(e.target.value)}
                     placeholder="50,000"
-                    className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
+                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
                   />
                 </div>
               </div>
@@ -246,7 +246,7 @@ export const InventoryView: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white font-bold rounded-xl text-xs shadow-xs"
+                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
                 >
                   Register Asset
                 </button>
@@ -258,12 +258,12 @@ export const InventoryView: React.FC = () => {
 
       {/* MODAL 2: QR Tag Label Preview */}
       {showQrModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-sm p-6 space-y-4 text-xs text-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4 text-xs text-center ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3 text-left">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">qr_code_2</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Asset Barcode & QR Label</h3>
+                <span className="material-symbols-outlined text-brand">qr_code_2</span>
+                <h3 className="font-bold text-ink text-sm">Asset Barcode & QR Label</h3>
               </div>
               <button
                 onClick={() => setShowQrModal(null)}
@@ -286,7 +286,7 @@ export const InventoryView: React.FC = () => {
                   className="w-32 h-32 border border-slate-200 p-1 bg-white rounded-lg shadow-xs"
                 />
               </div>
-              <div className="font-mono font-bold text-sm text-[#082b3d]">{showQrModal.sku}</div>
+              <div className="font-mono font-bold text-sm text-ink">{showQrModal.sku}</div>
               <div className="font-bold text-xs text-slate-800">{showQrModal.name}</div>
               <div className="text-[11px] text-slate-500">{showQrModal.category} • Value: {showQrModal.value}</div>
             </div>
@@ -297,7 +297,7 @@ export const InventoryView: React.FC = () => {
                   window.print();
                   addToast(`Dispatched print job for QR Label ${showQrModal.sku}`, 'success');
                 }}
-                className="px-4 py-2 bg-[#0e5d84] hover:bg-[#083a4f] text-white font-bold rounded-xl text-xs shadow-xs flex items-center gap-1.5"
+                className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs flex items-center gap-1.5"
               >
                 <span className="material-symbols-outlined text-sm">print</span>
                 <span>Print QR Sticker</span>
@@ -309,12 +309,12 @@ export const InventoryView: React.FC = () => {
 
       {/* MODAL 3: Audit Asset QR Tags */}
       {showAuditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-amber-600">qr_code_scanner</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Bi-Annual Asset Physical Audit</h3>
+                <h3 className="font-bold text-ink text-sm">Bi-Annual Asset Physical Audit</h3>
               </div>
               <button
                 onClick={() => setShowAuditModal(false)}
@@ -357,7 +357,7 @@ export const InventoryView: React.FC = () => {
                   setShowAuditModal(false);
                   addToast('Signed off physical asset verification ledger with digital auditor key', 'success');
                 }}
-                className="px-4 py-2 bg-[#0e5d84] hover:bg-[#083a4f] text-white font-bold rounded-xl text-xs shadow-xs"
+                className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
               >
                 Sign-Off Audit Roster
               </button>

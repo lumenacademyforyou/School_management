@@ -191,14 +191,14 @@ export const HRPayrollView: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">groups</span>
             <span>Faculty Workforce & Statutory Payroll</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">
             7th Central Pay Commission (CPC) Payroll Command
           </h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <p className="text-xs text-ink-soft mt-1">
             184 Academic & Operations Staff • EPFO Electronic Challan Return (ECR) • Form 16 TDS Auto-Calculator
           </p>
         </div>
@@ -206,7 +206,7 @@ export const HRPayrollView: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowAddStaffModal(true)}
-            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-[#082b3d] text-xs font-semibold px-3 py-2 rounded-xl transition-colors"
+            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-ink text-xs font-semibold px-3 py-2 rounded-xl transition-colors"
           >
             <span className="material-symbols-outlined text-sm">person_add</span>
             <span>Add Employee</span>
@@ -214,7 +214,7 @@ export const HRPayrollView: React.FC = () => {
 
           <button
             onClick={handleExportEPFChallan}
-            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-[#082b3d] text-xs font-semibold px-3 py-2 rounded-xl transition-colors"
+            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-ink text-xs font-semibold px-3 py-2 rounded-xl transition-colors"
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Export EPFO / ESI Challan</span>
@@ -222,7 +222,7 @@ export const HRPayrollView: React.FC = () => {
 
           <button
             onClick={() => setShowDisbursalModal(true)}
-            className="flex items-center gap-1.5 bg-[#0e5d84] hover:bg-[#083a4f] text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-xs transition-colors"
+            className="flex items-center gap-1.5 bg-brand hover:bg-brand-strong text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-xs transition-colors"
           >
             <span className="material-symbols-outlined text-sm">payments</span>
             <span>Run Monthly Disbursal</span>
@@ -232,37 +232,37 @@ export const HRPayrollView: React.FC = () => {
 
       {/* Wage Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[10px] uppercase font-bold text-[#777587]">Monthly Gross Wage Bill</div>
-          <div className="text-2xl font-bold font-display text-[#082b3d] mt-0.5">₹88.4 Lakh</div>
-          <div className="text-[11px] text-[#464555]">{staff.length} displayed (184 total on roll)</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[10px] uppercase font-bold text-ink-muted">Monthly Gross Wage Bill</div>
+          <div className="text-2xl font-bold font-display text-ink mt-0.5">₹88.4 Lakh</div>
+          <div className="text-[11px] text-ink-soft">{staff.length} displayed (184 total on roll)</div>
         </div>
         <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-200 shadow-xs">
           <div className="text-[10px] uppercase font-bold text-emerald-800">Statutory EPF Transfer</div>
           <div className="text-2xl font-bold font-display text-emerald-900 mt-0.5">₹10.60 Lakh</div>
           <div className="text-[11px] text-emerald-700 font-semibold">12% Employee + Employer</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[10px] uppercase font-bold text-[#777587]">TDS Section 192 Deducted</div>
-          <div className="text-2xl font-bold font-display text-[#0e5d84] mt-0.5">₹7.20 Lakh</div>
-          <div className="text-[11px] text-[#464555]">TRACES 24Q Form Gen</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[10px] uppercase font-bold text-ink-muted">TDS Section 192 Deducted</div>
+          <div className="text-2xl font-bold font-display text-brand mt-0.5">₹7.20 Lakh</div>
+          <div className="text-[11px] text-ink-soft">TRACES 24Q Form Gen</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[10px] uppercase font-bold text-[#777587]">Staff In-Campus Today</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[10px] uppercase font-bold text-ink-muted">Staff In-Campus Today</div>
           <div className="text-2xl font-bold font-display text-emerald-700 mt-0.5">178 / 184</div>
           <div className="text-[11px] text-emerald-700 font-semibold">96.7% Biometric Present</div>
         </div>
       </div>
 
       {/* Staff Directory Table */}
-      <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-        <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex items-center justify-between">
-          <span className="text-xs font-bold text-[#082b3d]">Staff Payroll Register (7th CPC Scale)</span>
-          <span className="text-xs font-mono text-[#0e5d84]">Bank Disbursal: 1st of Month</span>
+      <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+        <div className="p-4 bg-subtle border-b border-line flex items-center justify-between">
+          <span className="text-xs font-bold text-ink">Staff Payroll Register (7th CPC Scale)</span>
+          <span className="text-xs font-mono text-brand">Bank Disbursal: 1st of Month</span>
         </div>
 
         <table className="w-full text-xs text-left">
-          <thead className="bg-[#f0f7fb]/60 text-[#464555] font-semibold border-b border-[#cbe0ec]">
+          <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
             <tr>
               <th className="p-3">Staff Member & Designation</th>
               <th className="p-3">7th CPC Pay Scale</th>
@@ -272,19 +272,19 @@ export const HRPayrollView: React.FC = () => {
               <th className="p-3 text-right">Payslip</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f0f7fb]">
+          <tbody className="divide-y divide-subtle">
             {staff.map(s => (
-              <tr key={s.id} className="hover:bg-[#f8f9ff] transition-colors">
-                <td className="p-3 font-bold text-[#082b3d]">
+              <tr key={s.id} className="hover:bg-wash transition-colors">
+                <td className="p-3 font-bold text-ink">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-[11px] text-[#0e5d84]">{s.id}</span>
+                    <span className="font-mono text-[11px] text-brand">{s.id}</span>
                     <span>{s.name}</span>
                   </div>
-                  <div className="text-[10px] text-[#777587] font-normal">{s.role}</div>
+                  <div className="text-[10px] text-ink-muted font-normal">{s.role}</div>
                 </td>
-                <td className="p-3 font-mono font-bold text-[#0e5d84]">{s.level}</td>
-                <td className="p-3 font-mono text-[#082b3d]">₹{(s.basic + s.da).toLocaleString()}</td>
-                <td className="p-3 font-mono text-[#464555]">₹{s.epf.toLocaleString()}</td>
+                <td className="p-3 font-mono font-bold text-brand">{s.level}</td>
+                <td className="p-3 font-mono text-ink">₹{(s.basic + s.da).toLocaleString()}</td>
+                <td className="p-3 font-mono text-ink-soft">₹{s.epf.toLocaleString()}</td>
                 <td className="p-3">
                   <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">
                     {s.status}
@@ -293,7 +293,7 @@ export const HRPayrollView: React.FC = () => {
                 <td className="p-3 text-right">
                   <button
                     onClick={() => setSelectedStaffPayslip(s)}
-                    className="text-[#0e5d84] font-semibold hover:underline bg-[#f0f7fb] px-2.5 py-1 rounded-lg"
+                    className="text-brand font-semibold hover:underline bg-subtle px-2.5 py-1 rounded-lg"
                   >
                     View Payslip
                   </button>
@@ -306,31 +306,31 @@ export const HRPayrollView: React.FC = () => {
 
       {/* Modal: View Payslip */}
       {selectedStaffPayslip && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#cbe0ec] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
+            <div className="flex items-center justify-between border-b border-subtle pb-3">
               <div>
-                <span className="text-[10px] font-mono text-[#0e5d84] font-bold">LUMENACADEMY · SALARY SLIP</span>
-                <h3 className="font-bold text-base text-[#082b3d]">{selectedStaffPayslip.name}</h3>
-                <span className="text-xs text-[#777587]">{selectedStaffPayslip.role} • {selectedStaffPayslip.id}</span>
+                <span className="text-[10px] font-mono text-brand font-bold">LUMENACADEMY · SALARY SLIP</span>
+                <h3 className="font-bold text-base text-ink">{selectedStaffPayslip.name}</h3>
+                <span className="text-xs text-ink-muted">{selectedStaffPayslip.role} • {selectedStaffPayslip.id}</span>
               </div>
-              <button onClick={() => setSelectedStaffPayslip(null)} className="text-[#777587] hover:text-[#082b3d]">
+              <button onClick={() => setSelectedStaffPayslip(null)} className="text-ink-muted hover:text-ink">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs bg-[#f8f9ff] p-3 rounded-xl border border-[#cbe0ec]">
+            <div className="grid grid-cols-2 gap-3 text-xs bg-wash p-3 rounded-xl border border-line">
               <div>
-                <span className="text-[#777587] block text-[10px]">PAN Number</span>
-                <span className="font-mono font-bold text-[#082b3d]">{selectedStaffPayslip.pan}</span>
+                <span className="text-ink-muted block text-[10px]">PAN Number</span>
+                <span className="font-mono font-bold text-ink">{selectedStaffPayslip.pan}</span>
               </div>
               <div>
-                <span className="text-[#777587] block text-[10px]">EPFO UAN</span>
-                <span className="font-mono font-bold text-[#082b3d]">{selectedStaffPayslip.uan}</span>
+                <span className="text-ink-muted block text-[10px]">EPFO UAN</span>
+                <span className="font-mono font-bold text-ink">{selectedStaffPayslip.uan}</span>
               </div>
               <div className="col-span-2">
-                <span className="text-[#777587] block text-[10px]">Bank Account</span>
-                <span className="font-mono font-semibold text-[#082b3d]">{selectedStaffPayslip.bankAccount}</span>
+                <span className="text-ink-muted block text-[10px]">Bank Account</span>
+                <span className="font-mono font-semibold text-ink">{selectedStaffPayslip.bankAccount}</span>
               </div>
             </div>
 
@@ -365,12 +365,12 @@ export const HRPayrollView: React.FC = () => {
             </div>
 
             {/* Net Pay */}
-            <div className="p-3.5 bg-[#f0f7fb] rounded-xl border border-[#cbe0ec] flex items-center justify-between text-xs">
+            <div className="p-3.5 bg-subtle rounded-xl border border-line flex items-center justify-between text-xs">
               <div>
-                <span className="text-[#0e5d84] font-bold text-sm block">Net Take-Home Salary</span>
-                <span className="text-[11px] text-[#464555]">Direct NEFT Credit to Bank</span>
+                <span className="text-brand font-bold text-sm block">Net Take-Home Salary</span>
+                <span className="text-[11px] text-ink-soft">Direct NEFT Credit to Bank</span>
               </div>
-              <div className="text-xl font-bold font-mono text-[#0e5d84]">
+              <div className="text-xl font-bold font-mono text-brand">
                 ₹{(
                   selectedStaffPayslip.basic +
                   selectedStaffPayslip.da +
@@ -381,11 +381,11 @@ export const HRPayrollView: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2 border-t border-[#f0f7fb]">
+            <div className="flex justify-end gap-2 pt-2 border-t border-subtle">
               <button
                 type="button"
                 onClick={() => setSelectedStaffPayslip(null)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl font-semibold text-xs"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold text-xs"
               >
                 Close
               </button>
@@ -402,7 +402,7 @@ export const HRPayrollView: React.FC = () => {
                   document.body.removeChild(link);
                   addToast(`Downloaded PDF Payslip for ${selectedStaffPayslip.name}`, 'success');
                 }}
-                className="px-5 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl font-bold text-xs flex items-center gap-1.5"
+                className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold text-xs flex items-center gap-1.5"
               >
                 <span className="material-symbols-outlined text-sm">download</span>
                 <span>Download Payslip</span>
@@ -414,14 +414,14 @@ export const HRPayrollView: React.FC = () => {
 
       {/* Modal: Run Monthly Disbursal */}
       {showDisbursalModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#cbe0ec] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
+            <div className="flex items-center justify-between border-b border-subtle pb-3">
               <div>
-                <h3 className="font-bold text-base text-[#082b3d]">Run Monthly Payroll Disbursal</h3>
-                <span className="text-xs text-[#777587]">HDFC Corporate Banking NACH Portal</span>
+                <h3 className="font-bold text-base text-ink">Run Monthly Payroll Disbursal</h3>
+                <span className="text-xs text-ink-muted">HDFC Corporate Banking NACH Portal</span>
               </div>
-              <button onClick={() => setShowDisbursalModal(false)} className="text-[#777587] hover:text-[#082b3d]">
+              <button onClick={() => setShowDisbursalModal(false)} className="text-ink-muted hover:text-ink">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -435,15 +435,15 @@ export const HRPayrollView: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Corporate Debit Account</label>
-                <select className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]">
+                <label className="block font-bold text-ink-soft mb-1">Corporate Debit Account</label>
+                <select className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink">
                   <option>HDFC Bank Corporate Current A/c - 50200019284 (Balance: ₹1.45 Cr)</option>
                   <option>State Bank of India Treasury A/c - 30192847291 (Balance: ₹85 Lakh)</option>
                 </select>
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Disbursal Mode</label>
+                <label className="block font-bold text-ink-soft mb-1">Disbursal Mode</label>
                 <div className="space-y-1.5 text-xs">
                   <label className="flex items-center gap-2">
                     <input type="radio" name="mode" defaultChecked />
@@ -456,11 +456,11 @@ export const HRPayrollView: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#f0f7fb]">
+              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
                 <button
                   type="button"
                   onClick={() => setShowDisbursalModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl font-semibold"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
                 >
                   Cancel
                 </button>
@@ -478,46 +478,46 @@ export const HRPayrollView: React.FC = () => {
 
       {/* Modal: Add Employee */}
       {showAddStaffModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#cbe0ec] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
+            <div className="flex items-center justify-between border-b border-subtle pb-3">
               <div>
-                <h3 className="font-bold text-base text-[#082b3d]">Add Employee to Payroll</h3>
-                <span className="text-xs text-[#777587]">7th CPC Grade Allotment</span>
+                <h3 className="font-bold text-base text-ink">Add Employee to Payroll</h3>
+                <span className="text-xs text-ink-muted">7th CPC Grade Allotment</span>
               </div>
-              <button onClick={() => setShowAddStaffModal(false)} className="text-[#777587] hover:text-[#082b3d]">
+              <button onClick={() => setShowAddStaffModal(false)} className="text-ink-muted hover:text-ink">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <form onSubmit={handleAddStaff} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Employee Full Name</label>
+                <label className="block font-bold text-ink-soft mb-1">Employee Full Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Dr. Preeti Sharma"
                   value={newStaff.name}
                   onChange={e => setNewStaff({ ...newStaff, name: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   required
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Designation / Role</label>
+                <label className="block font-bold text-ink-soft mb-1">Designation / Role</label>
                 <input
                   type="text"
                   placeholder="e.g. TGT Social Sciences"
                   value={newStaff.role}
                   onChange={e => setNewStaff({ ...newStaff, role: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-[#464555] mb-1">7th CPC Pay Scale</label>
+                  <label className="block font-bold text-ink-soft mb-1">7th CPC Pay Scale</label>
                   <select
                     value={newStaff.level}
                     onChange={e => {
@@ -529,7 +529,7 @@ export const HRPayrollView: React.FC = () => {
                       else if (level.includes('Level 4')) basic = 25500;
                       setNewStaff({ ...newStaff, level, basic });
                     }}
-                    className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2 text-xs text-[#082b3d]"
+                    className="w-full bg-wash border border-line rounded-xl p-2 text-xs text-ink"
                   >
                     <option value="Level 13A (₹1,31,400)">Level 13A (₹1,31,400)</option>
                     <option value="Level 12 (₹78,800)">Level 12 (₹78,800)</option>
@@ -539,39 +539,39 @@ export const HRPayrollView: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-bold text-[#464555] mb-1">PAN Card</label>
+                  <label className="block font-bold text-ink-soft mb-1">PAN Card</label>
                   <input
                     type="text"
                     placeholder="e.g. ABCPS1234D"
                     value={newStaff.pan}
                     onChange={e => setNewStaff({ ...newStaff, pan: e.target.value })}
-                    className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Bank Name & A/c Number</label>
+                <label className="block font-bold text-ink-soft mb-1">Bank Name & A/c Number</label>
                 <input
                   type="text"
                   placeholder="e.g. HDFC Bank - 50100291823"
                   value={newStaff.bankAccount}
                   onChange={e => setNewStaff({ ...newStaff, bankAccount: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#f0f7fb]">
+              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
                 <button
                   type="button"
                   onClick={() => setShowAddStaffModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl font-semibold"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl font-bold"
+                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
                 >
                   Enroll in Payroll
                 </button>

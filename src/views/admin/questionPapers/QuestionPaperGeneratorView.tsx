@@ -71,14 +71,14 @@ export const QuestionPaperGeneratorView: React.FC<{ initialTab?: Tab }> = ({ ini
         <PaperWizard key={open.paper.id || 'new'} initial={open.paper} initialStep={open.step} onExit={() => setOpen(null)} />
       ) : (
         <>
-          <div className="flex gap-1 border-b border-[#e0ecf4] overflow-x-auto" role="tablist" aria-label="Question paper views">
+          <div className="flex gap-1 border-b border-line-soft overflow-x-auto" role="tablist" aria-label="Question paper views">
             {TABS.map(t => (
               <button
                 key={t.id}
                 role="tab"
                 aria-selected={tab === t.id}
                 onClick={() => setTab(t.id)}
-                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border-b-2 -mb-px whitespace-nowrap ${tab === t.id ? 'border-[#0e5d84] text-[#0e5d84]' : 'border-transparent text-[#777587] hover:text-[#082b3d]'}`}
+                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border-b-2 -mb-px whitespace-nowrap ${tab === t.id ? 'border-brand text-brand' : 'border-transparent text-ink-muted hover:text-ink'}`}
               >
                 <Icon name={t.icon} className="text-base" />
                 {t.label}
@@ -142,12 +142,12 @@ const Dashboard: React.FC<{ onOpen: (p: QuestionPaper) => void; onCreate: () => 
           ) : attention.length === 0 ? (
             <EmptyState icon="task_alt" title="Nothing waiting." text={reviewer ? 'No paper is waiting for review.' : 'No drafts or sent-back papers.'} />
           ) : (
-            <ul className="divide-y divide-[#f0f7fb]">
+            <ul className="divide-y divide-subtle">
               {attention.map(p => (
                 <li key={p.id} className="p-3 flex items-center gap-2">
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-[#082b3d] truncate">{p.title}</p>
-                    <p className="text-[10px] text-[#777587]">
+                    <p className="text-xs font-semibold text-ink truncate">{p.title}</p>
+                    <p className="text-[10px] text-ink-muted">
                       {p.id} · exam {fmtDate(p.details.examDate)}
                     </p>
                   </div>
@@ -161,7 +161,7 @@ const Dashboard: React.FC<{ onOpen: (p: QuestionPaper) => void; onCreate: () => 
           )}
         </Panel>
 
-        <Panel title="Recent papers" className="xl:col-span-2" actions={<button onClick={onArchive} className="text-xs font-semibold text-[#0e5d84]">View archive →</button>}>
+        <Panel title="Recent papers" className="xl:col-span-2" actions={<button onClick={onArchive} className="text-xs font-semibold text-brand">View archive →</button>}>
           {load === 'loading' ? (
             <LoadingRows rows={5} />
           ) : recent.length === 0 ? (
@@ -192,7 +192,7 @@ const PaperTable: React.FC<{ papers: QuestionPaper[]; onOpen: (p: QuestionPaper)
     <>
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-xs">
-          <thead className="bg-slate-50 text-[#464555]">
+          <thead className="bg-slate-50 text-ink-soft">
             <tr>
               {['Paper ID', 'Exam', 'Class', 'Subject', 'Created by', 'Date', 'Status', 'Actions'].map(h => (
                 <th key={h} className="p-2.5 text-left font-semibold whitespace-nowrap">
@@ -201,15 +201,15 @@ const PaperTable: React.FC<{ papers: QuestionPaper[]; onOpen: (p: QuestionPaper)
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f0f7fb]">
+          <tbody className="divide-y divide-subtle">
             {papers.map(p => {
               const c = paperCounts(p);
               return (
-                <tr key={p.id} className="hover:bg-[#f8f9ff]" data-paper={p.id}>
-                  <td className="p-2.5 font-mono text-[11px] text-[#0e5d84] whitespace-nowrap">{p.id}</td>
+                <tr key={p.id} className="hover:bg-wash" data-paper={p.id}>
+                  <td className="p-2.5 font-mono text-[11px] text-brand whitespace-nowrap">{p.id}</td>
                   <td className="p-2.5">
                     <span className="block font-semibold">{p.details.exam}</span>
-                    <span className="block text-[10px] text-[#777587]">
+                    <span className="block text-[10px] text-ink-muted">
                       {p.details.academicYear} · {c.questions} q · {c.marks} marks
                     </span>
                   </td>
@@ -240,15 +240,15 @@ const PaperTable: React.FC<{ papers: QuestionPaper[]; onOpen: (p: QuestionPaper)
           </tbody>
         </table>
       </div>
-      <ul className="md:hidden divide-y divide-[#f0f7fb]">
+      <ul className="md:hidden divide-y divide-subtle">
         {papers.map(p => (
           <li key={p.id} className="p-3 space-y-1">
             <div className="flex items-center justify-between gap-2">
-              <span className="font-mono text-[11px] text-[#0e5d84]">{p.id}</span>
+              <span className="font-mono text-[11px] text-brand">{p.id}</span>
               <PaperStatusBadge status={p.status} />
             </div>
             <p className="text-xs font-semibold">{paperTitle(p.details)}</p>
-            <p className="text-[10px] text-[#777587]">
+            <p className="text-[10px] text-ink-muted">
               {p.createdBy} · {fmtDate(p.details.examDate)}
             </p>
             <button onClick={() => onOpen(p)} className={btnSoft}>
@@ -297,8 +297,8 @@ const Archive: React.FC<{ onOpen: (p: QuestionPaper) => void; onDuplicate: (p: Q
   }, [papers, f]);
 
   return (
-    <Panel title="Question Paper Archive" actions={<span className="text-xs text-[#464555]" aria-live="polite">{rows.length} paper(s)</span>}>
-      <div className="p-3 border-b border-[#f0f7fb] grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-2">
+    <Panel title="Question Paper Archive" actions={<span className="text-xs text-ink-soft" aria-live="polite">{rows.length} paper(s)</span>}>
+      <div className="p-3 border-b border-subtle grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-2">
         <input value={f.query} onChange={e => set({ query: e.target.value })} placeholder="Search ID, title or author" className={`${inputCls} col-span-2`} aria-label="Search archive" />
         <select value={f.year} onChange={e => set({ year: e.target.value })} className={inputCls} aria-label="Archive academic year">
           <option value="All">All years</option>

@@ -228,18 +228,18 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded text-[11px] font-mono font-bold bg-teal-50 text-teal-800 border border-teal-200">
               NTS · Module 37 · Layer 6 (People)
             </span>
-            <span className="text-xs text-[#777587]">30 Master Features</span>
+            <span className="text-xs text-ink-muted">30 Master Features</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#082b3d] mt-1">
+          <h1 className="text-xl md:text-2xl font-bold text-ink mt-1">
             Non-Teaching Staff & Support Operations
           </h1>
-          <p className="text-xs md:text-sm text-[#464555]">
+          <p className="text-xs md:text-sm text-ink-soft">
             Campus security, bus drivers, housekeeping, lab attendants, shift rosters, work order dispatch, and POCSO police verifications.
           </p>
         </div>
@@ -247,14 +247,14 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handlePublishDutyRoster}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">event_available</span>
             <span>Publish Roster</span>
           </button>
           <button
             onClick={() => setShowWorkOrderModal(true)}
-            className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+            className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">add_task</span>
             <span>New Work Order</span>
@@ -264,37 +264,37 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
 
       {/* KPI Stats Bar */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Total Support Staff (NTS-001)</div>
-          <div className="text-xl font-bold font-mono text-[#082b3d] mt-1">64 Personnel</div>
-          <div className="text-[11px] text-[#777587] mt-0.5">38 Direct • 26 Contracted</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Total Support Staff (NTS-001)</div>
+          <div className="text-xl font-bold font-mono text-ink mt-1">64 Personnel</div>
+          <div className="text-[11px] text-ink-muted mt-0.5">38 Direct • 26 Contracted</div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Shift Coverage Today (NTS-014)</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Shift Coverage Today (NTS-014)</div>
           <div className="text-xl font-bold font-mono text-emerald-700 mt-1">98.4% Present</div>
           <div className="text-[11px] text-emerald-600 mt-0.5">Zero unstaffed campus posts</div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Police Verification (NTS-007)</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Police Verification (NTS-007)</div>
           <div className="text-xl font-bold font-mono text-emerald-700 mt-1">100% Cleared</div>
-          <div className="text-[11px] text-[#777587] mt-0.5">Mandatory POCSO Act protocol</div>
+          <div className="text-[11px] text-ink-muted mt-0.5">Mandatory POCSO Act protocol</div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Work Order Completion (NTS-020)</div>
-          <div className="text-xl font-bold font-mono text-[#0e5d84] mt-1">94.8% SLA</div>
-          <div className="text-[11px] text-[#777587] mt-0.5">Avg turnaround: 2.1 hours</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Work Order Completion (NTS-020)</div>
+          <div className="text-xl font-bold font-mono text-brand mt-1">94.8% SLA</div>
+          <div className="text-[11px] text-ink-muted mt-0.5">Avg turnaround: 2.1 hours</div>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-[#e0ecf4] pb-2">
+      <div className="flex flex-wrap items-center gap-2 border-b border-line-soft pb-2">
         <button
           onClick={() => setActiveTab('staff-roster')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'staff-roster' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'staff-roster' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">badge</span>
@@ -303,7 +303,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
         <button
           onClick={() => setActiveTab('duty-shifts')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'duty-shifts' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'duty-shifts' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">schedule</span>
@@ -312,7 +312,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
         <button
           onClick={() => setActiveTab('work-orders')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'work-orders' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'work-orders' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">assignment</span>
@@ -321,7 +321,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
         <button
           onClick={() => setActiveTab('statutory-compliance')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'statutory-compliance' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'statutory-compliance' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">verified_user</span>
@@ -331,15 +331,15 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
 
       {/* Tab 1: Staff Directory & Categories */}
       {activeTab === 'staff-roster' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-          <div className="p-4 border-b border-[#e0ecf4] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-line-soft flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2">
               {['all', 'Campus Security', 'Fleet & Transport', 'Housekeeping & Sanitation', 'Lab & IT Support', 'Hostel Wardens'].map(cat => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
-                    selectedCategory === cat ? 'bg-[#0e5d84] text-white' : 'bg-slate-100 text-[#464555] hover:bg-slate-200'
+                    selectedCategory === cat ? 'bg-brand text-white' : 'bg-slate-100 text-ink-soft hover:bg-slate-200'
                   }`}
                 >
                   {cat === 'all' ? 'All Roles' : cat}
@@ -348,13 +348,13 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
             </div>
 
             <div className="relative w-full sm:w-64">
-              <span className="material-symbols-outlined absolute left-3 top-2.5 text-sm text-[#777587]">search</span>
+              <span className="material-symbols-outlined absolute left-3 top-2.5 text-sm text-ink-muted">search</span>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search staff..."
-                className="w-full bg-[#f8f9ff] border border-[#e0ecf4] rounded-xl pl-9 pr-3 py-1.5 text-xs text-[#082b3d] focus:outline-hidden focus:border-[#0e5d84]"
+                className="w-full bg-wash border border-line-soft rounded-xl pl-9 pr-3 py-1.5 text-xs text-ink focus:outline-hidden focus:border-brand"
               />
             </div>
           </div>
@@ -362,7 +362,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-[#464555] border-b border-[#e0ecf4] text-[11px] uppercase tracking-wider font-semibold">
+                <tr className="bg-slate-50 text-ink-soft border-b border-line-soft text-[11px] uppercase tracking-wider font-semibold">
                   <th className="py-3 px-4">Staff Member</th>
                   <th className="py-3 px-4">Department & Payroll</th>
                   <th className="py-3 px-4">Current Shift</th>
@@ -372,24 +372,24 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f1f5f9]">
+              <tbody className="divide-y divide-line-soft">
                 {filteredStaff.map(staff => (
-                  <tr key={staff.id} className="hover:bg-[#f8faff] transition-colors">
+                  <tr key={staff.id} className="hover:bg-wash transition-colors">
                     <td className="py-3 px-4">
-                      <div className="font-bold text-[#082b3d]">{staff.name}</div>
-                      <div className="text-[10px] text-[#777587] font-mono">{staff.code}</div>
+                      <div className="font-bold text-ink">{staff.name}</div>
+                      <div className="text-[10px] text-ink-muted font-mono">{staff.code}</div>
                     </td>
                     <td className="py-3 px-4">
-                      <div className="font-semibold text-[#082b3d]">{staff.category}</div>
-                      <div className="text-[10px] text-[#777587]">{staff.employmentType}</div>
+                      <div className="font-semibold text-ink">{staff.category}</div>
+                      <div className="text-[10px] text-ink-muted">{staff.employmentType}</div>
                     </td>
-                    <td className="py-3 px-4 text-[#464555] font-mono text-[11px]">{staff.shift}</td>
+                    <td className="py-3 px-4 text-ink-soft font-mono text-[11px]">{staff.shift}</td>
                     <td className="py-3 px-4 text-center">
                       <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                         {staff.policeVerification}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-center font-mono font-bold text-[#082b3d]">
+                    <td className="py-3 px-4 text-center font-mono font-bold text-ink">
                       <span className="text-amber-700">{staff.workOrdersActive} active</span> • <span className="text-emerald-700">{staff.workOrdersCompleted} done</span>
                     </td>
                     <td className="py-3 px-4 text-center">
@@ -406,7 +406,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
                     <td className="py-3 px-4 text-right">
                       <button
                         onClick={() => setSelectedStaffMember(staff)}
-                        className="text-xs text-[#0e5d84] font-bold hover:underline"
+                        className="text-xs text-brand font-bold hover:underline"
                       >
                         Profile & Assets →
                       </button>
@@ -421,15 +421,15 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
 
       {/* Tab 2: Shift Master & Rosters */}
       {activeTab === 'duty-shifts' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-[#e0ecf4] pb-3">
+        <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-line-soft pb-3">
             <div>
-              <h3 className="text-sm font-bold text-[#082b3d]">Campus 3-Shift Roster Structure (NTS-011)</h3>
-              <p className="text-xs text-[#777587]">24/7 campus gate security, early morning transport depot departures, and facility sanitization</p>
+              <h3 className="text-sm font-bold text-ink">Campus 3-Shift Roster Structure (NTS-011)</h3>
+              <p className="text-xs text-ink-muted">24/7 campus gate security, early morning transport depot departures, and facility sanitization</p>
             </div>
             <button
               onClick={handlePublishDutyRoster}
-              className="text-xs font-mono font-bold bg-[#f0f7fb] hover:bg-[#bae6fd] text-[#0e5d84] px-3 py-1 rounded-lg border border-[#cbe0ec] transition-colors"
+              className="text-xs font-mono font-bold bg-subtle hover:bg-lumen-200 text-brand px-3 py-1 rounded-lg border border-line transition-colors"
             >
               Export Shift Roster
             </button>
@@ -438,28 +438,28 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-sm text-[#082b3d]">Shift 1 · Morning</span>
-                <span className="font-mono text-[#0e5d84] font-bold">06:00 — 14:00</span>
+                <span className="font-bold text-sm text-ink">Shift 1 · Morning</span>
+                <span className="font-mono text-brand font-bold">06:00 — 14:00</span>
               </div>
-              <p className="text-[#777587]">Bus boarding arrival, gates 1 & 2 morning intake, main building housekeeping prep.</p>
+              <p className="text-ink-muted">Bus boarding arrival, gates 1 & 2 morning intake, main building housekeeping prep.</p>
               <div className="font-bold text-emerald-700 text-[11px] pt-1 border-t border-slate-200">24 Staff Assigned</div>
             </div>
 
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-sm text-[#082b3d]">Shift 2 · General</span>
-                <span className="font-mono text-[#0e5d84] font-bold">08:30 — 17:00</span>
+                <span className="font-bold text-sm text-ink">Shift 2 · General</span>
+                <span className="font-mono text-brand font-bold">08:30 — 17:00</span>
               </div>
-              <p className="text-[#777587]">Laboratory attendants, library circulation assistants, office messengers, canteen.</p>
+              <p className="text-ink-muted">Laboratory attendants, library circulation assistants, office messengers, canteen.</p>
               <div className="font-bold text-emerald-700 text-[11px] pt-1 border-t border-slate-200">28 Staff Assigned</div>
             </div>
 
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-sm text-[#082b3d]">Shift 3 · Night</span>
-                <span className="font-mono text-[#0e5d84] font-bold">22:00 — 06:00</span>
+                <span className="font-bold text-sm text-ink">Shift 3 · Night</span>
+                <span className="font-mono text-brand font-bold">22:00 — 06:00</span>
               </div>
-              <p className="text-[#777587]">Perimeter campus security, hostel gatekeepers, overnight maintenance & CCTV monitor.</p>
+              <p className="text-ink-muted">Perimeter campus security, hostel gatekeepers, overnight maintenance & CCTV monitor.</p>
               <div className="font-bold text-emerald-700 text-[11px] pt-1 border-t border-slate-200">12 Staff Assigned</div>
             </div>
           </div>
@@ -468,15 +468,15 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
 
       {/* Tab 3: Work Orders */}
       {activeTab === 'work-orders' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs space-y-4">
+        <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-[#082b3d]">Active Work Orders & Maintenance Log (NTS-019)</h3>
-              <p className="text-xs text-[#777587]">Dispatched tasks linked to support staff with GPS / timestamp verification</p>
+              <h3 className="text-sm font-bold text-ink">Active Work Orders & Maintenance Log (NTS-019)</h3>
+              <p className="text-xs text-ink-muted">Dispatched tasks linked to support staff with GPS / timestamp verification</p>
             </div>
             <button
               onClick={() => setShowWorkOrderModal(true)}
-              className="px-3.5 py-1.5 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white text-xs font-bold rounded-xl flex items-center gap-1 shadow-xs transition-colors"
+              className="px-3.5 py-1.5 bg-brand hover:bg-brand-strong text-white text-xs font-bold rounded-xl flex items-center gap-1 shadow-xs transition-colors"
             >
               <span className="material-symbols-outlined text-sm">add</span>
               <span>Create Work Order</span>
@@ -488,16 +488,16 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
               <div key={wo.id} className="p-4 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-[#0e5d84]">{wo.id}</span>
-                    <span className="text-xs font-bold text-[#082b3d]">{wo.title}</span>
+                    <span className="font-mono text-xs font-bold text-brand">{wo.id}</span>
+                    <span className="text-xs font-bold text-ink">{wo.title}</span>
                     <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
                       wo.priority === 'Emergency' ? 'bg-rose-100 text-rose-800' : wo.priority === 'High' ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-700'
                     }`}>
                       {wo.priority}
                     </span>
                   </div>
-                  <div className="text-xs text-[#777587] mt-1">
-                    Assignee: <span className="font-semibold text-[#082b3d]">{wo.assignee}</span> • Category: {wo.category}
+                  <div className="text-xs text-ink-muted mt-1">
+                    Assignee: <span className="font-semibold text-ink">{wo.assignee}</span> • Category: {wo.category}
                   </div>
                 </div>
 
@@ -512,7 +512,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
                   {wo.status !== 'Completed' && (
                     <button
                       onClick={() => handleCompleteWorkOrder(wo.id, wo.assignee)}
-                      className="px-2.5 py-1 bg-white hover:bg-emerald-50 text-[#082b3d] hover:text-emerald-800 border border-slate-200 rounded text-xs font-bold transition-all"
+                      className="px-2.5 py-1 bg-white hover:bg-emerald-50 text-ink hover:text-emerald-800 border border-slate-200 rounded text-xs font-bold transition-all"
                     >
                       Mark Done
                     </button>
@@ -526,11 +526,11 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
 
       {/* Tab 4: Statutory Compliance */}
       {activeTab === 'statutory-compliance' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-[#e0ecf4] pb-3">
+        <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-line-soft pb-3">
             <div>
-              <h3 className="text-sm font-bold text-[#082b3d]">Statutory Compliance & Child Protection Register (NTS-026)</h3>
-              <p className="text-xs text-[#777587]">POCSO Act 2012, mandatory background verification, and vendor SLA audit</p>
+              <h3 className="text-sm font-bold text-ink">Statutory Compliance & Child Protection Register (NTS-026)</h3>
+              <p className="text-xs text-ink-muted">POCSO Act 2012, mandatory background verification, and vendor SLA audit</p>
             </div>
             <button
               onClick={handleExportCompliance}
@@ -560,12 +560,12 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
 
       {/* MODAL 1: Create Work Order Modal */}
       {showWorkOrderModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">add_task</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Dispatch New Support Work Order</h3>
+                <span className="material-symbols-outlined text-brand">add_task</span>
+                <h3 className="font-bold text-ink text-sm">Dispatch New Support Work Order</h3>
               </div>
               <button
                 onClick={() => setShowWorkOrderModal(false)}
@@ -583,7 +583,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
                   value={woTitle}
                   onChange={e => setWoTitle(e.target.value)}
                   placeholder="e.g., Auditorium Stage Mic Line Repair"
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-[#0e5d84]"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
                 />
               </div>
 
@@ -592,7 +592,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
                 <select
                   value={woAssignee}
                   onChange={e => setWoAssignee(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
                 >
                   {staffList.map(s => (
                     <option key={s.id} value={s.name}>
@@ -608,7 +608,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
                   <select
                     value={woPriority}
                     onChange={e => setWoPriority(e.target.value as any)}
-                    className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+                    className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
                   >
                     <option value="Routine">Routine</option>
                     <option value="High">High</option>
@@ -620,7 +620,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
                   <select
                     value={woCategory}
                     onChange={e => setWoCategory(e.target.value)}
-                    className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+                    className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
                   >
                     <option value="General Maintenance">General Maintenance</option>
                     <option value="Security">Security</option>
@@ -641,7 +641,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white font-bold rounded-xl text-xs shadow-xs"
+                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
                 >
                   Dispatch Work Order
                 </button>
@@ -653,12 +653,12 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
 
       {/* MODAL 2: Staff Profile & Asset Ledger Modal */}
       {selectedStaffMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">badge</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">
+                <span className="material-symbols-outlined text-brand">badge</span>
+                <h3 className="font-bold text-ink text-sm">
                   Support Staff Profile & Assets (NTS-010)
                 </h3>
               </div>
@@ -670,10 +670,10 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
               </button>
             </div>
 
-            <div className="space-y-3 bg-[#f8f9ff] p-4 rounded-xl border border-slate-200">
+            <div className="space-y-3 bg-wash p-4 rounded-xl border border-slate-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="font-bold text-sm text-[#082b3d]">{selectedStaffMember.name}</div>
+                  <div className="font-bold text-sm text-ink">{selectedStaffMember.name}</div>
                   <div className="font-mono text-slate-500 text-[11px]">{selectedStaffMember.code} • {selectedStaffMember.category}</div>
                 </div>
                 <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
@@ -693,7 +693,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
 
             {/* Issued Institutional Assets */}
             <div className="space-y-2">
-              <div className="font-bold text-[#082b3d] flex justify-between">
+              <div className="font-bold text-ink flex justify-between">
                 <span>Issued School Equipment & Assets (NTS-022)</span>
                 <span className="text-emerald-700 font-normal">All Signed Out</span>
               </div>
@@ -719,7 +719,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
                   addToast(`Issued additional equipment asset requisition for ${selectedStaffMember.name}`, 'success');
                   setSelectedStaffMember(null);
                 }}
-                className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl font-bold flex items-center gap-1.5"
+                className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold flex items-center gap-1.5"
               >
                 <span className="material-symbols-outlined text-sm">inventory_2</span>
                 <span>Issue Additional Asset</span>

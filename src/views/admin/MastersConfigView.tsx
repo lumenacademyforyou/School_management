@@ -191,18 +191,18 @@ export const MastersConfigView: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#f0f7fb] text-[#0e5d84]">
+            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-subtle text-brand">
               MST · Module 10
             </span>
-            <span className="text-xs text-[#777587]">14 Master Features</span>
+            <span className="text-xs text-ink-muted">14 Master Features</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#082b3d] mt-1">
+          <h1 className="text-xl md:text-2xl font-bold text-ink mt-1">
             Masters & Institutional Configuration
           </h1>
-          <p className="text-xs md:text-sm text-[#464555]">
+          <p className="text-xs md:text-sm text-ink-soft">
             Class/section setups, bell timetable schedules, CBSE grading scales, dynamic numbering series, and working-day rules.
           </p>
         </div>
@@ -210,14 +210,14 @@ export const MastersConfigView: React.FC = () => {
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <button
             onClick={handleExportConfig}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Export Config JSON</span>
           </button>
           <button
             onClick={() => addToast('All institutional masters committed and synchronized with database RLS cache', 'success')}
-            className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+            className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">save</span>
             <span>Save Changes</span>
@@ -226,11 +226,11 @@ export const MastersConfigView: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-[#e0ecf4] pb-2">
+      <div className="flex flex-wrap items-center gap-2 border-b border-line-soft pb-2">
         <button
           onClick={() => setActiveTab('numbering')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'numbering' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'numbering' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">pin</span>
@@ -239,7 +239,7 @@ export const MastersConfigView: React.FC = () => {
         <button
           onClick={() => setActiveTab('bell-schedule')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'bell-schedule' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'bell-schedule' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">notifications_active</span>
@@ -248,7 +248,7 @@ export const MastersConfigView: React.FC = () => {
         <button
           onClick={() => setActiveTab('grading')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'grading' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'grading' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">grade</span>
@@ -257,7 +257,7 @@ export const MastersConfigView: React.FC = () => {
         <button
           onClick={() => setActiveTab('houses')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'houses' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'houses' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">shield</span>
@@ -267,15 +267,15 @@ export const MastersConfigView: React.FC = () => {
 
       {/* Tab 1: Numbering Series */}
       {activeTab === 'numbering' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-          <div className="p-4 border-b border-[#e0ecf4] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-line-soft flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="text-sm font-bold text-[#082b3d]">Automated Voucher & Document Series (MST-010)</h3>
-              <p className="text-xs text-[#777587]">Concurrency-Safe Atomic Sequences across multi-branch instances</p>
+              <h3 className="text-sm font-bold text-ink">Automated Voucher & Document Series (MST-010)</h3>
+              <p className="text-xs text-ink-muted">Concurrency-Safe Atomic Sequences across multi-branch instances</p>
             </div>
             <button
               onClick={() => setShowAddSeriesModal(true)}
-              className="px-3.5 py-1.5 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1 self-start sm:self-auto"
+              className="px-3.5 py-1.5 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1 self-start sm:self-auto"
             >
               <span className="material-symbols-outlined text-sm">add</span>
               <span>New Series Sequence</span>
@@ -285,7 +285,7 @@ export const MastersConfigView: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-[#464555] border-b border-[#e0ecf4] text-[11px] uppercase tracking-wider font-semibold">
+                <tr className="bg-slate-50 text-ink-soft border-b border-line-soft text-[11px] uppercase tracking-wider font-semibold">
                   <th className="py-3 px-4">Code</th>
                   <th className="py-3 px-4">Module</th>
                   <th className="py-3 px-4">Prefix</th>
@@ -295,14 +295,14 @@ export const MastersConfigView: React.FC = () => {
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f1f5f9]">
+              <tbody className="divide-y divide-line-soft">
                 {numberingSeries.map(item => (
-                  <tr key={item.code} className="hover:bg-[#f8faff] transition-colors">
-                    <td className="py-3 px-4 font-mono font-bold text-[#0e5d84]">{item.code}</td>
-                    <td className="py-3 px-4 font-semibold text-[#082b3d]">{item.module}</td>
-                    <td className="py-3 px-4 font-mono text-[#464555]">{item.prefix}</td>
+                  <tr key={item.code} className="hover:bg-wash transition-colors">
+                    <td className="py-3 px-4 font-mono font-bold text-brand">{item.code}</td>
+                    <td className="py-3 px-4 font-semibold text-ink">{item.module}</td>
+                    <td className="py-3 px-4 font-mono text-ink-soft">{item.prefix}</td>
                     <td className="py-3 px-4 font-mono text-emerald-700 font-bold">{item.format}</td>
-                    <td className="py-3 px-4 font-mono text-center font-bold text-[#082b3d]">{item.currentNumber + 1}</td>
+                    <td className="py-3 px-4 font-mono text-center font-bold text-ink">{item.currentNumber + 1}</td>
                     <td className="py-3 px-4 text-center">
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
                         {item.status}
@@ -316,7 +316,7 @@ export const MastersConfigView: React.FC = () => {
                           );
                           addToast(`Incremented sequence for ${item.module}`, 'info');
                         }}
-                        className="text-[#0e5d84] hover:underline font-bold text-xs"
+                        className="text-brand hover:underline font-bold text-xs"
                       >
                         Advance +1
                       </button>
@@ -331,15 +331,15 @@ export const MastersConfigView: React.FC = () => {
 
       {/* Tab 2: Bell Schedule */}
       {activeTab === 'bell-schedule' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-          <div className="p-4 border-b border-[#e0ecf4] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-line-soft flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="text-sm font-bold text-[#082b3d]">Daily Campus Period & Bell Timings (MST-005)</h3>
-              <p className="text-xs text-[#777587]">Configured for morning shift, assembly, breaks, and zero hour remedials</p>
+              <h3 className="text-sm font-bold text-ink">Daily Campus Period & Bell Timings (MST-005)</h3>
+              <p className="text-xs text-ink-muted">Configured for morning shift, assembly, breaks, and zero hour remedials</p>
             </div>
             <button
               onClick={() => setShowAddPeriodModal(true)}
-              className="px-3.5 py-1.5 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1 self-start sm:self-auto"
+              className="px-3.5 py-1.5 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1 self-start sm:self-auto"
             >
               <span className="material-symbols-outlined text-sm">add</span>
               <span>Add Timetable Period</span>
@@ -349,7 +349,7 @@ export const MastersConfigView: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-[#464555] border-b border-[#e0ecf4] text-[11px] uppercase tracking-wider font-semibold">
+                <tr className="bg-slate-50 text-ink-soft border-b border-line-soft text-[11px] uppercase tracking-wider font-semibold">
                   <th className="py-3 px-4">Period</th>
                   <th className="py-3 px-4">Time Interval</th>
                   <th className="py-3 px-4">Duration</th>
@@ -357,12 +357,12 @@ export const MastersConfigView: React.FC = () => {
                   <th className="py-3 px-4 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f1f5f9]">
+              <tbody className="divide-y divide-line-soft">
                 {bellPeriods.map((bp, idx) => (
-                  <tr key={idx} className="hover:bg-[#f8faff] transition-colors">
-                    <td className="py-3 px-4 font-bold text-[#082b3d]">{bp.period}</td>
-                    <td className="py-3 px-4 font-mono font-semibold text-[#0e5d84]">{bp.time}</td>
-                    <td className="py-3 px-4 text-[#464555]">{bp.duration}</td>
+                  <tr key={idx} className="hover:bg-wash transition-colors">
+                    <td className="py-3 px-4 font-bold text-ink">{bp.period}</td>
+                    <td className="py-3 px-4 font-mono font-semibold text-brand">{bp.time}</td>
+                    <td className="py-3 px-4 text-ink-soft">{bp.duration}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`text-[10px] px-2 py-0.5 rounded-md font-semibold ${
@@ -370,7 +370,7 @@ export const MastersConfigView: React.FC = () => {
                             ? 'bg-blue-50 text-blue-700'
                             : bp.type === 'Break' || bp.type === 'Lunch'
                             ? 'bg-amber-50 text-amber-700'
-                            : 'bg-[#f0f7fb] text-[#0e5d84]'
+                            : 'bg-subtle text-brand'
                         }`}
                       >
                         {bp.type}
@@ -397,15 +397,15 @@ export const MastersConfigView: React.FC = () => {
 
       {/* Tab 3: Grading Scale */}
       {activeTab === 'grading' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-          <div className="p-4 border-b border-[#e0ecf4] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-line-soft flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="text-sm font-bold text-[#082b3d]">CBSE Affiliated 9-Point Grading Scale (MST-014)</h3>
-              <p className="text-xs text-[#777587]">Standardized mapping of numerical marks to 9 letter grades and grade points</p>
+              <h3 className="text-sm font-bold text-ink">CBSE Affiliated 9-Point Grading Scale (MST-014)</h3>
+              <p className="text-xs text-ink-muted">Standardized mapping of numerical marks to 9 letter grades and grade points</p>
             </div>
             <button
               onClick={() => setShowAddGradeModal(true)}
-              className="px-3.5 py-1.5 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1 self-start sm:self-auto"
+              className="px-3.5 py-1.5 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1 self-start sm:self-auto"
             >
               <span className="material-symbols-outlined text-sm">add</span>
               <span>Add Custom Boundary</span>
@@ -415,7 +415,7 @@ export const MastersConfigView: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-[#464555] border-b border-[#e0ecf4] text-[11px] uppercase tracking-wider font-semibold">
+                <tr className="bg-slate-50 text-ink-soft border-b border-line-soft text-[11px] uppercase tracking-wider font-semibold">
                   <th className="py-3 px-4">Grade</th>
                   <th className="py-3 px-4">Marks Range (Out of 100)</th>
                   <th className="py-3 px-4 font-mono">Grade Point (GPA)</th>
@@ -423,13 +423,13 @@ export const MastersConfigView: React.FC = () => {
                   <th className="py-3 px-4 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f1f5f9]">
+              <tbody className="divide-y divide-line-soft">
                 {gradingScales.map((g, idx) => (
-                  <tr key={g.grade} className="hover:bg-[#f8faff] transition-colors">
-                    <td className="py-3 px-4 font-bold text-[#0e5d84] font-mono text-sm">{g.grade}</td>
-                    <td className="py-3 px-4 font-mono font-semibold text-[#082b3d]">{g.minMarks} — {g.maxMarks}%</td>
+                  <tr key={g.grade} className="hover:bg-wash transition-colors">
+                    <td className="py-3 px-4 font-bold text-brand font-mono text-sm">{g.grade}</td>
+                    <td className="py-3 px-4 font-mono font-semibold text-ink">{g.minMarks} — {g.maxMarks}%</td>
                     <td className="py-3 px-4 font-mono font-bold text-emerald-700">{g.gpa}</td>
-                    <td className="py-3 px-4 text-[#464555]">{g.remark}</td>
+                    <td className="py-3 px-4 text-ink-soft">{g.remark}</td>
                     <td className="py-3 px-4 text-right">
                       <button
                         onClick={() => {
@@ -451,18 +451,18 @@ export const MastersConfigView: React.FC = () => {
 
       {/* Tab 4: Houses */}
       {activeTab === 'houses' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#e0ecf4] pb-3">
+        <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line-soft pb-3">
             <div>
-              <h3 className="text-sm font-bold text-[#082b3d]">Inter-House Championship & Co-Scholastic Roster (MST-006)</h3>
-              <p className="text-xs text-[#777587]">Live scoreboards for athletics, debates, science exhibitions, and cultural trophies</p>
+              <h3 className="text-sm font-bold text-ink">Inter-House Championship & Co-Scholastic Roster (MST-006)</h3>
+              <p className="text-xs text-ink-muted">Live scoreboards for athletics, debates, science exhibitions, and cultural trophies</p>
             </div>
             <button
               onClick={() => {
                 setSelectedHouse(houses[0]);
                 setShowAwardPointsModal(true);
               }}
-              className="px-3.5 py-1.5 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1 self-start sm:self-auto"
+              className="px-3.5 py-1.5 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1 self-start sm:self-auto"
             >
               <span className="material-symbols-outlined text-sm">military_tech</span>
               <span>Award House Trophy Points</span>
@@ -485,17 +485,17 @@ export const MastersConfigView: React.FC = () => {
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#464555]">
+                    <span className="text-xs font-bold uppercase tracking-wider text-ink-soft">
                       {house.motto}
                     </span>
                     <span className="font-mono text-xs font-bold">{house.id}</span>
                   </div>
-                  <div className="font-bold text-[#082b3d] text-base mt-1">{house.name}</div>
-                  <div className="text-xs text-[#777587] mt-1">Captain: {house.captain}</div>
+                  <div className="font-bold text-ink text-base mt-1">{house.name}</div>
+                  <div className="text-xs text-ink-muted mt-1">Captain: {house.captain}</div>
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-black/10 flex items-center justify-between">
-                  <div className="text-2xl font-bold font-mono text-[#082b3d]">
+                  <div className="text-2xl font-bold font-mono text-ink">
                     {house.points.toLocaleString()} <span className="text-xs font-normal">Pts</span>
                   </div>
                   <button
@@ -503,7 +503,7 @@ export const MastersConfigView: React.FC = () => {
                       setSelectedHouse(house);
                       setShowAwardPointsModal(true);
                     }}
-                    className="px-2.5 py-1 rounded-lg text-xs font-bold bg-white text-[#082b3d] shadow-2xs hover:bg-slate-100 transition-colors"
+                    className="px-2.5 py-1 rounded-lg text-xs font-bold bg-white text-ink shadow-2xs hover:bg-slate-100 transition-colors"
                   >
                     + Points
                   </button>
@@ -516,22 +516,22 @@ export const MastersConfigView: React.FC = () => {
 
       {/* Modal: Add Numbering Series */}
       {showAddSeriesModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#cbe0ec] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-3">
-              <h3 className="font-bold text-base text-[#082b3d]">New Numbering Series (MST-010)</h3>
-              <button onClick={() => setShowAddSeriesModal(false)} className="text-[#777587] hover:text-[#082b3d]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
+            <div className="flex items-center justify-between border-b border-subtle pb-3">
+              <h3 className="font-bold text-base text-ink">New Numbering Series (MST-010)</h3>
+              <button onClick={() => setShowAddSeriesModal(false)} className="text-ink-muted hover:text-ink">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <form onSubmit={handleCreateSeries} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Target Module</label>
+                <label className="block font-bold text-ink-soft mb-1">Target Module</label>
                 <select
                   value={newSeries.module}
                   onChange={e => setNewSeries({ ...newSeries, module: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                 >
                   <option value="Admissions">Admissions (Student Enrolment)</option>
                   <option value="Fee Receipts">Fee Receipts</option>
@@ -543,50 +543,50 @@ export const MastersConfigView: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Prefix Pattern</label>
+                <label className="block font-bold text-ink-soft mb-1">Prefix Pattern</label>
                 <input
                   type="text"
                   placeholder="e.g. TC/2026/ or RCP/AY26/"
                   value={newSeries.prefix}
                   onChange={e => setNewSeries({ ...newSeries, prefix: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-[#464555] mb-1">Initial Sequence</label>
+                  <label className="block font-bold text-ink-soft mb-1">Initial Sequence</label>
                   <input
                     type="number"
                     value={newSeries.currentNumber}
                     onChange={e => setNewSeries({ ...newSeries, currentNumber: Number(e.target.value) })}
-                    className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-[#464555] mb-1">Display Mask</label>
+                  <label className="block font-bold text-ink-soft mb-1">Display Mask</label>
                   <input
                     type="text"
                     placeholder="e.g. TC/2026/XXX"
                     value={newSeries.format}
                     onChange={e => setNewSeries({ ...newSeries, format: e.target.value })}
-                    className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#f0f7fb]">
+              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
                 <button
                   type="button"
                   onClick={() => setShowAddSeriesModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl font-semibold"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl font-bold"
+                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
                 >
                   Save Sequence
                 </button>
@@ -598,56 +598,56 @@ export const MastersConfigView: React.FC = () => {
 
       {/* Modal: Add Bell Period */}
       {showAddPeriodModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#cbe0ec] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-3">
-              <h3 className="font-bold text-base text-[#082b3d]">Add Timetable Period (MST-005)</h3>
-              <button onClick={() => setShowAddPeriodModal(false)} className="text-[#777587] hover:text-[#082b3d]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
+            <div className="flex items-center justify-between border-b border-subtle pb-3">
+              <h3 className="font-bold text-base text-ink">Add Timetable Period (MST-005)</h3>
+              <button onClick={() => setShowAddPeriodModal(false)} className="text-ink-muted hover:text-ink">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <form onSubmit={handleCreatePeriod} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Period Label</label>
+                <label className="block font-bold text-ink-soft mb-1">Period Label</label>
                 <input
                   type="text"
                   placeholder="e.g. Period 9 or Remedial Lab"
                   value={newPeriod.period}
                   onChange={e => setNewPeriod({ ...newPeriod, period: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   required
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Time Interval</label>
+                <label className="block font-bold text-ink-soft mb-1">Time Interval</label>
                 <input
                   type="text"
                   placeholder="e.g. 03:40 PM - 04:20 PM"
                   value={newPeriod.time}
                   onChange={e => setNewPeriod({ ...newPeriod, time: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-[#464555] mb-1">Duration</label>
+                  <label className="block font-bold text-ink-soft mb-1">Duration</label>
                   <input
                     type="text"
                     value={newPeriod.duration}
                     onChange={e => setNewPeriod({ ...newPeriod, duration: e.target.value })}
-                    className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-[#464555] mb-1">Classification</label>
+                  <label className="block font-bold text-ink-soft mb-1">Classification</label>
                   <select
                     value={newPeriod.type}
                     onChange={e => setNewPeriod({ ...newPeriod, type: e.target.value })}
-                    className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   >
                     <option value="Instructional">Instructional</option>
                     <option value="Instructional / Lab">Instructional / Lab</option>
@@ -658,17 +658,17 @@ export const MastersConfigView: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#f0f7fb]">
+              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
                 <button
                   type="button"
                   onClick={() => setShowAddPeriodModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl font-semibold"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl font-bold"
+                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
                 >
                   Save Period
                 </button>
@@ -680,11 +680,11 @@ export const MastersConfigView: React.FC = () => {
 
       {/* Modal: Add Grade Boundary */}
       {showAddGradeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#cbe0ec] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-3">
-              <h3 className="font-bold text-base text-[#082b3d]">Add Custom Grade Boundary (MST-014)</h3>
-              <button onClick={() => setShowAddGradeModal(false)} className="text-[#777587] hover:text-[#082b3d]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
+            <div className="flex items-center justify-between border-b border-subtle pb-3">
+              <h3 className="font-bold text-base text-ink">Add Custom Grade Boundary (MST-014)</h3>
+              <button onClick={() => setShowAddGradeModal(false)} className="text-ink-muted hover:text-ink">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -692,24 +692,24 @@ export const MastersConfigView: React.FC = () => {
             <form onSubmit={handleCreateGrade} className="space-y-3 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-[#464555] mb-1">Letter Grade</label>
+                  <label className="block font-bold text-ink-soft mb-1">Letter Grade</label>
                   <input
                     type="text"
                     placeholder="e.g. A+"
                     value={newGrade.grade}
                     onChange={e => setNewGrade({ ...newGrade, grade: e.target.value })}
-                    className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-[#464555] mb-1">Grade Point (GPA)</label>
+                  <label className="block font-bold text-ink-soft mb-1">Grade Point (GPA)</label>
                   <input
                     type="text"
                     placeholder="e.g. 9.5"
                     value={newGrade.gpa}
                     onChange={e => setNewGrade({ ...newGrade, gpa: e.target.value })}
-                    className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                     required
                   />
                 </div>
@@ -717,49 +717,49 @@ export const MastersConfigView: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-[#464555] mb-1">Min Marks (%)</label>
+                  <label className="block font-bold text-ink-soft mb-1">Min Marks (%)</label>
                   <input
                     type="number"
                     value={newGrade.minMarks}
                     onChange={e => setNewGrade({ ...newGrade, minMarks: Number(e.target.value) })}
-                    className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-[#464555] mb-1">Max Marks (%)</label>
+                  <label className="block font-bold text-ink-soft mb-1">Max Marks (%)</label>
                   <input
                     type="number"
                     value={newGrade.maxMarks}
                     onChange={e => setNewGrade({ ...newGrade, maxMarks: Number(e.target.value) })}
-                    className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Remark Statement</label>
+                <label className="block font-bold text-ink-soft mb-1">Remark Statement</label>
                 <input
                   type="text"
                   placeholder="e.g. Exceptional Proficiency"
                   value={newGrade.remark}
                   onChange={e => setNewGrade({ ...newGrade, remark: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#f0f7fb]">
+              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
                 <button
                   type="button"
                   onClick={() => setShowAddGradeModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl font-semibold"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl font-bold"
+                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
                 >
                   Save Grade
                 </button>
@@ -771,22 +771,22 @@ export const MastersConfigView: React.FC = () => {
 
       {/* Modal: Award House Points */}
       {showAwardPointsModal && selectedHouse && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#cbe0ec] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-3">
-              <h3 className="font-bold text-base text-[#082b3d]">Award Trophy Points — {selectedHouse.name}</h3>
-              <button onClick={() => setShowAwardPointsModal(false)} className="text-[#777587] hover:text-[#082b3d]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
+            <div className="flex items-center justify-between border-b border-subtle pb-3">
+              <h3 className="font-bold text-base text-ink">Award Trophy Points — {selectedHouse.name}</h3>
+              <button onClick={() => setShowAwardPointsModal(false)} className="text-ink-muted hover:text-ink">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <form onSubmit={handleAwardPoints} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Select House</label>
+                <label className="block font-bold text-ink-soft mb-1">Select House</label>
                 <select
                   value={selectedHouse.id}
                   onChange={e => setSelectedHouse(houses.find(h => h.id === e.target.value) || houses[0])}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                 >
                   {houses.map(h => (
                     <option key={h.id} value={h.id}>
@@ -797,38 +797,38 @@ export const MastersConfigView: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Points to Award / Deduct</label>
+                <label className="block font-bold text-ink-soft mb-1">Points to Award / Deduct</label>
                 <input
                   type="number"
                   value={pointsDelta}
                   onChange={e => setPointsDelta(Number(e.target.value))}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   required
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Event / Achievement Reason</label>
+                <label className="block font-bold text-ink-soft mb-1">Event / Achievement Reason</label>
                 <input
                   type="text"
                   value={pointsReason}
                   onChange={e => setPointsReason(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   required
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#f0f7fb]">
+              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
                 <button
                   type="button"
                   onClick={() => setShowAwardPointsModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl font-semibold"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl font-bold"
+                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
                 >
                   Confirm Points
                 </button>

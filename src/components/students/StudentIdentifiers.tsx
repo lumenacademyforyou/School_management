@@ -41,13 +41,13 @@ export const EmisDisplay: React.FC<{ student: RosterStudent; canEdit: boolean; e
   const roster = useRoster();
   const check = checkEmis(student.emis, student.id, roster);
   return (
-    <div className={compact ? 'space-y-1' : 'rounded-xl border border-[#e0ecf4] p-3 space-y-1'} data-emis={student.id}>
+    <div className={compact ? 'space-y-1' : 'rounded-xl border border-line-soft p-3 space-y-1'} data-emis={student.id}>
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[10px] font-semibold text-[#777587] uppercase tracking-wider">EMIS Number</p>
+        <p className="text-[10px] font-semibold text-ink-muted uppercase tracking-wider">EMIS Number</p>
         <EmisStatusBadge check={check} />
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <p className={`font-mono font-bold text-[#082b3d] ${compact ? 'text-xs' : 'text-base'} break-all`}>{student.emis ? formatEmis(student.emis) : 'Not recorded'}</p>
+        <p className={`font-mono font-bold text-ink ${compact ? 'text-xs' : 'text-base'} break-all`}>{student.emis ? formatEmis(student.emis) : 'Not recorded'}</p>
         <div className="flex gap-1 ml-auto">
           <button
             onClick={async () => addToast((await copyText(student.emis ?? '')) ? 'EMIS number copied' : 'Could not copy', 'info', student.emis)}
@@ -64,7 +64,7 @@ export const EmisDisplay: React.FC<{ student: RosterStudent; canEdit: boolean; e
           </button>
         </div>
       </div>
-      <p className={`text-[10px] ${check.state === 'valid' ? 'text-emerald-700' : check.state === 'empty' ? 'text-[#777587]' : check.state === 'duplicate' ? 'text-amber-800' : 'text-rose-700'}`}>{check.message}</p>
+      <p className={`text-[10px] ${check.state === 'valid' ? 'text-emerald-700' : check.state === 'empty' ? 'text-ink-muted' : check.state === 'duplicate' ? 'text-amber-800' : 'text-rose-700'}`}>{check.message}</p>
     </div>
   );
 };
@@ -88,7 +88,7 @@ const LiveEmis: React.FC<{ value: string; studentId: string; roster: RosterStude
         />
         <EmisStatusBadge check={check} />
       </div>
-      <span id={`emis-state-${studentId}`} role="status" className={`block text-[10px] ${check.state === 'valid' ? 'text-emerald-700' : check.state === 'empty' ? 'text-[#777587]' : check.state === 'duplicate' ? 'text-amber-800' : 'text-rose-700'}`}>
+      <span id={`emis-state-${studentId}`} role="status" className={`block text-[10px] ${check.state === 'valid' ? 'text-emerald-700' : check.state === 'empty' ? 'text-ink-muted' : check.state === 'duplicate' ? 'text-amber-800' : 'text-rose-700'}`}>
         {check.message}
       </span>
     </Field>
@@ -105,8 +105,8 @@ const IdentifierFields: React.FC<{
 }> = ({ studentId, value, onChange, admissionNo, onAdmissionNo, roster }) => {
   const apaarState = !value.apaar.trim() ? 'empty' : isValidApaar(value.apaar) ? 'ok' : 'bad';
   return (
-    <fieldset className="rounded-xl border border-[#e0ecf4] p-3 space-y-3">
-      <legend className="px-1 text-xs font-bold text-[#082b3d]">Government / Education Identifiers</legend>
+    <fieldset className="rounded-xl border border-line-soft p-3 space-y-3">
+      <legend className="px-1 text-xs font-bold text-ink">Government / Education Identifiers</legend>
       <LiveEmis value={value.emis} studentId={studentId} roster={roster} onChange={emis => onChange({ ...value, emis })} />
       <Field label="APAAR ID" hint="12-digit Automated Permanent Academic Account Registry ID. Leave blank while it is being generated." error={apaarState === 'bad' ? 'APAAR ID is 12 digits.' : undefined}>
         <input value={value.apaar} onChange={e => onChange({ ...value, apaar: e.target.value })} inputMode="numeric" placeholder="XXXX-XXXX-XXXX" className={`${inputCls} w-full font-mono`} aria-label="APAAR ID" aria-invalid={apaarState === 'bad'} />

@@ -63,10 +63,10 @@ export const GlobalSearchModal: React.FC = () => {
   if (!searchModalOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-950/50 z-50 flex items-start justify-center pt-20 px-4" onClick={() => setSearchModalOpen(false)}>
-      <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-[#cbe0ec] overflow-hidden" onClick={e => e.stopPropagation()} role="dialog" aria-label="Search">
-        <div className="p-3 border-b border-[#f0f7fb] flex items-center gap-3">
-          <span className="material-symbols-outlined text-[#0e5d84] text-xl">search</span>
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setSearchModalOpen(false)}>
+      <div className="bg-surface w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()} role="dialog" aria-label="Search">
+        <div className="p-3 border-b border-subtle flex items-center gap-3">
+          <span className="material-symbols-outlined text-brand text-xl">search</span>
           <input
             type="text"
             placeholder={canView(role, 'students') ? 'Search screens, or a student by name, admission no. or mobile' : 'Search screens'}
@@ -76,29 +76,29 @@ export const GlobalSearchModal: React.FC = () => {
               if (e.key === 'Enter' && results[0]) results[0].open();
             }}
             autoFocus
-            className="flex-1 text-sm outline-hidden text-[#082b3d] placeholder-[#777587]"
+            className="flex-1 text-sm outline-hidden text-ink placeholder:text-ink-muted"
             aria-label="Search"
           />
-          <button onClick={() => setSearchModalOpen(false)} className="text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded text-[#464555]">
+          <button onClick={() => setSearchModalOpen(false)} className="text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded text-ink-soft">
             Esc
           </button>
         </div>
         <div className="max-h-96 overflow-y-auto p-2">
           {results.length === 0 ? (
-            <p className="py-8 text-center text-xs text-[#777587]">Nothing matches “{query}”.</p>
+            <p className="py-8 text-center text-xs text-ink-muted">Nothing matches “{query}”.</p>
           ) : (
             results.map(r => (
-              <button key={r.id} onClick={r.open} className="w-full text-left p-2.5 rounded-xl hover:bg-[#f0f7fb] flex items-center justify-between gap-3">
+              <button key={r.id} onClick={r.open} className="w-full text-left p-2.5 rounded-xl hover:bg-subtle flex items-center justify-between gap-3">
                 <span className="flex items-center gap-3 min-w-0">
-                  <span className="w-8 h-8 rounded-lg bg-[#f0f7fb] text-[#0e5d84] flex items-center justify-center shrink-0">
+                  <span className="w-8 h-8 rounded-lg bg-subtle text-brand flex items-center justify-center shrink-0">
                     <span className="material-symbols-outlined text-lg">{r.icon}</span>
                   </span>
                   <span className="min-w-0">
-                    <span className="block text-xs font-bold text-[#082b3d] truncate">{r.title}</span>
-                    <span className="block text-[11px] text-[#464555] truncate">{r.subtitle}</span>
+                    <span className="block text-xs font-bold text-ink truncate">{r.title}</span>
+                    <span className="block text-[11px] text-ink-soft truncate">{r.subtitle}</span>
                   </span>
                 </span>
-                <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded font-medium text-[#777587]">{r.category}</span>
+                <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded font-medium text-ink-muted">{r.category}</span>
               </button>
             ))
           )}

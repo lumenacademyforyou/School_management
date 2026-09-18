@@ -132,11 +132,11 @@ export const BankPanel: React.FC<{
   );
 
   return (
-    <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-      <div className="p-3 bg-[#f0f7fb] border-b border-[#cbe0ec] space-y-2">
+    <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+      <div className="p-3 bg-subtle border-b border-line space-y-2">
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative flex-1 min-w-[220px]">
-            <Icon name="search" className="absolute left-2 top-1/2 -translate-y-1/2 text-base text-[#777587]" />
+            <Icon name="search" className="absolute left-2 top-1/2 -translate-y-1/2 text-base text-ink-muted" />
             <input
               value={filter.query}
               onChange={e => set('query', e.target.value)}
@@ -145,7 +145,7 @@ export const BankPanel: React.FC<{
               aria-label="Search question bank"
             />
           </div>
-          <span className="text-xs text-[#464555]" aria-live="polite">
+          <span className="text-xs text-ink-soft" aria-live="polite">
             {rows.length} question(s)
           </span>
           <button onClick={clear} className={btnGhost}>
@@ -220,7 +220,7 @@ export const BankPanel: React.FC<{
         <>
           <div className="hidden lg:block overflow-x-auto">
             <table className="w-full text-xs">
-              <thead className="bg-slate-50 text-[#464555]">
+              <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   {['ID', 'Question', 'Type', 'Marks', 'Difficulty', 'Chapter · topic', 'Used', 'Status', ''].map(h => (
                     <th key={h} className="p-2.5 text-left font-semibold whitespace-nowrap">
@@ -229,10 +229,10 @@ export const BankPanel: React.FC<{
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {rows.slice(0, shown).map(q => (
-                  <tr key={q.id} className={inPaper.has(q.id) ? 'bg-emerald-50/40' : 'hover:bg-[#f8f9ff]'} data-question={q.id}>
-                    <td className="p-2.5 font-mono text-[11px] text-[#0e5d84] whitespace-nowrap">{q.id}</td>
+                  <tr key={q.id} className={inPaper.has(q.id) ? 'bg-emerald-50/40' : 'hover:bg-wash'} data-question={q.id}>
+                    <td className="p-2.5 font-mono text-[11px] text-brand whitespace-nowrap">{q.id}</td>
                     <td className="p-2.5 max-w-[360px]">
                       <QuestionBody q={q} language={paper?.details.language} compact />
                       {q.source === 'AI generated' && <AiBadge />}
@@ -244,7 +244,7 @@ export const BankPanel: React.FC<{
                     </td>
                     <td className="p-2.5">
                       <span className="block">{q.chapter}</span>
-                      <span className="block text-[10px] text-[#777587]">{q.topic}</span>
+                      <span className="block text-[10px] text-ink-muted">{q.topic}</span>
                     </td>
                     <td className="p-2.5 text-center">{q.usageCount}</td>
                     <td className="p-2.5">
@@ -258,11 +258,11 @@ export const BankPanel: React.FC<{
               </tbody>
             </table>
           </div>
-          <ul className="lg:hidden divide-y divide-[#f0f7fb]">
+          <ul className="lg:hidden divide-y divide-subtle">
             {rows.slice(0, shown).map(q => (
               <li key={q.id} className="p-3 space-y-2" data-question={q.id}>
                 <div className="flex flex-wrap items-center gap-1">
-                  <span className="font-mono text-[11px] text-[#0e5d84] mr-1">{q.id}</span>
+                  <span className="font-mono text-[11px] text-brand mr-1">{q.id}</span>
                   <Badge tone="blue">{q.type}</Badge>
                   <Badge>{q.marks} mark(s)</Badge>
                   <DifficultyBadge value={q.difficulty} />
@@ -272,7 +272,7 @@ export const BankPanel: React.FC<{
                 <div className="text-xs">
                   <QuestionBody q={q} language={paper?.details.language} compact />
                 </div>
-                <p className="text-[10px] text-[#777587]">
+                <p className="text-[10px] text-ink-muted">
                   {q.chapter} · {q.topic} · used {q.usageCount} time(s)
                 </p>
                 <Actions q={q} />
@@ -280,7 +280,7 @@ export const BankPanel: React.FC<{
             ))}
           </ul>
           {rows.length > shown && (
-            <div className="p-3 border-t border-[#f0f7fb] text-center">
+            <div className="p-3 border-t border-subtle text-center">
               <button onClick={() => setShown(n => n + PAGE)} className={btnSoft}>
                 Show {Math.min(PAGE, rows.length - shown)} more
               </button>
@@ -301,10 +301,10 @@ export const BankPanel: React.FC<{
                 onAdd?.(picking, s);
                 setPicking(null);
               }}
-              className="w-full text-left rounded-xl border border-[#e0ecf4] p-3 hover:border-[#0e5d84]"
+              className="w-full text-left rounded-xl border border-line-soft p-3 hover:border-brand"
             >
               <span className="block font-semibold">{s.title}</span>
-              <span className="block text-[11px] text-[#464555]">
+              <span className="block text-[11px] text-ink-soft">
                 {s.count} × {s.type} · {s.marksEach} mark(s) each
               </span>
             </button>

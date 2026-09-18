@@ -237,7 +237,7 @@ const RouteMap: React.FC<{ a: Allocation; trip: TripState }> = ({ a, trip }) => 
         <rect width="100" height="100" fill="url(#grid)" />
         <polyline points={pts} fill="none" stroke="var(--accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" opacity="0.7" />
         {a.route.stops.map(s => (
-          <circle key={s.id} cx={s.x} cy={s.y} r={s.id === a.pickup.id ? 2.4 : 1.6} fill={s.id === a.pickup.id ? '#f59e0b' : 'var(--surface)'} stroke="var(--accent)" strokeWidth="0.8" vectorEffect="non-scaling-stroke" />
+          <circle key={s.id} cx={s.x} cy={s.y} r={s.id === a.pickup.id ? 2.4 : 1.6} fill={s.id === a.pickup.id ? '#dea02d' : 'var(--surface)'} stroke="var(--accent)" strokeWidth="0.8" vectorEffect="non-scaling-stroke" />
         ))}
       </svg>
       <span className="absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-700" style={{ left: `${trip.x}%`, top: `${(trip.y / 100) * 176}px` }} aria-hidden="true">
@@ -523,7 +523,7 @@ const ThemePreview: React.FC<{ choice: ThemeChoice }> = ({ choice }) => {
   return (
     <span className="flex w-full h-20 rounded-lg overflow-hidden border border-slate-200" aria-hidden="true">
       {previews.map(t => (
-        <span key={t} data-app-theme={t} className="flex-1 flex flex-col bg-[var(--app-bg)]" style={{ ['--accent' as string]: '#0e5d84' }}>
+        <span key={t} data-app-theme={t} className="flex-1 flex flex-col bg-[var(--app-bg)]" style={{ ['--accent' as string]: '#17667d' }}>
           <span className="h-4 bg-[var(--bar)] border-b-2 border-[var(--bar-edge)]" />
           <span className="m-1.5 flex-1 rounded-md bg-[var(--surface)] border border-slate-200 p-1 space-y-1">
             <span className="block h-1.5 w-2/3 rounded bg-slate-300" />

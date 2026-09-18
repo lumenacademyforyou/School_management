@@ -154,10 +154,10 @@ const NotAllotted: React.FC = () => {
   return (
     <div className="h-full flex items-center justify-center p-6">
       <div className="max-w-sm text-center space-y-3">
-        <span className="material-symbols-outlined text-5xl text-[#777587]">lock</span>
-        <h1 className="text-lg font-bold text-[#082b3d]">Not available for your role</h1>
-        <p className="text-sm text-[#464555]">This screen is not allotted to the {ROLE_LABEL[currentUser.staffRole]} role. Ask the Principal if you need access.</p>
-        <button onClick={() => setAdminView(HOME_VIEW[currentUser.staffRole])} className="rounded-lg bg-[#0e5d84] text-white text-sm font-semibold px-4 py-2">
+        <span className="material-symbols-outlined text-5xl text-ink-muted">lock</span>
+        <h1 className="text-lg font-bold text-ink">Not available for your role</h1>
+        <p className="text-sm text-ink-soft">This screen is not allotted to the {ROLE_LABEL[currentUser.staffRole]} role. Ask the Principal if you need access.</p>
+        <button onClick={() => setAdminView(HOME_VIEW[currentUser.staffRole])} className="rounded-lg bg-brand text-white text-sm font-semibold px-4 py-2">
           Back to my workspace
         </button>
       </div>
@@ -198,7 +198,7 @@ const Console: React.FC = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-[#f8f9ff] text-[#082b3d] font-sans antialiased">
+    <div className="h-screen flex flex-col overflow-hidden bg-wash text-ink font-sans antialiased">
       <AdminHeader />
       <div className="flex-1 flex min-h-0 overflow-hidden relative">
         <div className="hidden md:flex shrink-0 h-full">
@@ -207,7 +207,7 @@ const Console: React.FC = () => {
 
         {sidebarOpen && (
           <div className="md:hidden fixed inset-0 z-50 flex">
-            <div className="fixed inset-0 bg-black/40" onClick={() => setSidebarOpen(false)} />
+            <div className="fixed inset-0 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setSidebarOpen(false)} />
             <div
               className="relative flex-1 max-w-xs w-full bg-white shadow-2xl flex flex-col z-50"
               onClick={e => {

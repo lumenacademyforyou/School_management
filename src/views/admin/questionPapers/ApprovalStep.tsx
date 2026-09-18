@@ -61,9 +61,9 @@ export const ApprovalStep: React.FC<{ paper: QuestionPaper; onSaved: (p: Questio
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
       <div className="xl:col-span-2 space-y-4">
-        <section className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-4" aria-labelledby="flow-h">
+        <section className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-4" aria-labelledby="flow-h">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 id="flow-h" className="text-sm font-bold text-[#082b3d]">
+            <h2 id="flow-h" className="text-sm font-bold text-ink">
               Approval workflow
             </h2>
             <PaperStatusBadge status={paper.status} />
@@ -76,14 +76,14 @@ export const ApprovalStep: React.FC<{ paper: QuestionPaper; onSaved: (p: Questio
                 <li key={s} className="flex sm:flex-1 items-center gap-2">
                   <span
                     className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 ${
-                      done ? 'bg-emerald-600 text-white' : current ? (paper.status === 'Rejected' ? 'bg-rose-600 text-white' : 'bg-[#0e5d84] text-white') : 'bg-slate-100 text-[#777587]'
+                      done ? 'bg-emerald-600 text-white' : current ? (paper.status === 'Rejected' ? 'bg-rose-600 text-white' : 'bg-brand text-white') : 'bg-slate-100 text-ink-muted'
                     }`}
                     aria-current={current ? 'step' : undefined}
                   >
                     {done ? <Icon name="check" className="text-sm" /> : i + 1}
                   </span>
-                  <span className={`text-xs ${current ? 'font-bold text-[#082b3d]' : 'text-[#464555]'}`}>{current && (paper.status === 'Changes requested' || paper.status === 'Rejected') ? paper.status : s}</span>
-                  {i < STATUS_STEPS.length - 1 && <span className="hidden sm:block flex-1 h-px bg-[#cbe0ec]" aria-hidden="true" />}
+                  <span className={`text-xs ${current ? 'font-bold text-ink' : 'text-ink-soft'}`}>{current && (paper.status === 'Changes requested' || paper.status === 'Rejected') ? paper.status : s}</span>
+                  {i < STATUS_STEPS.length - 1 && <span className="hidden sm:block flex-1 h-px bg-line" aria-hidden="true" />}
                 </li>
               );
             })}
@@ -98,34 +98,34 @@ export const ApprovalStep: React.FC<{ paper: QuestionPaper; onSaved: (p: Questio
               ['Paper', `${counts.questions} questions · ${counts.marks} marks · ${paper.sets.length || 1} set(s)`],
             ].map(([k, v]) => (
               <div key={k}>
-                <dt className="text-[10px] text-[#777587]">{k}</dt>
-                <dd className="font-semibold text-[#082b3d]">{v}</dd>
+                <dt className="text-[10px] text-ink-muted">{k}</dt>
+                <dd className="font-semibold text-ink">{v}</dd>
               </div>
             ))}
           </dl>
         </section>
 
-        <section className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-2" aria-labelledby="hist-h">
-          <h2 id="hist-h" className="text-sm font-bold text-[#082b3d]">
+        <section className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-2" aria-labelledby="hist-h">
+          <h2 id="hist-h" className="text-sm font-bold text-ink">
             Comments and history
           </h2>
-          <ol className="relative border-l border-[#cbe0ec] ml-2 space-y-3">
+          <ol className="relative border-l border-line ml-2 space-y-3">
             {[...paper.history].reverse().map((h, i) => (
               <li key={i} className="ml-4">
-                <span className="absolute -left-1.5 mt-1 w-3 h-3 rounded-full bg-[#0e5d84] border-2 border-white" aria-hidden="true" />
+                <span className="absolute -left-1.5 mt-1 w-3 h-3 rounded-full bg-brand border-2 border-white" aria-hidden="true" />
                 <p className="text-xs">
-                  <span className="font-semibold">{h.action}</span> · {h.by} · <span className="text-[#777587]">{fmtDate(h.at)}</span>
+                  <span className="font-semibold">{h.action}</span> · {h.by} · <span className="text-ink-muted">{fmtDate(h.at)}</span>
                 </p>
-                {h.comment && <p className="mt-1 rounded-lg bg-[#f0f7fb] px-2 py-1 text-xs text-[#082b3d]">“{h.comment}”</p>}
+                {h.comment && <p className="mt-1 rounded-lg bg-subtle px-2 py-1 text-xs text-ink">“{h.comment}”</p>}
               </li>
             ))}
           </ol>
         </section>
       </div>
 
-      <aside className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3 xl:self-start">
-        <h2 className="text-sm font-bold text-[#082b3d]">Actions</h2>
-        {actions.length === 0 && <p className="text-xs text-[#464555]">{paper.status === 'Published' ? 'This paper is published and archived.' : 'No actions are open for this paper.'}</p>}
+      <aside className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3 xl:self-start">
+        <h2 className="text-sm font-bold text-ink">Actions</h2>
+        {actions.length === 0 && <p className="text-xs text-ink-soft">{paper.status === 'Published' ? 'This paper is published and archived.' : 'No actions are open for this paper.'}</p>}
         {actions.length > 0 && (
           <Field label="Comment" hint="Required to reject or request changes">
             <textarea value={comment} onChange={e => setComment(e.target.value)} rows={3} className={`${inputCls} w-full`} aria-label="Review comment" placeholder="What should the author know?" />
@@ -147,7 +147,7 @@ export const ApprovalStep: React.FC<{ paper: QuestionPaper; onSaved: (p: Questio
             </Gate>
           ))}
         </div>
-        {mine && paper.status === 'Under review' && <p className="text-[11px] text-[#464555]">Waiting for the Principal. You cannot review your own paper.</p>}
+        {mine && paper.status === 'Under review' && <p className="text-[11px] text-ink-soft">Waiting for the Principal. You cannot review your own paper.</p>}
       </aside>
 
       <ConfirmDialog
@@ -160,7 +160,7 @@ export const ApprovalStep: React.FC<{ paper: QuestionPaper; onSaved: (p: Questio
         onCancel={() => setPending(null)}
         onConfirm={run}
       >
-        {needsComment && <p className="rounded-lg bg-[#f0f7fb] p-2 text-xs">“{comment}”</p>}
+        {needsComment && <p className="rounded-lg bg-subtle p-2 text-xs">“{comment}”</p>}
       </ConfirmDialog>
     </div>
   );

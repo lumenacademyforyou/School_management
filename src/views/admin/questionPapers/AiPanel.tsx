@@ -100,16 +100,16 @@ export const AiPanel: React.FC<{ paper: QuestionPaper; editable: boolean; onAdd:
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-      <section className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3 xl:self-start" aria-labelledby="ai-form">
+      <section className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3 xl:self-start" aria-labelledby="ai-form">
         <div className="flex items-center gap-2">
           <span className="w-8 h-8 rounded-xl bg-violet-50 text-violet-700 flex items-center justify-center">
             <Icon name="auto_awesome" className="text-lg" />
           </span>
           <div>
-            <h2 id="ai-form" className="text-sm font-bold text-[#082b3d]">
+            <h2 id="ai-form" className="text-sm font-bold text-ink">
               Generate questions with AI
             </h2>
-            <p className="text-[11px] text-[#464555]">Drafts only. A teacher must accept each question before it enters the bank.</p>
+            <p className="text-[11px] text-ink-soft">Drafts only. A teacher must accept each question before it enters the bank.</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2">
@@ -160,12 +160,12 @@ export const AiPanel: React.FC<{ paper: QuestionPaper; editable: boolean; onAdd:
             {status === 'loading' ? 'Generating questions…' : 'Generate Questions'}
           </button>
         </Gate>
-        <p className="text-[10px] text-[#777587]">Prototype: questions come from a built-in mock, not a live AI model. Nothing leaves this browser.</p>
+        <p className="text-[10px] text-ink-muted">Prototype: questions come from a built-in mock, not a live AI model. Nothing leaves this browser.</p>
       </section>
 
       <section className="xl:col-span-2 space-y-3" aria-live="polite" aria-busy={status === 'loading'}>
         {status === 'idle' && (
-          <div className="bg-white rounded-2xl border border-dashed border-[#cbe0ec]">
+          <div className="bg-white rounded-2xl border border-dashed border-line">
             <EmptyState icon="auto_awesome" title="No generated questions yet." text="Pick a chapter and question type, then generate. Accepted questions are added to the bank and, where a section fits, to this paper." />
           </div>
         )}
@@ -176,7 +176,7 @@ export const AiPanel: React.FC<{ paper: QuestionPaper; editable: boolean; onAdd:
               Generating questions…
             </p>
             {Array.from({ length: Math.min(req.count, 3) }, (_, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-[#e0ecf4] p-4 space-y-2">
+              <div key={i} className="bg-surface rounded-2xl border border-line-soft p-4 space-y-2">
                 <Skeleton className="h-3 w-1/3" />
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-4 w-2/3" />
@@ -185,7 +185,7 @@ export const AiPanel: React.FC<{ paper: QuestionPaper; editable: boolean; onAdd:
           </div>
         )}
         {status === 'error' && (
-          <div className="bg-white rounded-2xl border border-[#e0ecf4]">
+          <div className="bg-surface rounded-2xl border border-line-soft">
             <ErrorState onRetry={generate} />
           </div>
         )}
@@ -193,7 +193,7 @@ export const AiPanel: React.FC<{ paper: QuestionPaper; editable: boolean; onAdd:
           cards.map(card => (
             <article
               key={`${card.index}-${card.q.id}`}
-              className={`bg-white rounded-2xl border p-4 space-y-2 slide-in-from-bottom-2 ${card.state === 'accepted' ? 'border-emerald-300' : card.state === 'rejected' ? 'border-slate-200 opacity-60' : 'border-[#e0ecf4]'}`}
+              className={`bg-white rounded-2xl border p-4 space-y-2 slide-in-from-bottom-2 ${card.state === 'accepted' ? 'border-emerald-300' : card.state === 'rejected' ? 'border-slate-200 opacity-60' : 'border-line-soft'}`}
               data-ai-card={card.index}
             >
               <div className="flex flex-wrap items-center gap-1">

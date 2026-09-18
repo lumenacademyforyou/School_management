@@ -82,15 +82,17 @@ const Login: React.FC<{ onLogin: (t: TeacherAccount) => void }> = ({ onLogin }) 
     onLogin(account);
   };
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row bg-[var(--accent)]">
-      <div className="px-6 pt-14 pb-10 text-white lg:flex-1 lg:flex lg:flex-col lg:justify-center lg:px-16 xl:px-24">
-        <img src={LOGO_SRC} alt="" className="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-white p-1" />
-        <h1 className="mt-5 text-[26px] lg:text-[40px] font-bold leading-tight">Lumen Teacher</h1>
-        <p className="text-white/80 text-[14px] lg:text-[17px] lg:max-w-md">Attendance, marks, homework and parent messages — works offline</p>
-        <ul className="hidden lg:block mt-8 space-y-3 text-[15px] text-white/90">
+    <div className="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row bg-lumen-night">
+      <div className="relative overflow-hidden px-6 pt-14 pb-10 text-white lg:flex-1 lg:flex lg:flex-col lg:justify-center lg:px-16 xl:px-24">
+        <div aria-hidden="true" className="absolute inset-0 bg-sunburst [mask-image:radial-gradient(120%_90%_at_100%_0%,black_0%,transparent_65%)]" />
+        <img src={LOGO_SRC} alt="" className="relative w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-cream-50 p-1 ring-2 ring-gold-400/70 shadow-[0_8px_24px_-8px_rgb(240_180_58/0.45)]" />
+        <h1 className="relative mt-5 text-[26px] lg:text-[40px] font-bold font-display tracking-tight leading-tight">Lumen Teacher</h1>
+        <p className="relative text-lumen-100/85 text-[14px] lg:text-[17px] lg:max-w-md">Attendance, marks, homework and parent messages — works offline</p>
+        <span aria-hidden="true" className="relative hidden lg:block mt-6 h-px w-24 bg-gradient-to-r from-gold-400 to-transparent" />
+        <ul className="relative hidden lg:block mt-6 space-y-3 text-[15px] text-cream-100/90">
           {['Morning roll call in under a minute', 'Marks entry with validation', 'Homework and class notices', 'Keeps working when the network drops'].map(x => (
             <li key={x} className="flex items-center gap-3">
-              <Icon name="check_circle" className="text-[20px]" />
+              <Icon name="check_circle" className="text-[20px] text-gold-300" />
               {x}
             </li>
           ))}
@@ -101,9 +103,9 @@ const Login: React.FC<{ onLogin: (t: TeacherAccount) => void }> = ({ onLogin }) 
           e.preventDefault();
           submit();
         }}
-        className="flex-1 lg:flex-none lg:w-[460px] lg:overflow-y-auto lg:flex lg:flex-col lg:justify-center bg-white rounded-t-[28px] lg:rounded-none p-6 lg:p-10 space-y-4"
+        className="flex-1 lg:flex-none lg:w-[460px] lg:overflow-y-auto lg:flex lg:flex-col lg:justify-center bg-[var(--surface)] rounded-t-[28px] lg:rounded-none p-6 lg:p-10 space-y-4 shadow-[0_-12px_32px_-12px_rgb(7_32_47/0.5)]"
       >
-        <h2 className="hidden lg:block text-[22px] font-bold text-slate-900">Sign in</h2>
+        <h2 className="hidden lg:block text-[24px] font-bold font-display tracking-tight text-slate-900">Sign in</h2>
         <Field label="School email">
           <input value={email} onChange={e => { setEmail(e.target.value); setError(''); }} type="email" className={inputClass} aria-label="Email" />
         </Field>
@@ -200,7 +202,7 @@ const TodayScreen: React.FC = () => {
     <Screen wide>
       <div className="lg:col-span-2">
         <p className="text-[13px] text-slate-500">{fmtDay(APP_TODAY)} · {APP_NOW}</p>
-        <p className="text-[18px] font-semibold text-slate-900">Hello, {teacher.name.replace(/^(Mrs|Mr|Ms|Dr)\.\s*/, '')}</p>
+        <p className="text-[20px] font-bold font-display tracking-tight text-slate-900">Hello, {teacher.name.replace(/^(Mrs|Mr|Ms|Dr)\.\s*/, '')}</p>
       </div>
 
       <div className="grid grid-cols-3 gap-2 lg:gap-4 lg:col-span-2">
@@ -1000,6 +1002,6 @@ const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => v
 
 export const TeacherApp: React.FC = () => {
   const [teacher, setTeacher] = useState<TeacherAccount | null>(null);
-  return <AppFrame accent="#1f6f5c">{teacher ? <TeacherSessionView teacher={teacher} onSignOut={() => setTeacher(null)} /> : <Login onLogin={setTeacher} />}</AppFrame>;
+  return <AppFrame accent="#125569">{teacher ? <TeacherSessionView teacher={teacher} onSignOut={() => setTeacher(null)} /> : <Login onLogin={setTeacher} />}</AppFrame>;
 };
 

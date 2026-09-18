@@ -46,7 +46,7 @@ export const AppShell: React.FC<{ side: React.ReactNode; bottom?: React.ReactNod
 );
 
 export const TopBar: React.FC<{ title: React.ReactNode; subtitle?: React.ReactNode; onBack?: () => void; right?: React.ReactNode }> = ({ title, subtitle, onBack, right }) => (
-  <header className="app-surface-transition shrink-0 bg-[var(--bar)] border-b-2 border-[var(--bar-edge)] text-white px-4 lg:px-8 pt-4 pb-3 flex items-center gap-3">
+  <header className="app-surface-transition shrink-0 bg-[var(--bar)] bg-[image:var(--bar-image)] border-b-2 border-[var(--bar-edge)] text-white px-4 lg:px-8 pt-4 pb-3 flex items-center gap-3 shadow-[0_2px_12px_-4px_rgb(7_32_47/0.35)]">
     {onBack && (
       <button onClick={onBack} className="-ml-1 p-1 rounded-full hover:bg-white/15" aria-label="Back">
         <Icon name="arrow_back" className="text-[22px]" />
@@ -103,8 +103,8 @@ export const SideNav = <T extends string>({
   footer?: React.ReactNode;
 }) => (
   <aside className="app-surface-transition hidden lg:flex w-64 shrink-0 flex-col bg-[var(--surface)] border-r border-slate-200" aria-label="Sidebar">
-    <div className="app-surface-transition flex items-center gap-3 px-5 py-4 bg-[var(--bar)] border-b-2 border-[var(--bar-edge)] text-white">
-      <img src={LOGO_SRC} alt="" className="w-10 h-10 rounded-xl bg-white p-0.5" />
+    <div className="app-surface-transition flex items-center gap-3 px-5 py-4 bg-[var(--bar)] bg-[image:var(--bar-image)] border-b-2 border-[var(--bar-edge)] text-white">
+      <img src={LOGO_SRC} alt="" className="w-10 h-10 rounded-xl bg-cream-50 p-0.5 ring-1 ring-gold-300/60" />
       <div className="min-w-0">
         <p className="text-[15px] font-bold leading-tight truncate">{title}</p>
         <p className="text-[12px] text-white/80 truncate">{subtitle}</p>
@@ -119,8 +119,9 @@ export const SideNav = <T extends string>({
             onClick={() => onChange(t.id)}
             aria-current={on ? 'page' : undefined}
             data-side-tab={t.id}
-            className={cx('w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] transition-colors', on ? 'bg-[var(--accent)]/15 text-[var(--accent-ink)] font-semibold' : 'text-slate-700 hover:bg-slate-100')}
+            className={cx('relative w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] transition-colors', on ? 'bg-[var(--accent)]/12 text-[var(--accent-ink)] font-semibold' : 'text-slate-700 hover:bg-slate-100')}
           >
+            {on && <span aria-hidden="true" className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-gold-400" />}
             <Icon name={t.icon} filled={on} className="text-[22px]" />
             <span className="flex-1 text-left">{t.label}</span>
             {Boolean(t.badge) && <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-rose-600 text-white text-[11px] font-bold leading-5 text-center">{t.badge}</span>}
@@ -156,7 +157,14 @@ export const Screen: React.FC<{ children: React.ReactNode; className?: string; w
 export const Card: React.FC<{ children: React.ReactNode; className?: string; onClick?: () => void; title?: React.ReactNode; action?: React.ReactNode }> = ({ children, className, onClick, title, action }) => {
   const Tag = onClick ? 'button' : 'section';
   return (
-    <Tag onClick={onClick} className={cx('block w-full text-left bg-[var(--surface)] rounded-2xl border border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.04)]', onClick && 'active:scale-[0.99] transition-transform', className)}>
+    <Tag
+      onClick={onClick}
+      className={cx(
+        'block w-full text-left bg-[var(--surface)] rounded-2xl border border-slate-200/80 shadow-[0_1px_2px_rgb(12_49_71/0.05),0_4px_12px_-6px_rgb(12_49_71/0.08)]',
+        onClick && 'transition-[transform,box-shadow] duration-150 active:scale-[0.99] hover:shadow-[0_2px_4px_rgb(12_49_71/0.06),0_10px_20px_-8px_rgb(12_49_71/0.14)]',
+        className
+      )}
+    >
       {(title || action) && (
         <div className="flex items-center justify-between px-4 pt-3">
           <h2 className="text-[13px] font-semibold text-slate-800">{title}</h2>
@@ -180,11 +188,14 @@ export const Pill: React.FC<{ tone?: 'green' | 'red' | 'amber' | 'blue' | 'grey'
 };
 
 export const PrimaryButton: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = ({ className, ...props }) => (
-  <button {...props} className={cx('w-full rounded-xl bg-[var(--accent)] text-white text-[14px] font-semibold py-3 disabled:opacity-40 active:opacity-90', className)} />
+  <button
+    {...props}
+    className={cx('w-full rounded-xl bg-[var(--accent)] text-white text-[14px] font-semibold py-3 shadow-[inset_0_1px_0_rgb(255_255_255/0.16),0_2px_6px_-2px_rgb(7_32_47/0.35)] disabled:opacity-40 active:opacity-90 transition-opacity', className)}
+  />
 );
 
 export const SecondaryButton: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = ({ className, ...props }) => (
-  <button {...props} className={cx('rounded-xl bg-slate-100 text-slate-800 text-[13px] font-semibold px-3 py-2 disabled:opacity-40', className)} />
+  <button {...props} className={cx('rounded-xl bg-slate-100 text-slate-800 text-[13px] font-semibold px-3 py-2 ring-1 ring-inset ring-slate-200 hover:bg-slate-200/70 disabled:opacity-40 transition-colors', className)} />
 );
 
 export const Field: React.FC<{ label: string; children: React.ReactNode; hint?: string }> = ({ label, children, hint }) => (
@@ -246,7 +257,7 @@ export const Toasts: React.FC<{ toasts: ToastItem[] }> = ({ toasts }) => (
     {toasts.map(t => (
       <div
         key={t.id}
-        className={cx('rounded-xl px-3 py-2.5 text-[13px] shadow-lg text-white', t.tone === 'ok' ? 'bg-[#0f172a] ring-1 ring-white/10' : t.tone === 'warn' ? 'bg-amber-600' : 'bg-rose-700')}
+        className={cx('rounded-xl px-3 py-2.5 text-[13px] shadow-lg text-white', t.tone === 'ok' ? 'bg-lumen-900 ring-1 ring-gold-400/30' : t.tone === 'warn' ? 'bg-amber-600' : 'bg-rose-700')}
       >
         {t.text}
       </div>

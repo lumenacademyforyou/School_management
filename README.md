@@ -38,6 +38,23 @@ public/                 logos
 
 The parent and teacher apps reuse the business rules in `src/data` (fees, attendance, messaging, permissions) but never import admin console screens.
 
+## Design system
+
+Every colour comes from the logo, and all three apps use the same tokens (`src/index.css`, `@theme`):
+
+| Role | Token | Value | Taken from |
+| --- | --- | --- | --- |
+| Brand teal | `brand`, `lumen-50`…`lumen-950` | `#17667d` | Mountains and ring |
+| Navy ink | `ink`, `lumen-900` | `#0c3147` | Mortarboard and lettering |
+| Gold | `accent`, `gold-50`…`gold-900` | `#dea02d` | Sun rays and tassel |
+| Cream | `canvas`, `surface`, `cream-50`…`cream-400` | `#f7f4ec` | Lettering band |
+
+- **Semantic names first.** Components use `ink`, `ink-soft`, `ink-muted`, `line`, `line-soft`, `subtle`, `wash`, `surface`, `canvas`, `brand` and `accent`. Use the numbered scales only when a specific step is needed.
+- **Colour grade.** Light steps lean cream and dark steps lean teal-navy. Tailwind's `slate` scale is regraded the same way, so every neutral follows. `sky`, `blue` and `teal` resolve to the brand teal, amber sits on the gold side, and emerald and rose stay the success and error colours.
+- **Details.** Shadows are tinted navy, never grey. Gold is kept for emphasis: the page eyebrow, the current-screen marker, the header rule and the one gold call to action (`btnGold`). The navy panels (`bg-lumen-night`) carry the logo's sun as a faint ray texture (`bg-sunburst`).
+- **Contrast.** Every text and background pair meets WCAG AA; the weakest, captions on `subtle`, is 4.6:1.
+- **Parent app themes** (Settings → Appearance): Light (teal bar, cream paper), School (navy bar, gold edge, deeper cream) and Dark (teal-navy night with cream type).
+
 ## Apps in this repository
 
 The admin console, parent app and teacher app are separate apps. Each has its own entry folder, build and output, and none of them ships another app's screens.

@@ -29,11 +29,11 @@ export const QuickActionDrawer: React.FC = () => {
   const available = SHORTCUTS.filter(s => canView(currentUser.staffRole, s.view));
 
   return (
-    <div className="fixed inset-0 bg-slate-950/50 z-50 flex justify-end" onClick={() => setQuickActionOpen(false)}>
-      <div className="bg-white w-full max-w-sm h-full shadow-2xl flex flex-col border-l border-[#cbe0ec]" onClick={e => e.stopPropagation()} role="dialog" aria-label="Quick actions">
-        <div className="p-4 border-b border-[#f0f7fb] flex items-center justify-between">
-          <h2 className="text-sm font-bold text-[#082b3d]">Quick actions</h2>
-          <button onClick={() => setQuickActionOpen(false)} className="p-1 text-[#777587] hover:text-[#082b3d] rounded-lg hover:bg-[#f0f7fb]" aria-label="Close quick actions">
+    <div className="fixed inset-0 z-50 flex justify-end bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setQuickActionOpen(false)}>
+      <div className="bg-white w-full max-w-sm h-full shadow-2xl flex flex-col border-l border-line" onClick={e => e.stopPropagation()} role="dialog" aria-label="Quick actions">
+        <div className="p-4 border-b border-subtle flex items-center justify-between">
+          <h2 className="text-sm font-bold text-ink">Quick actions</h2>
+          <button onClick={() => setQuickActionOpen(false)} className="p-1 text-ink-muted hover:text-ink rounded-lg hover:bg-subtle" aria-label="Close quick actions">
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
@@ -45,16 +45,16 @@ export const QuickActionDrawer: React.FC = () => {
                 setAdminView(s.view);
                 setQuickActionOpen(false);
               }}
-              className="w-full flex items-center gap-3 p-3 rounded-xl border border-[#e0ecf4] hover:bg-[#f0f7fb] text-left"
+              className="w-full flex items-center gap-3 p-3 rounded-xl border border-line-soft hover:bg-subtle text-left"
             >
-              <span className="material-symbols-outlined text-[#0e5d84]">{s.icon}</span>
+              <span className="material-symbols-outlined text-brand">{s.icon}</span>
               <span>
-                <span className="block text-sm font-semibold text-[#082b3d]">{s.title}</span>
-                <span className="block text-xs text-[#777587]">{s.detail}</span>
+                <span className="block text-sm font-semibold text-ink">{s.title}</span>
+                <span className="block text-xs text-ink-muted">{s.detail}</span>
               </span>
             </button>
           ))}
-          {available.length === 0 && <p className="text-xs text-[#777587] p-3">No quick actions for your role.</p>}
+          {available.length === 0 && <p className="text-xs text-ink-muted p-3">No quick actions for your role.</p>}
         </div>
       </div>
     </div>

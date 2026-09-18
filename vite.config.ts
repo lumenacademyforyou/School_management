@@ -38,13 +38,13 @@ const WEB_APPS = {
     name: 'Lumen Academy Parent',
     short_name: 'Lumen Parent',
     description: 'Attendance, fees, homework, results and messages for Lumen Academy parents.',
-    theme_color: '#0e5d84',
+    theme_color: '#17667d',
   },
   teacher: {
     name: 'Lumen Teacher',
     short_name: 'Lumen Teacher',
     description: 'Attendance, marks, homework and parent messages for Lumen Academy teachers. Works offline.',
-    theme_color: '#1f6f5c',
+    theme_color: '#125569',
   },
 } as const;
 type WebAppName = keyof typeof WEB_APPS;
@@ -58,7 +58,7 @@ const manifestFor = (app: WebAppName, assetPrefix = '') =>
       display: 'standalone',
       display_override: ['window-controls-overlay', 'standalone'],
       orientation: 'any',
-      background_color: '#ffffff',
+      background_color: '#f7f4ec',
       lang: 'en-IN',
       categories: ['education'],
       ...WEB_APPS[app],

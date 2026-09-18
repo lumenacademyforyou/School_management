@@ -148,18 +148,18 @@ export const DataMigrationView: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-[#f0f7fb] text-[#0e5d84]">
+            <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-subtle text-brand">
               MIG · Module 11
             </span>
-            <span className="text-xs text-[#777587]">16 Master Features</span>
+            <span className="text-xs text-ink-muted">16 Master Features</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#082b3d] mt-1">
+          <h1 className="text-xl md:text-2xl font-bold text-ink mt-1">
             Data Import, Export & Migration Wizard
           </h1>
-          <p className="text-xs md:text-sm text-[#464555]">
+          <p className="text-xs md:text-sm text-ink-soft">
             Guided 4-step import wizard, fuzzy column auto-mapping, dry-run validation report, atomic staged commit & rollback.
           </p>
         </div>
@@ -167,7 +167,7 @@ export const DataMigrationView: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => handleDownloadTemplate(selectedEntity)}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Download CSV Template</span>
@@ -176,29 +176,29 @@ export const DataMigrationView: React.FC = () => {
       </div>
 
       {/* Step Indicator */}
-      <div className="bg-white p-4 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="bg-surface p-4 rounded-2xl border border-line-soft shadow-sm">
         <div className="grid grid-cols-4 gap-2 text-center text-xs">
           <button
             onClick={() => setStep(1)}
-            className={`p-2 rounded-xl font-bold transition-all ${step === 1 ? 'bg-[#0e5d84] text-white' : 'bg-slate-100 text-[#777587] hover:bg-slate-200'}`}
+            className={`p-2 rounded-xl font-bold transition-all ${step === 1 ? 'bg-brand text-white' : 'bg-slate-100 text-ink-muted hover:bg-slate-200'}`}
           >
             1. Select Entity & File
           </button>
           <button
             onClick={() => setStep(2)}
-            className={`p-2 rounded-xl font-bold transition-all ${step === 2 ? 'bg-[#0e5d84] text-white' : 'bg-slate-100 text-[#777587] hover:bg-slate-200'}`}
+            className={`p-2 rounded-xl font-bold transition-all ${step === 2 ? 'bg-brand text-white' : 'bg-slate-100 text-ink-muted hover:bg-slate-200'}`}
           >
             2. Column Auto-Mapping
           </button>
           <button
             onClick={() => setStep(3)}
-            className={`p-2 rounded-xl font-bold transition-all ${step === 3 ? 'bg-[#0e5d84] text-white' : 'bg-slate-100 text-[#777587] hover:bg-slate-200'}`}
+            className={`p-2 rounded-xl font-bold transition-all ${step === 3 ? 'bg-brand text-white' : 'bg-slate-100 text-ink-muted hover:bg-slate-200'}`}
           >
             3. Dry-Run Validation
           </button>
           <button
             onClick={() => setStep(4)}
-            className={`p-2 rounded-xl font-bold transition-all ${step === 4 ? 'bg-[#0e5d84] text-white' : 'bg-slate-100 text-[#777587] hover:bg-slate-200'}`}
+            className={`p-2 rounded-xl font-bold transition-all ${step === 4 ? 'bg-brand text-white' : 'bg-slate-100 text-ink-muted hover:bg-slate-200'}`}
           >
             4. Atomic Commit
           </button>
@@ -207,9 +207,9 @@ export const DataMigrationView: React.FC = () => {
 
       {/* Step 1: Upload & Select Entity */}
       {step === 1 && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-6 shadow-xs space-y-6">
+        <div className="bg-surface rounded-2xl border border-line-soft p-6 shadow-sm space-y-6">
           <div className="space-y-3">
-            <label className="block text-xs font-bold text-[#777587] uppercase">Target Entity for Migration</label>
+            <label className="block text-xs font-bold text-ink-muted uppercase">Target Entity for Migration</label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 { id: 'students', name: 'Student 360 Records', desc: 'Demographics, PEN, APAAR, Parents' },
@@ -221,21 +221,21 @@ export const DataMigrationView: React.FC = () => {
                   onClick={() => setSelectedEntity(item.id)}
                   className={`p-4 rounded-xl border cursor-pointer transition-all ${
                     selectedEntity === item.id
-                      ? 'border-[#0e5d84] bg-[#f0f7fb]/40 shadow-xs'
-                      : 'border-[#e0ecf4] hover:bg-slate-50'
+                      ? 'border-brand bg-subtle/40 shadow-xs'
+                      : 'border-line-soft hover:bg-slate-50'
                   }`}
                 >
-                  <div className="font-bold text-sm text-[#082b3d]">{item.name}</div>
-                  <div className="text-xs text-[#777587] mt-1">{item.desc}</div>
+                  <div className="font-bold text-sm text-ink">{item.name}</div>
+                  <div className="text-xs text-ink-muted mt-1">{item.desc}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="border-2 border-dashed border-[#cbd5e1] rounded-2xl p-8 text-center bg-[#f8faff] space-y-3">
-            <span className="material-symbols-outlined text-4xl text-[#0e5d84]">cloud_upload</span>
-            <div className="font-bold text-sm text-[#082b3d]">Upload CSV or Excel (.csv, .xlsx)</div>
-            <p className="text-xs text-[#777587]">Maximum file size: 50 MB (Supports up to 25,000 rows in single batch)</p>
+          <div className="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center bg-wash space-y-3">
+            <span className="material-symbols-outlined text-4xl text-brand">cloud_upload</span>
+            <div className="font-bold text-sm text-ink">Upload CSV or Excel (.csv, .xlsx)</div>
+            <p className="text-xs text-ink-muted">Maximum file size: 50 MB (Supports up to 25,000 rows in single batch)</p>
 
             <input
               ref={fileInputRef}
@@ -248,7 +248,7 @@ export const DataMigrationView: React.FC = () => {
             <div className="flex items-center justify-center gap-3 pt-2">
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="px-5 py-2.5 bg-[#0e5d84] text-white rounded-xl text-xs font-bold hover:bg-[#2c1ea8] transition-all flex items-center gap-1.5"
+                className="px-5 py-2.5 bg-brand text-white rounded-xl text-xs font-bold hover:bg-brand-strong transition-all flex items-center gap-1.5"
               >
                 <span className="material-symbols-outlined text-sm">upload_file</span>
                 <span>Select & Upload Local File</span>
@@ -261,7 +261,7 @@ export const DataMigrationView: React.FC = () => {
                   addToast('Loaded sample dataset "Lumen_Chennai_Students_AY26.csv" (450 rows detected)', 'info');
                   setStep(2);
                 }}
-                className="px-4 py-2.5 bg-slate-100 text-[#082b3d] hover:bg-slate-200 rounded-xl text-xs font-bold transition-all"
+                className="px-4 py-2.5 bg-slate-100 text-ink hover:bg-slate-200 rounded-xl text-xs font-bold transition-all"
               >
                 Load Sample Batch (450 Rows)
               </button>
@@ -272,12 +272,12 @@ export const DataMigrationView: React.FC = () => {
 
       {/* Step 2: Column Auto-Mapping */}
       {step === 2 && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-6 shadow-xs space-y-5">
-          <div className="flex items-center justify-between border-b border-[#e0ecf4] pb-3 flex-wrap gap-2">
+        <div className="bg-surface rounded-2xl border border-line-soft p-6 shadow-sm space-y-5">
+          <div className="flex items-center justify-between border-b border-line-soft pb-3 flex-wrap gap-2">
             <div>
-              <h3 className="text-sm font-bold text-[#082b3d]">Fuzzy Auto-Mapping Engine (MIG-003)</h3>
-              <p className="text-xs text-[#777587]">
-                Mapping for <span className="font-bold text-[#082b3d]">{uploadedFileName}</span> ({uploadedRowCount} rows)
+              <h3 className="text-sm font-bold text-ink">Fuzzy Auto-Mapping Engine (MIG-003)</h3>
+              <p className="text-xs text-ink-muted">
+                Mapping for <span className="font-bold text-ink">{uploadedFileName}</span> ({uploadedRowCount} rows)
               </p>
             </div>
             <span className="text-xs font-mono font-bold bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg border border-emerald-200">
@@ -288,8 +288,8 @@ export const DataMigrationView: React.FC = () => {
           <div className="space-y-2 text-xs">
             {mappings.map((row, i) => (
               <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 gap-2">
-                <span className="font-mono font-bold text-[#082b3d]">{row.source}</span>
-                <span className="material-symbols-outlined text-sm text-[#777587] hidden sm:inline">arrow_forward</span>
+                <span className="font-mono font-bold text-ink">{row.source}</span>
+                <span className="material-symbols-outlined text-sm text-ink-muted hidden sm:inline">arrow_forward</span>
                 <input
                   type="text"
                   value={row.target}
@@ -299,7 +299,7 @@ export const DataMigrationView: React.FC = () => {
                       prev.map((m, idx) => (idx === i ? { ...m, target: nextVal } : m))
                     );
                   }}
-                  className="font-mono text-xs text-[#0e5d84] bg-white border border-[#cbe0ec] rounded-lg px-2 py-1 flex-1 max-w-sm"
+                  className="font-mono text-xs text-brand bg-white border border-line rounded-lg px-2 py-1 flex-1 max-w-sm"
                 />
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 self-start sm:self-auto">
                   {row.status}
@@ -308,13 +308,13 @@ export const DataMigrationView: React.FC = () => {
             ))}
           </div>
 
-          <div className="flex justify-between pt-4 border-t border-[#e0ecf4]">
+          <div className="flex justify-between pt-4 border-t border-line-soft">
             <button onClick={() => setStep(1)} className="px-4 py-2 bg-slate-100 text-xs font-bold rounded-xl">
               ← Back
             </button>
             <button
               onClick={() => setStep(3)}
-              className="px-5 py-2 bg-[#0e5d84] text-white text-xs font-bold rounded-xl hover:bg-[#2c1ea8]"
+              className="px-5 py-2 bg-brand text-white text-xs font-bold rounded-xl hover:bg-brand-strong"
             >
               Proceed to Dry-Run →
             </button>
@@ -324,10 +324,10 @@ export const DataMigrationView: React.FC = () => {
 
       {/* Step 3: Dry-Run Validation */}
       {step === 3 && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-6 shadow-xs space-y-5">
+        <div className="bg-surface rounded-2xl border border-line-soft p-6 shadow-sm space-y-5">
           <div>
-            <h3 className="text-sm font-bold text-[#082b3d]">Simulated Dry-Run Validation (MIG-005)</h3>
-            <p className="text-xs text-[#777587]">Simulate batch insertion against database constraints without altering live data</p>
+            <h3 className="text-sm font-bold text-ink">Simulated Dry-Run Validation (MIG-005)</h3>
+            <p className="text-xs text-ink-muted">Simulate batch insertion against database constraints without altering live data</p>
           </div>
 
           {!dryRunComplete ? (
@@ -362,7 +362,7 @@ export const DataMigrationView: React.FC = () => {
                 ⚠️ Notice: Row #114 and #282 have missing postal PIN codes; fallback to campus pincode (600042) applied.
               </div>
 
-              <div className="flex justify-between items-center pt-4 border-t border-[#e0ecf4] flex-wrap gap-2">
+              <div className="flex justify-between items-center pt-4 border-t border-line-soft flex-wrap gap-2">
                 <button onClick={() => setStep(2)} className="px-4 py-2 bg-slate-100 text-xs font-bold rounded-xl">
                   ← Back
                 </button>
@@ -370,7 +370,7 @@ export const DataMigrationView: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleDownloadDryRunReport}
-                    className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] text-xs font-bold rounded-xl flex items-center gap-1.5"
+                    className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-ink text-xs font-bold rounded-xl flex items-center gap-1.5"
                   >
                     <span className="material-symbols-outlined text-sm">download</span>
                     <span>Download Report (JSON)</span>
@@ -378,7 +378,7 @@ export const DataMigrationView: React.FC = () => {
 
                   <button
                     onClick={() => setStep(4)}
-                    className="px-5 py-2 bg-[#0e5d84] text-white text-xs font-bold rounded-xl hover:bg-[#2c1ea8]"
+                    className="px-5 py-2 bg-brand text-white text-xs font-bold rounded-xl hover:bg-brand-strong"
                   >
                     Confirm & Go to Staged Commit →
                   </button>
@@ -391,24 +391,24 @@ export const DataMigrationView: React.FC = () => {
 
       {/* Step 4: Staged Commit & Rollback */}
       {step === 4 && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-6 shadow-xs space-y-5">
+        <div className="bg-surface rounded-2xl border border-line-soft p-6 shadow-sm space-y-5">
           <div>
-            <h3 className="text-sm font-bold text-[#082b3d]">Atomic Transactional Staged Commit (MIG-006)</h3>
-            <p className="text-xs text-[#777587]">
+            <h3 className="text-sm font-bold text-ink">Atomic Transactional Staged Commit (MIG-006)</h3>
+            <p className="text-xs text-ink-muted">
               Once committed, all {uploadedRowCount - 2} student profiles, parent logins, and initial ledgers will become live immediately. A rollback snapshot point will be created automatically.
             </p>
           </div>
 
-          <div className="p-4 bg-[#f0f7fb] rounded-xl border border-[#cbe0ec] text-xs space-y-2">
-            <div className="font-bold text-[#0e5d84]">Post-Migration Safety Guarantee:</div>
-            <ul className="list-disc list-inside text-[#464555] space-y-1">
+          <div className="p-4 bg-subtle rounded-xl border border-line text-xs space-y-2">
+            <div className="font-bold text-brand">Post-Migration Safety Guarantee:</div>
+            <ul className="list-disc list-inside text-ink-soft space-y-1">
               <li>Automatic deduplication checks against existing student admission numbers</li>
               <li>SMS welcome credentials queued in DLT quiet hours buffer</li>
               <li>Single-click rollback capability available for 72 hours under audit supervision</li>
             </ul>
           </div>
 
-          <div className="flex justify-between pt-4 border-t border-[#e0ecf4]">
+          <div className="flex justify-between pt-4 border-t border-line-soft">
             <button onClick={() => setStep(3)} className="px-4 py-2 bg-slate-100 text-xs font-bold rounded-xl">
               ← Back
             </button>
@@ -424,20 +424,20 @@ export const DataMigrationView: React.FC = () => {
       )}
 
       {/* Snapshot Rollback Registry */}
-      <div className="bg-white rounded-2xl border border-[#e0ecf4] p-6 shadow-xs space-y-4">
+      <div className="bg-surface rounded-2xl border border-line-soft p-6 shadow-sm space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-[#082b3d]">Recent Migration Snapshots & Rollback Points (MIG-008)</h3>
-            <p className="text-xs text-[#777587]">Audited transactional snapshots available for rollback within 72 hours</p>
+            <h3 className="text-sm font-bold text-ink">Recent Migration Snapshots & Rollback Points (MIG-008)</h3>
+            <p className="text-xs text-ink-muted">Audited transactional snapshots available for rollback within 72 hours</p>
           </div>
-          <span className="text-xs font-mono text-[#0e5d84] bg-[#f0f7fb] px-2 py-0.5 rounded border border-[#cbe0ec]">
+          <span className="text-xs font-mono text-brand bg-subtle px-2 py-0.5 rounded border border-line">
             Atomic DDL/DML Guard
           </span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left">
-            <thead className="bg-slate-50 text-[#464555] font-semibold border-b border-slate-200">
+            <thead className="bg-slate-50 text-ink-soft font-semibold border-b border-slate-200">
               <tr>
                 <th className="p-2.5">Snapshot ID</th>
                 <th className="p-2.5">Entity</th>
@@ -450,10 +450,10 @@ export const DataMigrationView: React.FC = () => {
             <tbody className="divide-y divide-slate-100">
               {snapshots.map(s => (
                 <tr key={s.id} className="hover:bg-slate-50/50">
-                  <td className="p-2.5 font-mono font-bold text-[#0e5d84]">{s.id}</td>
-                  <td className="p-2.5 text-[#082b3d] font-medium">{s.entity}</td>
+                  <td className="p-2.5 font-mono font-bold text-brand">{s.id}</td>
+                  <td className="p-2.5 text-ink font-medium">{s.entity}</td>
                   <td className="p-2.5 font-mono">{s.recordsCount} rows</td>
-                  <td className="p-2.5 text-[#777587]">{s.committedAt}</td>
+                  <td className="p-2.5 text-ink-muted">{s.committedAt}</td>
                   <td className="p-2.5">
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded ${
@@ -475,7 +475,7 @@ export const DataMigrationView: React.FC = () => {
                         <span>Rollback</span>
                       </button>
                     ) : (
-                      <span className="text-[#777587] text-[11px] italic">Rolled back</span>
+                      <span className="text-ink-muted text-[11px] italic">Rolled back</span>
                     )}
                   </td>
                 </tr>

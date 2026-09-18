@@ -163,12 +163,12 @@ export const PaperWizard: React.FC<{ initial: QuestionPaper; initialStep?: Wizar
             <Icon name="arrow_back" className="text-sm" />
             All papers
           </button>
-          <h2 className="text-lg font-bold text-[#082b3d] flex flex-wrap items-center gap-2">
+          <h2 className="text-lg font-bold text-ink flex flex-wrap items-center gap-2">
             {isNew ? 'Create Question Paper' : paper.id}
             <PaperStatusBadge status={paper.status} />
             {dirty && <span className="text-[10px] font-semibold text-amber-700">Unsaved changes</span>}
           </h2>
-          <p className="text-xs text-[#464555]">{paper.title}</p>
+          <p className="text-xs text-ink-soft">{paper.title}</p>
         </div>
         <div className="flex gap-2">
           {editable && (
@@ -199,7 +199,7 @@ export const PaperWizard: React.FC<{ initial: QuestionPaper; initialStep?: Wizar
         {step === 'key' && <AnswerKeyStep paper={paper} />}
         {step === 'approval' &&
           (isNew ? (
-            <p className="rounded-xl border border-dashed border-[#cbe0ec] p-6 text-center text-xs text-[#464555]">Save the paper first.</p>
+            <p className="rounded-xl border border-dashed border-line p-6 text-center text-xs text-ink-soft">Save the paper first.</p>
           ) : (
             <ApprovalStep
               paper={paper}
@@ -212,7 +212,7 @@ export const PaperWizard: React.FC<{ initial: QuestionPaper; initialStep?: Wizar
           ))}
       </div>
 
-      <div className="flex justify-between gap-2 pt-2 border-t border-[#e0ecf4]">
+      <div className="flex justify-between gap-2 pt-2 border-t border-line-soft">
         <button onClick={() => go(STEPS[index - 1].id)} disabled={index === 0} className={btnSoft}>
           <Icon name="arrow_back" className="text-sm" />
           Back

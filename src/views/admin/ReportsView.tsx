@@ -142,7 +142,7 @@ const LineChart: React.FC<{ series: { label: string; values: number[]; color: st
         </g>
       ))}
       {labels.map((l, i) => (
-        <text key={l} x={x(i)} y={H - 4} textAnchor="middle" fontSize={9} fill="#777587">
+        <text key={l} x={x(i)} y={H - 4} textAnchor="middle" fontSize={9} fill="#5b6e78">
           {l}
         </text>
       ))}
@@ -268,29 +268,29 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">analytics</span>
             <span>Module 9 · Reporting & Analytics (RPT)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">Reports & Analytics</h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">Reports & Analytics</h1>
+          <p className="text-xs text-ink-soft mt-1">
             {selectedCampus.name} · AY 2024–25 · viewing as {dashRole} · export {canExport ? 'granted' : 'not granted'}
           </p>
         </div>
-        <select value={dashRole} onChange={e => setDashRole(e.target.value as DashboardRole)} className="text-xs border border-[#cbe0ec] rounded-lg px-2 py-1.5 bg-white self-start sm:self-auto">
+        <select value={dashRole} onChange={e => setDashRole(e.target.value as DashboardRole)} className="text-xs border border-line rounded-lg px-2 py-1.5 bg-white self-start sm:self-auto">
           {(Object.keys(ROLE_WIDGETS) as DashboardRole[]).map(r => (
             <option key={r}>{r}</option>
           ))}
         </select>
       </div>
 
-      <div className="flex gap-1 overflow-x-auto border-b border-[#e0ecf4]">
+      <div className="flex gap-1 overflow-x-auto border-b border-line-soft">
         {TABS.map(t => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
-              tab === t.id ? 'border-[#0e5d84] text-[#0e5d84]' : 'border-transparent text-[#777587] hover:text-[#082b3d]'
+              tab === t.id ? 'border-brand text-brand' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
             <span className="material-symbols-outlined text-sm">{t.icon}</span>
@@ -303,9 +303,9 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
       {tab === 'dashboard' && (
         <div className="space-y-6">
           <div className="flex flex-wrap gap-1">
-            <span className="text-[11px] font-semibold text-[#464555] mr-1">{dashRole} widgets:</span>
+            <span className="text-[11px] font-semibold text-ink-soft mr-1">{dashRole} widgets:</span>
             {ROLE_WIDGETS[dashRole].map(w => (
-              <span key={w} className="text-[10px] px-2 py-0.5 rounded-full bg-white border border-[#cbe0ec] text-[#082b3d]">
+              <span key={w} className="text-[10px] px-2 py-0.5 rounded-full bg-white border border-line text-ink">
                 {w}
               </span>
             ))}
@@ -316,24 +316,24 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
               <button
                 key={k.id}
                 onClick={() => setDrill(drill === k.id ? null : k.id)}
-                className={`text-left bg-white rounded-2xl border p-4 shadow-xs transition-colors ${drill === k.id ? 'border-[#0e5d84] ring-2 ring-[#0e5d84]/20' : 'border-[#e0ecf4] hover:border-[#cbe0ec]'}`}
+                className={`text-left bg-white rounded-2xl border p-4 shadow-xs transition-colors ${drill === k.id ? 'border-brand ring-2 ring-brand/20' : 'border-line-soft hover:border-line'}`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="material-symbols-outlined text-[#0e5d84] text-lg">{k.icon}</span>
-                  <span className="text-[10px] text-[#777587]">{drill === k.id ? 'Hide records' : 'View records'}</span>
+                  <span className="material-symbols-outlined text-brand text-lg">{k.icon}</span>
+                  <span className="text-[10px] text-ink-muted">{drill === k.id ? 'Hide records' : 'View records'}</span>
                 </div>
-                <p className="text-2xl font-bold text-[#082b3d] mt-1">{k.value}</p>
-                <p className="text-[11px] font-semibold text-[#082b3d]">{k.label}</p>
-                <p className="text-[10px] text-[#777587]">{k.sub}</p>
+                <p className="text-2xl font-bold text-ink mt-1">{k.value}</p>
+                <p className="text-[11px] font-semibold text-ink">{k.label}</p>
+                <p className="text-[10px] text-ink-muted">{k.sub}</p>
               </button>
             ))}
           </div>
 
           {drill && (
-            <div className="bg-white rounded-2xl border border-[#0e5d84]/30 shadow-xs overflow-x-auto">
-              <div className="p-3 bg-[#f0f7fb] border-b border-[#cbe0ec] text-xs font-bold text-[#082b3d]">Records behind “{kpis.find(k => k.id === drill)!.label}”</div>
+            <div className="bg-white rounded-2xl border border-brand/30 shadow-xs overflow-x-auto">
+              <div className="p-3 bg-subtle border-b border-line text-xs font-bold text-ink">Records behind “{kpis.find(k => k.id === drill)!.label}”</div>
               <table className="w-full text-xs">
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {drill === 'enrolment' &&
                     ENROLMENT_BY_CLASS.map(r => (
                       <tr key={r.cls}>
@@ -347,7 +347,7 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
                         <td className="p-3 font-mono">{r.rollNo}</td>
                         <td className="p-3">{r.name}</td>
                         <td className="p-3 font-bold">{r.status}</td>
-                        <td className="p-3 text-[#464555]">{r.notes ?? r.telemetrySource}</td>
+                        <td className="p-3 text-ink-soft">{r.notes ?? r.telemetrySource}</td>
                       </tr>
                     ))}
                   {drill === 'outstanding' &&
@@ -367,7 +367,7 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
                       <tr key={f.stage}>
                         <td className="p-3">{f.stage}</td>
                         <td className="p-3 text-right font-mono">{f.count}</td>
-                        <td className="p-3 text-right text-[#777587]">{idx === 0 ? '—' : `${Math.round((f.count / FUNNEL[idx - 1].count) * 100)}% of previous stage`}</td>
+                        <td className="p-3 text-right text-ink-muted">{idx === 0 ? '—' : `${Math.round((f.count / FUNNEL[idx - 1].count) * 100)}% of previous stage`}</td>
                       </tr>
                     ))}
                 </tbody>
@@ -376,26 +376,26 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4">
-              <p className="text-xs font-bold text-[#082b3d]">Attendance % by month</p>
-              <LineChart labels={MONTHS} series={[{ label: 'Attendance', values: ATTENDANCE_TREND, color: '#0e5d84' }]} unit="%" />
+            <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4">
+              <p className="text-xs font-bold text-ink">Attendance % by month</p>
+              <LineChart labels={MONTHS} series={[{ label: 'Attendance', values: ATTENDANCE_TREND, color: '#17667d' }]} unit="%" />
             </div>
-            <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4">
-              <p className="text-xs font-bold text-[#082b3d]">Fee collected vs target (₹ lakh)</p>
+            <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4">
+              <p className="text-xs font-bold text-ink">Fee collected vs target (₹ lakh)</p>
               <LineChart
                 labels={MONTHS}
                 series={[
-                  { label: 'Collected', values: COLLECTION_TREND_LAKH, color: '#0e5d84' },
-                  { label: 'Target', values: COLLECTION_TARGET_LAKH, color: '#f59e0b' },
+                  { label: 'Collected', values: COLLECTION_TREND_LAKH, color: '#17667d' },
+                  { label: 'Target', values: COLLECTION_TARGET_LAKH, color: '#dea02d' },
                 ]}
               />
-              <div className="flex gap-3 text-[10px] text-[#464555]">
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#0e5d84]" />Collected</span>
+              <div className="flex gap-3 text-[10px] text-ink-soft">
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-brand" />Collected</span>
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500" />Target</span>
               </div>
             </div>
-            <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4">
-              <p className="text-xs font-bold text-[#082b3d]">Enrolment by month</p>
+            <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4">
+              <p className="text-xs font-bold text-ink">Enrolment by month</p>
               <LineChart labels={MONTHS} series={[{ label: 'Enrolment', values: ENROLMENT_TREND, color: '#059669' }]} />
             </div>
           </div>
@@ -404,19 +404,19 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
 
       {tab === 'library' && (
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3">
-            <p className="text-xs font-bold text-[#082b3d]">Filters (the same on every report)</p>
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3">
+            <p className="text-xs font-bold text-ink">Filters (the same on every report)</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
               <label className="block">
-                <span className="block text-[10px] font-semibold text-[#464555] mb-0.5">Academic year</span>
-                <select value={filters.year} onChange={e => setFilter('year', e.target.value)} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1">
+                <span className="block text-[10px] font-semibold text-ink-soft mb-0.5">Academic year</span>
+                <select value={filters.year} onChange={e => setFilter('year', e.target.value)} className="w-full border border-line rounded-lg px-2 py-1">
                   <option>AY 2024–25</option>
                   <option>AY 2023–24</option>
                 </select>
               </label>
               <label className="block">
-                <span className="block text-[10px] font-semibold text-[#464555] mb-0.5">Branch</span>
-                <select value={filters.branch} onChange={e => setFilter('branch', e.target.value)} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1">
+                <span className="block text-[10px] font-semibold text-ink-soft mb-0.5">Branch</span>
+                <select value={filters.branch} onChange={e => setFilter('branch', e.target.value)} className="w-full border border-line rounded-lg px-2 py-1">
                   {campuses.map(c => (
                     <option key={c.id} value={c.id}>
                       {c.name}
@@ -431,8 +431,8 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
                 ['status', 'Status', STATUSES],
               ] as const).map(([key, label, options]) => (
                 <label key={key} className="block">
-                  <span className="block text-[10px] font-semibold text-[#464555] mb-0.5">{label}</span>
-                  <select value={filters[key]} onChange={e => setFilter(key, e.target.value)} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1">
+                  <span className="block text-[10px] font-semibold text-ink-soft mb-0.5">{label}</span>
+                  <select value={filters[key]} onChange={e => setFilter(key, e.target.value)} className="w-full border border-line rounded-lg px-2 py-1">
                     {options.map(o => (
                       <option key={o}>{o}</option>
                     ))}
@@ -440,43 +440,43 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
                 </label>
               ))}
               <label className="block">
-                <span className="block text-[10px] font-semibold text-[#464555] mb-0.5">From</span>
-                <input type="date" value={filters.from} onChange={e => setFilter('from', e.target.value)} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1" />
+                <span className="block text-[10px] font-semibold text-ink-soft mb-0.5">From</span>
+                <input type="date" value={filters.from} onChange={e => setFilter('from', e.target.value)} className="w-full border border-line rounded-lg px-2 py-1" />
               </label>
               <label className="block">
-                <span className="block text-[10px] font-semibold text-[#464555] mb-0.5">To</span>
-                <input type="date" value={filters.to} onChange={e => setFilter('to', e.target.value)} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1" />
+                <span className="block text-[10px] font-semibold text-ink-soft mb-0.5">To</span>
+                <input type="date" value={filters.to} onChange={e => setFilter('to', e.target.value)} className="w-full border border-line rounded-lg px-2 py-1" />
               </label>
             </div>
             {filters.to < filters.from && <p className="text-[11px] text-rose-600">The end date is before the start date.</p>}
             <div className="flex flex-wrap items-center gap-2 pt-1">
-              <input value={viewName} onChange={e => setViewName(e.target.value)} placeholder="Name this filter set" className="text-xs border border-[#cbe0ec] rounded-lg px-2 py-1" />
+              <input value={viewName} onChange={e => setViewName(e.target.value)} placeholder="Name this filter set" className="text-xs border border-line rounded-lg px-2 py-1" />
               <button onClick={saveView} disabled={!viewName.trim()} className="text-xs font-semibold px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 disabled:opacity-50">
                 Save view
               </button>
               {savedViews.map(v => (
-                <button key={v.name} onClick={() => setFilters(v.filters)} className="text-[10px] px-2 py-1 rounded-full bg-[#f0f7fb] border border-[#cbe0ec] text-[#0e5d84] font-semibold">
+                <button key={v.name} onClick={() => setFilters(v.filters)} className="text-[10px] px-2 py-1 rounded-full bg-subtle border border-line text-brand font-semibold">
                   {v.name}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-            <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex flex-wrap items-center justify-between gap-2">
-              <span className="text-xs font-bold text-[#082b3d]">Standard reports</span>
-              <label className="flex items-center gap-1 text-[11px] text-[#464555]">
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+            <div className="p-4 bg-subtle border-b border-line flex flex-wrap items-center justify-between gap-2">
+              <span className="text-xs font-bold text-ink">Standard reports</span>
+              <label className="flex items-center gap-1 text-[11px] text-ink-soft">
                 Export purpose
-                <input value={exportPurpose} onChange={e => setExportPurpose(e.target.value)} className="border border-[#cbe0ec] rounded-lg px-2 py-1 text-xs" />
+                <input value={exportPurpose} onChange={e => setExportPurpose(e.target.value)} className="border border-line rounded-lg px-2 py-1 text-xs" />
               </label>
             </div>
-            <div className="divide-y divide-[#f0f7fb]">
+            <div className="divide-y divide-subtle">
               {REPORT_LIBRARY.map(r => (
                 <div key={r.id} className="p-3 flex flex-col sm:flex-row sm:items-center gap-2 text-xs">
                   <div className="flex-1">
-                    <p className="font-semibold text-[#082b3d]">{r.name}</p>
+                    <p className="font-semibold text-ink">{r.name}</p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[10px] text-[#777587]">{r.module}</span>
+                      <span className="text-[10px] text-ink-muted">{r.module}</span>
                       <FeatureTags ids={[r.source]} />
                     </div>
                   </div>
@@ -496,25 +496,25 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
                 </div>
               ))}
             </div>
-            <p className="p-3 text-[10px] text-[#777587] border-t border-[#f0f7fb]">
+            <p className="p-3 text-[10px] text-ink-muted border-t border-subtle">
               Appendix C of LMN-SMS-FEAT-001 (about 60 reports) was not in the source provided. This list shows only reports that a feature ID above names directly.
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-x-auto">
-            <div className="p-3 bg-[#f0f7fb] border-b border-[#cbe0ec] text-xs font-bold text-[#082b3d]">Export events (AUD-003)</div>
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-x-auto">
+            <div className="p-3 bg-subtle border-b border-line text-xs font-bold text-ink">Export events (AUD-003)</div>
             {exportLog.length === 0 ? (
-              <p className="p-4 text-xs text-[#777587]">No exports this session.</p>
+              <p className="p-4 text-xs text-ink-muted">No exports this session.</p>
             ) : (
               <table className="w-full text-xs">
-                <thead className="bg-slate-50 text-[#464555]">
+                <thead className="bg-slate-50 text-ink-soft">
                   <tr>
                     {['When', 'Report', 'Format', 'Rows', 'By', 'Purpose'].map(h => (
                       <th key={h} className="text-left p-2 font-semibold">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {exportLog.map((e, i) => (
                     <tr key={`${e.at}-${i}`}>
                       <td className="p-2 font-mono whitespace-nowrap">{e.at}</td>
@@ -539,26 +539,26 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
               <button
                 key={m}
                 onClick={() => setBranchMetric(m)}
-                className={`text-xs font-semibold px-3 py-1.5 rounded-lg ${branchMetric === m ? 'bg-[#0e5d84] text-white' : 'bg-slate-100 text-[#082b3d] hover:bg-slate-200'}`}
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg ${branchMetric === m ? 'bg-brand text-white' : 'bg-slate-100 text-ink hover:bg-slate-200'}`}
               >
                 {{ enrolment: 'Enrolment', attendancePct: 'Attendance', collectionPct: 'Collection', admissions: 'Admissions' }[m]}
               </button>
             ))}
           </div>
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3">
-            <p className="text-xs font-bold text-[#082b3d]">{metricLabel} by branch · click a bar to drill in</p>
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3">
+            <p className="text-xs font-bold text-ink">{metricLabel} by branch · click a bar to drill in</p>
             {branchRows.map(r => {
               const v = r[branchMetric] as number | null;
               return (
                 <button key={r.id} onClick={() => setBranchDrill(branchDrill === r.id ? null : r.id)} className="w-full text-left">
                   <div className="flex justify-between text-[11px] mb-0.5">
-                    <span className="font-semibold text-[#082b3d]">
-                      {r.name} <span className="font-mono text-[#777587]">{r.code}</span>
+                    <span className="font-semibold text-ink">
+                      {r.name} <span className="font-mono text-ink-muted">{r.code}</span>
                     </span>
                     <span className="font-mono">{v === null ? 'No data yet' : branchMetric === 'enrolment' || branchMetric === 'admissions' ? v.toLocaleString('en-IN') : `${v}%`}</span>
                   </div>
                   <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
-                    <div className={`h-full ${branchDrill === r.id ? 'bg-amber-500' : 'bg-[#0e5d84]'}`} style={{ width: `${v === null ? 0 : (v / metricMax) * 100}%` }} />
+                    <div className={`h-full ${branchDrill === r.id ? 'bg-amber-500' : 'bg-brand'}`} style={{ width: `${v === null ? 0 : (v / metricMax) * 100}%` }} />
                   </div>
                 </button>
               );
@@ -575,8 +575,8 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
                   ['Admissions', r.admissions === null ? '—' : String(r.admissions)],
                 ].map(([label, value]) => (
                   <div key={label} className="p-2 rounded-lg bg-slate-50">
-                    <p className="text-lg font-bold text-[#082b3d]">{value}</p>
-                    <p className="text-[10px] text-[#777587]">
+                    <p className="text-lg font-bold text-ink">{value}</p>
+                    <p className="text-[10px] text-ink-muted">
                       {r.name} · {label}
                     </p>
                   </div>
@@ -590,11 +590,11 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
       {tab === 'schedules' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <form onSubmit={addSchedule} className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3 text-xs">
-              <p className="font-bold text-[#082b3d]">New scheduled report</p>
+            <form onSubmit={addSchedule} className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3 text-xs">
+              <p className="font-bold text-ink">New scheduled report</p>
               <label className="block">
-                <span className="block font-semibold text-[#464555] mb-1">Report</span>
-                <select value={newSchedule.report} onChange={e => setNewSchedule({ ...newSchedule, report: e.target.value })} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1.5">
+                <span className="block font-semibold text-ink-soft mb-1">Report</span>
+                <select value={newSchedule.report} onChange={e => setNewSchedule({ ...newSchedule, report: e.target.value })} className="w-full border border-line rounded-lg px-2 py-1.5">
                   {REPORT_LIBRARY.map(r => (
                     <option key={r.id}>{r.name}</option>
                   ))}
@@ -602,23 +602,23 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
               </label>
               <div className="grid grid-cols-3 gap-2">
                 <label className="block">
-                  <span className="block font-semibold text-[#464555] mb-1">Cadence</span>
-                  <select value={newSchedule.cadence} onChange={e => setNewSchedule({ ...newSchedule, cadence: e.target.value })} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1.5">
+                  <span className="block font-semibold text-ink-soft mb-1">Cadence</span>
+                  <select value={newSchedule.cadence} onChange={e => setNewSchedule({ ...newSchedule, cadence: e.target.value })} className="w-full border border-line rounded-lg px-2 py-1.5">
                     <option>Daily · 07:30</option>
                     <option>Weekly · Monday 08:00</option>
                     <option>Monthly · 1st 09:00</option>
                   </select>
                 </label>
                 <label className="block">
-                  <span className="block font-semibold text-[#464555] mb-1">Channel</span>
-                  <select value={newSchedule.channel} onChange={e => setNewSchedule({ ...newSchedule, channel: e.target.value })} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1.5">
+                  <span className="block font-semibold text-ink-soft mb-1">Channel</span>
+                  <select value={newSchedule.channel} onChange={e => setNewSchedule({ ...newSchedule, channel: e.target.value })} className="w-full border border-line rounded-lg px-2 py-1.5">
                     <option>Email</option>
                     <option>WhatsApp</option>
                   </select>
                 </label>
                 <label className="block">
-                  <span className="block font-semibold text-[#464555] mb-1">Recipient</span>
-                  <select value={newSchedule.recipient} onChange={e => setNewSchedule({ ...newSchedule, recipient: e.target.value })} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1.5">
+                  <span className="block font-semibold text-ink-soft mb-1">Recipient</span>
+                  <select value={newSchedule.recipient} onChange={e => setNewSchedule({ ...newSchedule, recipient: e.target.value })} className="w-full border border-line rounded-lg px-2 py-1.5">
                     <option>Principal</option>
                     <option>Branch Admin</option>
                     <option>Accountant</option>
@@ -626,19 +626,19 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
                   </select>
                 </label>
               </div>
-              <button type="submit" className="font-semibold px-3 py-1.5 rounded-lg bg-[#0e5d84] text-white hover:bg-[#083a4f]">
+              <button type="submit" className="font-semibold px-3 py-1.5 rounded-lg bg-brand text-white hover:bg-brand-strong">
                 Add schedule
               </button>
             </form>
 
-            <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-              <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] text-xs font-bold text-[#082b3d]">Active schedules</div>
-              <div className="divide-y divide-[#f0f7fb]">
+            <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+              <div className="p-4 bg-subtle border-b border-line text-xs font-bold text-ink">Active schedules</div>
+              <div className="divide-y divide-subtle">
                 {schedules.map(s => (
                   <div key={s.id} className="p-3 flex items-center justify-between gap-2 text-xs">
                     <div>
-                      <p className="font-semibold text-[#082b3d]">{s.report}</p>
-                      <p className="text-[11px] text-[#777587]">
+                      <p className="font-semibold text-ink">{s.report}</p>
+                      <p className="text-[11px] text-ink-muted">
                         {s.cadence} · {s.channel} → {s.recipient}
                       </p>
                     </div>

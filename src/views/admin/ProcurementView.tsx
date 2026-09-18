@@ -103,16 +103,16 @@ export const ProcurementView: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">receipt_long</span>
             <span>Procurement & Accounts Payable (PRO-001..010)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">
             3-Way Match Verification & Purchase Order Audit
           </h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <p className="text-xs text-ink-soft mt-1">
             Reconciliation of Purchase Order (PO) ↔ Goods Receipt Note (GRN) ↔ Vendor GST Invoice
           </p>
         </div>
@@ -120,14 +120,14 @@ export const ProcurementView: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleExportProcurement}
-            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-[#082b3d] text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 transition-colors"
+            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-ink text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 transition-colors"
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Export CSV</span>
           </button>
           <button
             onClick={() => setShowCreatePoModal(true)}
-            className="flex items-center gap-1.5 bg-[#0e5d84] hover:bg-[#083a4f] text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-xs transition-colors"
+            className="flex items-center gap-1.5 bg-brand hover:bg-brand-strong text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-xs transition-colors"
           >
             <span className="material-symbols-outlined text-sm">add</span>
             <span>Create PO</span>
@@ -145,30 +145,30 @@ export const ProcurementView: React.FC = () => {
       {/* 3-Way Match Dossier Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Document 1: Purchase Order */}
-        <div className="bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-3">
-          <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-2">
-            <span className="text-xs font-bold text-[#082b3d]">1. Purchase Order (PO)</span>
-            <span className="text-[10px] font-mono bg-[#e0f2fe] text-[#082b3d] font-bold px-2 py-0.5 rounded">
+        <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-3">
+          <div className="flex items-center justify-between border-b border-subtle pb-2">
+            <span className="text-xs font-bold text-ink">1. Purchase Order (PO)</span>
+            <span className="text-[10px] font-mono bg-lumen-100 text-ink font-bold px-2 py-0.5 rounded">
               {activePo.poNo}
             </span>
           </div>
-          <div className="text-xs space-y-1 text-[#464555]">
+          <div className="text-xs space-y-1 text-ink-soft">
             <div>Vendor: <strong>{activePo.vendor}</strong></div>
             <div>Item: {activePo.items}</div>
             <div>Approved Rate: ₹290 / unit</div>
-            <div className="font-bold text-[#082b3d] pt-1">Total PO: ₹{activePo.amount.toLocaleString('en-IN')} (incl. GST)</div>
+            <div className="font-bold text-ink pt-1">Total PO: ₹{activePo.amount.toLocaleString('en-IN')} (incl. GST)</div>
           </div>
         </div>
 
         {/* Document 2: Goods Receipt Note */}
-        <div className="bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-3">
-          <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-2">
-            <span className="text-xs font-bold text-[#082b3d]">2. Goods Receipt Note (GRN)</span>
+        <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-3">
+          <div className="flex items-center justify-between border-b border-subtle pb-2">
+            <span className="text-xs font-bold text-ink">2. Goods Receipt Note (GRN)</span>
             <span className="text-[10px] font-mono bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">
               GRN-9412
             </span>
           </div>
-          <div className="text-xs space-y-1 text-[#464555]">
+          <div className="text-xs space-y-1 text-ink-soft">
             <div>Received by: <strong>Lab Assistant K. Natarajan</strong></div>
             <div>Quantity Counted: 50 / 50 Verified</div>
             <div>Damage / Rejections: 0 Units (100% Quality Pass)</div>
@@ -177,14 +177,14 @@ export const ProcurementView: React.FC = () => {
         </div>
 
         {/* Document 3: Vendor GST Tax Invoice */}
-        <div className="bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-3">
-          <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-2">
-            <span className="text-xs font-bold text-[#082b3d]">3. Vendor GST Invoice</span>
+        <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-3">
+          <div className="flex items-center justify-between border-b border-subtle pb-2">
+            <span className="text-xs font-bold text-ink">3. Vendor GST Invoice</span>
             <span className="text-[10px] font-mono bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">
               INV-GST-4410
             </span>
           </div>
-          <div className="text-xs space-y-1 text-[#464555]">
+          <div className="text-xs space-y-1 text-ink-soft">
             <div>GSTIN: <strong>33AAAC1234F1Z5 (Tamil Nadu)</strong></div>
             <div>GSTR-2B ITC Match: <strong>Auto-Reconciled</strong></div>
             <div>Invoice Amount: ₹{activePo.amount.toLocaleString('en-IN')}</div>
@@ -205,14 +205,14 @@ export const ProcurementView: React.FC = () => {
       </div>
 
       {/* Purchase Orders Table */}
-      <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-        <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex items-center justify-between">
-          <span className="text-xs font-bold text-[#082b3d]">Purchase Orders & 3-Way Match History</span>
-          <span className="text-xs text-[#777587] font-mono">{orders.length} Records</span>
+      <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+        <div className="p-4 bg-subtle border-b border-line flex items-center justify-between">
+          <span className="text-xs font-bold text-ink">Purchase Orders & 3-Way Match History</span>
+          <span className="text-xs text-ink-muted font-mono">{orders.length} Records</span>
         </div>
 
         <table className="w-full text-xs text-left">
-          <thead className="bg-[#f0f7fb]/60 text-[#464555] font-semibold border-b border-[#cbe0ec]">
+          <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
             <tr>
               <th className="p-3">PO Number</th>
               <th className="p-3">Vendor</th>
@@ -223,13 +223,13 @@ export const ProcurementView: React.FC = () => {
               <th className="p-3">Bank UTR</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f0f7fb]">
+          <tbody className="divide-y divide-subtle">
             {orders.map(o => (
-              <tr key={o.poNo} className="hover:bg-[#f8f9ff]">
-                <td className="p-3 font-mono font-bold text-[#0e5d84]">{o.poNo}</td>
-                <td className="p-3 font-semibold text-[#082b3d]">{o.vendor}</td>
-                <td className="p-3 text-[#464555]">{o.items}</td>
-                <td className="p-3 text-right font-mono font-bold text-[#082b3d]">
+              <tr key={o.poNo} className="hover:bg-wash">
+                <td className="p-3 font-mono font-bold text-brand">{o.poNo}</td>
+                <td className="p-3 font-semibold text-ink">{o.vendor}</td>
+                <td className="p-3 text-ink-soft">{o.items}</td>
+                <td className="p-3 text-right font-mono font-bold text-ink">
                   ₹{o.amount.toLocaleString('en-IN')}
                 </td>
                 <td className="p-3">
@@ -248,7 +248,7 @@ export const ProcurementView: React.FC = () => {
                     {o.paymentStatus}
                   </span>
                 </td>
-                <td className="p-3 font-mono text-[11px] text-[#777587]">
+                <td className="p-3 font-mono text-[11px] text-ink-muted">
                   {o.utr || 'Pending'}
                 </td>
               </tr>
@@ -259,12 +259,12 @@ export const ProcurementView: React.FC = () => {
 
       {/* MODAL 1: Create Purchase Order */}
       {showCreatePoModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">receipt_long</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Issue Purchase Order (PRO-001)</h3>
+                <span className="material-symbols-outlined text-brand">receipt_long</span>
+                <h3 className="font-bold text-ink text-sm">Issue Purchase Order (PRO-001)</h3>
               </div>
               <button
                 onClick={() => setShowCreatePoModal(false)}
@@ -282,7 +282,7 @@ export const ProcurementView: React.FC = () => {
                   value={vendorName}
                   onChange={e => setVendorName(e.target.value)}
                   placeholder="e.g. Navneet Educational Publications Ltd"
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-[#0e5d84]"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
                 />
               </div>
 
@@ -293,7 +293,7 @@ export const ProcurementView: React.FC = () => {
                   value={itemDescription}
                   onChange={e => setItemDescription(e.target.value)}
                   placeholder="e.g. 500x Standard Graph Notebooks & Log Tables"
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-[#0e5d84]"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
                 />
               </div>
 
@@ -304,7 +304,7 @@ export const ProcurementView: React.FC = () => {
                   value={poAmount}
                   onChange={e => setPoAmount(e.target.value)}
                   placeholder="25000"
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-[#0e5d84]"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
                 />
               </div>
 
@@ -318,7 +318,7 @@ export const ProcurementView: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#0e5d84] hover:bg-[#083a4f] text-white font-bold rounded-xl text-xs shadow-xs"
+                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
                 >
                   Generate PO
                 </button>
@@ -330,12 +330,12 @@ export const ProcurementView: React.FC = () => {
 
       {/* MODAL 2: Release Payment */}
       {showPaymentModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-emerald-600">payments</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Authorize RTGS Vendor Payment</h3>
+                <h3 className="font-bold text-ink text-sm">Authorize RTGS Vendor Payment</h3>
               </div>
               <button
                 onClick={() => setShowPaymentModal(false)}

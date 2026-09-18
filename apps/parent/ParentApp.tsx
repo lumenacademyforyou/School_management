@@ -95,22 +95,24 @@ const Login: React.FC<{ onLogin: (a: ParentAccount) => void }> = ({ onLogin }) =
   const account = PARENT_ACCOUNTS.find(a => digits(a.guardian.mobile) === digits(mobile));
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row bg-[var(--accent)]">
-      <div className="px-6 pt-14 pb-10 text-white lg:flex-1 lg:flex lg:flex-col lg:justify-center lg:px-16 xl:px-24">
-        <img src={LOGO_SRC} alt="" className="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-white p-1" />
-        <h1 className="mt-5 text-[26px] lg:text-[40px] font-bold leading-tight">Lumen Academy</h1>
-        <p className="text-white/80 text-[14px] lg:text-[17px] lg:max-w-md">Parent app · attendance, fees, homework and messages in one place</p>
-        <ul className="hidden lg:block mt-8 space-y-3 text-[15px] text-white/90">
+    <div className="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row bg-lumen-night">
+      <div className="relative overflow-hidden px-6 pt-14 pb-10 text-white lg:flex-1 lg:flex lg:flex-col lg:justify-center lg:px-16 xl:px-24">
+        <div aria-hidden="true" className="absolute inset-0 bg-sunburst [mask-image:radial-gradient(120%_90%_at_100%_0%,black_0%,transparent_65%)]" />
+        <img src={LOGO_SRC} alt="" className="relative w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-cream-50 p-1 ring-2 ring-gold-400/70 shadow-[0_8px_24px_-8px_rgb(240_180_58/0.45)]" />
+        <h1 className="relative mt-5 text-[26px] lg:text-[40px] font-bold font-display tracking-tight leading-tight">Lumen Academy</h1>
+        <p className="relative text-lumen-100/85 text-[14px] lg:text-[17px] lg:max-w-md">Parent app · attendance, fees, homework and messages in one place</p>
+        <span aria-hidden="true" className="relative hidden lg:block mt-6 h-px w-24 bg-gradient-to-r from-gold-400 to-transparent" />
+        <ul className="relative hidden lg:block mt-6 space-y-3 text-[15px] text-cream-100/90">
           {['Daily attendance and leave requests', 'Fee dues, receipts and online payment', 'Homework, results and Hall of Fame', 'Bus, hostel and messages from teachers'].map(x => (
             <li key={x} className="flex items-center gap-3">
-              <Icon name="check_circle" className="text-[20px]" />
+              <Icon name="check_circle" className="text-[20px] text-gold-300" />
               {x}
             </li>
           ))}
         </ul>
       </div>
-      <div className="flex-1 lg:flex-none lg:w-[460px] lg:overflow-y-auto lg:flex lg:flex-col lg:justify-center bg-[var(--surface)] rounded-t-[28px] lg:rounded-none p-6 lg:p-10 space-y-4">
-        <h2 className="hidden lg:block text-[22px] font-bold text-slate-900">Sign in</h2>
+      <div className="flex-1 lg:flex-none lg:w-[460px] lg:overflow-y-auto lg:flex lg:flex-col lg:justify-center bg-[var(--surface)] rounded-t-[28px] lg:rounded-none p-6 lg:p-10 space-y-4 shadow-[0_-12px_32px_-12px_rgb(7_32_47/0.5)]">
+        <h2 className="hidden lg:block text-[24px] font-bold font-display tracking-tight text-slate-900">Sign in</h2>
         {step === 'mobile' ? (
           <>
             <Field label="Registered mobile number" hint="We send a one-time password by WhatsApp, or SMS if WhatsApp is not available.">
@@ -174,7 +176,7 @@ const Login: React.FC<{ onLogin: (a: ParentAccount) => void }> = ({ onLogin }) =
 export const ParentApp: React.FC = () => {
   const [account, setAccount] = useState<ParentAccount | null>(null);
   const { applied } = useTheme();
-  return <AppFrame accent="#0e5d84" theme={applied}>{account ? <Signedin account={account} onSignOut={() => setAccount(null)} /> : <Login onLogin={setAccount} />}</AppFrame>;
+  return <AppFrame accent="#17667d" theme={applied}>{account ? <Signedin account={account} onSignOut={() => setAccount(null)} /> : <Login onLogin={setAccount} />}</AppFrame>;
 };
 
 const HomeScreen: React.FC = () => {
@@ -185,7 +187,7 @@ const HomeScreen: React.FC = () => {
     <Screen wide>
       <div className="lg:col-span-2">
         <p className="text-[13px] text-slate-500">{t('greeting')}, {guardian.name.split(' ').slice(-1)[0]}</p>
-        <p className="text-[18px] font-semibold text-slate-900">
+        <p className="text-[20px] font-bold font-display tracking-tight text-slate-900">
           {child.name} · Class {section}
         </p>
       </div>

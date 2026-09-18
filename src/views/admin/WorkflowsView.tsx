@@ -301,12 +301,12 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       <div>
-        <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+        <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
           <span className="material-symbols-outlined text-sm">account_tree</span>
           <span>Module 5 · Workflow & Approvals (WFL)</span>
         </div>
-        <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">Approval Workflows</h1>
-        <p className="text-xs text-[#464555] mt-1">
+        <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">Approval Workflows</h1>
+        <p className="text-xs text-ink-soft mt-1">
           Signed in as {currentUser.name} · {currentUser.roleTitle}
           {delegation && ` · delegating to ${delegation.to} until ${delegation.until}`}
         </p>
@@ -319,21 +319,21 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
           { label: 'Active workflows', value: workflows.length, icon: 'account_tree' },
           { label: 'Transitions logged', value: history.length, icon: 'history' },
         ].map(k => (
-          <div key={k.label} className="bg-white rounded-2xl border border-[#e0ecf4] p-4 shadow-xs">
-            <span className="material-symbols-outlined text-[#0e5d84] text-lg">{k.icon}</span>
-            <p className="text-2xl font-bold text-[#082b3d] mt-1">{k.value}</p>
-            <p className="text-[11px] text-[#777587]">{k.label}</p>
+          <div key={k.label} className="bg-surface rounded-2xl border border-line-soft p-4 shadow-sm">
+            <span className="material-symbols-outlined text-brand text-lg">{k.icon}</span>
+            <p className="text-2xl font-bold text-ink mt-1">{k.value}</p>
+            <p className="text-[11px] text-ink-muted">{k.label}</p>
           </div>
         ))}
       </div>
 
-      <div className="flex gap-1 overflow-x-auto border-b border-[#e0ecf4]">
+      <div className="flex gap-1 overflow-x-auto border-b border-line-soft">
         {TABS.map(t => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
-              tab === t.id ? 'border-[#0e5d84] text-[#0e5d84]' : 'border-transparent text-[#777587] hover:text-[#082b3d]'
+              tab === t.id ? 'border-brand text-brand' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
             <span className="material-symbols-outlined text-sm">{t.icon}</span>
@@ -344,9 +344,9 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
       <FeatureTags ids={TABS.find(t => t.id === tab)!.ids} />
 
       {tab === 'queue' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-          <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex flex-wrap items-center gap-2">
-            <select value={workflowFilter} onChange={e => setWorkflowFilter(e.target.value)} className="text-xs border border-[#cbe0ec] rounded-lg px-2 py-1.5 bg-white">
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+          <div className="p-4 bg-subtle border-b border-line flex flex-wrap items-center gap-2">
+            <select value={workflowFilter} onChange={e => setWorkflowFilter(e.target.value)} className="text-xs border border-line rounded-lg px-2 py-1.5 bg-white">
               <option value="all">All workflows</option>
               {workflows.map(w => (
                 <option key={w.id} value={w.id}>
@@ -359,18 +359,18 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
               value={bulkComment}
               onChange={e => setBulkComment(e.target.value)}
               placeholder="Shared comment for bulk approval"
-              className="text-xs border border-[#cbe0ec] rounded-lg px-2 py-1.5 min-w-0 w-full sm:w-64"
+              className="text-xs border border-line rounded-lg px-2 py-1.5 min-w-0 w-full sm:w-64"
             />
             <button
               onClick={bulkApprove}
               disabled={selected.size === 0}
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#0e5d84] text-white hover:bg-[#083a4f] disabled:opacity-50"
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand text-white hover:bg-brand-strong disabled:opacity-50"
             >
               Approve selected ({selected.size})
             </button>
           </div>
-          {pending.length === 0 && <p className="p-6 text-center text-xs text-[#777587]">Nothing awaiting your action.</p>}
-          <div className="divide-y divide-[#f0f7fb]">
+          {pending.length === 0 && <p className="p-6 text-center text-xs text-ink-muted">Nothing awaiting your action.</p>}
+          <div className="divide-y divide-subtle">
             {pending.map(item => {
               const stage = stageOf(item);
               const def = wf(item.workflowId);
@@ -382,24 +382,24 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
                     type="checkbox"
                     checked={selected.has(item.id)}
                     onChange={() => toggleSelected(item.id)}
-                    className="accent-[#0e5d84] self-start md:self-center"
+                    className="accent-brand self-start md:self-center"
                     aria-label={`Select ${item.reference}`}
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-mono font-bold text-[#0e5d84]">{item.reference}</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-[#464555]">{def.name}</span>
+                      <span className="font-mono font-bold text-brand">{item.reference}</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-ink-soft">{def.name}</span>
                       {isBreached(item) && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">SLA breached</span>}
                       {own && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">Created by you</span>}
                     </div>
-                    <p className="font-semibold text-[#082b3d] mt-1">{item.subject}</p>
-                    <p className="text-[11px] text-[#777587]">
+                    <p className="font-semibold text-ink mt-1">{item.subject}</p>
+                    <p className="text-[11px] text-ink-muted">
                       Stage {item.stageIndex + 1}/{def.stages.length}: {stage.name} · owner {ROLE_NAMES[stage.owner]} · {item.hoursInStage}h of {stage.slaHours}h SLA · from {item.submittedBy}
                     </p>
                   </div>
                   <div className="flex gap-1">
                     {!mine ? (
-                      <span className="px-3 py-1.5 rounded-lg bg-slate-50 text-[#777587] font-semibold">Waiting on {ROLE_NAMES[stage.owner]}</span>
+                      <span className="px-3 py-1.5 rounded-lg bg-slate-50 text-ink-muted font-semibold">Waiting on {ROLE_NAMES[stage.owner]}</span>
                     ) : (
                     <>
                     <button onClick={() => setRejecting(item)} disabled={own} className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 font-semibold disabled:opacity-40">
@@ -409,7 +409,7 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
                       onClick={() => approve(item, 'Approved from queue') && addToast(`${item.reference} approved`, 'success')}
                       disabled={own}
                       title={own ? 'You cannot approve a request you created' : undefined}
-                      className="px-3 py-1.5 rounded-lg bg-[#0e5d84] hover:bg-[#083a4f] text-white font-semibold disabled:opacity-40"
+                      className="px-3 py-1.5 rounded-lg bg-brand hover:bg-brand-strong text-white font-semibold disabled:opacity-40"
                     >
                       Approve
                     </button>
@@ -426,29 +426,29 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
       {tab === 'definitions' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {workflows.map(w => (
-            <div key={w.id} className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3">
+            <div key={w.id} className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="text-sm font-bold text-[#082b3d]">{w.name}</p>
-                  <p className="text-[11px] text-[#777587]">
+                  <p className="text-sm font-bold text-ink">{w.name}</p>
+                  <p className="text-[11px] text-ink-muted">
                     Entity {w.entity} · v{w.version} · {w.mode}
                     {w.quorum && ` · ${w.quorum}`}
                   </p>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#f0f7fb] text-[#0e5d84] border border-[#cbe0ec]">{w.phase}</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-subtle text-brand border border-line">{w.phase}</span>
               </div>
               <ol className="space-y-2">
                 {w.stages.map((s, i) => (
                   <li key={s.name} className="flex items-center gap-2 text-xs p-2 rounded-lg bg-slate-50">
-                    <span className="w-5 h-5 rounded-full bg-[#0e5d84] text-white text-[10px] font-bold flex items-center justify-center shrink-0">{i + 1}</span>
+                    <span className="w-5 h-5 rounded-full bg-brand text-white text-[10px] font-bold flex items-center justify-center shrink-0">{i + 1}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-[#082b3d]">{s.name}</p>
-                      <p className="text-[10px] text-[#777587]">
+                      <p className="font-semibold text-ink">{s.name}</p>
+                      <p className="text-[10px] text-ink-muted">
                         {ROLE_NAMES[s.owner]}
                         {s.requiredDocs.length > 0 && ` · needs ${s.requiredDocs.join(', ')}`}
                       </p>
                     </div>
-                    <label className="flex items-center gap-1 text-[10px] text-[#464555]">
+                    <label className="flex items-center gap-1 text-[10px] text-ink-soft">
                       SLA
                       <input
                         type="number"
@@ -456,7 +456,7 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
                         value={s.slaHours}
                         onChange={e => updateSla(w.id, i, Number(e.target.value))}
                         disabled={!canConfigure}
-                        className="w-14 border border-[#cbe0ec] rounded px-1 py-0.5 text-right font-mono"
+                        className="w-14 border border-line rounded px-1 py-0.5 text-right font-mono"
                         aria-label={`${w.name} ${s.name} SLA hours`}
                       />
                       h
@@ -470,26 +470,26 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
       )}
 
       {tab === 'history' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-x-auto">
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-x-auto">
           <table className="w-full text-xs">
-            <thead className="bg-slate-50 text-[#464555]">
+            <thead className="bg-slate-50 text-ink-soft">
               <tr>
                 {['When', 'Reference', 'Actor', 'Action', 'Transition', 'Comment'].map(h => (
                   <th key={h} className="text-left p-3 font-semibold whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#f0f7fb]">
+            <tbody className="divide-y divide-subtle">
               {history.map(h => (
                 <tr key={h.id}>
                   <td className="p-3 font-mono whitespace-nowrap">{h.at}</td>
-                  <td className="p-3 font-mono text-[#0e5d84]">{queue.find(q => q.id === h.itemId)?.reference}</td>
+                  <td className="p-3 font-mono text-brand">{queue.find(q => q.id === h.itemId)?.reference}</td>
                   <td className="p-3">{h.actor}</td>
                   <td className="p-3 font-semibold">{h.action}</td>
-                  <td className="p-3 text-[#464555]">
+                  <td className="p-3 text-ink-soft">
                     {h.fromStage} → {h.toStage}
                   </td>
-                  <td className="p-3 text-[#464555]">{h.comment}</td>
+                  <td className="p-3 text-ink-soft">{h.comment}</td>
                 </tr>
               ))}
             </tbody>
@@ -499,27 +499,27 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
 
       {tab === 'delegation' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <form onSubmit={saveDelegation} aria-disabled={myStages.length === 0} className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3 text-xs">
-            <p className="font-bold text-[#082b3d]">Delegate my approvals during leave</p>
+          <form onSubmit={saveDelegation} aria-disabled={myStages.length === 0} className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3 text-xs">
+            <p className="font-bold text-ink">Delegate my approvals during leave</p>
             <label className="block">
-              <span className="block font-semibold text-[#464555] mb-1">Delegate to</span>
-              <select value={delegateTo} onChange={e => setDelegateTo(e.target.value)} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1.5">
+              <span className="block font-semibold text-ink-soft mb-1">Delegate to</span>
+              <select value={delegateTo} onChange={e => setDelegateTo(e.target.value)} className="w-full border border-line rounded-lg px-2 py-1.5">
                 <option>Mrs. Kavitha Raman (Vice Principal)</option>
                 <option>Mr. Joseph Antony (Branch Admin)</option>
               </select>
             </label>
             <div className="grid grid-cols-2 gap-2">
               <label className="block">
-                <span className="block font-semibold text-[#464555] mb-1">From</span>
-                <input type="date" value={delegateFrom} onChange={e => setDelegateFrom(e.target.value)} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1.5" />
+                <span className="block font-semibold text-ink-soft mb-1">From</span>
+                <input type="date" value={delegateFrom} onChange={e => setDelegateFrom(e.target.value)} className="w-full border border-line rounded-lg px-2 py-1.5" />
               </label>
               <label className="block">
-                <span className="block font-semibold text-[#464555] mb-1">Until</span>
-                <input type="date" value={delegateUntil} onChange={e => setDelegateUntil(e.target.value)} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1.5" />
+                <span className="block font-semibold text-ink-soft mb-1">Until</span>
+                <input type="date" value={delegateUntil} onChange={e => setDelegateUntil(e.target.value)} className="w-full border border-line rounded-lg px-2 py-1.5" />
               </label>
             </div>
             <div className="flex gap-2">
-              <button type="submit" className="font-semibold px-3 py-1.5 rounded-lg bg-[#0e5d84] text-white hover:bg-[#083a4f]">
+              <button type="submit" className="font-semibold px-3 py-1.5 rounded-lg bg-brand text-white hover:bg-brand-strong">
                 Save delegation
               </button>
               {delegation && (
@@ -537,9 +537,9 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
             </div>
           </form>
 
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-            <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex items-center justify-between">
-              <span className="text-xs font-bold text-[#082b3d]">SLA breaches → escalate to Principal</span>
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+            <div className="p-4 bg-subtle border-b border-line flex items-center justify-between">
+              <span className="text-xs font-bold text-ink">SLA breaches → escalate to Principal</span>
               <button
                 onClick={escalateAll}
                 disabled={breached.length === 0 || !canConfigure}
@@ -548,10 +548,10 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
                 Escalate ({breached.length})
               </button>
             </div>
-            {breached.length === 0 && <p className="p-4 text-xs text-[#777587]">No items past their SLA.</p>}
+            {breached.length === 0 && <p className="p-4 text-xs text-ink-muted">No items past their SLA.</p>}
             {breached.map(item => (
-              <div key={item.id} className="p-3 text-xs border-b border-[#f0f7fb]">
-                <p className="font-semibold text-[#082b3d]">
+              <div key={item.id} className="p-3 text-xs border-b border-subtle">
+                <p className="font-semibold text-ink">
                   {item.reference} · {item.subject}
                 </p>
                 <p className="text-[11px] text-rose-700">
@@ -565,21 +565,21 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
 
       {tab === 'analytics' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-x-auto">
-            <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] text-xs font-bold text-[#082b3d]">Time in stage vs SLA (bottlenecks first)</div>
+          <div className="lg:col-span-2 bg-surface rounded-2xl border border-line-soft shadow-sm overflow-x-auto">
+            <div className="p-4 bg-subtle border-b border-line text-xs font-bold text-ink">Time in stage vs SLA (bottlenecks first)</div>
             <table className="w-full text-xs">
-              <thead className="bg-slate-50 text-[#464555]">
+              <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   {['Workflow', 'Stage', 'Avg hours', 'SLA', 'Load', 'Completed'].map(h => (
                     <th key={h} className="text-left p-3 font-semibold">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {bottlenecks.map(b => (
                   <tr key={`${b.workflowId}-${b.stage}`}>
                     <td className="p-3">{b.workflow}</td>
-                    <td className="p-3 font-semibold text-[#082b3d]">{b.stage}</td>
+                    <td className="p-3 font-semibold text-ink">{b.stage}</td>
                     <td className="p-3 font-mono">{b.avgHours}</td>
                     <td className="p-3 font-mono">{b.sla}</td>
                     <td className="p-3 w-32">
@@ -597,8 +597,8 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
               </tbody>
             </table>
           </div>
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-2">
-            <p className="text-xs font-bold text-[#082b3d]">Approver throughput (logged transitions)</p>
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-2">
+            <p className="text-xs font-bold text-ink">Approver throughput (logged transitions)</p>
             {throughput.map(([actor, count]) => (
               <div key={actor} className="flex justify-between text-xs p-2 rounded-lg bg-slate-50">
                 <span className="truncate pr-2">{actor}</span>
@@ -610,20 +610,20 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
       )}
 
       {rejecting && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setRejecting(null)}>
-          <div className="bg-white rounded-2xl max-w-md w-full p-5 space-y-3 shadow-2xl text-xs" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-[#082b3d]">Reject {rejecting.reference}</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setRejecting(null)}>
+          <div className="bg-surface rounded-2xl max-w-md w-full p-5 space-y-3 shadow-2xl text-xs ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
+            <h3 className="text-sm font-bold text-ink">Reject {rejecting.reference}</h3>
             <label className="block">
-              <span className="block font-semibold text-[#464555] mb-1">Reason code</span>
-              <select value={rejectReason} onChange={e => setRejectReason(e.target.value)} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1.5">
+              <span className="block font-semibold text-ink-soft mb-1">Reason code</span>
+              <select value={rejectReason} onChange={e => setRejectReason(e.target.value)} className="w-full border border-line rounded-lg px-2 py-1.5">
                 {REJECT_REASONS.map(r => (
                   <option key={r}>{r}</option>
                 ))}
               </select>
             </label>
             <label className="block">
-              <span className="block font-semibold text-[#464555] mb-1">Comment (required)</span>
-              <textarea value={rejectComment} onChange={e => setRejectComment(e.target.value)} rows={3} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1.5" />
+              <span className="block font-semibold text-ink-soft mb-1">Comment (required)</span>
+              <textarea value={rejectComment} onChange={e => setRejectComment(e.target.value)} rows={3} className="w-full border border-line rounded-lg px-2 py-1.5" />
             </label>
             <div className="flex justify-end gap-2">
               <button onClick={() => setRejecting(null)} className="font-semibold px-3 py-1.5 rounded-lg bg-slate-100">

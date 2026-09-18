@@ -12,19 +12,19 @@ export const LeaveApplicationModal: React.FC = () => {
   if (!leaveModalOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 fade-in" onClick={() => setLeaveModalOpen(false)}>
-      <div className="bg-white rounded-2xl shadow-2xl border border-[#cbe0ec] max-w-md w-full overflow-hidden zoom-in" onClick={e => e.stopPropagation()}>
-        <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex items-center justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 fade-in bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setLeaveModalOpen(false)}>
+      <div className="bg-surface rounded-2xl shadow-2xl max-w-md w-full overflow-hidden zoom-in ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
+        <div className="p-4 bg-subtle border-b border-line flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#0e5d84]">edit_calendar</span>
+            <span className="material-symbols-outlined text-brand">edit_calendar</span>
             <div>
-              <h2 className="text-sm font-bold text-[#082b3d]">Submit Student Leave Request</h2>
-              <div className="text-[11px] text-[#464555]">Aarav S. Ramanathan • Class 10-A</div>
+              <h2 className="text-sm font-bold text-ink">Submit Student Leave Request</h2>
+              <div className="text-[11px] text-ink-soft">Aarav S. Ramanathan • Class 10-A</div>
             </div>
           </div>
           <button
             onClick={() => setLeaveModalOpen(false)}
-            className="text-[#777587] hover:text-[#082b3d] p-1 rounded-lg"
+            className="text-ink-muted hover:text-ink p-1 rounded-lg"
           >
             <span className="material-symbols-outlined text-base">close</span>
           </button>
@@ -32,11 +32,11 @@ export const LeaveApplicationModal: React.FC = () => {
 
         <div className="p-4 space-y-3.5">
           <div>
-            <label className="block text-xs font-semibold text-[#082b3d] mb-1">Leave Category</label>
+            <label className="block text-xs font-semibold text-ink mb-1">Leave Category</label>
             <select
               value={leaveType}
               onChange={e => setLeaveType(e.target.value)}
-              className="w-full bg-white border border-[#cbe0ec] rounded-lg p-2 text-xs text-[#082b3d] outline-hidden focus:border-[#0e5d84]"
+              className="w-full bg-white border border-line rounded-lg p-2 text-xs text-ink outline-hidden focus:border-brand"
             >
               <option value="Medical Leave">Medical Leave (Doctor prescription attachable)</option>
               <option value="Family Event">Family / Personal Emergency</option>
@@ -47,49 +47,49 @@ export const LeaveApplicationModal: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-semibold text-[#082b3d] mb-1">From Date</label>
+              <label className="block text-xs font-semibold text-ink mb-1">From Date</label>
               <input
                 type="date"
                 value={fromDate}
                 onChange={e => setFromDate(e.target.value)}
-                className="w-full bg-white border border-[#cbe0ec] rounded-lg p-2 text-xs text-[#082b3d] outline-hidden"
+                className="w-full bg-white border border-line rounded-lg p-2 text-xs text-ink outline-hidden"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-[#082b3d] mb-1">To Date</label>
+              <label className="block text-xs font-semibold text-ink mb-1">To Date</label>
               <input
                 type="date"
                 value={toDate}
                 onChange={e => setToDate(e.target.value)}
-                className="w-full bg-white border border-[#cbe0ec] rounded-lg p-2 text-xs text-[#082b3d] outline-hidden"
+                className="w-full bg-white border border-line rounded-lg p-2 text-xs text-ink outline-hidden"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#082b3d] mb-1">Reason / Notes for Class Teacher</label>
+            <label className="block text-xs font-semibold text-ink mb-1">Reason / Notes for Class Teacher</label>
             <textarea
               rows={3}
               value={reason}
               onChange={e => setReason(e.target.value)}
-              className="w-full bg-white border border-[#cbe0ec] rounded-lg p-2 text-xs text-[#082b3d] outline-hidden focus:border-[#0e5d84]"
+              className="w-full bg-white border border-line rounded-lg p-2 text-xs text-ink outline-hidden focus:border-brand"
               placeholder="State reasons for absence..."
             />
           </div>
 
-          <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-[11px] text-[#464555] flex items-center justify-between">
+          <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-[11px] text-ink-soft flex items-center justify-between">
             <span className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-sm text-[#0e5d84]">attach_file</span>
+              <span className="material-symbols-outlined text-sm text-brand">attach_file</span>
               <span>Attach Doctor Note (Optional)</span>
             </span>
-            <span className="text-[#0e5d84] font-semibold cursor-pointer">Browse PDF</span>
+            <span className="text-brand font-semibold cursor-pointer">Browse PDF</span>
           </div>
         </div>
 
-        <div className="p-3 bg-[#f0f7fb] border-t border-[#cbe0ec] flex justify-end gap-2">
+        <div className="p-3 bg-subtle border-t border-line flex justify-end gap-2">
           <button
             onClick={() => setLeaveModalOpen(false)}
-            className="px-3 py-1.5 text-xs text-[#464555] hover:text-[#082b3d] font-medium"
+            className="px-3 py-1.5 text-xs text-ink-soft hover:text-ink font-medium"
           >
             Cancel
           </button>
@@ -98,7 +98,7 @@ export const LeaveApplicationModal: React.FC = () => {
               setLeaveModalOpen(false);
               addToast('Leave Request Dispatched', 'success', `Forwarded to Mrs. Malini Iyer for Class 10-A attendance exemption.`);
             }}
-            className="px-4 py-1.5 bg-[#0e5d84] hover:bg-[#083a4f] text-white text-xs font-semibold rounded-lg shadow-sm transition-colors"
+            className="px-4 py-1.5 bg-brand hover:bg-brand-strong text-white text-xs font-semibold rounded-lg shadow-sm transition-colors"
           >
             Submit to School
           </button>

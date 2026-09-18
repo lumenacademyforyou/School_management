@@ -75,10 +75,10 @@ const fmt = (iso: string) => {
 };
 const rupees = (n: number) => `₹${n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-const inputCls = 'text-xs border border-[#cbe0ec] rounded-lg px-2 py-1.5 bg-white';
+const inputCls = 'text-xs border border-line rounded-lg px-2 py-1.5 bg-white';
 const btn = 'text-xs font-semibold px-3 py-1.5 rounded-lg disabled:opacity-40';
-const btnPrimary = `${btn} bg-[#0e5d84] text-white hover:bg-[#083a4f]`;
-const btnSoft = `${btn} bg-slate-100 hover:bg-slate-200 text-[#082b3d]`;
+const btnPrimary = `${btn} bg-brand text-white hover:bg-brand-strong`;
+const btnSoft = `${btn} bg-slate-100 hover:bg-slate-200 text-ink`;
 const btnDanger = `${btn} bg-rose-600 text-white hover:bg-rose-700`;
 
 const STATUS_STYLE: Record<string, string> = {
@@ -91,9 +91,9 @@ const STATUS_STYLE: Record<string, string> = {
 };
 
 const Panel: React.FC<{ title: React.ReactNode; actions?: React.ReactNode; children: React.ReactNode; className?: string }> = ({ title, actions, children, className = '' }) => (
-  <div className={`bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden ${className}`}>
-    <div className="p-3 bg-[#f0f7fb] border-b border-[#cbe0ec] flex flex-wrap items-center justify-between gap-2">
-      <span className="text-xs font-bold text-[#082b3d]">{title}</span>
+  <div className={`bg-white rounded-2xl border border-line-soft shadow-xs overflow-hidden ${className}`}>
+    <div className="p-3 bg-subtle border-b border-line flex flex-wrap items-center justify-between gap-2">
+      <span className="text-xs font-bold text-ink">{title}</span>
       {actions}
     </div>
     {children}
@@ -110,7 +110,7 @@ const Chip: React.FC<{ active: boolean; onClick: () => void; children: React.Rea
     onClick={onClick}
     aria-pressed={active}
     aria-label={label}
-    className={`text-[11px] px-2 py-1 rounded-full border font-semibold ${active ? 'bg-[#0e5d84] text-white border-[#0e5d84]' : 'bg-white text-[#464555] border-[#cbe0ec]'}`}
+    className={`text-[11px] px-2 py-1 rounded-full border font-semibold ${active ? 'bg-brand text-white border-brand' : 'bg-white text-ink-soft border-line'}`}
   >
     {children}
   </button>
@@ -406,17 +406,17 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">campaign</span>
             <span>Modules 7 & 27 · Notifications (NOT) & Communication (COM)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">Communication Desk</h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">Communication Desk</h1>
+          <p className="text-xs text-ink-soft mt-1">
             {guardians.filter(g => g.primary).length} guardian households · {STAFF.length} staff · DLT entity {binding.entityId} ({binding.status})
           </p>
         </div>
         <label className="flex items-center gap-2 text-xs self-start sm:self-auto">
-          <span className="font-semibold text-[#464555]">Sending as</span>
+          <span className="font-semibold text-ink-soft">Sending as</span>
           <select value={senderRole} onChange={e => setSenderRole(e.target.value as typeof senderRole)} className={inputCls} aria-label="Sending role">
             {['Principal', 'Branch Admin', 'Teacher', 'Accountant'].map(r => (
               <option key={r}>{r}</option>
@@ -432,21 +432,21 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
           { label: 'Awaiting moderation', value: heldCount, sub: 'parent–teacher messages' },
           { label: 'Opted-out guardians', value: optedOut.length, sub: 'channels honoured automatically' },
         ].map(k => (
-          <div key={k.label} className="bg-white rounded-2xl border border-[#e0ecf4] p-3 shadow-xs">
-            <p className="text-2xl font-bold text-[#082b3d]">{k.value}</p>
-            <p className="text-[11px] font-semibold text-[#082b3d]">{k.label}</p>
-            <p className="text-[10px] text-[#777587]">{k.sub}</p>
+          <div key={k.label} className="bg-surface rounded-2xl border border-line-soft p-3 shadow-sm">
+            <p className="text-2xl font-bold text-ink">{k.value}</p>
+            <p className="text-[11px] font-semibold text-ink">{k.label}</p>
+            <p className="text-[10px] text-ink-muted">{k.sub}</p>
           </div>
         ))}
       </div>
 
-      <div className="flex gap-1 overflow-x-auto border-b border-[#e0ecf4]">
+      <div className="flex gap-1 overflow-x-auto border-b border-line-soft">
         {TABS.map(t => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
-              tab === t.id ? 'border-[#0e5d84] text-[#0e5d84]' : 'border-transparent text-[#777587] hover:text-[#082b3d]'
+              tab === t.id ? 'border-brand text-brand' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
             <span className="material-symbols-outlined text-sm">{t.icon}</span>
@@ -463,7 +463,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
             <div className="p-3 space-y-3 text-xs">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <label className="block">
-                  <span className="block text-[10px] font-semibold text-[#464555]">Event / template</span>
+                  <span className="block text-[10px] font-semibold text-ink-soft">Event / template</span>
                   <select value={eventId} onChange={e => { setEventId(e.target.value); setChannelOverride(null); }} disabled={emergency} className={`${inputCls} w-full`} aria-label="Event">
                     {events.filter(e => e.id !== 'EV-EMERGENCY').map(e => (
                       <option key={e.id} value={e.id}>
@@ -474,7 +474,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                 </label>
                 <label className="flex items-end gap-2">
                   <input type="checkbox" checked={emergency} onChange={e => { setEmergency(e.target.checked); setConfirmEmergency(false); }} disabled={!canEmergency} className="accent-rose-600" aria-label="Emergency broadcast" />
-                  <span className={canEmergency ? 'text-rose-700 font-semibold' : 'text-[#777587]'}>
+                  <span className={canEmergency ? 'text-rose-700 font-semibold' : 'text-ink-muted'}>
                     Emergency broadcast {canEmergency ? '(ignores quiet hours and cost rules)' : `— not allowed for ${senderRole}`}
                   </span>
                 </label>
@@ -484,7 +484,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
               {missingVars.length > 0 && <p className="text-[10px] text-amber-700">This template also uses {missingVars.map(v => `{{${v}}}`).join(', ')}, which are filled per student when sent automatically.</p>}
 
               <div className="space-y-1.5">
-                <p className="font-semibold text-[#082b3d]">Audience</p>
+                <p className="font-semibold text-ink">Audience</p>
                 <div className="flex flex-wrap gap-1">
                   <Chip active={audience.group === 'Guardians'} onClick={() => setAudience({ ...audience, group: 'Guardians' })}>
                     Guardians
@@ -496,13 +496,13 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                 {audience.group === 'Guardians' && (
                   <>
                     <div className="flex flex-wrap items-center gap-1">
-                      <span className="text-[10px] text-[#777587] w-16">Class</span>
+                      <span className="text-[10px] text-ink-muted w-16">Class</span>
                       {[8, 9, 10].map(c => (
                         <Chip key={c} active={audience.classes.includes(c)} onClick={() => setAudience({ ...audience, classes: toggle(audience.classes, c) })} label={`Class ${c}`}>
                           {c}
                         </Chip>
                       ))}
-                      <span className="text-[10px] text-[#777587] w-16 ml-2">Section</span>
+                      <span className="text-[10px] text-ink-muted w-16 ml-2">Section</span>
                       {['A', 'B'].map(s => (
                         <Chip key={s} active={audience.sections.includes(s)} onClick={() => setAudience({ ...audience, sections: toggle(audience.sections, s) })} label={`Section ${s}`}>
                           {s}
@@ -510,7 +510,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                       ))}
                     </div>
                     <div className="flex flex-wrap items-center gap-1">
-                      <span className="text-[10px] text-[#777587] w-16">Fee</span>
+                      <span className="text-[10px] text-ink-muted w-16">Fee</span>
                       {['Paid', 'Due', 'Overdue'].map(f => (
                         <Chip key={f} active={audience.feeStatus.includes(f)} onClick={() => setAudience({ ...audience, feeStatus: toggle(audience.feeStatus, f) })}>
                           {f}
@@ -525,14 +525,14 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                     </div>
                   </>
                 )}
-                <p className="text-[11px] text-[#464555]">
+                <p className="text-[11px] text-ink-soft">
                   {recipients.length} recipient(s). Siblings share one guardian, so each household receives one copy. Languages:{' '}
                   {(['en', 'ta', 'hi'] as Language[]).map(l => `${LANGUAGE_NAMES[l].split(' ')[0]} ${recipients.filter(r => r.language === l).length}`).join(' · ')}
                 </p>
               </div>
 
               <div className="space-y-1">
-                <p className="font-semibold text-[#082b3d]">Channels, in order</p>
+                <p className="font-semibold text-ink">Channels, in order</p>
                 <div className="flex flex-wrap gap-1">
                   {CHANNELS.map(c => (
                     <Chip
@@ -548,7 +548,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                     </Chip>
                   ))}
                   {channelOverride && (
-                    <button type="button" onClick={() => setChannelOverride(null)} className="text-[11px] text-[#0e5d84] underline">
+                    <button type="button" onClick={() => setChannelOverride(null)} className="text-[11px] text-brand underline">
                       use event default
                     </button>
                   )}
@@ -557,11 +557,11 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 <label className="flex items-center gap-1">
-                  <input type="checkbox" checked={circular} onChange={e => setCircular(e.target.checked)} className="accent-[#0e5d84]" />
+                  <input type="checkbox" checked={circular} onChange={e => setCircular(e.target.checked)} className="accent-brand" />
                   Numbered circular
                 </label>
                 <label className="flex items-center gap-1">
-                  <input type="checkbox" checked={ackRequired} onChange={e => setAckRequired(e.target.checked)} className="accent-[#0e5d84]" />
+                  <input type="checkbox" checked={ackRequired} onChange={e => setAckRequired(e.target.checked)} className="accent-brand" />
                   Acknowledgement required
                 </label>
                 {circular && <input value={attachment} onChange={e => setAttachment(e.target.value)} placeholder="Attachment file name" className={inputCls} aria-label="Attachment" />}
@@ -615,8 +615,8 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
               }
             >
               <div className="p-3 space-y-2 text-xs">
-                <div className="p-3 rounded-2xl bg-[#e7f6ec] text-[#082b3d] whitespace-pre-wrap">{previewText}</div>
-                <p className="text-[10px] text-[#777587]">
+                <div className="p-3 rounded-2xl bg-[#e7f6ec] text-ink whitespace-pre-wrap">{previewText}</div>
+                <p className="text-[10px] text-ink-muted">
                   {previewText.length} characters · {smsSegments(previewText)} SMS segment(s) · DLT {template.dltTemplateId ?? 'not registered'} · sender {template.senderId ?? '—'} · WhatsApp {template.whatsapp ? `${template.whatsapp.name} (${template.whatsapp.status})` : 'not mapped'}
                 </p>
               </div>
@@ -631,7 +631,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                 ].map(([k, v]) => (
                   <div key={k} className="p-2 rounded-lg bg-slate-50">
                     <p className="text-lg font-bold">{v}</p>
-                    <p className="text-[10px] text-[#777587]">{k}</p>
+                    <p className="text-[10px] text-ink-muted">{k}</p>
                   </div>
                 ))}
                 <p className="col-span-2 text-[11px]">Estimated cost {rupees(dryRun.cost)}</p>
@@ -645,19 +645,19 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
       {tab === 'outbox' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Panel title="Messages">
-            <div className="divide-y divide-[#f0f7fb] max-h-[640px] overflow-y-auto">
+            <div className="divide-y divide-subtle max-h-[640px] overflow-y-auto">
               {messages.map(m => {
                 const s = summarise(m.trails);
                 return (
-                  <button key={m.id} onClick={() => setOpenMessage(m.id)} className={`w-full text-left p-3 text-xs ${m.id === openMessage ? 'bg-[#f0f7fb]' : 'hover:bg-[#f8f9ff]'}`}>
+                  <button key={m.id} onClick={() => setOpenMessage(m.id)} className={`w-full text-left p-3 text-xs ${m.id === openMessage ? 'bg-subtle' : 'hover:bg-wash'}`}>
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-semibold text-[#082b3d] truncate">
+                      <span className="font-semibold text-ink truncate">
                         {m.emergency && '🚨 '}
                         {m.title}
                       </span>
-                      <span className="font-mono text-[10px] text-[#777587]">{m.id}</span>
+                      <span className="font-mono text-[10px] text-ink-muted">{m.id}</span>
                     </div>
-                    <p className="text-[10px] text-[#777587]">
+                    <p className="text-[10px] text-ink-muted">
                       {m.scheduledFor ? `Scheduled ${fmt(m.scheduledFor)} ${m.sentAt}` : `${fmt(m.sentOn)} ${m.sentAt} · ${s.delivered}/${s.total} delivered · ${s.read} read`}
                       {m.circularNo && ` · ${m.circularNo}`}
                     </p>
@@ -707,7 +707,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                       .map(([k, v]) => (
                         <div key={k} className="p-2 rounded-lg bg-slate-50 text-center">
                           <p className="text-base font-bold">{v}</p>
-                          <p className="text-[10px] text-[#777587] capitalize">{k}</p>
+                          <p className="text-[10px] text-ink-muted capitalize">{k}</p>
                         </div>
                       ))}
                   </div>
@@ -725,14 +725,14 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
-                    <thead className="bg-slate-50 text-[#464555]">
+                    <thead className="bg-slate-50 text-ink-soft">
                       <tr>
                         {['Recipient', 'Lang', 'Delivery trail', 'Status', current.ackRequired ? 'Ack' : ''].map(h => (
                           <th key={h} className="text-left p-2.5 font-semibold">{h}</th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#f0f7fb]">
+                    <tbody className="divide-y divide-subtle">
                       {current.trails
                         .filter(t => trailFilter === 'All' || (trailFilter === 'Not delivered' ? t.status === 'Failed' || t.status === 'Blocked' : trailFilter === 'Unread' ? t.status === 'Delivered' : t.status === 'Held'))
                         .map(t => {
@@ -741,7 +741,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                             <tr key={t.recipientId} className="align-top">
                               <td className="p-2.5">
                                 <p className="font-semibold">{r?.name}</p>
-                                <p className="text-[10px] text-[#777587]">{r?.kind === 'Guardian' ? `${r.primary ? 'Primary' : 'Second'} guardian of ${nameOfStudent(r.studentId)}` : r?.kind}</p>
+                                <p className="text-[10px] text-ink-muted">{r?.kind === 'Guardian' ? `${r.primary ? 'Primary' : 'Second'} guardian of ${nameOfStudent(r.studentId)}` : r?.kind}</p>
                               </td>
                               <td className="p-2.5 uppercase">{t.language}</td>
                               <td className="p-2.5 space-y-0.5">
@@ -749,7 +749,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                                 {t.attempts.map((a, i) => (
                                   <p key={i}>
                                     <span className="font-semibold">{a.channel}</span> <Badge className={STATUS_STYLE[a.result]}>{a.result}</Badge>
-                                    {a.reason && <span className="text-[10px] text-[#777587]"> {a.reason}</span>}
+                                    {a.reason && <span className="text-[10px] text-ink-muted"> {a.reason}</span>}
                                     {a.cost > 0 && <span className="text-[10px] font-mono"> {rupees(a.cost)}</span>}
                                   </p>
                                 ))}
@@ -762,11 +762,11 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                                   (current.acknowledged.includes(t.recipientId) ? (
                                     <span className="text-emerald-700 font-semibold">✓</span>
                                   ) : t.status === 'Read' ? (
-                                    <button onClick={() => acknowledge(current, t.recipientId)} className="text-[10px] text-[#0e5d84] underline">
+                                    <button onClick={() => acknowledge(current, t.recipientId)} className="text-[10px] text-brand underline">
                                       record
                                     </button>
                                   ) : (
-                                    <span className="text-[#777587]">—</span>
+                                    <span className="text-ink-muted">—</span>
                                   ))}
                               </td>
                             </tr>
@@ -774,7 +774,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                         })}
                     </tbody>
                   </table>
-                  {current.scheduledFor && <p className="p-3 text-xs text-[#777587]">Scheduled — delivery trails appear once it is sent.</p>}
+                  {current.scheduledFor && <p className="p-3 text-xs text-ink-muted">Scheduled — delivery trails appear once it is sent.</p>}
                 </div>
               </Panel>
             </div>
@@ -787,7 +787,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Panel title={`Notice board · ${activeNotices.length} active · ${expiredNotices.length} expired`}>
-              <div className="p-3 space-y-2 text-xs border-b border-[#f0f7fb]">
+              <div className="p-3 space-y-2 text-xs border-b border-subtle">
                 <input value={newNotice.title} onChange={e => setNewNotice({ ...newNotice, title: e.target.value })} placeholder="Notice title" className={`${inputCls} w-full`} aria-label="Notice title" />
                 <input value={newNotice.body} onChange={e => setNewNotice({ ...newNotice, body: e.target.value })} placeholder="Details" className={`${inputCls} w-full`} aria-label="Notice details" />
                 <div className="flex flex-wrap items-center gap-2">
@@ -796,7 +796,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                     <input type="date" value={newNotice.expiresOn} min={asOf} onChange={e => setNewNotice({ ...newNotice, expiresOn: e.target.value })} className={inputCls} aria-label="Notice expiry" />
                   </label>
                   <label className="flex items-center gap-1">
-                    <input type="checkbox" checked={newNotice.pinned} onChange={e => setNewNotice({ ...newNotice, pinned: e.target.checked })} className="accent-[#0e5d84]" />
+                    <input type="checkbox" checked={newNotice.pinned} onChange={e => setNewNotice({ ...newNotice, pinned: e.target.checked })} className="accent-brand" />
                     Pin to top
                   </label>
                   <button
@@ -813,21 +813,21 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                   </button>
                 </div>
               </div>
-              <div className="divide-y divide-[#f0f7fb]">
+              <div className="divide-y divide-subtle">
                 {activeNotices.map(n => (
                   <div key={n.id} className="p-3 text-xs">
-                    <p className="font-semibold text-[#082b3d]">
+                    <p className="font-semibold text-ink">
                       {n.pinned && '📌 '}
                       {n.title}
                     </p>
                     <p>{n.body}</p>
-                    <p className="text-[10px] text-[#777587]">
+                    <p className="text-[10px] text-ink-muted">
                       {n.audience} · posted {fmt(n.postedOn)} · until {fmt(n.expiresOn)}
                     </p>
                   </div>
                 ))}
                 {expiredNotices.map(n => (
-                  <p key={n.id} className="p-3 text-[11px] text-[#777587]">
+                  <p key={n.id} className="p-3 text-[11px] text-ink-muted">
                     Expired: {n.title} (until {fmt(n.expiresOn)})
                   </p>
                 ))}
@@ -836,7 +836,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
 
             <Panel title="Event calendar · September 2024">
               <div className="p-3 text-xs">
-                <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-[#777587] mb-1">
+                <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-ink-muted mb-1">
                   {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => (
                     <span key={d}>{d}</span>
                   ))}
@@ -844,7 +844,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                 <div className="grid grid-cols-7 gap-1">
                   {calendarDays.map((d, i) =>
                     d ? (
-                      <div key={d} className={`min-h-[48px] rounded-lg border p-1 ${d === asOf ? 'border-[#0e5d84] bg-[#f0f7fb]' : 'border-[#e0ecf4]'}`}>
+                      <div key={d} className={`min-h-[48px] rounded-lg border p-1 ${d === asOf ? 'border-brand bg-subtle' : 'border-line-soft'}`}>
                         <p className="text-[10px] font-mono">{Number(d.slice(8))}</p>
                         {calEvents
                           .filter(e => e.date === d)
@@ -930,7 +930,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                               disabled={Boolean(s.bookedBy)}
                               title={s.bookedBy ? `Booked by ${recipientById(s.bookedBy)?.name}` : 'Free'}
                               aria-label={`${teacher} ${s.start}`}
-                              className={`w-12 py-1 rounded ${s.bookedBy === booker ? 'bg-[#0e5d84] text-white' : s.bookedBy ? 'bg-slate-200 text-slate-500' : 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'}`}
+                              className={`w-12 py-1 rounded ${s.bookedBy === booker ? 'bg-brand text-white' : s.bookedBy ? 'bg-slate-200 text-slate-500' : 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'}`}
                             >
                               {s.bookedBy === booker ? 'Mine' : s.bookedBy ? 'Taken' : 'Free'}
                             </button>
@@ -941,7 +941,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                 </tbody>
               </table>
             </div>
-            <p className="p-3 text-[10px] text-[#777587]">
+            <p className="p-3 text-[10px] text-ink-muted">
               {slots.filter(s => s.bookedBy).length} of {slots.length} slots booked. A guardian cannot book two teachers for the same time.
             </p>
           </Panel>
@@ -952,13 +952,13 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
       {tab === 'threads' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Panel title="Conversations">
-            <div className="divide-y divide-[#f0f7fb]">
+            <div className="divide-y divide-subtle">
               {threads.map(t => (
-                <button key={t.id} onClick={() => setOpenThread(t.id)} className={`w-full text-left p-3 text-xs ${t.id === openThread ? 'bg-[#f0f7fb]' : 'hover:bg-[#f8f9ff]'}`}>
-                  <p className="font-semibold text-[#082b3d]">
+                <button key={t.id} onClick={() => setOpenThread(t.id)} className={`w-full text-left p-3 text-xs ${t.id === openThread ? 'bg-subtle' : 'hover:bg-wash'}`}>
+                  <p className="font-semibold text-ink">
                     {t.subject} · {nameOfStudent(t.studentId)}
                   </p>
-                  <p className="text-[10px] text-[#777587]">
+                  <p className="text-[10px] text-ink-muted">
                     {t.teacher}
                     {t.messages.some(m => m.status === 'Held for moderation') && ' · ⚠ awaiting moderation'}
                   </p>
@@ -969,9 +969,9 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
           <Panel className="lg:col-span-2" title={`${thread.subject} · ${thread.teacher} ↔ guardian of ${nameOfStudent(thread.studentId)}`}>
             <div className="p-3 space-y-2 text-xs">
               {thread.messages.map((m, i) => (
-                <div key={i} className={`max-w-[80%] p-2 rounded-xl ${m.from === 'Teacher' ? 'bg-[#f0f7fb]' : 'bg-emerald-50 ml-auto'} ${m.status !== 'Delivered' ? 'border border-dashed border-amber-400' : ''}`}>
-                  <p className={m.status === 'Rejected' ? 'line-through text-[#777587]' : ''}>{m.text}</p>
-                  <p className="text-[10px] text-[#777587]">
+                <div key={i} className={`max-w-[80%] p-2 rounded-xl ${m.from === 'Teacher' ? 'bg-subtle' : 'bg-emerald-50 ml-auto'} ${m.status !== 'Delivered' ? 'border border-dashed border-amber-400' : ''}`}>
+                  <p className={m.status === 'Rejected' ? 'line-through text-ink-muted' : ''}>{m.text}</p>
+                  <p className="text-[10px] text-ink-muted">
                     {m.from} · {m.at} · {m.status}
                   </p>
                   {m.flags && m.status === 'Held for moderation' && (
@@ -989,7 +989,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                   )}
                 </div>
               ))}
-              <p className="text-[10px] text-[#777587]">Phone numbers stay private: teachers and parents talk here without seeing each other’s contact details.</p>
+              <p className="text-[10px] text-ink-muted">Phone numbers stay private: teachers and parents talk here without seeing each other’s contact details.</p>
               <div className="flex gap-1">
                 <select value={replyAs} onChange={e => setReplyAs(e.target.value as 'Teacher' | 'Parent')} className={inputCls} aria-label="Reply as">
                   <option>Teacher</option>
@@ -1019,7 +1019,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
             </select>
           }
         >
-          <div className="p-3 text-xs space-y-1 border-b border-[#f0f7fb]">
+          <div className="p-3 text-xs space-y-1 border-b border-subtle">
             {studentRecipients.map(r => (
               <p key={r.id}>
                 {r.name} · {r.primary ? 'primary' : 'second'} guardian · {LANGUAGE_NAMES[r.language]} · app {r.appInstalled ? 'yes' : 'no'} · WhatsApp {r.whatsappOptIn ? 'opted in' : 'no'}
@@ -1028,20 +1028,20 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
             ))}
           </div>
           <table className="w-full text-xs">
-            <thead className="bg-slate-50 text-[#464555]">
+            <thead className="bg-slate-50 text-ink-soft">
               <tr>
                 {['Date', 'Message', 'To', 'Channels', 'Status'].map(h => (
                   <th key={h} className="text-left p-2.5 font-semibold">{h}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#f0f7fb]">
+            <tbody className="divide-y divide-subtle">
               {studentLog.map(({ m, t, r }) => (
                 <tr key={`${m.id}-${t.recipientId}`}>
                   <td className="p-2.5 font-mono whitespace-nowrap">{fmt(m.sentOn)} {m.sentAt}</td>
                   <td className="p-2.5">
                     <p className="font-semibold">{m.title}</p>
-                    <p className="text-[10px] text-[#777587]">{t.text}</p>
+                    <p className="text-[10px] text-ink-muted">{t.text}</p>
                   </td>
                   <td className="p-2.5">{r.name}</td>
                   <td className="p-2.5">{t.attempts.filter(a => a.tries > 0).map(a => `${a.channel} (${a.result})`).join(', ') || '—'}</td>
@@ -1055,7 +1055,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                   <td className="p-2.5 font-mono whitespace-nowrap">{t.messages[t.messages.length - 1].at}</td>
                   <td className="p-2.5">
                     <p className="font-semibold">Conversation: {t.subject}</p>
-                    <p className="text-[10px] text-[#777587]">{t.messages.length} message(s)</p>
+                    <p className="text-[10px] text-ink-muted">{t.messages.length} message(s)</p>
                   </td>
                   <td className="p-2.5">{t.teacher}</td>
                   <td className="p-2.5">In-app</td>
@@ -1064,7 +1064,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
               ))}
             </tbody>
           </table>
-          {studentLog.length === 0 && studentThreads.length === 0 && <p className="p-3 text-xs text-[#777587]">Nothing sent yet.</p>}
+          {studentLog.length === 0 && studentThreads.length === 0 && <p className="p-3 text-xs text-ink-muted">Nothing sent yet.</p>}
         </Panel>
       )}
 
@@ -1072,11 +1072,11 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
       {tab === 'gallery' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Panel title="Albums">
-            <div className="divide-y divide-[#f0f7fb]">
+            <div className="divide-y divide-subtle">
               {albums.map(a => (
-                <button key={a.id} onClick={() => setOpenAlbum(a.id)} className={`w-full text-left p-3 text-xs ${a.id === openAlbum ? 'bg-[#f0f7fb]' : 'hover:bg-[#f8f9ff]'}`}>
+                <button key={a.id} onClick={() => setOpenAlbum(a.id)} className={`w-full text-left p-3 text-xs ${a.id === openAlbum ? 'bg-subtle' : 'hover:bg-wash'}`}>
                   <p className="font-semibold">{a.title}</p>
-                  <p className="text-[10px] text-[#777587]">
+                  <p className="text-[10px] text-ink-muted">
                     {fmt(a.date)} · {a.photos.length} photos · {a.status}
                     {a.external ? ' · external share' : ''}
                   </p>
@@ -1104,12 +1104,12 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
               {album.photos.map(p => {
                 const blocked = photoGate(p);
                 return (
-                  <div key={p.id} className={`rounded-xl border p-2 space-y-1 ${blocked.length ? 'border-rose-300 bg-rose-50' : 'border-[#e0ecf4]'}`}>
+                  <div key={p.id} className={`rounded-xl border p-2 space-y-1 ${blocked.length ? 'border-rose-300 bg-rose-50' : 'border-line-soft'}`}>
                     <div className="aspect-video rounded-lg bg-gradient-to-br from-sky-100 to-emerald-100 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-3xl text-[#0e5d84]">photo_camera</span>
+                      <span className="material-symbols-outlined text-3xl text-brand">photo_camera</span>
                     </div>
                     <p className="font-semibold">{p.caption}</p>
-                    <p className="text-[10px] text-[#777587]">{p.studentIds.length ? p.studentIds.map(id => nameOfStudent(id)).join(', ') : 'No students tagged'}</p>
+                    <p className="text-[10px] text-ink-muted">{p.studentIds.length ? p.studentIds.map(id => nameOfStudent(id)).join(', ') : 'No students tagged'}</p>
                     {blocked.length > 0 && (
                       <>
                         <p className="text-[10px] text-rose-700">No photo consent: {blocked.map(id => nameOfStudent(id)).join(', ')}</p>
@@ -1124,7 +1124,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                 );
               })}
             </div>
-            <p className="px-3 pb-3 text-[10px] text-[#777587]">Photos of children are personal data. Every gallery publish checks each tagged student’s photo consent.</p>
+            <p className="px-3 pb-3 text-[10px] text-ink-muted">Photos of children are personal data. Every gallery publish checks each tagged student’s photo consent.</p>
           </Panel>
         </div>
       )}
@@ -1134,17 +1134,17 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <Panel title="Events">
-              <div className="divide-y divide-[#f0f7fb]">
+              <div className="divide-y divide-subtle">
                 {events.map(e => (
-                  <button key={e.id} onClick={() => setOpenEvent(e.id)} className={`w-full text-left p-2.5 text-xs ${e.id === openEvent ? 'bg-[#f0f7fb]' : 'hover:bg-[#f8f9ff]'}`}>
+                  <button key={e.id} onClick={() => setOpenEvent(e.id)} className={`w-full text-left p-2.5 text-xs ${e.id === openEvent ? 'bg-subtle' : 'hover:bg-wash'}`}>
                     <p className="font-semibold">{e.name}</p>
-                    <p className="text-[10px] text-[#777587]">
+                    <p className="text-[10px] text-ink-muted">
                       {e.tier} · {e.order.join(' → ')}
                     </p>
                   </button>
                 ))}
               </div>
-              <p className="p-3 text-[10px] text-[#777587]">These are the events other features name. The full event list (Appendix D) was not in the source provided.</p>
+              <p className="p-3 text-[10px] text-ink-muted">These are the events other features name. The full event list (Appendix D) was not in the source provided.</p>
             </Panel>
 
             <Panel className="lg:col-span-2" title={`Routing policy · ${editedEvent.name}`}>
@@ -1159,18 +1159,18 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                     </select>
                   </label>
                   <label className="flex items-center gap-1">
-                    <input type="checkbox" checked={editedEvent.fallback} onChange={e => editEvent(editedEvent.id, { fallback: e.target.checked })} className="accent-[#0e5d84]" />
+                    <input type="checkbox" checked={editedEvent.fallback} onChange={e => editEvent(editedEvent.id, { fallback: e.target.checked })} className="accent-brand" />
                     Try the next channel on failure
                   </label>
                   <label className="flex items-center gap-1">
-                    <input type="checkbox" checked={editedEvent.costAware} onChange={e => editEvent(editedEvent.id, { costAware: e.target.checked })} className="accent-[#0e5d84]" />
+                    <input type="checkbox" checked={editedEvent.costAware} onChange={e => editEvent(editedEvent.id, { costAware: e.target.checked })} className="accent-brand" />
                     Skip paid channels when read in the app
                   </label>
                 </div>
                 <div className="flex flex-wrap items-center gap-1">
                   {editedEvent.order.map((c, i) => (
-                    <span key={c} className="flex items-center gap-0.5 px-2 py-1 rounded-lg bg-slate-50 border border-[#e0ecf4]">
-                      {i + 1}. {c} <span className="font-mono text-[10px] text-[#777587]">{rupees(CHANNEL_COST[c])}</span>
+                    <span key={c} className="flex items-center gap-0.5 px-2 py-1 rounded-lg bg-slate-50 border border-line-soft">
+                      {i + 1}. {c} <span className="font-mono text-[10px] text-ink-muted">{rupees(CHANNEL_COST[c])}</span>
                       <button onClick={() => moveChannel(editedEvent, i, -1)} disabled={i === 0} className="disabled:opacity-30" aria-label={`Move ${c} earlier`}>
                         ‹
                       </button>
@@ -1199,7 +1199,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                     className={`${inputCls} w-full`}
                     aria-label="Template body"
                   />
-                  <p className="text-[10px] text-[#777587]">Variables: {templateVariables(editedTemplate.body.en ?? '').map(v => `{{${v}}}`).join(' ')}</p>
+                  <p className="text-[10px] text-ink-muted">Variables: {templateVariables(editedTemplate.body.en ?? '').map(v => `{{${v}}}`).join(' ')}</p>
                 </div>
               </div>
             </Panel>
@@ -1227,7 +1227,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                   <Badge className={binding.status === 'Live' ? STATUS_STYLE.Read : STATUS_STYLE.Blocked}>{binding.status}</Badge>
                 </div>
                 <table className="w-full">
-                  <thead className="text-[#464555]">
+                  <thead className="text-ink-soft">
                     <tr>
                       <th className="text-left">Template</th>
                       <th className="text-left">DLT ID</th>
@@ -1258,7 +1258,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
               }
             >
               <table className="w-full text-xs">
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {templates.map(t => (
                     <tr key={t.id}>
                       <td className="p-2.5">{t.name}</td>
@@ -1299,18 +1299,18 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                       ))}
                     </select>
                   </label>
-                  <span className="text-[10px] text-[#777587]">every {retry.backoffMinutes} min; permanent errors go straight to the dead-letter list</span>
+                  <span className="text-[10px] text-ink-muted">every {retry.backoffMinutes} min; permanent errors go straight to the dead-letter list</span>
                 </div>
               </div>
             </Panel>
 
             <Panel title="Scheduled & recurring sends">
-              <div className="divide-y divide-[#f0f7fb]">
+              <div className="divide-y divide-subtle">
                 {schedules.map(s => (
                   <div key={s.id} className="p-2.5 text-xs flex items-center justify-between gap-2">
                     <span>
                       <span className="font-semibold">{s.label}</span>
-                      <span className="block text-[10px] text-[#777587]">
+                      <span className="block text-[10px] text-ink-muted">
                         {s.cadence} at {s.time} · next {s.active ? fmt(nextRun(s, asOf)) : 'paused'}
                       </span>
                     </span>
@@ -1325,13 +1325,13 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
 
           <Panel title="Channel opt-outs (honoured on every send)">
             <table className="w-full text-xs">
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {guardians
                   .filter(g => g.primary)
                   .map(g => (
                     <tr key={g.id}>
                       <td className="p-2.5">
-                        {g.name} <span className="text-[10px] text-[#777587]">· {nameOfStudent(g.studentId)}</span>
+                        {g.name} <span className="text-[10px] text-ink-muted">· {nameOfStudent(g.studentId)}</span>
                       </td>
                       {(['WhatsApp', 'SMS', 'Email'] as Channel[]).map(c => (
                         <td key={c} className="p-2.5">
@@ -1343,7 +1343,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                                 setGuardians(prev => prev.map(x => (x.id === g.id ? { ...x, optedOut: toggle(x.optedOut, c) } : x)));
                                 log(`Opt-${g.optedOut.includes(c) ? 'in' : 'out'} · ${g.name} · ${c}`);
                               }}
-                              className="accent-[#0e5d84]"
+                              className="accent-brand"
                               aria-label={`${g.name} ${c}`}
                             />
                             {c}
@@ -1365,7 +1365,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <Panel title="By channel (this session’s sends)">
               <table className="w-full text-xs">
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {byChannel.map(c => (
                     <tr key={c.channel}>
                       <td className="p-2.5">{c.channel}</td>
@@ -1378,7 +1378,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
             </Panel>
             <Panel title="By event">
               <table className="w-full text-xs">
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {byEvent.map(x => (
                     <tr key={x.event.id}>
                       <td className="p-2.5">{x.event.name}</td>
@@ -1390,7 +1390,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
             </Panel>
             <Panel title="By branch (August chargeback)">
               <table className="w-full text-xs">
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {branches.map(b => (
                     <tr key={b}>
                       <td className="p-2.5">{b}</td>
@@ -1417,16 +1417,16 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                     <span className="font-mono">{rupees(monthTotal(m))}</span>
                   </div>
                   <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#0e5d84]" style={{ width: `${(monthTotal(m) / maxMonth) * 100}%` }} />
+                    <div className="h-full bg-brand" style={{ width: `${(monthTotal(m) / maxMonth) * 100}%` }} />
                   </div>
                 </div>
               ))}
-              <p className="text-[10px] text-[#777587]">Costs up to August come from provider invoices; later months are this system’s own delivery log.</p>
+              <p className="text-[10px] text-ink-muted">Costs up to August come from provider invoices; later months are this system’s own delivery log.</p>
             </div>
           </Panel>
           <Panel title={`Activity log · ${audit.length}`}>
             <div className="p-3 space-y-1 text-[11px] max-h-60 overflow-y-auto">
-              {audit.length === 0 && <p className="text-[#777587]">No actions yet.</p>}
+              {audit.length === 0 && <p className="text-ink-muted">No actions yet.</p>}
               {audit.map((a, i) => (
                 <p key={i}>{a}</p>
               ))}

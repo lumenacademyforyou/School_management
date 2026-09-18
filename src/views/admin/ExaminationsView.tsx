@@ -445,13 +445,13 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">quiz</span>
             <span>Module 16 · Examination & Assessment (EXM)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">Half-Yearly Examination · Class 10-A</h1>
-          <p className="text-xs text-[#464555] mt-1">AY 2024–25 · CBSE · Science marks stage: {stage}</p>
-          <button onClick={() => setAdminView('question-papers')} className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-[#0e5d84] hover:underline">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">Half-Yearly Examination · Class 10-A</h1>
+          <p className="text-xs text-ink-soft mt-1">AY 2024–25 · CBSE · Science marks stage: {stage}</p>
+          <button onClick={() => setAdminView('question-papers')} className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline">
             <span className="material-symbols-outlined text-sm">description</span>
             Question Paper Generator
           </button>
@@ -461,24 +461,24 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
             <React.Fragment key={s}>
               <span
                 className={`text-[10px] font-bold px-2 py-1 rounded-full ${
-                  STAGES.indexOf(stage) >= i ? 'bg-[#0e5d84] text-white' : 'bg-slate-100 text-[#777587]'
+                  STAGES.indexOf(stage) >= i ? 'bg-brand text-white' : 'bg-slate-100 text-ink-muted'
                 }`}
               >
                 {s}
               </span>
-              {i < STAGES.length - 1 && <span className="w-3 h-px bg-[#cbe0ec]" />}
+              {i < STAGES.length - 1 && <span className="w-3 h-px bg-line" />}
             </React.Fragment>
           ))}
         </div>
       </div>
 
-      <div className="flex gap-1 overflow-x-auto border-b border-[#e0ecf4]">
+      <div className="flex gap-1 overflow-x-auto border-b border-line-soft">
         {TABS.map(t => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
-              tab === t.id ? 'border-[#0e5d84] text-[#0e5d84]' : 'border-transparent text-[#777587] hover:text-[#082b3d]'
+              tab === t.id ? 'border-brand text-brand' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
             <span className="material-symbols-outlined text-sm">{t.icon}</span>
@@ -490,12 +490,12 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
 
       {tab === 'exams' && (
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-            <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex flex-wrap gap-1 items-center justify-between">
-              <span className="text-xs font-bold text-[#082b3d]">Exam definitions · AY 2024–25</span>
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+            <div className="p-4 bg-subtle border-b border-line flex flex-wrap gap-1 items-center justify-between">
+              <span className="text-xs font-bold text-ink">Exam definitions · AY 2024–25</span>
               <div className="flex flex-wrap gap-1">
                 {EXAM_TYPES.map(t => (
-                  <span key={t} className="text-[10px] px-2 py-0.5 rounded-full bg-white border border-[#cbe0ec] text-[#464555]">
+                  <span key={t} className="text-[10px] px-2 py-0.5 rounded-full bg-white border border-line text-ink-soft">
                     {t}
                   </span>
                 ))}
@@ -503,17 +503,17 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
-                <thead className="bg-slate-50 text-[#464555]">
+                <thead className="bg-slate-50 text-ink-soft">
                   <tr>
                     {['Exam', 'Type', 'Term', 'Classes', 'Weightage', 'Status'].map(h => (
                       <th key={h} className="text-left p-3 font-semibold">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {EXAMS.map(e => (
                     <tr key={e.id}>
-                      <td className="p-3 font-semibold text-[#082b3d]">{e.name}</td>
+                      <td className="p-3 font-semibold text-ink">{e.name}</td>
                       <td className="p-3">{e.type}</td>
                       <td className="p-3">{e.term}</td>
                       <td className="p-3">{e.classes}</td>
@@ -534,16 +534,16 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-            <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex items-center justify-between gap-2">
-              <span className="text-xs font-bold text-[#082b3d]">Half-yearly schedule · Class 10</span>
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+            <div className="p-4 bg-subtle border-b border-line flex items-center justify-between gap-2">
+              <span className="text-xs font-bold text-ink">Half-yearly schedule · Class 10</span>
               <button
                 onClick={() => {
                   setHallTicketsIssued(true);
                   addToast(`Hall tickets generated for ${CLASS_10A_STUDENTS.length} students`, 'success');
                 }}
                 disabled={hallTicketsIssued}
-                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#0e5d84] text-white hover:bg-[#083a4f] disabled:opacity-50"
+                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand text-white hover:bg-brand-strong disabled:opacity-50"
               >
                 <span className="material-symbols-outlined text-sm">badge</span>
                 {hallTicketsIssued ? 'Hall tickets issued' : 'Generate hall tickets'}
@@ -551,17 +551,17 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
-                <thead className="bg-slate-50 text-[#464555]">
+                <thead className="bg-slate-50 text-ink-soft">
                   <tr>
                     {['Subject', 'Date', 'Start', 'Duration', 'Room', 'Invigilator'].map(h => (
                       <th key={h} className="text-left p-3 font-semibold">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {SCHEDULE.map(s => (
                     <tr key={s.id}>
-                      <td className="p-3 font-semibold text-[#082b3d]">{s.subject}</td>
+                      <td className="p-3 font-semibold text-ink">{s.subject}</td>
                       <td className="p-3 font-mono">{s.date}</td>
                       <td className="p-3 font-mono">{s.start}</td>
                       <td className="p-3">{s.durationMin / 60} h</td>
@@ -589,27 +589,27 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
 
       {tab === 'structure' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3">
-            <p className="text-xs font-bold text-[#082b3d]">Assessment structure · Science</p>
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3">
+            <p className="text-xs font-bold text-ink">Assessment structure · Science</p>
             {SCIENCE_COMPONENTS.map(c => (
               <div key={c.name} className="flex justify-between items-center text-xs p-2 rounded-lg bg-slate-50">
                 <div>
-                  <p className="font-semibold text-[#082b3d]">{c.name}</p>
-                  <p className="text-[10px] text-[#777587]">Entered by {c.enteredBy}</p>
+                  <p className="font-semibold text-ink">{c.name}</p>
+                  <p className="text-[10px] text-ink-muted">Entered by {c.enteredBy}</p>
                 </div>
                 <span className="font-mono font-bold">{c.max}</span>
               </div>
             ))}
-            <p className="text-[11px] text-right text-[#464555]">Subject maximum: {SCIENCE_MAX}</p>
+            <p className="text-[11px] text-right text-ink-soft">Subject maximum: {SCIENCE_MAX}</p>
           </div>
 
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3">
-            <p className="text-xs font-bold text-[#082b3d]">Grading scale · CBSE 9-point (Class 9–10)</p>
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3">
+            <p className="text-xs font-bold text-ink">Grading scale · CBSE 9-point (Class 9–10)</p>
             <div className="grid grid-cols-4 gap-2">
               {GRADE_SCALE.map((g, i) => (
-                <div key={g.grade} className="text-center p-2 rounded-lg border border-[#e0ecf4]">
-                  <p className="font-bold text-[#0e5d84]">{g.grade}</p>
-                  <p className="text-[10px] text-[#777587]">
+                <div key={g.grade} className="text-center p-2 rounded-lg border border-line-soft">
+                  <p className="font-bold text-brand">{g.grade}</p>
+                  <p className="text-[10px] text-ink-muted">
                     {g.min}–{i === 0 ? 100 : GRADE_SCALE[i - 1].min - 1}%
                   </p>
                 </div>
@@ -617,29 +617,29 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3">
-            <p className="text-xs font-bold text-[#082b3d]">Board computation & promotion rules</p>
-            <ul className="text-[11px] text-[#464555] space-y-1 list-disc pl-4">
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3">
+            <p className="text-xs font-bold text-ink">Board computation & promotion rules</p>
+            <ul className="text-[11px] text-ink-soft space-y-1 list-disc pl-4">
               <li>Pass mark: {PASS_PCT}% in every subject and {PASS_PCT}% overall</li>
               <li>Failing 1–{MAX_COMPARTMENT_SUBJECTS} subjects with {PASS_PCT}% overall → Compartment (supplementary exam)</li>
               <li>Failing more than {MAX_COMPARTMENT_SUBJECTS} subjects → Fail</li>
               <li>Exempt (EX) subjects are removed from the total and maximum</li>
               <li>Absent (AB) scores zero for the student and is excluded from the class average</li>
             </ul>
-            <label className="block text-[11px] font-semibold text-[#082b3d]">Re-test policy</label>
-            <select value={policy} onChange={e => setPolicy(e.target.value as RetestPolicy)} className="w-full text-xs border border-[#cbe0ec] rounded-lg px-2 py-1.5">
+            <label className="block text-[11px] font-semibold text-ink">Re-test policy</label>
+            <select value={policy} onChange={e => setPolicy(e.target.value as RetestPolicy)} className="w-full text-xs border border-line rounded-lg px-2 py-1.5">
               <option value="higher">Higher of original and re-test counts</option>
               <option value="retest">Re-test always replaces original</option>
               <option value="original">Original always counts</option>
             </select>
           </div>
 
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-2">
-            <p className="text-xs font-bold text-[#082b3d]">Co-scholastic descriptors · Aarav S. Ramanathan</p>
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-2">
+            <p className="text-xs font-bold text-ink">Co-scholastic descriptors · Aarav S. Ramanathan</p>
             {CO_SCHOLASTIC.map(c => (
               <div key={c.area} className="flex justify-between text-xs p-2 rounded-lg bg-slate-50">
-                <span className="text-[#082b3d]">{c.area}</span>
-                <span className="font-semibold text-[#0e5d84]">{c.descriptor}</span>
+                <span className="text-ink">{c.area}</span>
+                <span className="font-semibold text-brand">{c.descriptor}</span>
               </div>
             ))}
           </div>
@@ -648,11 +648,11 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
 
       {tab === 'entry' && (
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-            <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex flex-wrap items-center justify-between gap-2">
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+            <div className="p-4 bg-subtle border-b border-line flex flex-wrap items-center justify-between gap-2">
               <div>
-                <p className="text-xs font-bold text-[#082b3d]">Science · Theory /80 · Internal /20 · Re-test /80</p>
-                <p className="text-[10px] text-[#777587]">Type a number, AB for absent or EX for exempt · {errorCount} invalid · {incompleteCount} incomplete</p>
+                <p className="text-xs font-bold text-ink">Science · Theory /80 · Internal /20 · Re-test /80</p>
+                <p className="text-[10px] text-ink-muted">Type a number, AB for absent or EX for exempt · {errorCount} invalid · {incompleteCount} incomplete</p>
               </div>
               <div className="flex gap-2">
                 {locked && !unlockRequested && (
@@ -666,7 +666,7 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                   </button>
                 )}
                 {!locked && (
-                  <button onClick={advanceStage} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#0e5d84] text-white hover:bg-[#083a4f]">
+                  <button onClick={advanceStage} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand text-white hover:bg-brand-strong">
                     {stage === 'Draft' ? 'Submit for moderation' : stage === 'Submitted' ? 'Complete moderation (HOD)' : 'Lock marks'}
                   </button>
                 )}
@@ -674,7 +674,7 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
-                <thead className="bg-slate-50 text-[#464555]">
+                <thead className="bg-slate-50 text-ink-soft">
                   <tr>
                     <th className="text-left p-3 font-semibold">Roll</th>
                     <th className="text-left p-3 font-semibold">Student</th>
@@ -684,14 +684,14 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                     <th className="p-3 font-semibold text-right">Total /{SCIENCE_MAX}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {marks.map(m => {
                     const sci = scienceScore(m, policy);
                     const student = CLASS_10A_STUDENTS.find(s => s.studentId === m.studentId)!;
                     return (
                       <tr key={m.studentId}>
                         <td className="p-3 font-mono">{student.rollNo}</td>
-                        <td className="p-3 font-medium text-[#082b3d]">{student.name}</td>
+                        <td className="p-3 font-medium text-ink">{student.name}</td>
                         {(['theory', 'internal', 'retest'] as const).map(field => {
                           const err = errors[`${m.studentId}-${field}`];
                           return (
@@ -703,8 +703,8 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                                 title={err}
                                 aria-label={`${student.name} ${field}`}
                                 aria-invalid={Boolean(err)}
-                                className={`w-16 text-center font-mono px-1 py-1 rounded-md border outline-none focus:ring-2 focus:ring-[#0e5d84]/30 disabled:bg-slate-50 disabled:text-[#777587] ${
-                                  err ? 'border-rose-400 bg-rose-50' : 'border-[#cbe0ec]'
+                                className={`w-16 text-center font-mono px-1 py-1 rounded-md border outline-none focus:ring-2 focus:ring-brand/30 disabled:bg-slate-50 disabled:text-ink-muted ${
+                                  err ? 'border-rose-400 bg-rose-50' : 'border-line'
                                 }`}
                               />
                             </td>
@@ -718,8 +718,8 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                             </>
                           )}
                           {sci.status === 'absent' && <span className="text-rose-600">AB</span>}
-                          {sci.status === 'exempt' && <span className="text-[#777587]">EX</span>}
-                          {sci.status === 'incomplete' && <span className="text-[#777587]">—</span>}
+                          {sci.status === 'exempt' && <span className="text-ink-muted">EX</span>}
+                          {sci.status === 'incomplete' && <span className="text-ink-muted">—</span>}
                         </td>
                       </tr>
                     );
@@ -729,22 +729,22 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3">
-            <p className="text-xs font-bold text-[#082b3d]">Bulk marks import · paste CSV (roll, theory, internal)</p>
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3">
+            <p className="text-xs font-bold text-ink">Bulk marks import · paste CSV (roll, theory, internal)</p>
             <textarea
               value={importText}
               onChange={e => setImportText(e.target.value)}
               rows={5}
-              className="w-full font-mono text-xs border border-[#cbe0ec] rounded-lg p-2"
+              className="w-full font-mono text-xs border border-line rounded-lg p-2"
             />
             <button
               onClick={runImport}
               disabled={!editable}
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#0e5d84] text-white hover:bg-[#083a4f] disabled:opacity-50"
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand text-white hover:bg-brand-strong disabled:opacity-50"
             >
               Validate & apply
             </button>
-            {!editable && <p className="text-[11px] text-[#777587]">Import is available only while marks are in Draft.</p>}
+            {!editable && <p className="text-[11px] text-ink-muted">Import is available only while marks are in Draft.</p>}
             {importReport && (
               <ul className="text-[11px] space-y-1">
                 {importReport.map(r => (
@@ -762,8 +762,8 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
       {tab === 'results' && (
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
-            <label className="flex items-center gap-1.5 text-xs text-[#082b3d]">
-              <input type="checkbox" checked={suppressRank} onChange={e => setSuppressRank(e.target.checked)} className="accent-[#0e5d84]" />
+            <label className="flex items-center gap-1.5 text-xs text-ink">
+              <input type="checkbox" checked={suppressRank} onChange={e => setSuppressRank(e.target.checked)} className="accent-brand" />
               Suppress rank on published result
             </label>
             <div className="flex-1" />
@@ -783,7 +783,7 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
             <button
               onClick={publish}
               disabled={!approved || Boolean(publishedAt)}
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#0e5d84] text-white hover:bg-[#083a4f] disabled:opacity-50"
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand text-white hover:bg-brand-strong disabled:opacity-50"
             >
               {publishedAt ? 'Published' : 'Publish to parents'}
             </button>
@@ -795,30 +795,30 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
           )}
           {publishedAt && <p className="text-[11px] text-emerald-700">Published {publishedAt}</p>}
 
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-x-auto">
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-x-auto">
             <table className="w-full text-xs">
-              <thead className="bg-slate-50 text-[#464555]">
+              <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   {['Roll', 'Student', 'Total', '%', 'Grade', 'Result', 'Rank', ''].map(h => (
                     <th key={h} className="text-left p-3 font-semibold">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {results.map(r => (
                   <tr key={r.studentId} className={withheld[r.studentId] ? 'bg-slate-50' : ''}>
                     <td className="p-3 font-mono">{r.rollNo}</td>
                     <td className="p-3">
-                      <p className="font-medium text-[#082b3d]">{r.name}</p>
+                      <p className="font-medium text-ink">{r.name}</p>
                       {r.failedSubjects.length > 0 && <p className="text-[10px] text-rose-600">Below pass: {r.failedSubjects.join(', ')}</p>}
                       {withheld[r.studentId] && <p className="text-[10px] text-amber-700">Withheld: {withheld[r.studentId]}</p>}
                     </td>
                     <td className="p-3 font-mono">{r.incomplete ? '—' : `${r.total}/${r.max}`}</td>
                     <td className="p-3 font-mono">{r.incomplete ? '—' : r.pct}</td>
-                    <td className="p-3 font-bold text-[#0e5d84]">{r.incomplete ? '—' : r.grade}</td>
+                    <td className="p-3 font-bold text-brand">{r.incomplete ? '—' : r.grade}</td>
                     <td className="p-3">
                       {r.incomplete ? (
-                        <span className="text-[#777587]">Pending marks</span>
+                        <span className="text-ink-muted">Pending marks</span>
                       ) : (
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
@@ -832,7 +832,7 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                     <td className="p-3 font-mono">{suppressRank ? '—' : r.rank ?? '—'}</td>
                     <td className="p-3 text-right">
                       {withheld[r.studentId] ? (
-                        <button onClick={() => releaseWithheld(r.studentId)} className="text-[11px] font-semibold text-[#0e5d84] hover:underline">
+                        <button onClick={() => releaseWithheld(r.studentId)} className="text-[11px] font-semibold text-brand hover:underline">
                           Release
                         </button>
                       ) : (
@@ -851,23 +851,23 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
 
       {tab === 'analytics' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3">
-            <p className="text-xs font-bold text-[#082b3d]">Class 10-A summary</p>
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3">
+            <p className="text-xs font-bold text-ink">Class 10-A summary</p>
             <div className="grid grid-cols-3 gap-2 text-center">
               <div className="p-2 rounded-lg bg-slate-50">
-                <p className="text-lg font-bold text-[#082b3d]">{analytics.passPct}%</p>
-                <p className="text-[10px] text-[#777587]">Pass rate</p>
+                <p className="text-lg font-bold text-ink">{analytics.passPct}%</p>
+                <p className="text-[10px] text-ink-muted">Pass rate</p>
               </div>
               <div className="p-2 rounded-lg bg-slate-50">
-                <p className="text-lg font-bold text-[#082b3d]">{analytics.avg}</p>
-                <p className="text-[10px] text-[#777587]">Science avg /{SCIENCE_MAX}</p>
+                <p className="text-lg font-bold text-ink">{analytics.avg}</p>
+                <p className="text-[10px] text-ink-muted">Science avg /{SCIENCE_MAX}</p>
               </div>
               <div className="p-2 rounded-lg bg-slate-50">
-                <p className="text-lg font-bold text-[#082b3d]">{analytics.scoredCount}</p>
-                <p className="text-[10px] text-[#777587]">Science scripts counted</p>
+                <p className="text-lg font-bold text-ink">{analytics.scoredCount}</p>
+                <p className="text-[10px] text-ink-muted">Science scripts counted</p>
               </div>
             </div>
-            <p className="text-xs font-semibold text-[#082b3d] pt-2">Subject averages (%)</p>
+            <p className="text-xs font-semibold text-ink pt-2">Subject averages (%)</p>
             {analytics.subjectAverages.map(s => (
               <div key={s.subject}>
                 <div className="flex justify-between text-[11px] mb-0.5">
@@ -875,29 +875,29 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                   <span className="font-mono">{s.avg}</span>
                 </div>
                 <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#0e5d84]" style={{ width: `${s.avg}%` }} />
+                  <div className="h-full bg-brand" style={{ width: `${s.avg}%` }} />
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3">
-            <p className="text-xs font-bold text-[#082b3d]">Grade distribution</p>
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3">
+            <p className="text-xs font-bold text-ink">Grade distribution</p>
             <div className="flex items-end gap-2 h-36">
               {analytics.distribution.map(d => (
                 <div key={d.grade} className="flex-1 flex flex-col items-center justify-end h-full">
                   <span className="text-[10px] font-mono mb-0.5">{d.count}</span>
-                  <div className="w-full bg-[#0e5d84] rounded-t" style={{ height: `${(d.count / maxDistribution) * 100}%` }} />
+                  <div className="w-full bg-brand rounded-t" style={{ height: `${(d.count / maxDistribution) * 100}%` }} />
                   <span className="text-[10px] font-bold mt-1">{d.grade}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3">
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-xs font-bold text-[#082b3d]">Science trend</p>
-              <select value={trendStudent} onChange={e => setTrendStudent(e.target.value)} className="text-xs border border-[#cbe0ec] rounded-lg px-2 py-1">
+              <p className="text-xs font-bold text-ink">Science trend</p>
+              <select value={trendStudent} onChange={e => setTrendStudent(e.target.value)} className="text-xs border border-line rounded-lg px-2 py-1">
                 {CLASS_10A_STUDENTS.map(s => (
                   <option key={s.studentId} value={s.studentId}>
                     {s.name}
@@ -916,8 +916,8 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-2">
-            <p className="text-xs font-bold text-[#082b3d]">Merit list (top 3)</p>
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-2">
+            <p className="text-xs font-bold text-ink">Merit list (top 3)</p>
             {analytics.toppers.map(t => (
               <div key={t.studentId} className="flex justify-between text-xs p-2 rounded-lg bg-slate-50">
                 <span>
@@ -926,7 +926,7 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                 <span className="font-mono font-bold">{t.pct}%</span>
               </div>
             ))}
-            <p className="text-[10px] text-[#777587]">
+            <p className="text-[10px] text-ink-muted">
               {analytics.hiddenForConsent} student(s) left out because guardians have not consented to publication. Withheld results are also left out.
             </p>
           </div>
@@ -934,11 +934,11 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
       )}
 
       {withholdTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setWithholdTarget(null)}>
-          <div className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-[#082b3d]">Withhold result · {nameOf(withholdTarget)}</h3>
-            <label className="block text-[11px] font-semibold text-[#464555]">Reason (required)</label>
-            <select value={withholdReason} onChange={e => setWithholdReason(e.target.value)} className="w-full text-xs border border-[#cbe0ec] rounded-lg px-2 py-1.5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setWithholdTarget(null)}>
+          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
+            <h3 className="text-sm font-bold text-ink">Withhold result · {nameOf(withholdTarget)}</h3>
+            <label className="block text-[11px] font-semibold text-ink-soft">Reason (required)</label>
+            <select value={withholdReason} onChange={e => setWithholdReason(e.target.value)} className="w-full text-xs border border-line rounded-lg px-2 py-1.5">
               <option>Fee dues pending</option>
               <option>Disciplinary review</option>
               <option>Document verification pending</option>

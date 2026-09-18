@@ -100,16 +100,16 @@ export const AuditLogView: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">history_edu</span>
             <span>Cryptographic Audit Trail & Automated Workflows (AUD-001..010)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">
             Immutable WORM Event Stream & Merkle Integrity
           </h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <p className="text-xs text-ink-soft mt-1">
             Write-Once-Read-Many (WORM) Compliance • SHA-256 Hashed Blocks • CBSE Forensic Audit Ready
           </p>
         </div>
@@ -117,7 +117,7 @@ export const AuditLogView: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-[#082b3d] text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 transition-colors"
+            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-ink text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 transition-colors"
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Export Log</span>
@@ -131,7 +131,7 @@ export const AuditLogView: React.FC = () => {
               }, 1000);
             }}
             disabled={verifyingMerkle}
-            className="flex items-center gap-1.5 bg-[#0e5d84] hover:bg-[#083a4f] text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-xs transition-colors"
+            className="flex items-center gap-1.5 bg-brand hover:bg-brand-strong text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-xs transition-colors"
           >
             <span className="material-symbols-outlined text-sm">{verifyingMerkle ? 'sync' : 'verified'}</span>
             <span>{verifyingMerkle ? 'Validating Hashes...' : 'Re-verify Merkle Root'}</span>
@@ -140,15 +140,15 @@ export const AuditLogView: React.FC = () => {
       </div>
 
       {/* Merkle Root Banner */}
-      <div className="bg-[#082b3d] text-white p-5 rounded-2xl border border-[#213145] shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-ink text-white p-5 rounded-2xl border border-lumen-800 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-3xl text-[#f59e0b]">account_tree</span>
+          <span className="material-symbols-outlined text-3xl text-accent">account_tree</span>
           <div>
-            <div className="text-xs font-mono text-[#f59e0b] font-bold">MERKLE ROOT HASH: BLOCK #48,201</div>
+            <div className="text-xs font-mono text-accent font-bold">MERKLE ROOT HASH: BLOCK #48,201</div>
             <div className="text-sm font-mono font-bold text-white mt-0.5">
               0x8F3C92B104EAA5098DF4C12E79B5A0329910D701A
             </div>
-            <div className="text-[11px] text-[#cbdbf5] mt-0.5">
+            <div className="text-[11px] text-lumen-200 mt-0.5">
               Verified against National Informatics Centre (NIC) and CBSE central ledger timestamping service.
             </div>
           </div>
@@ -160,27 +160,27 @@ export const AuditLogView: React.FC = () => {
       </div>
 
       {/* Visual DAG Workflow Pipeline */}
-      <div className="bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-3">
-        <h2 className="text-sm font-bold text-[#082b3d] flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#0e5d84] text-base">schema</span>
+      <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-3">
+        <h2 className="text-sm font-bold text-ink flex items-center gap-2">
+          <span className="material-symbols-outlined text-brand text-base">schema</span>
           <span>Automated Operational DAG Workflow: Absenteeism Exception Resolution</span>
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs pt-2">
-          <div className="p-3 bg-[#f0f7fb] rounded-xl border border-[#cbe0ec]">
-            <div className="text-[10px] font-bold text-[#0e5d84] uppercase">Node 1: Trigger</div>
-            <div className="font-bold text-[#082b3d] mt-1">Biometric Turnstile Miss</div>
-            <div className="text-[11px] text-[#464555] mt-0.5">Unrecorded at 08:30 AM</div>
+          <div className="p-3 bg-subtle rounded-xl border border-line">
+            <div className="text-[10px] font-bold text-brand uppercase">Node 1: Trigger</div>
+            <div className="font-bold text-ink mt-1">Biometric Turnstile Miss</div>
+            <div className="text-[11px] text-ink-soft mt-0.5">Unrecorded at 08:30 AM</div>
           </div>
-          <div className="p-3 bg-[#f0f7fb] rounded-xl border border-[#cbe0ec]">
-            <div className="text-[10px] font-bold text-[#0e5d84] uppercase">Node 2: Decision</div>
-            <div className="font-bold text-[#082b3d] mt-1">Class Teacher Verify</div>
-            <div className="text-[11px] text-[#464555] mt-0.5">Mrs. Malini roll call scan</div>
+          <div className="p-3 bg-subtle rounded-xl border border-line">
+            <div className="text-[10px] font-bold text-brand uppercase">Node 2: Decision</div>
+            <div className="font-bold text-ink mt-1">Class Teacher Verify</div>
+            <div className="text-[11px] text-ink-soft mt-0.5">Mrs. Malini roll call scan</div>
           </div>
-          <div className="p-3 bg-[#f0f7fb] rounded-xl border border-[#cbe0ec]">
-            <div className="text-[10px] font-bold text-[#0e5d84] uppercase">Node 3: Dispatch</div>
-            <div className="font-bold text-[#082b3d] mt-1">TRAI DLT WhatsApp</div>
-            <div className="text-[11px] text-[#464555] mt-0.5">Instant parent alert sent</div>
+          <div className="p-3 bg-subtle rounded-xl border border-line">
+            <div className="text-[10px] font-bold text-brand uppercase">Node 3: Dispatch</div>
+            <div className="font-bold text-ink mt-1">TRAI DLT WhatsApp</div>
+            <div className="text-[11px] text-ink-soft mt-0.5">Instant parent alert sent</div>
           </div>
           <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-300">
             <div className="text-[10px] font-bold text-emerald-800 uppercase">Node 4: Audit</div>
@@ -191,11 +191,11 @@ export const AuditLogView: React.FC = () => {
       </div>
 
       {/* Forensic Audit Log Table */}
-      <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-        <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+        <div className="p-4 bg-subtle border-b border-line flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span className="text-xs font-bold text-[#082b3d]">Forensic Event Stream (Last 24 Hours)</span>
-            <span className="text-xs font-mono text-[#464555] ml-2">• Zero Retention Pruning Policy</span>
+            <span className="text-xs font-bold text-ink">Forensic Event Stream (Last 24 Hours)</span>
+            <span className="text-xs font-mono text-ink-soft ml-2">• Zero Retention Pruning Policy</span>
           </div>
           <div className="relative w-full sm:w-64">
             <input
@@ -203,33 +203,33 @@ export const AuditLogView: React.FC = () => {
               placeholder="Search action or actor..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 bg-white border border-[#cbe0ec] rounded-xl text-xs focus:outline-hidden focus:border-[#0e5d84]"
+              className="w-full pl-8 pr-3 py-1.5 bg-white border border-line rounded-xl text-xs focus:outline-hidden focus:border-brand"
             />
-            <span className="material-symbols-outlined text-xs absolute left-2.5 top-2 text-[#777587]">search</span>
+            <span className="material-symbols-outlined text-xs absolute left-2.5 top-2 text-ink-muted">search</span>
           </div>
         </div>
 
-        <div className="divide-y divide-[#f0f7fb]">
+        <div className="divide-y divide-subtle">
           {filteredEvents.map(evt => (
             <div
               key={evt.id}
               onClick={() => setSelectedEvent(evt)}
-              className="p-3.5 hover:bg-[#f8f9ff] text-xs transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-2 cursor-pointer"
+              className="p-3.5 hover:bg-wash text-xs transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-2 cursor-pointer"
             >
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-[#0e5d84]">{evt.action}</span>
+                  <span className="font-mono text-xs font-bold text-brand">{evt.action}</span>
                   <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-bold">
                     {evt.status}
                   </span>
                 </div>
-                <div className="text-xs text-[#082b3d] mt-0.5">
+                <div className="text-xs text-ink mt-0.5">
                   Actor: <strong>{evt.actor}</strong> ➔ Target: <strong>{evt.target}</strong>
                 </div>
               </div>
-              <div className="text-right text-[11px] text-[#777587] font-mono shrink-0">
+              <div className="text-right text-[11px] text-ink-muted font-mono shrink-0">
                 <div>{evt.timestamp}</div>
-                <div className="text-[#0e5d84] font-semibold flex items-center justify-end gap-1">
+                <div className="text-brand font-semibold flex items-center justify-end gap-1">
                   <span>{evt.hash.slice(0, 18)}...</span>
                   <span className="material-symbols-outlined text-xs">visibility</span>
                 </div>
@@ -241,12 +241,12 @@ export const AuditLogView: React.FC = () => {
 
       {/* MODAL: Event Cryptographic Inspection */}
       {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">verified</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Cryptographic Event Dossier</h3>
+                <span className="material-symbols-outlined text-brand">verified</span>
+                <h3 className="font-bold text-ink text-sm">Cryptographic Event Dossier</h3>
               </div>
               <button
                 onClick={() => setSelectedEvent(null)}
@@ -258,7 +258,7 @@ export const AuditLogView: React.FC = () => {
 
             <div className="space-y-3 font-mono">
               <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 text-[11px]">
-                <div><strong className="text-slate-600 font-sans">Action:</strong> <span className="text-[#0e5d84] font-bold">{selectedEvent.action}</span></div>
+                <div><strong className="text-slate-600 font-sans">Action:</strong> <span className="text-brand font-bold">{selectedEvent.action}</span></div>
                 <div><strong className="text-slate-600 font-sans">Timestamp:</strong> {selectedEvent.timestamp}</div>
                 <div><strong className="text-slate-600 font-sans">Origin IP:</strong> {selectedEvent.ip}</div>
                 <div><strong className="text-slate-600 font-sans">Actor:</strong> {selectedEvent.actor}</div>
@@ -267,7 +267,7 @@ export const AuditLogView: React.FC = () => {
 
               <div>
                 <span className="font-bold text-slate-700 font-sans block mb-1">SHA-256 Current Block Hash</span>
-                <div className="p-2.5 bg-[#f0f7fb] border border-[#cbe0ec] rounded-lg text-[#082b3d] break-all text-[10px]">
+                <div className="p-2.5 bg-subtle border border-line rounded-lg text-ink break-all text-[10px]">
                   {selectedEvent.hash}
                 </div>
               </div>
@@ -294,7 +294,7 @@ export const AuditLogView: React.FC = () => {
                   navigator.clipboard.writeText(selectedEvent.hash);
                   addToast('Copied SHA-256 hash to clipboard', 'info');
                 }}
-                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-lg font-bold text-xs flex items-center gap-1"
+                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-ink rounded-lg font-bold text-xs flex items-center gap-1"
               >
                 <span className="material-symbols-outlined text-xs">content_copy</span>
                 <span>Copy Hash</span>
@@ -302,7 +302,7 @@ export const AuditLogView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSelectedEvent(null)}
-                className="px-4 py-1.5 bg-[#0e5d84] hover:bg-[#083a4f] text-white rounded-lg font-bold text-xs"
+                className="px-4 py-1.5 bg-brand hover:bg-brand-strong text-white rounded-lg font-bold text-xs"
               >
                 Close Dossier
               </button>

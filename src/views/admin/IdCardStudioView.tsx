@@ -36,12 +36,12 @@ interface CardTemplate {
   backNote: string;
 }
 
-const ACCENTS = ['#0e5d84', '#082b3d', '#7c2d12', '#166534', '#6d28d9'];
+const ACCENTS = ['#17667d', '#0c3147', '#7c2d12', '#166534', '#6d28d9'];
 
 export const DEFAULT_TEMPLATES: Record<HolderType, CardTemplate> = {
   Student: {
     orientation: 'portrait',
-    accent: '#0e5d84',
+    accent: '#17667d',
     showBloodGroup: true,
     showEmergency: true,
     showAccessZones: false,
@@ -50,7 +50,7 @@ export const DEFAULT_TEMPLATES: Record<HolderType, CardTemplate> = {
   },
   Teacher: {
     orientation: 'portrait',
-    accent: '#082b3d',
+    accent: '#0c3147',
     showBloodGroup: true,
     showEmergency: true,
     showAccessZones: true,
@@ -59,7 +59,7 @@ export const DEFAULT_TEMPLATES: Record<HolderType, CardTemplate> = {
   },
   Staff: {
     orientation: 'landscape',
-    accent: '#082b3d',
+    accent: '#0c3147',
     showBloodGroup: true,
     showEmergency: true,
     showAccessZones: true,
@@ -143,7 +143,7 @@ export const IdCard: React.FC<CardProps> = ({ holder, card, template, campus, si
 
   if (side === 'back') {
     return (
-      <div className="id-card bg-white border border-slate-300 rounded-[3mm] overflow-hidden flex flex-col text-[#082b3d]" style={size}>
+      <div className="id-card bg-white border border-slate-300 rounded-[3mm] overflow-hidden flex flex-col text-ink" style={size}>
         <div className="h-[3mm]" style={{ background: band }} />
         <div className="flex-1 p-[3mm] flex flex-col gap-[1.5mm] text-[7px] leading-snug">
           {template.showEmergency && (
@@ -193,7 +193,7 @@ export const IdCard: React.FC<CardProps> = ({ holder, card, template, campus, si
   );
 
   return (
-    <div className="id-card bg-white border border-slate-300 rounded-[3mm] overflow-hidden flex flex-col text-[#082b3d]" style={size}>
+    <div className="id-card bg-white border border-slate-300 rounded-[3mm] overflow-hidden flex flex-col text-ink" style={size}>
       <div className="px-[2.5mm] py-[1.5mm] flex items-center gap-[1.5mm] text-white" style={{ background: template.accent }}>
         <img src="/lumen-academy-logo.png" alt="" className="w-[7mm] h-[7mm] object-contain bg-white rounded-full p-[0.3mm]" />
         <div className="min-w-0 leading-tight">
@@ -507,12 +507,12 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">badge</span>
             <span>Identity · Students, faculty & support staff</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">ID Card Studio</h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">ID Card Studio</h1>
+          <p className="text-xs text-ink-soft mt-1">
             {selectedCampus.name} · CR80 cards (85.6 × 54 mm) · status as of {formatDate(ID_CARD_AS_OF)}
           </p>
         </div>
@@ -526,15 +526,15 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
               setTab('issue');
               setStateFilter(stateFilter === state ? 'All' : state);
             }}
-            className={`text-left bg-white rounded-2xl border p-4 shadow-xs ${stateFilter === state ? 'border-[#0e5d84] ring-2 ring-[#0e5d84]/20' : 'border-[#e0ecf4]'}`}
+            className={`text-left bg-white rounded-2xl border p-4 shadow-xs ${stateFilter === state ? 'border-brand ring-2 ring-brand/20' : 'border-line-soft'}`}
           >
-            <p className="text-2xl font-bold text-[#082b3d]">{counts[state]}</p>
+            <p className="text-2xl font-bold text-ink">{counts[state]}</p>
             <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${STATE_STYLE[state]}`}>{state}</span>
           </button>
         ))}
       </div>
 
-      <div className="flex gap-1 overflow-x-auto border-b border-[#e0ecf4]">
+      <div className="flex gap-1 overflow-x-auto border-b border-line-soft">
         {TABS.map(t => (
           <button
             key={t.id}
@@ -542,7 +542,7 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
             aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
-              tab === t.id ? 'border-[#0e5d84] text-[#0e5d84]' : 'border-transparent text-[#777587] hover:text-[#082b3d]'
+              tab === t.id ? 'border-brand text-brand' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
             <span className="material-symbols-outlined text-sm">{t.icon}</span>
@@ -553,20 +553,20 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
       <FeatureTags ids={TABS.find(t => t.id === tab)!.ids} />
 
       {tab === 'issue' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-          <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex flex-wrap items-center gap-2">
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+          <div className="p-4 bg-subtle border-b border-line flex flex-wrap items-center gap-2">
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search name, ID or card number"
-              className="text-xs border border-[#cbe0ec] rounded-lg px-2 py-1.5 w-full sm:w-56"
+              className="text-xs border border-line rounded-lg px-2 py-1.5 w-full sm:w-56"
             />
-            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value as 'All' | HolderType)} className="text-xs border border-[#cbe0ec] rounded-lg px-2 py-1.5 bg-white">
+            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value as 'All' | HolderType)} className="text-xs border border-line rounded-lg px-2 py-1.5 bg-white">
               {['All', 'Student', 'Teacher', 'Staff'].map(o => (
                 <option key={o}>{o}</option>
               ))}
             </select>
-            <select value={stateFilter} onChange={e => setStateFilter(e.target.value as 'All' | CardState)} className="text-xs border border-[#cbe0ec] rounded-lg px-2 py-1.5 bg-white">
+            <select value={stateFilter} onChange={e => setStateFilter(e.target.value as 'All' | CardState)} className="text-xs border border-line rounded-lg px-2 py-1.5 bg-white">
               {['All', 'Active', 'Not issued', 'Expired', 'Photo missing'].map(o => (
                 <option key={o}>{o}</option>
               ))}
@@ -575,28 +575,28 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
             <button onClick={generateSelected} disabled={!selected.size} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 disabled:opacity-50">
               Generate cards ({selected.size})
             </button>
-            <button onClick={printSelected} disabled={!selected.size} className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#0e5d84] text-white hover:bg-[#083a4f] disabled:opacity-50">
+            <button onClick={printSelected} disabled={!selected.size} className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand text-white hover:bg-brand-strong disabled:opacity-50">
               <span className="material-symbols-outlined text-sm">print</span>
               Print selected
             </button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
-              <thead className="bg-slate-50 text-[#464555]">
+              <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   <th className="p-3 w-8">
-                    <input type="checkbox" checked={allVisibleSelected} onChange={toggleAllVisible} className="accent-[#0e5d84]" aria-label="Select all shown" />
+                    <input type="checkbox" checked={allVisibleSelected} onChange={toggleAllVisible} className="accent-brand" aria-label="Select all shown" />
                   </th>
                   {['Holder', 'Type', 'ID', 'Card number', 'RFID', 'Valid until', 'Status', ''].map(h => (
                     <th key={h} className="text-left p-3 font-semibold whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {rows.map(({ holder, state, card }) => (
-                  <tr key={holder.id} className="hover:bg-[#f8f9ff]">
+                  <tr key={holder.id} className="hover:bg-wash">
                     <td className="p-3">
-                      <input type="checkbox" checked={selected.has(holder.id)} onChange={() => toggle(holder.id)} className="accent-[#0e5d84]" aria-label={`Select ${holder.name}`} />
+                      <input type="checkbox" checked={selected.has(holder.id)} onChange={() => toggle(holder.id)} className="accent-brand" aria-label={`Select ${holder.name}`} />
                     </td>
                     <td className="p-3">
                       <div className="flex items-center gap-2">
@@ -606,8 +606,8 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                           <span className="w-7 h-7 rounded-full bg-rose-50 text-rose-600 text-[10px] font-bold flex items-center justify-center">{initialsOf(holder.name)}</span>
                         )}
                         <div>
-                          <p className="font-semibold text-[#082b3d]">{holder.name}</p>
-                          <p className="text-[10px] text-[#777587]">{holder.designation}</p>
+                          <p className="font-semibold text-ink">{holder.name}</p>
+                          <p className="text-[10px] text-ink-muted">{holder.designation}</p>
                         </div>
                       </div>
                     </td>
@@ -631,7 +631,7 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                           setPreviewHolderId(holder.id);
                           setTab('designer');
                         }}
-                        className="text-[11px] font-semibold text-[#0e5d84] hover:underline mr-2"
+                        className="text-[11px] font-semibold text-brand hover:underline mr-2"
                       >
                         Preview
                       </button>
@@ -645,10 +645,10 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                 ))}
               </tbody>
             </table>
-            {rows.length === 0 && <p className="p-6 text-center text-xs text-[#777587]">No holders match these filters.</p>}
+            {rows.length === 0 && <p className="p-6 text-center text-xs text-ink-muted">No holders match these filters.</p>}
           </div>
           {printLog.length > 0 && (
-            <div className="p-3 border-t border-[#f0f7fb] text-[11px] text-[#464555] space-y-0.5">
+            <div className="p-3 border-t border-subtle text-[11px] text-ink-soft space-y-0.5">
               {printLog.map((p, i) => (
                 <p key={i}>
                   Print batch · {p.at} · {p.count} card(s) · {p.by}
@@ -661,7 +661,7 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
 
       {tab === 'designer' && (
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-4 text-xs">
+          <div className="lg:col-span-2 bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-4 text-xs">
             <div className="flex gap-1">
               {(['Student', 'Teacher', 'Staff'] as HolderType[]).map(t => (
                 <button
@@ -670,15 +670,15 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                     setDesignType(t);
                     setPreviewHolderId(CARD_HOLDERS.find(h => h.type === t)!.id);
                   }}
-                  className={`flex-1 font-semibold px-2 py-1.5 rounded-lg ${designType === t ? 'bg-[#0e5d84] text-white' : 'bg-slate-100 text-[#082b3d]'}`}
+                  className={`flex-1 font-semibold px-2 py-1.5 rounded-lg ${designType === t ? 'bg-brand text-white' : 'bg-slate-100 text-ink'}`}
                 >
                   {t}
                 </button>
               ))}
             </div>
             <label className="block">
-              <span className="block font-semibold text-[#464555] mb-1">Preview with</span>
-              <select value={previewHolder.id} onChange={e => setPreviewHolderId(e.target.value)} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1.5">
+              <span className="block font-semibold text-ink-soft mb-1">Preview with</span>
+              <select value={previewHolder.id} onChange={e => setPreviewHolderId(e.target.value)} className="w-full border border-line rounded-lg px-2 py-1.5">
                 {designHolders.map(h => (
                   <option key={h.id} value={h.id}>
                     {h.name}
@@ -687,17 +687,17 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
               </select>
             </label>
             <div>
-              <span className="block font-semibold text-[#464555] mb-1">Orientation</span>
+              <span className="block font-semibold text-ink-soft mb-1">Orientation</span>
               <div className="flex gap-1">
                 {(['portrait', 'landscape'] as const).map(o => (
-                  <button key={o} onClick={() => setTemplate({ orientation: o })} className={`flex-1 capitalize px-2 py-1.5 rounded-lg font-semibold ${template.orientation === o ? 'bg-[#082b3d] text-white' : 'bg-slate-100'}`}>
+                  <button key={o} onClick={() => setTemplate({ orientation: o })} className={`flex-1 capitalize px-2 py-1.5 rounded-lg font-semibold ${template.orientation === o ? 'bg-ink text-white' : 'bg-slate-100'}`}>
                     {o}
                   </button>
                 ))}
               </div>
             </div>
             <div>
-              <span className="block font-semibold text-[#464555] mb-1">Header colour</span>
+              <span className="block font-semibold text-ink-soft mb-1">Header colour</span>
               <div className="flex gap-2">
                 {ACCENTS.map(c => (
                   <button
@@ -709,7 +709,7 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                   />
                 ))}
               </div>
-              {designType === 'Staff' && <p className="text-[10px] text-[#777587] mt-1">The category band uses a fixed colour per staff category.</p>}
+              {designType === 'Staff' && <p className="text-[10px] text-ink-muted mt-1">The category band uses a fixed colour per staff category.</p>}
             </div>
             <div className="space-y-1.5">
               {([
@@ -718,18 +718,18 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                 ['showAccessZones', 'Access zones (back)'],
               ] as const).map(([key, label]) => (
                 <label key={key} className="flex items-center gap-2">
-                  <input type="checkbox" checked={template[key]} onChange={e => setTemplate({ [key]: e.target.checked })} className="accent-[#0e5d84]" />
+                  <input type="checkbox" checked={template[key]} onChange={e => setTemplate({ [key]: e.target.checked })} className="accent-brand" />
                   {label}
                 </label>
               ))}
             </div>
             <label className="block">
-              <span className="block font-semibold text-[#464555] mb-1">Signatory</span>
-              <input value={template.signatory} onChange={e => setTemplate({ signatory: e.target.value })} maxLength={24} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1.5" />
+              <span className="block font-semibold text-ink-soft mb-1">Signatory</span>
+              <input value={template.signatory} onChange={e => setTemplate({ signatory: e.target.value })} maxLength={24} className="w-full border border-line rounded-lg px-2 py-1.5" />
             </label>
             <label className="block">
-              <span className="block font-semibold text-[#464555] mb-1">Back-side note ({template.backNote.length}/220)</span>
-              <textarea value={template.backNote} onChange={e => setTemplate({ backNote: e.target.value.slice(0, 220) })} rows={4} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1.5" />
+              <span className="block font-semibold text-ink-soft mb-1">Back-side note ({template.backNote.length}/220)</span>
+              <textarea value={template.backNote} onChange={e => setTemplate({ backNote: e.target.value.slice(0, 220) })} rows={4} className="w-full border border-line rounded-lg px-2 py-1.5" />
             </label>
             <button
               onClick={() => {
@@ -742,8 +742,8 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
             </button>
           </div>
 
-          <div className="lg:col-span-3 bg-slate-50 rounded-2xl border border-[#e0ecf4] p-4 flex flex-col items-center gap-3">
-            <p className="text-xs font-bold text-[#082b3d] self-start">Live preview · front and back</p>
+          <div className="lg:col-span-3 bg-slate-50 rounded-2xl border border-line-soft p-4 flex flex-col items-center gap-3">
+            <p className="text-xs font-bold text-ink self-start">Live preview · front and back</p>
             {!previewHolder.photo && (
               <p className="text-[11px] text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-2 py-1 self-stretch">
                 No photo on file for {previewHolder.name}. This card can be designed but not printed.
@@ -760,13 +760,13 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
 
       {tab === 'import' && (
         <div className="space-y-4">
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3 text-xs">
-            <p className="font-bold text-[#082b3d]">Import existing card numbers and RFID tags</p>
-            <p className="text-[11px] text-[#464555]">
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3 text-xs">
+            <p className="font-bold text-ink">Import existing card numbers and RFID tags</p>
+            <p className="text-[11px] text-ink-soft">
               Columns: <span className="font-mono">identifier, card_number, rfid</span>. The identifier is the admission number or employee code. Photos come from
               the photo bulk import. Any active card a holder already has is revoked and replaced.
             </p>
-            <textarea value={importText} onChange={e => { setImportText(e.target.value); setImportRows(null); }} rows={8} className="w-full font-mono border border-[#cbe0ec] rounded-lg p-2" />
+            <textarea value={importText} onChange={e => { setImportText(e.target.value); setImportRows(null); }} rows={8} className="w-full font-mono border border-line rounded-lg p-2" />
             <div className="flex gap-2">
               <button onClick={validateImport} className="font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200">
                 Validate
@@ -774,23 +774,23 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
               <button
                 onClick={commitImport}
                 disabled={!importRows || importRows.every(r => r.errors.length)}
-                className="font-semibold px-3 py-1.5 rounded-lg bg-[#0e5d84] text-white hover:bg-[#083a4f] disabled:opacity-50"
+                className="font-semibold px-3 py-1.5 rounded-lg bg-brand text-white hover:bg-brand-strong disabled:opacity-50"
               >
                 Import valid rows & send to print
               </button>
             </div>
           </div>
           {importRows && (
-            <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-x-auto">
+            <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-x-auto">
               <table className="w-full text-xs">
-                <thead className="bg-slate-50 text-[#464555]">
+                <thead className="bg-slate-50 text-ink-soft">
                   <tr>
                     {['Line', 'Identifier', 'Holder', 'Card number', 'RFID', 'Result'].map(h => (
                       <th key={h} className="text-left p-3 font-semibold">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {importRows.map(r => (
                     <tr key={r.line} className={r.errors.length ? 'bg-rose-50/40' : ''}>
                       <td className="p-3 font-mono">{r.line}</td>
@@ -819,33 +819,33 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
       )}
 
       {tab === 'register' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-          <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex items-center justify-between">
-            <span className="text-xs font-bold text-[#082b3d]">Every card ever issued · {records.length} records</span>
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+          <div className="p-4 bg-subtle border-b border-line flex items-center justify-between">
+            <span className="text-xs font-bold text-ink">Every card ever issued · {records.length} records</span>
             <button onClick={exportRegister} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200">
               Export CSV
             </button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
-              <thead className="bg-slate-50 text-[#464555]">
+              <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   {['Card number', 'Holder', 'RFID', 'Issued', 'Valid until', 'Ver.', 'Status'].map(h => (
                     <th key={h} className="text-left p-3 font-semibold whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {[...records]
                   .sort((a, b) => b.issuedOn.localeCompare(a.issuedOn) || a.cardNo.localeCompare(b.cardNo))
                   .map(r => {
                     const h = CARD_HOLDERS.find(x => x.id === r.holderId)!;
                     const expired = r.status === 'Active' && r.validUntil < ID_CARD_AS_OF;
                     return (
-                      <tr key={r.cardNo} className={r.status === 'Revoked' ? 'text-[#777587]' : ''}>
+                      <tr key={r.cardNo} className={r.status === 'Revoked' ? 'text-ink-muted' : ''}>
                         <td className={`p-3 font-mono ${r.status === 'Revoked' ? 'line-through' : ''}`}>{r.cardNo}</td>
                         <td className="p-3">
-                          {h.name} <span className="text-[10px] text-[#777587]">· {h.type}</span>
+                          {h.name} <span className="text-[10px] text-ink-muted">· {h.type}</span>
                         </td>
                         <td className="p-3 font-mono">{r.rfid ?? '—'}</td>
                         <td className="p-3 font-mono">{formatDate(r.issuedOn)}</td>
@@ -870,15 +870,15 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
       )}
 
       {reissueFor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setReissueFor(null)}>
-          <div className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-[#082b3d]">Reissue card · {reissueFor.name}</h3>
-            <p className="text-[#464555]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setReissueFor(null)}>
+          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
+            <h3 className="text-sm font-bold text-ink">Reissue card · {reissueFor.name}</h3>
+            <p className="text-ink-soft">
               Current card {activeCardFor(records, reissueFor.id)?.cardNo} will be revoked and a new number issued from the series.
             </p>
             <label className="block">
-              <span className="block font-semibold text-[#464555] mb-1">Reason</span>
-              <select value={reissueReason} onChange={e => setReissueReason(e.target.value)} className="w-full border border-[#cbe0ec] rounded-lg px-2 py-1.5">
+              <span className="block font-semibold text-ink-soft mb-1">Reason</span>
+              <select value={reissueReason} onChange={e => setReissueReason(e.target.value)} className="w-full border border-line rounded-lg px-2 py-1.5">
                 {REISSUE_REASONS.map(r => (
                   <option key={r}>{r}</option>
                 ))}

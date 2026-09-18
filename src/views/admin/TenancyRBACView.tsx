@@ -131,14 +131,14 @@ export const TenancyRBACView: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">hub</span>
             <span>Multi-Tenant Architecture & Enterprise RBAC</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">
             Campus Cluster Topology & Granular Role Governance
           </h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <p className="text-xs text-ink-soft mt-1">
             {campuses.length} Campus Nodes • Row-Level Tenant Security • Just-In-Time (JIT) Elevation Protocol
           </p>
         </div>
@@ -146,7 +146,7 @@ export const TenancyRBACView: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowAddCampusModal(true)}
-            className="flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#082b3d] transition-colors"
+            className="flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-ink transition-colors"
           >
             <span className="material-symbols-outlined text-sm">add_business</span>
             <span>Add Campus Node</span>
@@ -154,7 +154,7 @@ export const TenancyRBACView: React.FC = () => {
 
           <button
             onClick={handleExportRbac}
-            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#082b3d] transition-colors"
+            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-ink transition-colors"
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Export RBAC Matrix</span>
@@ -173,7 +173,7 @@ export const TenancyRBACView: React.FC = () => {
             className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl shadow-xs transition-colors ${
               jitElevated
                 ? 'bg-amber-600 text-white animate-pulse'
-                : 'bg-[#f0f7fb] text-[#0e5d84] border border-[#cbe0ec] hover:bg-[#e0ecf4]'
+                : 'bg-subtle text-brand border border-line hover:bg-line-soft'
             }`}
           >
             <span className="material-symbols-outlined text-sm">key</span>
@@ -193,42 +193,42 @@ export const TenancyRBACView: React.FC = () => {
             }}
             className={`p-4 rounded-xl border transition-all cursor-pointer ${
               selectedCampus.id === c.id
-                ? 'bg-[#f0f7fb] border-[#0e5d84] ring-2 ring-[#0e5d84]'
-                : 'bg-white border-[#e0ecf4] hover:border-[#cbe0ec]'
+                ? 'bg-subtle border-brand ring-2 ring-brand'
+                : 'bg-white border-line-soft hover:border-line'
             }`}
           >
-            <div className="flex items-center justify-between text-xs text-[#777587] mb-1">
-              <span className="font-bold text-[#0e5d84] font-mono">{c.code}</span>
+            <div className="flex items-center justify-between text-xs text-ink-muted mb-1">
+              <span className="font-bold text-brand font-mono">{c.code}</span>
               <span className="flex items-center gap-1 text-[10px] text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded font-semibold">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                 {c.status}
               </span>
             </div>
-            <div className="text-sm font-bold text-[#082b3d]">{c.name}</div>
-            <div className="text-[11px] text-[#464555] mt-1">{c.location}</div>
-            <div className="mt-3 pt-2 border-t border-[#cbe0ec] text-xs flex justify-between font-medium">
+            <div className="text-sm font-bold text-ink">{c.name}</div>
+            <div className="text-[11px] text-ink-soft mt-1">{c.location}</div>
+            <div className="mt-3 pt-2 border-t border-line text-xs flex justify-between font-medium">
               <span>{c.studentsCount} Students</span>
-              <span className="font-mono text-[#777587]">{c.storageGb} GB DB</span>
+              <span className="font-mono text-ink-muted">{c.storageGb} GB DB</span>
             </div>
           </div>
         ))}
       </div>
 
       {/* Granular RBAC Permissions Matrix */}
-      <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-        <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+        <div className="p-4 bg-subtle border-b border-line flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <span className="text-xs font-bold text-[#082b3d] block">Institutional Role-Based Access Control (RBAC) Matrix</span>
-            <span className="text-[11px] text-[#777587]">Click any role to edit authorization rules and verb privileges</span>
+            <span className="text-xs font-bold text-ink block">Institutional Role-Based Access Control (RBAC) Matrix</span>
+            <span className="text-[11px] text-ink-muted">Click any role to edit authorization rules and verb privileges</span>
           </div>
-          <span className="text-xs font-mono text-[#0e5d84] bg-white px-2 py-0.5 rounded border border-[#cbe0ec] self-start sm:self-auto">
+          <span className="text-xs font-mono text-brand bg-white px-2 py-0.5 rounded border border-line self-start sm:self-auto">
             Least Privilege Policy Enforced
           </span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left">
-            <thead className="bg-[#f0f7fb]/60 text-[#464555] font-semibold border-b border-[#cbe0ec]">
+            <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
               <tr>
                 <th className="p-3">Role Designation</th>
                 <th className="p-3 text-center">Student 360</th>
@@ -239,17 +239,17 @@ export const TenancyRBACView: React.FC = () => {
                 <th className="p-3 text-right">Configure</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#f0f7fb]">
+            <tbody className="divide-y divide-subtle">
               {rolesMatrix.map(r => (
-                <tr key={r.role} className="hover:bg-[#f8faff] transition-colors">
-                  <td className="p-3 font-bold text-[#082b3d]">{r.role}</td>
+                <tr key={r.role} className="hover:bg-wash transition-colors">
+                  <td className="p-3 font-bold text-ink">{r.role}</td>
                   <td className="p-3 text-center">
-                    <span className={r.student360.includes('FULL') ? 'text-emerald-600 font-bold' : r.student360.includes('CLASS') ? 'text-[#0e5d84] font-semibold' : 'text-slate-400'}>
+                    <span className={r.student360.includes('FULL') ? 'text-emerald-600 font-bold' : r.student360.includes('CLASS') ? 'text-brand font-semibold' : 'text-slate-400'}>
                       {r.student360}
                     </span>
                   </td>
                   <td className="p-3 text-center">
-                    <span className={r.financialLedger.includes('FULL') ? 'text-emerald-600 font-bold' : r.financialLedger.includes('VIEW') ? 'text-[#0e5d84] font-semibold' : 'text-slate-400'}>
+                    <span className={r.financialLedger.includes('FULL') ? 'text-emerald-600 font-bold' : r.financialLedger.includes('VIEW') ? 'text-brand font-semibold' : 'text-slate-400'}>
                       {r.financialLedger}
                     </span>
                   </td>
@@ -259,7 +259,7 @@ export const TenancyRBACView: React.FC = () => {
                     </span>
                   </td>
                   <td className="p-3 text-center">
-                    <span className={r.fleetGps.includes('FULL') || r.fleetGps.includes('AIS') ? 'text-emerald-600 font-bold' : r.fleetGps.includes('VIEW') || r.fleetGps.includes('SUPERVISE') ? 'text-[#0e5d84] font-semibold' : 'text-slate-400'}>
+                    <span className={r.fleetGps.includes('FULL') || r.fleetGps.includes('AIS') ? 'text-emerald-600 font-bold' : r.fleetGps.includes('VIEW') || r.fleetGps.includes('SUPERVISE') ? 'text-brand font-semibold' : 'text-slate-400'}>
                       {r.fleetGps}
                     </span>
                   </td>
@@ -274,7 +274,7 @@ export const TenancyRBACView: React.FC = () => {
                         setSelectedRole({ ...r });
                         setShowEditRoleModal(true);
                       }}
-                      className="text-[#0e5d84] hover:underline font-bold text-xs"
+                      className="text-brand hover:underline font-bold text-xs"
                     >
                       Edit Verbs
                     </button>
@@ -288,11 +288,11 @@ export const TenancyRBACView: React.FC = () => {
 
       {/* Modal: Add Campus Node */}
       {showAddCampusModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#cbe0ec] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-3">
-              <h3 className="font-bold text-base text-[#082b3d]">Add Campus Branch Node (TEN-002)</h3>
-              <button onClick={() => setShowAddCampusModal(false)} className="text-[#777587] hover:text-[#082b3d]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
+            <div className="flex items-center justify-between border-b border-subtle pb-3">
+              <h3 className="font-bold text-base text-ink">Add Campus Branch Node (TEN-002)</h3>
+              <button onClick={() => setShowAddCampusModal(false)} className="text-ink-muted hover:text-ink">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -300,62 +300,62 @@ export const TenancyRBACView: React.FC = () => {
             <form onSubmit={handleCreateCampus} className="space-y-3 text-xs">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-[#464555] mb-1">Campus Code</label>
+                  <label className="block font-bold text-ink-soft mb-1">Campus Code</label>
                   <input
                     type="text"
                     placeholder="e.g. LMN-BLR"
                     value={newCampus.code}
                     onChange={e => setNewCampus({ ...newCampus, code: e.target.value })}
-                    className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d] uppercase"
+                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink uppercase"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-[#464555] mb-1">Initial Capacity</label>
+                  <label className="block font-bold text-ink-soft mb-1">Initial Capacity</label>
                   <input
                     type="number"
                     value={newCampus.studentsCount}
                     onChange={e => setNewCampus({ ...newCampus, studentsCount: Number(e.target.value) })}
-                    className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Campus Name</label>
+                <label className="block font-bold text-ink-soft mb-1">Campus Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Lumen Bengaluru South Campus"
                   value={newCampus.name}
                   onChange={e => setNewCampus({ ...newCampus, name: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   required
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Geographic Location</label>
+                <label className="block font-bold text-ink-soft mb-1">Geographic Location</label>
                 <input
                   type="text"
                   placeholder="e.g. Whitefield, Bengaluru, Karnataka"
                   value={newCampus.location}
                   onChange={e => setNewCampus({ ...newCampus, location: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   required
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#f0f7fb]">
+              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
                 <button
                   type="button"
                   onClick={() => setShowAddCampusModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl font-semibold"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl font-bold"
+                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
                 >
                   Provision Campus
                 </button>
@@ -367,25 +367,25 @@ export const TenancyRBACView: React.FC = () => {
 
       {/* Modal: Edit Role Verbs */}
       {showEditRoleModal && selectedRole && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#cbe0ec] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
+            <div className="flex items-center justify-between border-b border-subtle pb-3">
               <div>
-                <h3 className="font-bold text-base text-[#082b3d]">Configure Role: {selectedRole.role}</h3>
-                <span className="text-[11px] text-[#777587]">Module-level authorization verbs</span>
+                <h3 className="font-bold text-base text-ink">Configure Role: {selectedRole.role}</h3>
+                <span className="text-[11px] text-ink-muted">Module-level authorization verbs</span>
               </div>
-              <button onClick={() => setShowEditRoleModal(false)} className="text-[#777587] hover:text-[#082b3d]">
+              <button onClick={() => setShowEditRoleModal(false)} className="text-ink-muted hover:text-ink">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <form onSubmit={handleSaveRole} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Student 360 Scope</label>
+                <label className="block font-bold text-ink-soft mb-1">Student 360 Scope</label>
                 <select
                   value={selectedRole.student360}
                   onChange={e => setSelectedRole({ ...selectedRole, student360: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2 text-xs"
+                  className="w-full bg-wash border border-line rounded-xl p-2 text-xs"
                 >
                   <option value="FULL (R/W)">FULL (R/W)</option>
                   <option value="VIEW ONLY">VIEW ONLY</option>
@@ -395,11 +395,11 @@ export const TenancyRBACView: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Financial Ledger Scope</label>
+                <label className="block font-bold text-ink-soft mb-1">Financial Ledger Scope</label>
                 <select
                   value={selectedRole.financialLedger}
                   onChange={e => setSelectedRole({ ...selectedRole, financialLedger: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2 text-xs"
+                  className="w-full bg-wash border border-line rounded-xl p-2 text-xs"
                 >
                   <option value="FULL (R/W)">FULL (R/W)</option>
                   <option value="VIEW ONLY">VIEW ONLY</option>
@@ -408,11 +408,11 @@ export const TenancyRBACView: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">CBSE DigiLocker DSC Signature</label>
+                <label className="block font-bold text-ink-soft mb-1">CBSE DigiLocker DSC Signature</label>
                 <select
                   value={selectedRole.digiLockerDsc}
                   onChange={e => setSelectedRole({ ...selectedRole, digiLockerDsc: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2 text-xs"
+                  className="w-full bg-wash border border-line rounded-xl p-2 text-xs"
                 >
                   <option value="DSC SIGN">DSC SIGN (Authorized Signatory)</option>
                   <option value="VIEW ONLY">VIEW ONLY</option>
@@ -421,11 +421,11 @@ export const TenancyRBACView: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Fleet GPS & SOS Permissions</label>
+                <label className="block font-bold text-ink-soft mb-1">Fleet GPS & SOS Permissions</label>
                 <select
                   value={selectedRole.fleetGps}
                   onChange={e => setSelectedRole({ ...selectedRole, fleetGps: e.target.value })}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2 text-xs"
+                  className="w-full bg-wash border border-line rounded-xl p-2 text-xs"
                 >
                   <option value="FULL (R/W)">FULL (R/W)</option>
                   <option value="SUPERVISE">SUPERVISE</option>
@@ -435,17 +435,17 @@ export const TenancyRBACView: React.FC = () => {
                 </select>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#f0f7fb]">
+              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
                 <button
                   type="button"
                   onClick={() => setShowEditRoleModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl font-semibold"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl font-bold"
+                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
                 >
                   Save Policy
                 </button>

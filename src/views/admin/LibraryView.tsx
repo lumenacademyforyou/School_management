@@ -101,16 +101,16 @@ export const LibraryView: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">local_library</span>
             <span>Digital Media & RFID Circulation Hub (LIB-001..010)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">
             Dewey Decimal Catalog & Smart RFID Circulation
           </h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <p className="text-xs text-ink-soft mt-1">
             24,500 Physical Volumes • RFID Self-Checkout Antennas • Automated WhatsApp Fine Notices
           </p>
         </div>
@@ -118,7 +118,7 @@ export const LibraryView: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleExportCatalog}
-            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-[#082b3d] text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 transition-colors"
+            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-ink text-xs font-semibold px-3 py-2 rounded-xl border border-slate-300 transition-colors"
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Export Catalog</span>
@@ -140,7 +140,7 @@ export const LibraryView: React.FC = () => {
               }, 900);
             }}
             disabled={rfidScanning}
-            className="flex items-center gap-1.5 bg-[#0e5d84] hover:bg-[#083a4f] text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-xs transition-colors"
+            className="flex items-center gap-1.5 bg-brand hover:bg-brand-strong text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-xs transition-colors"
           >
             <span className="material-symbols-outlined text-sm">{rfidScanning ? 'sync' : 'contactless'}</span>
             <span>{rfidScanning ? 'Scanning Tray...' : 'Trigger RFID Book Scan'}</span>
@@ -151,10 +151,10 @@ export const LibraryView: React.FC = () => {
       {/* Main Grid: RFID Tray Simulator + Dewey Explorer */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left 2 Cols: Smart RFID Circulation Desk */}
-        <div className="lg:col-span-2 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#f0f7fb]">
-            <h2 className="text-sm font-bold text-[#082b3d] flex items-center gap-2">
-              <span className="material-symbols-outlined text-[#0e5d84]">sensors</span>
+        <div className="lg:col-span-2 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-subtle">
+            <h2 className="text-sm font-bold text-ink flex items-center gap-2">
+              <span className="material-symbols-outlined text-brand">sensors</span>
               <span>Self-Checkout RFID Antenna Tray #01</span>
             </h2>
             <span className="text-xs font-mono bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">
@@ -162,14 +162,14 @@ export const LibraryView: React.FC = () => {
             </span>
           </div>
 
-          <div className="p-6 bg-[#f0f7fb] rounded-xl border border-[#cbe0ec] flex flex-col items-center justify-center text-center space-y-3">
-            <span className="material-symbols-outlined text-5xl text-[#0e5d84] animate-bounce">
+          <div className="p-6 bg-subtle rounded-xl border border-line flex flex-col items-center justify-center text-center space-y-3">
+            <span className="material-symbols-outlined text-5xl text-brand animate-bounce">
               book_2
             </span>
             <div className="space-y-1">
-              <div className="text-xs uppercase font-bold text-[#777587]">Detected Item on Tray</div>
-              <div className="text-base font-bold text-[#082b3d]">{scannedBook}</div>
-              <div className="text-xs text-[#464555]">Dewey: 530.1 (Physics) • Barcode: #LMN-LIB-09412</div>
+              <div className="text-xs uppercase font-bold text-ink-muted">Detected Item on Tray</div>
+              <div className="text-base font-bold text-ink">{scannedBook}</div>
+              <div className="text-xs text-ink-soft">Dewey: 530.1 (Physics) • Barcode: #LMN-LIB-09412</div>
             </div>
 
             <div className="flex flex-wrap justify-center gap-2 pt-2">
@@ -185,7 +185,7 @@ export const LibraryView: React.FC = () => {
               </button>
               <button
                 onClick={handleProcessReturn}
-                className="bg-white hover:bg-slate-100 border border-[#cbe0ec] text-[#082b3d] font-semibold text-xs px-4 py-2 rounded-xl transition-colors flex items-center gap-1.5"
+                className="bg-white hover:bg-slate-100 border border-line text-ink font-semibold text-xs px-4 py-2 rounded-xl transition-colors flex items-center gap-1.5"
               >
                 <span className="material-symbols-outlined text-sm">assignment_return</span>
                 <span>Process Return</span>
@@ -194,16 +194,16 @@ export const LibraryView: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold text-[#082b3d]">
+            <div className="flex items-center justify-between text-xs font-bold text-ink">
               <span>Active Issue & Circulation Ledger</span>
-              <span className="text-[#777587] font-normal">{recentIssues.length} active records</span>
+              <span className="text-ink-muted font-normal">{recentIssues.length} active records</span>
             </div>
             <div className="space-y-1.5">
               {recentIssues.map(issue => (
                 <div key={issue.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl text-xs border border-slate-200">
                   <div>
-                    <div className="font-bold text-[#082b3d]">{issue.bookTitle}</div>
-                    <div className="text-[#777587] text-[11px]">
+                    <div className="font-bold text-ink">{issue.bookTitle}</div>
+                    <div className="text-ink-muted text-[11px]">
                       Issued to {issue.studentName} ({issue.rollNo}) • Due: <strong>{issue.dueDate}</strong>
                     </div>
                   </div>
@@ -223,28 +223,28 @@ export const LibraryView: React.FC = () => {
         </div>
 
         {/* Right Col: Dewey Decimal Explorer */}
-        <div className="bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-4">
-          <h2 className="text-sm font-bold text-[#082b3d] flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#0e5d84] text-base">category</span>
+        <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-4">
+          <h2 className="text-sm font-bold text-ink flex items-center gap-2">
+            <span className="material-symbols-outlined text-brand text-base">category</span>
             <span>Dewey 500–900 Classification</span>
           </h2>
 
           <div className="space-y-2 text-xs">
-            <div className="p-3 bg-[#f0f7fb] rounded-xl border border-[#cbe0ec]">
-              <div className="font-bold text-[#0e5d84]">500 Natural Sciences & Mathematics</div>
-              <div className="text-[11px] text-[#464555]">6,420 Volumes (Physics, Chem, Bio, Maths)</div>
+            <div className="p-3 bg-subtle rounded-xl border border-line">
+              <div className="font-bold text-brand">500 Natural Sciences & Mathematics</div>
+              <div className="text-[11px] text-ink-soft">6,420 Volumes (Physics, Chem, Bio, Maths)</div>
             </div>
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <div className="font-bold text-[#082b3d]">600 Technology & Applied Sciences</div>
-              <div className="text-[11px] text-[#464555]">4,850 Volumes (Robotics, AI, Medicine)</div>
+              <div className="font-bold text-ink">600 Technology & Applied Sciences</div>
+              <div className="text-[11px] text-ink-soft">4,850 Volumes (Robotics, AI, Medicine)</div>
             </div>
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <div className="font-bold text-[#082b3d]">800 Literature & Rhetoric</div>
-              <div className="text-[11px] text-[#464555]">5,200 Volumes (Shakespeare, Tagore, Hindi)</div>
+              <div className="font-bold text-ink">800 Literature & Rhetoric</div>
+              <div className="text-[11px] text-ink-soft">5,200 Volumes (Shakespeare, Tagore, Hindi)</div>
             </div>
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <div className="font-bold text-[#082b3d]">900 History & Geography</div>
-              <div className="text-[11px] text-[#464555]">3,100 Volumes (Indian Independence, Atlas)</div>
+              <div className="font-bold text-ink">900 History & Geography</div>
+              <div className="text-[11px] text-ink-soft">3,100 Volumes (Indian Independence, Atlas)</div>
             </div>
           </div>
         </div>
@@ -252,12 +252,12 @@ export const LibraryView: React.FC = () => {
 
       {/* MODAL 1: Issue Book to Student */}
       {showIssueModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-emerald-600">book</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Issue Library Book (LIB-003)</h3>
+                <h3 className="font-bold text-ink text-sm">Issue Library Book (LIB-003)</h3>
               </div>
               <button
                 onClick={() => setShowIssueModal(false)}
@@ -274,7 +274,7 @@ export const LibraryView: React.FC = () => {
                   type="text"
                   value={issueBookName}
                   onChange={e => setIssueBookName(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
                 />
               </div>
 
@@ -283,7 +283,7 @@ export const LibraryView: React.FC = () => {
                 <select
                   value={issueStudent}
                   onChange={e => setIssueStudent(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
                 >
                   <option value="Aarav S. Ramanathan (10-A, Roll 14)">Aarav S. Ramanathan (Class 10-A, Roll 14)</option>
                   <option value="Farah N. Siddiqui (10-A, Roll 18)">Farah N. Siddiqui (Class 10-A, Roll 18)</option>
@@ -297,7 +297,7 @@ export const LibraryView: React.FC = () => {
                 <select
                   value={issueDays}
                   onChange={e => setIssueDays(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
                 >
                   <option value="7">7 Days (Weekly Borrow)</option>
                   <option value="14">14 Days (Standard Student Loan)</option>
@@ -327,12 +327,12 @@ export const LibraryView: React.FC = () => {
 
       {/* MODAL 2: Overdue Fine & Reminders */}
       {showOverdueModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-amber-600">notifications_active</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Automated Overdue Notice Dispatch (LIB-007)</h3>
+                <h3 className="font-bold text-ink text-sm">Automated Overdue Notice Dispatch (LIB-007)</h3>
               </div>
               <button
                 onClick={() => setShowOverdueModal(false)}
@@ -367,7 +367,7 @@ export const LibraryView: React.FC = () => {
                   setShowOverdueModal(false);
                   addToast('Dispatched WhatsApp & SMS overdue notice to Chetan R. Varma guardian (LIB-007)', 'success');
                 }}
-                className="px-4 py-2 bg-[#0e5d84] hover:bg-[#083a4f] text-white font-bold rounded-xl text-xs shadow-xs"
+                className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
               >
                 Send Automated Notice
               </button>

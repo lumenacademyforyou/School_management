@@ -48,7 +48,7 @@ export const QueueTab: React.FC<ActionProps & { onUpload: () => void; uploading:
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-xs" data-testid="emis-queue">
-              <thead className="bg-slate-50 border-b border-[#e0ecf4]">
+              <thead className="bg-slate-50 border-b border-line-soft">
                 <tr>
                   {['Change', 'Student', 'EMIS number', 'What will be sent', 'Last attempt', ''].map(h => (
                     <th key={h} className={th}>
@@ -57,7 +57,7 @@ export const QueueTab: React.FC<ActionProps & { onUpload: () => void; uploading:
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#e0ecf4]">
+              <tbody className="divide-y divide-line-soft">
                 {queue.map(c => {
                   const last = lastResult[c.id];
                   return (
@@ -65,7 +65,7 @@ export const QueueTab: React.FC<ActionProps & { onUpload: () => void; uploading:
                       <td className={td}>
                         <ChangeBadge kind={c.kind} />
                       </td>
-                      <td className={`${td} font-semibold text-[#082b3d]`}>{c.studentName}</td>
+                      <td className={`${td} font-semibold text-ink`}>{c.studentName}</td>
                       <td className={`${td} font-mono whitespace-nowrap`}>{c.emis ? formatEmis(c.emis) : '—'}</td>
                       <td className={td}>{c.summary}</td>
                       <td className={`${td} max-w-xs`}>
@@ -74,7 +74,7 @@ export const QueueTab: React.FC<ActionProps & { onUpload: () => void; uploading:
                             <span className="font-semibold">Rejected:</span> {last.message}
                           </span>
                         ) : (
-                          <span className="text-[#777587]">Not sent yet</span>
+                          <span className="text-ink-muted">Not sent yet</span>
                         )}
                       </td>
                       <td className={`${td} text-right`}>
@@ -96,27 +96,27 @@ export const QueueTab: React.FC<ActionProps & { onUpload: () => void; uploading:
       </Panel>
 
       <Panel title="Upload history">
-        <ul className="divide-y divide-[#e0ecf4]">
+        <ul className="divide-y divide-line-soft">
           {uploads.map(u => {
             const ok = u.results.filter(r => r.ok).length;
             const rejected = u.results.length - ok;
             const open = openLog === u.id;
             return (
               <li key={u.id} data-upload={u.id}>
-                <button onClick={() => setOpenLog(open ? null : u.id)} className="w-full flex flex-wrap items-center gap-2 px-3 py-2 text-left text-xs hover:bg-[#f8fbfd]" aria-expanded={open}>
-                  <span className="font-mono font-semibold text-[#082b3d]">{u.id}</span>
-                  <span className="text-[#464555]">
+                <button onClick={() => setOpenLog(open ? null : u.id)} className="w-full flex flex-wrap items-center gap-2 px-3 py-2 text-left text-xs hover:bg-wash" aria-expanded={open}>
+                  <span className="font-mono font-semibold text-ink">{u.id}</span>
+                  <span className="text-ink-soft">
                     {fmtStamp(u.at)} · {u.by}
                   </span>
                   <span className="ml-auto flex gap-1">
                     <Badge tone="green">{ok} accepted</Badge>
                     {rejected > 0 && <Badge tone="red">{rejected} rejected</Badge>}
                   </span>
-                  <Icon name={open ? 'expand_less' : 'expand_more'} className="text-base text-[#777587]" />
+                  <Icon name={open ? 'expand_less' : 'expand_more'} className="text-base text-ink-muted" />
                 </button>
                 {open && (
                   <ul className="px-3 pb-3 space-y-1">
-                    {u.results.length === 0 && <li className="text-[11px] text-[#777587]">Routine refresh; no changes were sent.</li>}
+                    {u.results.length === 0 && <li className="text-[11px] text-ink-muted">Routine refresh; no changes were sent.</li>}
                     {u.results.map(r => (
                       <li key={r.id} className="flex items-start gap-2 text-[11px]">
                         <Icon name={r.ok ? 'check_circle' : 'cancel'} className={`text-sm ${r.ok ? 'text-emerald-600' : 'text-rose-600'}`} />
@@ -153,8 +153,8 @@ const RecordCard: React.FC<{ record: StateRecord }> = ({ record }) => (
       ['Portal status', record.status],
     ].map(([k, v]) => (
       <div key={k}>
-        <dt className="text-[10px] font-semibold uppercase tracking-wider text-[#777587]">{k}</dt>
-        <dd className={`font-semibold text-[#082b3d] ${k === 'EMIS number' || k === 'School code' ? 'font-mono' : ''}`}>{v}</dd>
+        <dt className="text-[10px] font-semibold uppercase tracking-wider text-ink-muted">{k}</dt>
+        <dd className={`font-semibold text-ink ${k === 'EMIS number' || k === 'School code' ? 'font-mono' : ''}`}>{v}</dd>
       </div>
     ))}
   </dl>
@@ -208,7 +208,7 @@ export const PoolTab: React.FC<ActionProps> = ({ canUpdate, why }) => {
             lookup();
           }}
         >
-          <p className="text-[11px] text-[#464555]">
+          <p className="text-[11px] text-ink-soft">
             A student joining from another Tamil Nadu school keeps their EMIS number. The previous school releases them to the common pool, and this school then admits them with the same number.
           </p>
           <div className="flex gap-2">
@@ -218,7 +218,7 @@ export const PoolTab: React.FC<ActionProps> = ({ canUpdate, why }) => {
               {looking ? 'Looking up…' : 'Look up'}
             </button>
           </div>
-          <p className="text-[10px] text-[#777587]">
+          <p className="text-[10px] text-ink-muted">
             Try 3303 1506 0011 4455 (in the common pool) or 3302 1104 0021 8841 (still at another school).
           </p>
         </form>
@@ -230,12 +230,12 @@ export const PoolTab: React.FC<ActionProps> = ({ canUpdate, why }) => {
           )}
           {result?.state === 'invalid' && <p className="rounded-lg border border-rose-200 bg-rose-50 p-2 text-xs text-rose-800">{result.message}</p>}
           {result?.state === 'not-found' && (
-            <p className="rounded-lg border border-slate-200 bg-slate-50 p-2 text-xs text-[#464555]">
+            <p className="rounded-lg border border-slate-200 bg-slate-50 p-2 text-xs text-ink-soft">
               No student on the portal has this number. Check it with the family; a student new to Tamil Nadu schools gets a number when this school adds them on the portal.
             </p>
           )}
           {result?.state === 'found' && (
-            <div className="rounded-xl border border-[#cbe0ec] p-3 space-y-3">
+            <div className="rounded-xl border border-line p-3 space-y-3">
               <RecordCard record={result.record} />
               {result.relation === 'ours' && (
                 <p className="text-xs text-emerald-800">
@@ -249,7 +249,7 @@ export const PoolTab: React.FC<ActionProps> = ({ canUpdate, why }) => {
               )}
               {result.relation === 'pool' &&
                 (result.linkedTo ? (
-                  <p className="text-xs text-[#0e5d84]">Linked to {result.linkedTo.name}. Upload the queue to complete the transfer on the portal.</p>
+                  <p className="text-xs text-brand">Linked to {result.linkedTo.name}. Upload the queue to complete the transfer on the portal.</p>
                 ) : (
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="text-xs text-emerald-800 flex-1">In the common pool: ready to admit.</p>
@@ -279,16 +279,16 @@ export const PoolTab: React.FC<ActionProps> = ({ canUpdate, why }) => {
           {withoutEmis.length === 0 ? (
             <EmptyState icon="task_alt" title="Every student has a number." />
           ) : (
-            <ul className="divide-y divide-[#e0ecf4]">
+            <ul className="divide-y divide-line-soft">
               {withoutEmis.map(s => {
                 const matches = poolMatchesFor(s, portal);
                 return (
                   <li key={s.id} className="p-3 space-y-2" data-pool-student={s.id}>
                     <p className="text-xs">
-                      <span className="font-semibold text-[#082b3d]">{s.name}</span> · Class {s.classLevel}-{s.section} · born {fmtDate(s.dob)}
+                      <span className="font-semibold text-ink">{s.name}</span> · Class {s.classLevel}-{s.section} · born {fmtDate(s.dob)}
                     </p>
                     {matches.length === 0 ? (
-                      <p className="text-[11px] text-[#777587]">No match in the common pool. Ask the family for the number from the previous school.</p>
+                      <p className="text-[11px] text-ink-muted">No match in the common pool. Ask the family for the number from the previous school.</p>
                     ) : (
                       matches.map(r => (
                         <div key={r.emis} className="flex flex-wrap items-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 p-2 text-[11px]">
@@ -323,14 +323,14 @@ export const PoolTab: React.FC<ActionProps> = ({ canUpdate, why }) => {
           {leavers.length === 0 ? (
             <EmptyState icon="logout" title="No leavers." />
           ) : (
-            <ul className="divide-y divide-[#e0ecf4]">
+            <ul className="divide-y divide-line-soft">
               {leavers.map(s => {
                 const st = portalStatus(s, roster, portal);
                 return (
                   <li key={s.id} className="p-3 flex flex-wrap items-start gap-2 text-xs">
                     <span className="flex-1 min-w-0">
-                      <span className="font-semibold text-[#082b3d]">{s.name}</span> · {s.status} · {s.emis ? formatEmis(s.emis) : 'no EMIS'}
-                      <span className="block text-[10px] text-[#464555]">{st.detail}</span>
+                      <span className="font-semibold text-ink">{s.name}</span> · {s.status} · {s.emis ? formatEmis(s.emis) : 'no EMIS'}
+                      <span className="block text-[10px] text-ink-soft">{st.detail}</span>
                     </span>
                     <PortalBadge state={st.state} />
                   </li>
@@ -359,13 +359,13 @@ export const PoolTab: React.FC<ActionProps> = ({ canUpdate, why }) => {
 
 export const StaffTab: React.FC = () => (
   <Panel title={`Teacher EMIS IDs (${STAFF_EMIS.length})`}>
-    <p className="px-3 pt-3 text-[11px] text-[#464555]">
+    <p className="px-3 pt-3 text-[11px] text-ink-soft">
       The portal also tracks every teacher: postings, subjects and training. IDs are kept on the staff record in Teachers; this list shows which ones are ready for the state return. Format:{' '}
       {TEACHER_ID_RULE}
     </p>
     <div className="overflow-x-auto">
       <table className="w-full text-xs mt-2" data-testid="emis-staff">
-        <thead className="bg-slate-50 border-y border-[#e0ecf4]">
+        <thead className="bg-slate-50 border-y border-line-soft">
           <tr>
             {['Staff member', 'Role', 'Teacher EMIS ID', 'Status'].map(h => (
               <th key={h} className={th}>
@@ -374,14 +374,14 @@ export const StaffTab: React.FC = () => (
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#e0ecf4]">
+        <tbody className="divide-y divide-line-soft">
           {STAFF_EMIS.map(s => {
             const state = checkTeacherId(s.teacherId);
             return (
               <tr key={s.id}>
-                <td className={`${td} font-semibold text-[#082b3d]`}>{s.name}</td>
+                <td className={`${td} font-semibold text-ink`}>{s.name}</td>
                 <td className={td}>{s.role}</td>
-                <td className={`${td} font-mono`}>{s.teacherId || <span className="font-sans text-[#777587]">Not recorded</span>}</td>
+                <td className={`${td} font-mono`}>{s.teacherId || <span className="font-sans text-ink-muted">Not recorded</span>}</td>
                 <td className={td}>
                   {state === 'valid' ? <Badge tone="green">Linked</Badge> : state === 'missing' ? <Badge tone="grey">Missing</Badge> : <Badge tone="red">Invalid: must be 8 digits</Badge>}
                 </td>
@@ -415,12 +415,12 @@ export const AttendanceTab: React.FC<ActionProps> = ({ canUpdate, why }) => {
   };
   return (
     <Panel title="Daily attendance on the portal">
-      <p className="px-3 pt-3 text-[11px] text-[#464555]">
+      <p className="px-3 pt-3 text-[11px] text-ink-soft">
         The state expects school-wide attendance for every working day by {ATTENDANCE_DUE} AM (demo rule). Counts come from the attendance register for all classes at {SCHOOL_EMIS.name}.
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-xs mt-2" data-testid="emis-attendance">
-          <thead className="bg-slate-50 border-y border-[#e0ecf4]">
+          <thead className="bg-slate-50 border-y border-line-soft">
             <tr>
               {['Date', 'On roll', 'Present', 'Attendance', 'Portal', ''].map(h => (
                 <th key={h} className={th}>
@@ -429,7 +429,7 @@ export const AttendanceTab: React.FC<ActionProps> = ({ canUpdate, why }) => {
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#e0ecf4]">
+          <tbody className="divide-y divide-line-soft">
             {attendance.map(d => (
               <tr key={d.date} data-attendance-day={d.date}>
                 <td className={`${td} font-semibold whitespace-nowrap`}>{fmtDate(d.date)}</td>
@@ -438,7 +438,7 @@ export const AttendanceTab: React.FC<ActionProps> = ({ canUpdate, why }) => {
                 <td className={td}>{((d.present / d.onRoll) * 100).toFixed(1)}%</td>
                 <td className={`${td} max-w-xs`}>
                   <Badge tone={d.status === 'Uploaded' ? 'green' : d.status === 'Failed' ? 'red' : 'amber'}>{d.status}</Badge>
-                  <p className="mt-1 text-[10px] text-[#464555]">
+                  <p className="mt-1 text-[10px] text-ink-soft">
                     {d.at ? `${fmtStamp(d.at)}` : 'Not sent'}
                     {d.note ? ` · ${d.note}` : ''}
                   </p>

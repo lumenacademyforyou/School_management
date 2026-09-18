@@ -80,10 +80,10 @@ const fmt = (iso: string) => {
   return `${d}/${m}/${y}`;
 };
 
-const inputCls = 'text-xs border border-[#cbe0ec] rounded-lg px-2 py-1.5 bg-white';
+const inputCls = 'text-xs border border-line rounded-lg px-2 py-1.5 bg-white';
 const btn = 'text-xs font-semibold px-3 py-1.5 rounded-lg disabled:opacity-40';
-const btnPrimary = `${btn} bg-[#0e5d84] text-white hover:bg-[#083a4f]`;
-const btnSoft = `${btn} bg-slate-100 hover:bg-slate-200 text-[#082b3d]`;
+const btnPrimary = `${btn} bg-brand text-white hover:bg-brand-strong`;
+const btnSoft = `${btn} bg-slate-100 hover:bg-slate-200 text-ink`;
 const btnDanger = `${btn} bg-rose-600 text-white hover:bg-rose-700`;
 
 const Badge: React.FC<{ className: string; children: React.ReactNode }> = ({ className, children }) => (
@@ -91,9 +91,9 @@ const Badge: React.FC<{ className: string; children: React.ReactNode }> = ({ cla
 );
 
 const Panel: React.FC<{ title: React.ReactNode; actions?: React.ReactNode; children: React.ReactNode; className?: string }> = ({ title, actions, children, className = '' }) => (
-  <div className={`bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden ${className}`}>
-    <div className="p-3 bg-[#f0f7fb] border-b border-[#cbe0ec] flex flex-wrap items-center justify-between gap-2">
-      <span className="text-xs font-bold text-[#082b3d]">{title}</span>
+  <div className={`bg-white rounded-2xl border border-line-soft shadow-xs overflow-hidden ${className}`}>
+    <div className="p-3 bg-subtle border-b border-line flex flex-wrap items-center justify-between gap-2">
+      <span className="text-xs font-bold text-ink">{title}</span>
       {actions}
     </div>
     {children}
@@ -629,7 +629,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
 
   const renderInvoiceTable = (states: InvoiceState[]) => (
     <table className="w-full text-xs">
-      <thead className="bg-slate-50 text-[#464555]">
+      <thead className="bg-slate-50 text-ink-soft">
         <tr>
           <Th>Invoice</Th>
           <Th>Due</Th>
@@ -639,10 +639,10 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
           <Th right>Balance</Th>
         </tr>
       </thead>
-      <tbody className="divide-y divide-[#f0f7fb]">
+      <tbody className="divide-y divide-subtle">
         {states.map(s => (
           <React.Fragment key={s.invoice.invoiceNo}>
-            <tr className="cursor-pointer hover:bg-[#f8f9ff]" onClick={() => setInvoiceOpen(invoiceOpen === s.invoice.invoiceNo ? null : s.invoice.invoiceNo)}>
+            <tr className="cursor-pointer hover:bg-wash" onClick={() => setInvoiceOpen(invoiceOpen === s.invoice.invoiceNo ? null : s.invoice.invoiceNo)}>
               <td className="p-2.5 font-mono">
                 {s.invoice.invoiceNo}
                 {s.invoice.note && <p className="text-[10px] text-amber-700 font-sans">{s.invoice.note}</p>}
@@ -660,7 +660,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
               <tr className="bg-slate-50">
                 <td colSpan={6} className="p-2.5">
                   <table className="w-full text-[11px]">
-                    <thead className="text-[#777587]">
+                    <thead className="text-ink-muted">
                       <tr>
                         <th className="text-left">Head</th>
                         <th className="text-right">Gross</th>
@@ -696,20 +696,20 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">payments</span>
             <span>Module 19 · Fees & Finance (FEE)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">Fees Desk · {ACADEMIC_YEAR}</h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">Fees Desk · {ACADEMIC_YEAR}</h1>
+          <p className="text-xs text-ink-soft mt-1">
             {selectedCampus.name} · balances as of {fmt(asOf)}
           </p>
-          <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-lg bg-[#f0f7fb] text-[#0e5d84]" data-testid="fee-access">
+          <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-lg bg-subtle text-brand" data-testid="fee-access">
             <span className="material-symbols-outlined text-sm">{changesAnything ? 'edit_note' : 'visibility'}</span>
             {GRANT_ROLE_LABEL[g.role]}: {[changesAnything ? 'records and proposes' : approvesAnything ? 'reads and approves' : 'read-only', exportsAnything && 'exports'].filter(Boolean).join(' · ')}
           </p>
         </div>
-        <p className="text-[10px] text-[#777587] max-w-xs sm:text-right">
+        <p className="text-[10px] text-ink-muted max-w-xs sm:text-right">
           Built from the feature names in the PDF feature list. Rules such as allocation order, late fee and proration follow common practice and should be
           checked against the catalogue text.
         </p>
@@ -717,21 +717,21 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         {kpis.map(k => (
-          <div key={k.label} className="bg-white rounded-2xl border border-[#e0ecf4] p-3 shadow-xs">
-            <p className="text-lg font-bold text-[#082b3d] font-mono">{k.value}</p>
-            <p className="text-[11px] font-semibold text-[#082b3d]">{k.label}</p>
-            {k.sub && <p className="text-[10px] text-[#777587]">{k.sub}</p>}
+          <div key={k.label} className="bg-surface rounded-2xl border border-line-soft p-3 shadow-sm">
+            <p className="text-lg font-bold text-ink font-mono">{k.value}</p>
+            <p className="text-[11px] font-semibold text-ink">{k.label}</p>
+            {k.sub && <p className="text-[10px] text-ink-muted">{k.sub}</p>}
           </div>
         ))}
       </div>
 
-      <div className="flex gap-1 overflow-x-auto border-b border-[#e0ecf4]">
+      <div className="flex gap-1 overflow-x-auto border-b border-line-soft">
         {TABS.map(t => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
-              tab === t.id ? 'border-[#0e5d84] text-[#0e5d84]' : 'border-transparent text-[#777587] hover:text-[#082b3d]'
+              tab === t.id ? 'border-brand text-brand' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
             <span className="material-symbols-outlined text-sm">{t.icon}</span>
@@ -748,16 +748,16 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
             <Panel title="Find student">
               <div className="p-3 space-y-2">
                 <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Name, admission no or mobile" className={`${inputCls} w-full`} aria-label="Find student" />
-                <div className="divide-y divide-[#f0f7fb]">
+                <div className="divide-y divide-subtle">
                   {searchHits.map(s => (
-                    <button key={s.id} onClick={() => { setActiveId(s.id); setLink(null); }} className={`w-full text-left p-2 text-xs ${s.id === activeId ? 'bg-[#f0f7fb]' : 'hover:bg-[#f8f9ff]'}`}>
-                      <span className="font-semibold text-[#082b3d]">{s.name}</span>
-                      <span className="text-[10px] text-[#777587] block">
+                    <button key={s.id} onClick={() => { setActiveId(s.id); setLink(null); }} className={`w-full text-left p-2 text-xs ${s.id === activeId ? 'bg-subtle' : 'hover:bg-wash'}`}>
+                      <span className="font-semibold text-ink">{s.name}</span>
+                      <span className="text-[10px] text-ink-muted block">
                         {s.admissionNo} · {s.classLevel}-{s.section} · due {inr(balanceFor(s.id))}
                       </span>
                     </button>
                   ))}
-                  {searchHits.length === 0 && <p className="p-2 text-xs text-[#777587]">No match.</p>}
+                  {searchHits.length === 0 && <p className="p-2 text-xs text-ink-muted">No match.</p>}
                 </div>
               </div>
             </Panel>
@@ -786,7 +786,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                 {mode === 'Card' && <input value={reference} onChange={e => setReference(e.target.value)} placeholder="POS approval code" className={`${inputCls} w-full`} aria-label="POS approval code" />}
                 {preview && (
                   <div className="p-2 rounded-lg bg-slate-50 space-y-0.5">
-                    <p className="font-semibold text-[#082b3d]">This payment will settle</p>
+                    <p className="font-semibold text-ink">This payment will settle</p>
                     {preview.lines.map((l, i) => (
                       <p key={i} className="flex justify-between">
                         <span>
@@ -806,7 +806,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                 <button type="submit" disabled={!amountValid || !g.can('FEE-017', 'C')} title={g.why('FEE-017', 'C')} className={`${btnPrimary} w-full`}>
                   Collect & issue receipt
                 </button>
-                <p className="text-[10px] text-[#777587]">Oldest invoice first; within an invoice, tuition first; the late fee is settled last. Extra money is kept as advance credit.</p>
+                <p className="text-[10px] text-ink-muted">Oldest invoice first; within an invoice, tuition first; the late fee is settled last. Extra money is kept as advance credit.</p>
               </form>
             </Panel>
           </div>
@@ -831,19 +831,19 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
             >
               <div className="p-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                 <div>
-                  <p className="text-[10px] text-[#777587]">Balance due</p>
+                  <p className="text-[10px] text-ink-muted">Balance due</p>
                   <Money value={activeDue} className="text-base font-bold text-rose-600" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-[#777587]">Advance credit</p>
+                  <p className="text-[10px] text-ink-muted">Advance credit</p>
                   <Money value={activeCredit} className="text-base font-bold text-sky-700" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-[#777587]">Concession</p>
+                  <p className="text-[10px] text-ink-muted">Concession</p>
                   <p className="font-semibold">{concessions.filter(c => c.studentId === activeId && c.status === 'Approved').map(c => `${c.type} ${c.pct}%`).join(', ') || 'None'}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] text-[#777587]">Opted in</p>
+                  <p className="text-[10px] text-ink-muted">Opted in</p>
                   <p className="font-semibold">{[...(active.transportRoute ? ['Transport'] : []), ...(optIns[activeId] ?? []).map(h => headByCode(h).name)].join(', ') || 'None'}</p>
                 </div>
               </div>
@@ -855,7 +855,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
               <div className="overflow-x-auto">
                 {renderInvoiceTable(activeStates)}
               </div>
-              {activeStates.length === 0 && <p className="p-3 text-xs text-[#777587]">No invoices for this student.</p>}
+              {activeStates.length === 0 && <p className="p-3 text-xs text-ink-muted">No invoices for this student.</p>}
             </Panel>
 
             {payments.filter(p => p.studentId === activeId && p.status === 'Pending').map(p => (
@@ -888,7 +888,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                       <span>
                         {r.id} · {nameOf(r.studentId)} · {inr(r.amount)} · {r.status}
                       </span>
-                      {r.status === 'Pending' && !g.can('FEE-025', 'A') && <span className="text-[10px] text-[#777587]">Awaiting Principal</span>}
+                      {r.status === 'Pending' && !g.can('FEE-025', 'A') && <span className="text-[10px] text-ink-muted">Awaiting Principal</span>}
                       {r.status === 'Pending' && g.can('FEE-025', 'A') && (
                         <span className="flex gap-1">
                           <button onClick={() => decideRefund(r, false)} className={btnSoft}>
@@ -906,7 +906,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
               <Panel title="Move credit to a sibling">
                 <div className="p-3 space-y-2 text-xs">
                   {siblings.length === 0 ? (
-                    <p className="text-[#777587]">No siblings share this guardian mobile.</p>
+                    <p className="text-ink-muted">No siblings share this guardian mobile.</p>
                   ) : (
                     <div className="flex gap-1">
                       <select value={transferTo} onChange={e => setTransferTo(e.target.value)} className={`${inputCls} flex-1`} aria-label="Sibling">
@@ -943,7 +943,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
         >
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
-              <thead className="bg-slate-50 text-[#464555]">
+              <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   <Th>Receipt</Th>
                   <Th>Date</Th>
@@ -955,20 +955,20 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                   <Th />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {receiptRows.map(p => (
-                  <tr key={p.id} className={p.status === 'Cancelled' || p.status === 'Failed' ? 'text-[#777587]' : ''}>
+                  <tr key={p.id} className={p.status === 'Cancelled' || p.status === 'Failed' ? 'text-ink-muted' : ''}>
                     <td className={`p-2.5 font-mono ${p.status === 'Cancelled' ? 'line-through' : ''}`}>{p.receiptNo ?? p.gatewayRef ?? p.id}</td>
                     <td className="p-2.5 font-mono">{fmt(p.date)}</td>
                     <td className="p-2.5">{nameOf(p.studentId)}</td>
                     <td className="p-2.5">
                       {p.mode}
                       {p.cheque && (
-                        <span className="block text-[10px] text-[#777587]">
+                        <span className="block text-[10px] text-ink-muted">
                           #{p.cheque.number} · {p.cheque.bank} · {p.cheque.status}
                         </span>
                       )}
-                      {p.reference && <span className="block text-[10px] text-[#777587]">{p.reference}</span>}
+                      {p.reference && <span className="block text-[10px] text-ink-muted">{p.reference}</span>}
                     </td>
                     <td className="p-2.5 text-right"><Money value={p.amount} /></td>
                     <td className="p-2.5">
@@ -1019,17 +1019,17 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
           <Panel title="Fee heads">
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
-                <thead className="bg-slate-50 text-[#464555]">
+                <thead className="bg-slate-50 text-ink-soft">
                   <tr>
                     {['Code', 'Head', 'Billing', 'Optional', 'Refundable', 'GST', 'Concession applies', 'Settles'].map(h => (
                       <Th key={h}>{h}</Th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {FEE_HEADS.map(h => (
                     <tr key={h.code}>
-                      <td className="p-2.5 font-mono font-bold text-[#0e5d84]">{h.code}</td>
+                      <td className="p-2.5 font-mono font-bold text-brand">{h.code}</td>
                       <td className="p-2.5 font-semibold">{h.name}</td>
                       <td className="p-2.5">{h.frequency}</td>
                       <td className="p-2.5">{h.optional ? 'Opt-in' : 'All students'}</td>
@@ -1065,7 +1065,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
             >
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
-                  <thead className="bg-slate-50 text-[#464555]">
+                  <thead className="bg-slate-50 text-ink-soft">
                     <tr>
                       <Th>Head</Th>
                       {classStructures.map(s => (
@@ -1075,7 +1075,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#f0f7fb]">
+                  <tbody className="divide-y divide-subtle">
                     {FEE_HEADS.map(h => (
                       <tr key={h.code}>
                         <td className="p-2.5">{h.name}</td>
@@ -1118,7 +1118,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                               {invoicingStarted ? 'Submit for approval' : 'Publish'}
                             </button>
                           ) : s.status === 'Draft' ? (
-                            <span className="text-[10px] text-[#777587]">Draft · not submitted</span>
+                            <span className="text-[10px] text-ink-muted">Draft · not submitted</span>
                           ) : null}
                         </td>
                       ))}
@@ -1139,7 +1139,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                       </span>
                     </p>
                   ))}
-                  <p className="text-[10px] text-[#777587] pt-1">Instalment heads follow these shares. Annual heads are billed in full in the first instalment a student is billed for.</p>
+                  <p className="text-[10px] text-ink-muted pt-1">Instalment heads follow these shares. Annual heads are billed in full in the first instalment a student is billed for.</p>
                 </div>
               </Panel>
               <Panel title="Late fee rule">
@@ -1150,7 +1150,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                     ['cap', 'Cap ₹'],
                   ] as const).map(([k, label]) => (
                     <label key={k} className="block">
-                      <span className="block text-[10px] font-semibold text-[#464555]">{label}</span>
+                      <span className="block text-[10px] font-semibold text-ink-soft">{label}</span>
                       <input
                         value={lateRule[k]}
                         onChange={e => {
@@ -1164,7 +1164,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                       />
                     </label>
                   ))}
-                  <p className="col-span-3 text-[10px] text-[#777587]">
+                  <p className="col-span-3 text-[10px] text-ink-muted">
                     Example: due 10 Jul, paid 30 Jul → {Math.max(0, 20 - lateRule.graceDays)} late day(s) → {inr(Math.min(lateRule.cap, Math.max(0, 20 - lateRule.graceDays) * lateRule.perDay))}. Changes apply to every open invoice.
                   </p>
                 </div>
@@ -1197,12 +1197,12 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                 .filter(s => !s.mergedInto && s.status !== 'TC issued')
                 .map(s => (
                   <label key={s.id} className="flex items-center gap-1">
-                    <input type="checkbox" checked={(optIns[s.id] ?? []).includes('OLY')} onChange={() => toggleOptIn(s.id, 'OLY')} disabled={!g.can('FEE-006', 'U')} className="accent-[#0e5d84]" />
+                    <input type="checkbox" checked={(optIns[s.id] ?? []).includes('OLY')} onChange={() => toggleOptIn(s.id, 'OLY')} disabled={!g.can('FEE-006', 'U')} className="accent-brand" />
                     {s.name}
                   </label>
                 ))}
             </div>
-            <p className="px-3 pb-3 text-[10px] text-[#777587]">Opt-ins take effect on the next demand; invoices already raised are not changed.</p>
+            <p className="px-3 pb-3 text-[10px] text-ink-muted">Opt-ins take effect on the next demand; invoices already raised are not changed.</p>
           </Panel>
         </div>
       )}
@@ -1213,17 +1213,17 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
           <div className="space-y-4">
             <Panel title="Concession types">
               <table className="w-full text-xs">
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {CONCESSION_TYPES.map(t => (
                     <tr key={t.type}>
                       <td className="p-2.5 font-semibold">{t.type}</td>
                       <td className="p-2.5 font-mono">{t.pct}%</td>
-                      <td className="p-2.5 text-[#777587]">{t.needsDocument ? 'Document required' : 'No document'}</td>
+                      <td className="p-2.5 text-ink-muted">{t.needsDocument ? 'Document required' : 'No document'}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              <p className="p-3 text-[10px] text-[#777587]">Applies to tuition, development and lab fees. If a student has several, only the highest applies.</p>
+              <p className="p-3 text-[10px] text-ink-muted">Applies to tuition, development and lab fees. If a student has several, only the highest applies.</p>
             </Panel>
             {g.can('FEE-011', 'C') ? (
             <Panel title="Propose a concession">
@@ -1247,11 +1247,11 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                 <button type="submit" className={`${btnPrimary} w-full`}>
                   Propose concession
                 </button>
-                <p className="text-[10px] text-[#777587]">Up to {CONCESSION_APPROVAL_THRESHOLD_PCT}% applies at once; anything higher goes to the Principal. You cannot approve your own proposal.</p>
+                <p className="text-[10px] text-ink-muted">Up to {CONCESSION_APPROVAL_THRESHOLD_PCT}% applies at once; anything higher goes to the Principal. You cannot approve your own proposal.</p>
               </form>
             </Panel>
             ) : (
-              <p className="text-[11px] text-[#464555] p-3 rounded-xl border border-dashed border-[#cbe0ec]">
+              <p className="text-[11px] text-ink-soft p-3 rounded-xl border border-dashed border-line">
                 {GRANT_ROLE_LABEL[g.role]}: {g.grant('FEE-011')?.condition || 'no access to concession proposals'}.
               </p>
             )}
@@ -1259,14 +1259,14 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
           <Panel className="lg:col-span-2" title="Concessions & scholarships">
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
-                <thead className="bg-slate-50 text-[#464555]">
+                <thead className="bg-slate-50 text-ink-soft">
                   <tr>
                     {['Id', 'Student', 'Type', 'Reason', 'Requested', 'Status', ''].map(h => (
                       <Th key={h}>{h}</Th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {concessions.map(c => (
                     <tr key={c.id}>
                       <td className="p-2.5 font-mono">{c.id}</td>
@@ -1274,7 +1274,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                       <td className="p-2.5">
                         {c.type} {c.pct}%
                         {c.scholarship && (
-                          <span className="block text-[10px] text-[#777587]">
+                          <span className="block text-[10px] text-ink-muted">
                             {c.scholarship.scheme} · {c.scholarship.sanctionNo}
                           </span>
                         )}
@@ -1282,14 +1282,14 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                       <td className="p-2.5">{c.reason}</td>
                       <td className="p-2.5">
                         {c.requestedBy}
-                        <span className="block text-[10px] text-[#777587]">{fmt(c.requestedOn)}</span>
+                        <span className="block text-[10px] text-ink-muted">{fmt(c.requestedOn)}</span>
                       </td>
                       <td className="p-2.5">
                         {c.status}
-                        {c.decidedBy && <span className="block text-[10px] text-[#777587]">by {c.decidedBy}</span>}
+                        {c.decidedBy && <span className="block text-[10px] text-ink-muted">by {c.decidedBy}</span>}
                       </td>
                       <td className="p-2.5 whitespace-nowrap text-right">
-                        {c.status === 'Pending' && !g.can('FEE-011', 'A') && <span className="text-[10px] text-[#777587]">Awaiting Principal</span>}
+                        {c.status === 'Pending' && !g.can('FEE-011', 'A') && <span className="text-[10px] text-ink-muted">Awaiting Principal</span>}
                         {c.status === 'Pending' && g.can('FEE-011', 'A') && (
                           <span className="inline-flex gap-1">
                             <button onClick={() => decideConcession(c, false)} className={btnSoft}>
@@ -1332,7 +1332,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
           >
             <div className="p-3 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               <div>
-                <p className="font-semibold text-[#082b3d] mb-1">
+                <p className="font-semibold text-ink mb-1">
                   Will be billed · {inr(demandPreview.created.reduce((s, i) => s + invoiceTotal(i), 0))}
                 </p>
                 {demandPreview.created.map(i => (
@@ -1341,14 +1341,14 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                     <Money value={invoiceTotal(i)} />
                   </p>
                 ))}
-                {demandPreview.created.length === 0 && <p className="text-[#777587]">Everyone eligible has already been billed for this instalment.</p>}
+                {demandPreview.created.length === 0 && <p className="text-ink-muted">Everyone eligible has already been billed for this instalment.</p>}
               </div>
               <div>
-                <p className="font-semibold text-[#082b3d] mb-1">Skipped</p>
+                <p className="font-semibold text-ink mb-1">Skipped</p>
                 {demandPreview.skipped.map(s => (
                   <p key={s.studentId} className="flex justify-between">
                     <span>{nameOf(s.studentId)}</span>
-                    <span className="text-[#777587]">{s.reason}</span>
+                    <span className="text-ink-muted">{s.reason}</span>
                   </p>
                 ))}
               </div>
@@ -1367,9 +1367,9 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
         <div className="space-y-6">
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
             {buckets.map(b => (
-              <div key={b.label} className="bg-white rounded-2xl border border-[#e0ecf4] p-3 shadow-xs">
-                <Money value={b.total} className={`text-base font-bold ${b.label.startsWith('90') ? 'text-rose-600' : 'text-[#082b3d]'}`} />
-                <p className="text-[11px] text-[#777587]">{b.label}</p>
+              <div key={b.label} className="bg-surface rounded-2xl border border-line-soft p-3 shadow-sm">
+                <Money value={b.total} className={`text-base font-bold ${b.label.startsWith('90') ? 'text-rose-600' : 'text-ink'}`} />
+                <p className="text-[11px] text-ink-muted">{b.label}</p>
               </div>
             ))}
           </div>
@@ -1390,18 +1390,18 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                 />
               }
             >
-              <div className="divide-y divide-[#f0f7fb]">
-                {defaulters.length === 0 && <p className="p-3 text-xs text-[#777587]">No defaulters at this threshold.</p>}
+              <div className="divide-y divide-subtle">
+                {defaulters.length === 0 && <p className="p-3 text-xs text-ink-muted">No defaulters at this threshold.</p>}
                 {defaulters.map(d => {
                   const s = student(d.sid);
                   const plan = plans.find(p => p.studentId === d.sid && p.status === 'Active');
                   return (
                     <div key={d.sid} className="p-3 text-xs flex flex-wrap items-center justify-between gap-2">
                       <div>
-                        <p className="font-semibold text-[#082b3d]">
+                        <p className="font-semibold text-ink">
                           {s.name} · {s.classLevel}-{s.section}
                         </p>
-                        <p className="text-[11px] text-[#777587]">
+                        <p className="text-[11px] text-ink-muted">
                           {s.guardianName} · {s.guardianMobile} · oldest {d.oldest} days
                         </p>
                         {plan && (
@@ -1414,7 +1414,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                       <div className="flex items-center gap-1">
                         <span className="text-right mr-2">
                           <Money value={d.balance} className="font-bold text-rose-600" />
-                          <span className="block text-[10px] text-[#777587]">overdue</span>
+                          <span className="block text-[10px] text-ink-muted">overdue</span>
                         </span>
                         {!plan && g.can('FEE-032', 'C') && (
                           <button onClick={() => { setPlanFor(d.sid); setPlanParts(3); }} className={btnSoft}>
@@ -1454,9 +1454,9 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                 </div>
               }
             >
-              <p className="px-3 pt-2 text-[10px] text-[#777587]">Schedule: 3 days before the due date, on the due date, then 7 and 15 days after. Balances are as of {fmt(asOf)}.</p>
-              <div className="divide-y divide-[#f0f7fb]">
-                {reminders.length === 0 && <p className="p-3 text-xs text-[#777587]">No reminders fall on this date.</p>}
+              <p className="px-3 pt-2 text-[10px] text-ink-muted">Schedule: 3 days before the due date, on the due date, then 7 and 15 days after. Balances are as of {fmt(asOf)}.</p>
+              <div className="divide-y divide-subtle">
+                {reminders.length === 0 && <p className="p-3 text-xs text-ink-muted">No reminders fall on this date.</p>}
                 {reminders.map(r => (
                   <div key={`${r.invoiceNo}-${r.label}`} className="p-2.5 text-xs flex items-center justify-between gap-2">
                     <span>
@@ -1479,7 +1479,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
             title="Outstanding ledger"
             actions={
               <span className="flex items-center gap-2">
-                <span className="text-[10px] text-[#777587]">{g.grant('FEE-028')?.condition}</span>
+                <span className="text-[10px] text-ink-muted">{g.grant('FEE-028')?.condition}</span>
                 <button onClick={exportLedger} disabled={!g.can('FEE-028', 'E')} title={g.why('FEE-028', 'E')} className={btnSoft}>
                   Export ledger
                 </button>
@@ -1488,7 +1488,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
           >
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
-                <thead className="bg-slate-50 text-[#464555]">
+                <thead className="bg-slate-50 text-ink-soft">
                   <tr>
                     <Th>Student</Th>
                     <Th>Class</Th>
@@ -1500,7 +1500,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                     <Th right>Total</Th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {Array.from(new Set(openStates.map(s => s.invoice.studentId)))
                     .map(sid => ({ sid, total: balanceFor(sid) }))
                     .sort((a, b) => b.total - a.total)
@@ -1531,11 +1531,11 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
       {tab === 'recon' && (
         <div className="space-y-6">
           <Panel title={`Exceptions queue · ${exceptions.filter(x => !resolved[x.key]).length} open`}>
-            <div className="divide-y divide-[#f0f7fb]">
+            <div className="divide-y divide-subtle">
               {exceptions.map(x => (
                 <div key={x.key} className="p-3 text-xs flex flex-wrap items-center justify-between gap-2">
                   <span>
-                    <Badge className="bg-white text-[#464555] border-[#e0ecf4]">{x.source}</Badge> {x.detail}
+                    <Badge className="bg-white text-ink-soft border-line-soft">{x.source}</Badge> {x.detail}
                   </span>
                   {resolved[x.key] ? (
                     <span className="text-emerald-700">Resolved: {resolved[x.key]}</span>
@@ -1560,7 +1560,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                       Resolve
                     </button>
                   ) : (
-                    <span className="text-[#777587]">Open</span>
+                    <span className="text-ink-muted">Open</span>
                   )}
                 </div>
               ))}
@@ -1571,7 +1571,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
             <Panel title="Gateway settlement vs online payments">
               <div className="overflow-x-auto max-h-[420px] overflow-y-auto">
                 <table className="w-full text-xs">
-                  <thead className="bg-slate-50 text-[#464555] sticky top-0">
+                  <thead className="bg-slate-50 text-ink-soft sticky top-0">
                     <tr>
                       <Th>Gateway ref</Th>
                       <Th right>Collected</Th>
@@ -1580,7 +1580,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                       <Th>Status</Th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#f0f7fb]">
+                  <tbody className="divide-y divide-subtle">
                     {gatewayRows.map(r => (
                       <tr key={r.gatewayRef}>
                         <td className="p-2.5 font-mono">{r.gatewayRef}</td>
@@ -1599,7 +1599,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
             <Panel title="Bank statement vs expected deposits">
               <div className="overflow-x-auto max-h-[420px] overflow-y-auto">
                 <table className="w-full text-xs">
-                  <thead className="bg-slate-50 text-[#464555] sticky top-0">
+                  <thead className="bg-slate-50 text-ink-soft sticky top-0">
                     <tr>
                       <Th>Expected</Th>
                       <Th right>Expected ₹</Th>
@@ -1607,7 +1607,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                       <Th>Status</Th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#f0f7fb]">
+                  <tbody className="divide-y divide-subtle">
                     {bankRows.map(r => (
                       <tr key={r.key}>
                         <td className="p-2.5">{r.expected?.label ?? r.lines[0].narration}</td>
@@ -1643,11 +1643,11 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                     <Money value={m.total} />
                   </p>
                 ))}
-                <p className="flex justify-between font-bold border-t border-[#e0ecf4] pt-1">
+                <p className="flex justify-between font-bold border-t border-line-soft pt-1">
                   <span>Total</span>
                   <Money value={byMode.reduce((s, m) => s + m.total, 0)} />
                 </p>
-                {dayBook.length === 0 && <p className="text-[#777587]">No receipts on this date.</p>}
+                {dayBook.length === 0 && <p className="text-ink-muted">No receipts on this date.</p>}
               </div>
             </Panel>
 
@@ -1663,7 +1663,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                     </div>
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden relative">
                       <div className={`h-full ${v.pct >= COLLECTION_TARGET_PCT ? 'bg-emerald-500' : 'bg-amber-500'}`} style={{ width: `${Math.min(100, v.pct)}%` }} />
-                      <div className="absolute top-0 h-full w-0.5 bg-[#082b3d]" style={{ left: `${COLLECTION_TARGET_PCT}%` }} />
+                      <div className="absolute top-0 h-full w-0.5 bg-ink" style={{ left: `${COLLECTION_TARGET_PCT}%` }} />
                     </div>
                   </div>
                 ))}
@@ -1672,7 +1672,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
 
             <Panel title="Revenue by head (money received)">
               <table className="w-full text-xs">
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {headRevenue.map(r => (
                     <tr key={r.head.code}>
                       <td className="p-2.5">{r.head.name}</td>
@@ -1685,7 +1685,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
 
             <Panel title="Concessions granted">
               <table className="w-full text-xs">
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {concessionReport.map(r => (
                     <tr key={r.type}>
                       <td className="p-2.5">{r.type}</td>
@@ -1699,7 +1699,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
 
             <Panel title="GST on taxable heads">
               <table className="w-full text-xs">
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {gstRows.map(r => (
                     <tr key={r.head.code}>
                       <td className="p-2.5">
@@ -1711,7 +1711,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                   ))}
                 </tbody>
               </table>
-              <p className="p-3 text-[10px] text-[#777587]">Tuition, development, lab and transport are treated as exempt education services.</p>
+              <p className="p-3 text-[10px] text-ink-muted">Tuition, development, lab and transport are treated as exempt education services.</p>
             </Panel>
 
             <Panel
@@ -1745,11 +1745,11 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
               </button>
             }
           >
-            <div className="divide-y divide-[#f0f7fb] max-h-[300px] overflow-y-auto">
-              {audit.length === 0 && <p className="p-3 text-xs text-[#777587]">No actions yet.</p>}
+            <div className="divide-y divide-subtle max-h-[300px] overflow-y-auto">
+              {audit.length === 0 && <p className="p-3 text-xs text-ink-muted">No actions yet.</p>}
               {audit.map((a, i) => (
                 <p key={i} className="p-2.5 text-xs">
-                  <span className="font-mono text-[#777587]">{a.at}</span> · {a.actor} · <span className="font-semibold">{a.action}</span> · {a.detail}
+                  <span className="font-mono text-ink-muted">{a.at}</span> · {a.actor} · <span className="font-semibold">{a.action}</span> · {a.detail}
                 </p>
               ))}
             </div>
@@ -1761,10 +1761,10 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
 
       {/* ------------------------------------------------------------ Modals */}
       {receiptFor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setReceiptFor(null)}>
-          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="p-3 border-b border-[#e0ecf4] flex justify-between items-center">
-              <span className="text-sm font-bold text-[#082b3d]">Receipt {receiptFor.receiptNo}</span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setReceiptFor(null)}>
+          <div className="bg-surface rounded-2xl max-w-lg w-full shadow-2xl max-h-[90vh] overflow-y-auto ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
+            <div className="p-3 border-b border-line-soft flex justify-between items-center">
+              <span className="text-sm font-bold text-ink">Receipt {receiptFor.receiptNo}</span>
               <div className="flex gap-2">
                 <button onClick={() => setPrintReceipt(true)} className={btnPrimary}>
                   Print
@@ -1790,14 +1790,14 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
       )}
 
       {cancelling && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setCancelling(null)}>
-          <div className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-[#082b3d]">Cancel receipt {cancelling.receiptNo}</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setCancelling(null)}>
+          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
+            <h3 className="text-sm font-bold text-ink">Cancel receipt {cancelling.receiptNo}</h3>
             <p>
               {nameOf(cancelling.studentId)} · {inr(cancelling.amount)} · collected by {cancelling.collectedBy}
             </p>
             <input value={cancelReason} onChange={e => setCancelReason(e.target.value)} placeholder="Reason" className={`${inputCls} w-full`} aria-label="Cancel reason" />
-            <p className="text-[#777587]">The receipt number is kept and marked cancelled. The money it settled goes back to outstanding.</p>
+            <p className="text-ink-muted">The receipt number is kept and marked cancelled. The money it settled goes back to outstanding.</p>
             <div className="flex justify-end gap-2">
               <button onClick={() => setCancelling(null)} className={btnSoft}>
                 Keep
@@ -1811,9 +1811,9 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
       )}
 
       {planFor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setPlanFor(null)}>
-          <div className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-[#082b3d]">Payment plan · {nameOf(planFor)}</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setPlanFor(null)}>
+          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
+            <h3 className="text-sm font-bold text-ink">Payment plan · {nameOf(planFor)}</h3>
             <label className="flex items-center gap-2">
               Monthly parts
               <select value={planParts} onChange={e => setPlanParts(Number(e.target.value))} className={inputCls} aria-label="Plan parts">
@@ -1824,7 +1824,7 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                 ))}
               </select>
             </label>
-            <p className="text-[#464555]">Covers the overdue amount of {inr(overdueFor(planFor))}. Invoices not yet due are billed as normal.</p>
+            <p className="text-ink-soft">Covers the overdue amount of {inr(overdueFor(planFor))}. Invoices not yet due are billed as normal.</p>
             {buildPlan(overdueFor(planFor), planParts, addDays(asOf, 5)).map(p => (
               <p key={p.dueDate} className="flex justify-between">
                 <span>{fmt(p.dueDate)}</span>
@@ -1853,12 +1853,12 @@ const Receipt: React.FC<{ payment: Payment; student: RosterStudent; allocations:
   credit,
   campus,
 }) => (
-  <div className="p-6 text-[12px] text-[#082b3d] bg-white">
-    <div className="flex items-center gap-3 border-b-2 border-[#0e5d84] pb-2">
+  <div className="p-6 text-[12px] text-ink bg-white">
+    <div className="flex items-center gap-3 border-b-2 border-brand pb-2">
       <img src="/lumen-academy-logo.png" alt="" className="w-10 h-10 object-contain" />
       <div>
         <p className="font-extrabold tracking-wide">LUMEN ACADEMY · FEE RECEIPT</p>
-        <p className="text-[11px] text-[#464555]">{campus}</p>
+        <p className="text-[11px] text-ink-soft">{campus}</p>
       </div>
       {payment.status === 'Cancelled' && <span className="ml-auto text-rose-600 font-extrabold border-2 border-rose-600 px-2 rotate-[-6deg]">CANCELLED</span>}
     </div>
@@ -1892,7 +1892,7 @@ const Receipt: React.FC<{ payment: Payment; student: RosterStudent; allocations:
         ))}
         {allocations.length === 0 && (
           <tr>
-            <td colSpan={3} className="p-1.5 text-[#777587]">
+            <td colSpan={3} className="p-1.5 text-ink-muted">
               {payment.status === 'Success' && payment.cheque?.status !== 'Bounced' ? 'Held as advance credit' : 'No amounts settled by this payment'}
             </td>
           </tr>
@@ -1914,7 +1914,7 @@ const Receipt: React.FC<{ payment: Payment; student: RosterStudent; allocations:
 );
 
 const FeeCertificate: React.FC<{ student: RosterStudent; tuition: number; other: number; campus: string }> = ({ student, tuition, other, campus }) => (
-  <div className="p-6 text-[12px] leading-relaxed text-[#082b3d] bg-white">
+  <div className="p-6 text-[12px] leading-relaxed text-ink bg-white">
     <p className="text-center font-extrabold tracking-wide">LUMEN ACADEMY · {campus}</p>
     <p className="text-center font-bold mt-1 underline">FEE CERTIFICATE · FY 2024–25</p>
     <p className="mt-3">
@@ -1933,7 +1933,7 @@ const FeeCertificate: React.FC<{ student: RosterStudent; tuition: number; other:
         </tr>
       </tbody>
     </table>
-    <p className="mt-2 text-[11px] text-[#464555]">Only the tuition fee is shown separately for income-tax deduction purposes. Late fees are excluded.</p>
+    <p className="mt-2 text-[11px] text-ink-soft">Only the tuition fee is shown separately for income-tax deduction purposes. Late fees are excluded.</p>
     <p className="mt-6 text-right font-bold">Accounts Officer</p>
   </div>
 );

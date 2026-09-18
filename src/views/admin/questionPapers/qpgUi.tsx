@@ -50,10 +50,10 @@ export const minutesLabel = (m: number) => (m % 60 === 0 ? `${m / 60} hour${m ==
 
 export const QuestionBody: React.FC<{ q: BankQuestion; language?: PaperLanguage; compact?: boolean }> = ({ q, language = 'English', compact }) => (
   <div className="space-y-1">
-    <p className={`text-[#082b3d] ${compact ? 'line-clamp-2' : ''}`}>{questionText(q, language)}</p>
+    <p className={`text-ink ${compact ? 'line-clamp-2' : ''}`}>{questionText(q, language)}</p>
     {language !== 'English' && !hasTranslation(q, language) && <p className="text-[10px] text-amber-700">No {language} version yet; shown in English.</p>}
     {q.options && !compact && (
-      <ol className="grid sm:grid-cols-2 gap-x-4 gap-y-0.5 text-[#464555]">
+      <ol className="grid sm:grid-cols-2 gap-x-4 gap-y-0.5 text-ink-soft">
         {q.options.map((o, i) => (
           <li key={o + i}>
             ({'abcd'[i]}) {o}
@@ -61,7 +61,7 @@ export const QuestionBody: React.FC<{ q: BankQuestion; language?: PaperLanguage;
         ))}
       </ol>
     )}
-    {q.hasDiagram && !compact && <p className="text-[10px] text-[#777587]">Includes a diagram (QPG-017).</p>}
+    {q.hasDiagram && !compact && <p className="text-[10px] text-ink-muted">Includes a diagram (QPG-017).</p>}
   </div>
 );
 
@@ -76,7 +76,7 @@ export const QuestionPreview: React.FC<{ q: BankQuestion | null; onClose: () => 
           <QuestionStatusBadge value={q.status} />
           {q.source === 'AI generated' && <AiBadge />}
         </div>
-        <div className="rounded-xl border border-[#e0ecf4] p-3">
+        <div className="rounded-xl border border-line-soft p-3">
           <QuestionBody q={q} language={language} />
         </div>
         <dl className="grid grid-cols-2 gap-2">
@@ -89,13 +89,13 @@ export const QuestionPreview: React.FC<{ q: BankQuestion | null; onClose: () => 
             ['Author', q.author],
           ].map(([k, v]) => (
             <div key={k}>
-              <dt className="text-[10px] text-[#777587]">{k}</dt>
+              <dt className="text-[10px] text-ink-muted">{k}</dt>
               <dd className="font-medium">{v}</dd>
             </div>
           ))}
         </dl>
         <div>
-          <p className="text-[10px] text-[#777587]">Marking scheme</p>
+          <p className="text-[10px] text-ink-muted">Marking scheme</p>
           <p>{q.markingScheme}</p>
         </div>
       </>

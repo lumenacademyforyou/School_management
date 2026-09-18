@@ -27,19 +27,19 @@ import { DifficultyBadge, Gate, QuestionEditor, minutesLabel, fmtDate } from './
 export const PaperHeader: React.FC<{ paper: QuestionPaper; setLabel?: string; subtitle?: string }> = ({ paper, setLabel, subtitle }) => {
   const d = paper.details;
   return (
-    <header className="text-center border-b-2 border-[#082b3d] pb-3 space-y-1">
+    <header className="text-center border-b-2 border-ink pb-3 space-y-1">
       <div className="flex items-center justify-center gap-2">
         <img src="/lumen-academy-logo.png" alt="" className="w-10 h-10 object-contain" />
         <div>
-          <p className="text-base font-bold tracking-wide text-[#082b3d]">LUMEN ACADEMY, CHENNAI</p>
-          <p className="text-[10px] text-[#464555]">Affiliated to {d.board} · Academic year {d.academicYear}</p>
+          <p className="text-base font-bold tracking-wide text-ink">LUMEN ACADEMY, CHENNAI</p>
+          <p className="text-[10px] text-ink-soft">Affiliated to {d.board} · Academic year {d.academicYear}</p>
         </div>
       </div>
       <p className="text-sm font-bold uppercase">
         {d.exam} · {subtitle ?? 'Question paper'}
         {setLabel ? ` · ${setLabel}` : ''}
       </p>
-      <div className="flex flex-wrap justify-center gap-x-4 text-[11px] text-[#082b3d]">
+      <div className="flex flex-wrap justify-center gap-x-4 text-[11px] text-ink">
         <span>Class {d.classLevel}{d.section !== 'All sections' ? `-${d.section}` : ''}</span>
         <span>Subject: {d.subject}</span>
         <span>Date: {fmtDate(d.examDate)}</span>
@@ -102,8 +102,8 @@ export const BuilderStep: React.FC<{ paper: QuestionPaper; editable: boolean; on
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
-      <div className="xl:col-span-3 bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 md:p-8 space-y-5" aria-label="Question Paper Preview">
-        <p className="text-[11px] font-semibold text-[#777587] uppercase tracking-wider">Question paper preview</p>
+      <div className="xl:col-span-3 bg-surface rounded-2xl border border-line-soft shadow-sm p-4 md:p-8 space-y-5" aria-label="Question Paper Preview">
+        <p className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">Question paper preview</p>
         <PaperHeader paper={paper} />
         <div className="text-xs space-y-1">
           <p className="font-bold">General instructions</p>
@@ -140,9 +140,9 @@ export const BuilderStep: React.FC<{ paper: QuestionPaper; editable: boolean; on
           const marks = rows.reduce((n, q) => n + q.marks, 0);
           return (
             <section key={section.id} className="space-y-2" aria-label={section.title}>
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#e0ecf4] pb-1">
-                <h3 className="text-sm font-bold text-[#082b3d]">
-                  {section.title} <span className="font-normal text-[#464555]">· {section.type}</span>
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-soft pb-1">
+                <h3 className="text-sm font-bold text-ink">
+                  {section.title} <span className="font-normal text-ink-soft">· {section.type}</span>
                 </h3>
                 <div className="flex items-center gap-2">
                   <Badge tone={rows.length === section.count ? 'green' : 'amber'}>
@@ -156,7 +156,7 @@ export const BuilderStep: React.FC<{ paper: QuestionPaper; editable: boolean; on
                   )}
                 </div>
               </div>
-              {rows.length === 0 && <p className="text-xs text-[#777587] italic">No questions yet. Use “Auto-fill” or add questions from the bank.</p>}
+              {rows.length === 0 && <p className="text-xs text-ink-muted italic">No questions yet. Use “Auto-fill” or add questions from the bank.</p>}
               <ol className="space-y-1">
                 {rows.map((pq, idx) => {
                   number += 1;
@@ -172,14 +172,14 @@ export const BuilderStep: React.FC<{ paper: QuestionPaper; editable: boolean; on
                         setDragKey(null);
                       }}
                       onDragEnd={() => setDragKey(null)}
-                      className={`group flex gap-2 rounded-lg p-2 text-xs ${dragKey === pq.key ? 'opacity-50 bg-[#f0f7fb]' : 'hover:bg-[#f8f9ff]'} ${editable ? 'cursor-grab' : ''}`}
+                      className={`group flex gap-2 rounded-lg p-2 text-xs ${dragKey === pq.key ? 'opacity-50 bg-subtle' : 'hover:bg-wash'} ${editable ? 'cursor-grab' : ''}`}
                       data-paper-question={pq.questionId}
                     >
-                      <span className="w-7 shrink-0 font-bold text-[#082b3d]">Q{number}.</span>
+                      <span className="w-7 shrink-0 font-bold text-ink">Q{number}.</span>
                       <div className="flex-1 min-w-0 space-y-1">
                         <p>{q ? questionText(q, paper.details.language) : <em>Question {pq.questionId} is no longer in the bank.</em>}</p>
                         {q?.options && (
-                          <ol className="grid sm:grid-cols-2 gap-x-4 text-[#464555]">
+                          <ol className="grid sm:grid-cols-2 gap-x-4 text-ink-soft">
                             {q.options.map((o, i) => (
                               <li key={o + i}>
                                 ({'abcd'[i]}) {o}
@@ -190,7 +190,7 @@ export const BuilderStep: React.FC<{ paper: QuestionPaper; editable: boolean; on
                         {editable && (
                           <div className="flex flex-wrap items-center gap-1 pt-1 print:hidden">
                             {q && <DifficultyBadge value={q.difficulty} />}
-                            <span className="text-[10px] text-[#777587] mr-1">{q?.chapter}</span>
+                            <span className="text-[10px] text-ink-muted mr-1">{q?.chapter}</span>
                             <button onClick={() => setContent(moveQuestion(content, pq.key, -1))} disabled={idx === 0} className={btnSoft} aria-label={`Move Q${number} up`}>
                               <Icon name="arrow_upward" className="text-sm" />
                             </button>
@@ -226,33 +226,33 @@ export const BuilderStep: React.FC<{ paper: QuestionPaper; editable: boolean; on
             </section>
           );
         })}
-        <p className="text-center text-[11px] text-[#777587] pt-4 border-t border-[#e0ecf4]">— End of question paper —</p>
+        <p className="text-center text-[11px] text-ink-muted pt-4 border-t border-line-soft">— End of question paper —</p>
       </div>
 
       <aside className="space-y-3 xl:sticky xl:top-4 xl:self-start">
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-4 space-y-2" aria-live="polite" data-testid="paper-summary">
-          <p className="text-xs font-bold text-[#082b3d]">Paper summary</p>
+        <div className="bg-surface rounded-2xl border border-line-soft p-4 space-y-2" aria-live="polite" data-testid="paper-summary">
+          <p className="text-xs font-bold text-ink">Paper summary</p>
           <dl className="grid grid-cols-2 gap-2 text-xs">
             <div>
-              <dt className="text-[#777587]">Questions</dt>
+              <dt className="text-ink-muted">Questions</dt>
               <dd className="text-xl font-bold">{stats.questions}</dd>
             </div>
             <div>
-              <dt className="text-[#777587]">Total marks</dt>
+              <dt className="text-ink-muted">Total marks</dt>
               <dd className={`text-xl font-bold ${stats.marks === paper.details.maxMarks ? 'text-emerald-700' : 'text-rose-700'}`}>
                 {stats.marks} / {paper.details.maxMarks}
               </dd>
             </div>
             <div>
-              <dt className="text-[#777587]">Easy</dt>
+              <dt className="text-ink-muted">Easy</dt>
               <dd className="font-semibold">{stats.easy}</dd>
             </div>
             <div>
-              <dt className="text-[#777587]">Medium</dt>
+              <dt className="text-ink-muted">Medium</dt>
               <dd className="font-semibold">{stats.medium}</dd>
             </div>
             <div>
-              <dt className="text-[#777587]">Hard</dt>
+              <dt className="text-ink-muted">Hard</dt>
               <dd className="font-semibold">{stats.hard}</dd>
             </div>
           </dl>
@@ -265,11 +265,11 @@ export const BuilderStep: React.FC<{ paper: QuestionPaper; editable: boolean; on
           )}
         </div>
         {editable && (
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] p-4 space-y-2">
-            <p className="text-xs font-bold text-[#082b3d]">Automatic generation</p>
-            <p className="text-[11px] text-[#464555]">Fills empty slots from the bank using the blueprint. Least-used questions come first.</p>
+          <div className="bg-surface rounded-2xl border border-line-soft p-4 space-y-2">
+            <p className="text-xs font-bold text-ink">Automatic generation</p>
+            <p className="text-[11px] text-ink-soft">Fills empty slots from the bank using the blueprint. Least-used questions come first.</p>
             <label className="flex items-center gap-2 text-[11px]">
-              <input type="checkbox" checked={allowRepeats} onChange={e => setAllowRepeats(e.target.checked)} className="accent-[#0e5d84]" />
+              <input type="checkbox" checked={allowRepeats} onChange={e => setAllowRepeats(e.target.checked)} className="accent-brand" />
               Allow questions from the last paper (QPG-014)
             </label>
             <Gate allowed={g.can('QPG-005', 'C')} why={g.why('QPG-005', 'C')}>
@@ -306,7 +306,7 @@ export const BuilderStep: React.FC<{ paper: QuestionPaper; editable: boolean; on
         {replacing &&
           (() => {
             const options = alternativesFor(content, replacing.section, paper.details, bank);
-            if (!options.length) return <p className="text-[#464555]">No other question in the bank fits {replacing.section.title}. Loosen the section’s chapter or difficulty, or generate more with AI.</p>;
+            if (!options.length) return <p className="text-ink-soft">No other question in the bank fits {replacing.section.title}. Loosen the section’s chapter or difficulty, or generate more with AI.</p>;
             return options.slice(0, 12).map(q => (
               <button
                 key={q.id}
@@ -315,12 +315,12 @@ export const BuilderStep: React.FC<{ paper: QuestionPaper; editable: boolean; on
                   setReplacing(null);
                   addToast(`Replaced with ${q.id}`, 'success');
                 }}
-                className="w-full text-left rounded-xl border border-[#e0ecf4] p-3 hover:border-[#0e5d84] space-y-1"
+                className="w-full text-left rounded-xl border border-line-soft p-3 hover:border-brand space-y-1"
               >
                 <span className="flex flex-wrap items-center gap-1">
-                  <span className="font-mono text-[10px] text-[#0e5d84]">{q.id}</span>
+                  <span className="font-mono text-[10px] text-brand">{q.id}</span>
                   <DifficultyBadge value={q.difficulty} />
-                  <span className="text-[10px] text-[#777587]">
+                  <span className="text-[10px] text-ink-muted">
                     {q.chapter} · used {q.usageCount}×
                   </span>
                 </span>

@@ -12,8 +12,8 @@ export const FeatureTags: React.FC<{ ids: string[]; className?: string }> = ({ i
         <span
           key={id}
           title={feat ? `${feat.name} · ${feat.phase} · ${feat.priority}${feat.desc ? ` — ${feat.desc}` : ''}` : 'Not in catalogue'}
-          className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ${
-            feat ? 'bg-[#f0f7fb] text-[#0e5d84] border-[#cbe0ec]' : 'bg-rose-50 text-rose-700 border-rose-200'
+          className={`text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded-md border transition-colors ${
+            feat ? 'bg-cream-100 text-ink-muted border-line-soft hover:text-brand hover:border-lumen-300' : 'bg-rose-50 text-rose-700 border-rose-200'
           }`}
         >
           {id}
@@ -25,11 +25,11 @@ export const FeatureTags: React.FC<{ ids: string[]; className?: string }> = ({ i
 
 /** Deferred-phase banner for catalogue features that are intentionally not active in this release. */
 export const PhaseNotice: React.FC<{ ids: string[]; phase: string; note: string }> = ({ ids, phase, note }) => (
-  <div className="flex items-start gap-2 p-3 rounded-xl border border-dashed border-[#cbe0ec] bg-slate-50 text-[11px] text-[#464555]">
-    <span className="material-symbols-outlined text-base text-[#777587]">schedule</span>
+  <div className="flex items-start gap-2 p-3 rounded-xl border border-dashed border-line bg-slate-50 text-[11px] text-ink-soft">
+    <span className="material-symbols-outlined text-base text-ink-muted">schedule</span>
     <div className="space-y-1">
       <p>
-        <span className="font-bold text-[#082b3d]">{phase} — </span>
+        <span className="font-bold text-ink">{phase} — </span>
         {note}
       </p>
       <FeatureTags ids={ids} />

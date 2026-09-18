@@ -152,7 +152,7 @@ const TABS: { id: Tab; label: string; icon: string; ids: string[] }[] = [
 ];
 
 const APPLICABILITY_STYLE: Record<Applicability, string> = {
-  M: 'bg-[#0e5d84] text-white',
+  M: 'bg-brand text-white',
   E: 'bg-amber-100 text-amber-900 border border-amber-300',
   '-': 'bg-slate-50 text-slate-300',
 };
@@ -240,16 +240,16 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">menu_book</span>
             <span>Module 14 · Academics — Curriculum (CUR)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">Curriculum & Syllabus Coverage</h1>
-          <p className="text-xs text-[#464555] mt-1">AY 2024–25 · CBSE · Subject master, electives, syllabus plan and coverage</p>
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">Curriculum & Syllabus Coverage</h1>
+          <p className="text-xs text-ink-soft mt-1">AY 2024–25 · CBSE · Subject master, electives, syllabus plan and coverage</p>
         </div>
         <button
           onClick={exportMapping}
-          className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-[#082b3d] text-xs font-semibold px-3 py-2 rounded-xl transition-colors self-start sm:self-auto"
+          className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-ink text-xs font-semibold px-3 py-2 rounded-xl transition-colors self-start sm:self-auto"
         >
           <span className="material-symbols-outlined text-sm">download</span>
           <span>Export Mapping</span>
@@ -263,21 +263,21 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
           { label: 'Class 10 Science coverage', value: `${coverage.pct}%`, icon: 'donut_large' },
           { label: 'Lesson plans awaiting HOD', value: pendingPlans, icon: 'rate_review' },
         ].map(kpi => (
-          <div key={kpi.label} className="bg-white rounded-2xl border border-[#e0ecf4] p-4 shadow-xs">
-            <span className="material-symbols-outlined text-[#0e5d84] text-lg">{kpi.icon}</span>
-            <p className="text-2xl font-bold text-[#082b3d] mt-1">{kpi.value}</p>
-            <p className="text-[11px] text-[#777587]">{kpi.label}</p>
+          <div key={kpi.label} className="bg-surface rounded-2xl border border-line-soft p-4 shadow-sm">
+            <span className="material-symbols-outlined text-brand text-lg">{kpi.icon}</span>
+            <p className="text-2xl font-bold text-ink mt-1">{kpi.value}</p>
+            <p className="text-[11px] text-ink-muted">{kpi.label}</p>
           </div>
         ))}
       </div>
 
-      <div className="flex gap-1 overflow-x-auto border-b border-[#e0ecf4]">
+      <div className="flex gap-1 overflow-x-auto border-b border-line-soft">
         {TABS.map(t => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
-              tab === t.id ? 'border-[#0e5d84] text-[#0e5d84]' : 'border-transparent text-[#777587] hover:text-[#082b3d]'
+              tab === t.id ? 'border-brand text-brand' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
             <span className="material-symbols-outlined text-sm">{t.icon}</span>
@@ -288,13 +288,13 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
       <FeatureTags ids={TABS.find(t => t.id === tab)!.ids} />
 
       {tab === 'subjects' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-          <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex flex-wrap items-center justify-between gap-2">
-            <span className="text-xs font-bold text-[#082b3d]">Class–subject applicability · click a cell to cycle Mandatory → Elective → Not offered</span>
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+          <div className="p-4 bg-subtle border-b border-line flex flex-wrap items-center justify-between gap-2">
+            <span className="text-xs font-bold text-ink">Class–subject applicability · click a cell to cycle Mandatory → Elective → Not offered</span>
             <select
               value={typeFilter}
               onChange={e => setTypeFilter(e.target.value as 'All' | SubjectType)}
-              className="text-xs border border-[#cbe0ec] rounded-lg px-2 py-1 bg-white"
+              className="text-xs border border-line rounded-lg px-2 py-1 bg-white"
             >
               {['All', 'Core', 'Elective', 'Co-scholastic'].map(o => (
                 <option key={o}>{o}</option>
@@ -303,7 +303,7 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
-              <thead className="bg-slate-50 text-[#464555]">
+              <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   <th className="text-left p-3 font-semibold">Code</th>
                   <th className="text-left p-3 font-semibold">Subject</th>
@@ -315,14 +315,14 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {visibleSubjects.map(s => (
-                  <tr key={s.code} className="hover:bg-[#f8f9ff]">
-                    <td className="p-3 font-mono font-bold text-[#0e5d84]">{s.code}</td>
-                    <td className="p-3 font-medium text-[#082b3d]">{s.name}</td>
-                    <td className="p-3 text-[#464555]">{s.type}</td>
+                  <tr key={s.code} className="hover:bg-wash">
+                    <td className="p-3 font-mono font-bold text-brand">{s.code}</td>
+                    <td className="p-3 font-medium text-ink">{s.name}</td>
+                    <td className="p-3 text-ink-soft">{s.type}</td>
                     <td className="p-3 text-center">{s.credit}</td>
-                    <td className="p-3 font-mono text-[#777587]">{s.board}</td>
+                    <td className="p-3 font-mono text-ink-muted">{s.board}</td>
                     {mapping[s.code].map((a, idx) => (
                       <td key={idx} className="p-1.5 text-center">
                         <button
@@ -346,11 +346,11 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-4">
             {groups.map(g => (
-              <div key={g.id} className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-3">
+              <div key={g.id} className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-bold text-[#082b3d]">{g.name}</p>
-                    <p className="text-[11px] text-[#777587]">{g.classLevel} · choose exactly one</p>
+                    <p className="text-sm font-bold text-ink">{g.name}</p>
+                    <p className="text-[11px] text-ink-muted">{g.classLevel} · choose exactly one</p>
                   </div>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Window open</span>
                 </div>
@@ -359,14 +359,14 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
                   return (
                     <div key={o.subjectCode}>
                       <div className="flex justify-between text-[11px] mb-1">
-                        <span className="font-semibold text-[#082b3d]">{subjectName(o.subjectCode)}</span>
-                        <span className={pct >= 100 ? 'text-rose-600 font-bold' : 'text-[#464555]'}>
+                        <span className="font-semibold text-ink">{subjectName(o.subjectCode)}</span>
+                        <span className={pct >= 100 ? 'text-rose-600 font-bold' : 'text-ink-soft'}>
                           {o.allotted}/{o.capacity}
                         </span>
                       </div>
                       <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                         <div
-                          className={`h-full ${pct >= 100 ? 'bg-rose-500' : pct >= 85 ? 'bg-amber-500' : 'bg-[#0e5d84]'}`}
+                          className={`h-full ${pct >= 100 ? 'bg-rose-500' : pct >= 85 ? 'bg-amber-500' : 'bg-brand'}`}
                           style={{ width: `${Math.min(pct, 100)}%` }}
                         />
                       </div>
@@ -377,21 +377,21 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
             ))}
           </div>
 
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-            <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] text-xs font-bold text-[#082b3d]">Selection requests</div>
-            <div className="divide-y divide-[#f0f7fb]">
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+            <div className="p-4 bg-subtle border-b border-line text-xs font-bold text-ink">Selection requests</div>
+            <div className="divide-y divide-subtle">
               {requests.map(r => (
                 <div key={r.id} className="p-3 flex items-center justify-between gap-2 text-xs">
                   <div>
-                    <p className="font-semibold text-[#082b3d]">{r.student}</p>
-                    <p className="text-[11px] text-[#777587]">{subjectName(r.subjectCode)}</p>
+                    <p className="font-semibold text-ink">{r.student}</p>
+                    <p className="text-[11px] text-ink-muted">{subjectName(r.subjectCode)}</p>
                   </div>
                   {r.status === 'Pending' ? (
                     <div className="flex gap-1">
                       <button onClick={() => decideRequest(r, 'Rejected')} className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 font-semibold">
                         Reject
                       </button>
-                      <button onClick={() => decideRequest(r, 'Approved')} className="px-2 py-1 rounded-lg bg-[#0e5d84] hover:bg-[#083a4f] text-white font-semibold">
+                      <button onClick={() => decideRequest(r, 'Approved')} className="px-2 py-1 rounded-lg bg-brand hover:bg-brand-strong text-white font-semibold">
                         Approve
                       </button>
                     </div>
@@ -409,27 +409,27 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
 
       {tab === 'syllabus' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-            <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] text-xs font-bold text-[#082b3d]">
+          <div className="lg:col-span-2 bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+            <div className="p-4 bg-subtle border-b border-line text-xs font-bold text-ink">
               Class 10 · Science (086) · tick topics as taught
             </div>
             <table className="w-full text-xs">
-              <thead className="bg-slate-50 text-[#464555]">
+              <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   <th className="p-3 w-10" />
                   <th className="text-left p-3 font-semibold">Chapter / Topic</th>
                   <th className="text-center p-3 font-semibold">Hours</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {topics.map(t => (
-                  <tr key={t.id} className="hover:bg-[#f8f9ff]">
+                  <tr key={t.id} className="hover:bg-wash">
                     <td className="p-3 text-center">
-                      <input type="checkbox" checked={t.covered} onChange={() => toggleTopic(t.id)} className="accent-[#0e5d84]" aria-label={t.topic} />
+                      <input type="checkbox" checked={t.covered} onChange={() => toggleTopic(t.id)} className="accent-brand" aria-label={t.topic} />
                     </td>
                     <td className="p-3">
-                      <p className={`font-medium ${t.covered ? 'text-[#777587] line-through' : 'text-[#082b3d]'}`}>{t.topic}</p>
-                      <p className="text-[10px] text-[#777587]">{t.chapter}</p>
+                      <p className={`font-medium ${t.covered ? 'text-ink-muted line-through' : 'text-ink'}`}>{t.topic}</p>
+                      <p className="text-[10px] text-ink-muted">{t.chapter}</p>
                     </td>
                     <td className="p-3 text-center">{t.hours}</td>
                   </tr>
@@ -437,22 +437,22 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
               </tbody>
             </table>
           </div>
-          <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs p-4 space-y-4">
+          <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-4">
             <div>
-              <p className="text-xs font-bold text-[#082b3d]">Coverage vs plan</p>
-              <p className="text-3xl font-bold text-[#0e5d84] mt-1">{coverage.pct}%</p>
-              <p className="text-[11px] text-[#777587]">
+              <p className="text-xs font-bold text-ink">Coverage vs plan</p>
+              <p className="text-3xl font-bold text-brand mt-1">{coverage.pct}%</p>
+              <p className="text-[11px] text-ink-muted">
                 {coverage.done} of {coverage.total} planned hours taught
               </p>
             </div>
             {coverage.byUnit.map(u => (
               <div key={u.unit}>
                 <div className="flex justify-between text-[11px] mb-1">
-                  <span className="text-[#082b3d] font-semibold">{u.unit}</span>
-                  <span className="text-[#464555]">{u.pct}%</span>
+                  <span className="text-ink font-semibold">{u.unit}</span>
+                  <span className="text-ink-soft">{u.pct}%</span>
                 </div>
                 <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#0e5d84]" style={{ width: `${u.pct}%` }} />
+                  <div className="h-full bg-brand" style={{ width: `${u.pct}%` }} />
                 </div>
               </div>
             ))}
@@ -461,16 +461,16 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
       )}
 
       {tab === 'plans' && (
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-          <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] text-xs font-bold text-[#082b3d]">HOD approval queue · weekly plans mapped to syllabus topics</div>
-          <div className="divide-y divide-[#f0f7fb]">
+        <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+          <div className="p-4 bg-subtle border-b border-line text-xs font-bold text-ink">HOD approval queue · weekly plans mapped to syllabus topics</div>
+          <div className="divide-y divide-subtle">
             {plans.map(p => {
               const t = topicById(p.topicId);
               return (
                 <div key={p.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                   <div>
-                    <p className="font-semibold text-[#082b3d]">{t?.topic}</p>
-                    <p className="text-[11px] text-[#777587]">
+                    <p className="font-semibold text-ink">{t?.topic}</p>
+                    <p className="text-[11px] text-ink-muted">
                       {p.teacher} · {p.week} · {t?.chapter}
                     </p>
                   </div>
@@ -479,7 +479,7 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
                       <button onClick={() => decidePlan(p.id, 'Returned')} className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 font-semibold">
                         Return
                       </button>
-                      <button onClick={() => decidePlan(p.id, 'Approved')} className="px-2 py-1 rounded-lg bg-[#0e5d84] hover:bg-[#083a4f] text-white font-semibold">
+                      <button onClick={() => decidePlan(p.id, 'Approved')} className="px-2 py-1 rounded-lg bg-brand hover:bg-brand-strong text-white font-semibold">
                         Approve
                       </button>
                     </div>
@@ -498,37 +498,37 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
       {tab === 'resources' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-              <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] text-xs font-bold text-[#082b3d]">Textbooks & resources</div>
+            <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+              <div className="p-4 bg-subtle border-b border-line text-xs font-bold text-ink">Textbooks & resources</div>
               <table className="w-full text-xs">
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {RESOURCES.map(r => (
                     <tr key={r.title}>
-                      <td className="p-3 font-mono font-bold text-[#0e5d84]">{r.subject}</td>
+                      <td className="p-3 font-mono font-bold text-brand">{r.subject}</td>
                       <td className="p-3">
-                        <p className="font-medium text-[#082b3d]">{r.title}</p>
-                        <p className="text-[10px] text-[#777587]">
+                        <p className="font-medium text-ink">{r.title}</p>
+                        <p className="text-[10px] text-ink-muted">
                           {r.classLevel} · {r.publisher}
                         </p>
                       </td>
-                      <td className="p-3 text-right text-[#464555]">{r.kind}</td>
+                      <td className="p-3 text-right text-ink-soft">{r.kind}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <div className="bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden">
-              <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] text-xs font-bold text-[#082b3d]">Curriculum versions by academic year</div>
+            <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+              <div className="p-4 bg-subtle border-b border-line text-xs font-bold text-ink">Curriculum versions by academic year</div>
               <table className="w-full text-xs">
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {VERSIONS.map(v => (
                     <tr key={v.version}>
-                      <td className="p-3 font-mono font-bold text-[#082b3d]">{v.version}</td>
+                      <td className="p-3 font-mono font-bold text-ink">{v.version}</td>
                       <td className="p-3">
-                        <p className="font-medium text-[#082b3d]">
+                        <p className="font-medium text-ink">
                           {v.academicYear} · {v.board}
                         </p>
-                        <p className="text-[10px] text-[#777587]">{v.note}</p>
+                        <p className="text-[10px] text-ink-muted">{v.note}</p>
                       </td>
                       <td className="p-3 text-right">
                         <span

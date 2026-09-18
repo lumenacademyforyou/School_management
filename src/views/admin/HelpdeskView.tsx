@@ -251,18 +251,18 @@ export const HelpdeskView: React.FC = () => {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm">
         <div>
           <div className="flex items-center gap-2">
             <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-amber-50 text-amber-900 border border-amber-200">
               HLP · Module 31 · Layer 6 (Operations)
             </span>
-            <span className="text-xs text-[#777587]">8 Master Features</span>
+            <span className="text-xs text-ink-muted">8 Master Features</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-[#082b3d] mt-1">
+          <h1 className="text-xl md:text-2xl font-bold text-ink mt-1">
             Helpdesk & Statutory Grievance Redressal
           </h1>
-          <p className="text-xs md:text-sm text-[#464555]">
+          <p className="text-xs md:text-sm text-ink-soft">
             Unified ticketing, SLA routing, PoSH / Anti-ragging statutory grievance desk, and parent satisfaction analytics.
           </p>
         </div>
@@ -270,14 +270,14 @@ export const HelpdeskView: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleExportTickets}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl text-xs font-bold border border-slate-300 transition-all flex items-center gap-1.5"
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-bold border border-slate-300 transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Export CSV</span>
           </button>
           <button
             onClick={() => setShowNewTicketModal(true)}
-            className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+            className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
           >
             <span className="material-symbols-outlined text-sm">add</span>
             <span>Raise New Ticket</span>
@@ -287,38 +287,38 @@ export const HelpdeskView: React.FC = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Active Open Tickets</div>
-          <div className="text-xl font-bold font-mono text-[#082b3d] mt-1">
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Active Open Tickets</div>
+          <div className="text-xl font-bold font-mono text-ink mt-1">
             {tickets.filter(t => t.status === 'Open' || t.status === 'In Progress').length}
           </div>
           <div className="text-[11px] text-emerald-600 mt-0.5">Average First Response: 18 mins</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">SLA Compliance Rate</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">SLA Compliance Rate</div>
           <div className="text-xl font-bold font-mono text-emerald-600 mt-1">98.4%</div>
-          <div className="text-[11px] text-[#777587] mt-0.5">Under 24h Resolution SLA</div>
+          <div className="text-[11px] text-ink-muted mt-0.5">Under 24h Resolution SLA</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Statutory Grievances (PoSH)</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Statutory Grievances (PoSH)</div>
           <div className="text-xl font-bold font-mono text-rose-600 mt-1">
             {tickets.filter(t => t.category.includes('Grievance') && t.status !== 'Resolved').length} Under Review
           </div>
           <div className="text-[11px] text-rose-700 mt-0.5">Confidential ICC Committee</div>
         </div>
-        <div className="bg-white p-4 rounded-xl border border-[#e0ecf4] shadow-xs">
-          <div className="text-[11px] font-bold text-[#777587] uppercase">Parent CSAT Rating</div>
-          <div className="text-xl font-bold font-mono text-[#0e5d84] mt-1">4.8 / 5.0 ⭐</div>
-          <div className="text-[11px] text-[#777587] mt-0.5">Based on 340 ratings</div>
+        <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
+          <div className="text-[11px] font-bold text-ink-muted uppercase">Parent CSAT Rating</div>
+          <div className="text-xl font-bold font-mono text-brand mt-1">4.8 / 5.0 ⭐</div>
+          <div className="text-[11px] text-ink-muted mt-0.5">Based on 340 ratings</div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-[#e0ecf4] pb-2">
+      <div className="flex items-center gap-2 border-b border-line-soft pb-2">
         <button
           onClick={() => setActiveTab('all')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'all' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'all' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">inbox</span>
@@ -327,7 +327,7 @@ export const HelpdeskView: React.FC = () => {
         <button
           onClick={() => setActiveTab('grievances')}
           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-            activeTab === 'grievances' ? 'bg-[#0e5d84] text-white shadow-xs' : 'text-[#464555] hover:bg-[#f0f7fb]'
+            activeTab === 'grievances' ? 'bg-brand text-white shadow-xs' : 'text-ink-soft hover:bg-subtle'
           }`}
         >
           <span className="material-symbols-outlined text-sm">shield</span>
@@ -345,13 +345,13 @@ export const HelpdeskView: React.FC = () => {
               onClick={() => setSelectedTicket(ticket)}
               className={`p-4 rounded-2xl border transition-all cursor-pointer bg-white ${
                 selectedTicket?.id === ticket.id
-                  ? 'border-[#0e5d84] ring-2 ring-[#cbe0ec] shadow-sm'
-                  : 'border-[#e0ecf4] hover:border-slate-300 shadow-2xs'
+                  ? 'border-brand ring-2 ring-line shadow-sm'
+                  : 'border-line-soft hover:border-slate-300 shadow-2xs'
               }`}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-[#0e5d84] bg-[#f0f7fb] px-2 py-0.5 rounded">
+                  <span className="font-mono text-xs font-bold text-brand bg-subtle px-2 py-0.5 rounded">
                     {ticket.ticketNo}
                   </span>
                   <span
@@ -365,7 +365,7 @@ export const HelpdeskView: React.FC = () => {
                   >
                     {ticket.priority} Priority
                   </span>
-                  <span className="text-[11px] text-[#777587]">• {ticket.category}</span>
+                  <span className="text-[11px] text-ink-muted">• {ticket.category}</span>
                 </div>
 
                 <span
@@ -381,13 +381,13 @@ export const HelpdeskView: React.FC = () => {
                 </span>
               </div>
 
-              <h4 className="text-sm font-bold text-[#082b3d] mt-2">
+              <h4 className="text-sm font-bold text-ink mt-2">
                 {ticket.subject}
               </h4>
 
-              <div className="flex flex-wrap items-center justify-between text-[11px] text-[#777587] mt-3 pt-2 border-t border-[#f1f5f9]">
+              <div className="flex flex-wrap items-center justify-between text-[11px] text-ink-muted mt-3 pt-2 border-t border-line-soft">
                 <div>
-                  <span className="font-medium text-[#082b3d]">{ticket.raisedBy}</span>
+                  <span className="font-medium text-ink">{ticket.raisedBy}</span>
                   <span className="ml-1 px-1.5 py-0.5 bg-slate-100 rounded text-[10px] font-semibold">{ticket.role}</span>
                 </div>
 
@@ -404,12 +404,12 @@ export const HelpdeskView: React.FC = () => {
         </div>
 
         {/* Threaded Details Drawer (1 col) */}
-        <div className="bg-white rounded-2xl border border-[#e0ecf4] p-5 shadow-xs flex flex-col justify-between">
+        <div className="bg-surface rounded-2xl border border-line-soft p-5 shadow-sm flex flex-col justify-between">
           {selectedTicket ? (
             <div className="space-y-4">
-              <div className="border-b border-[#e0ecf4] pb-3">
+              <div className="border-b border-line-soft pb-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-[#0e5d84]">{selectedTicket.ticketNo}</span>
+                  <span className="font-mono text-xs font-bold text-brand">{selectedTicket.ticketNo}</span>
                   {selectedTicket.status !== 'Resolved' && (
                     <button
                       onClick={() => handleResolve(selectedTicket.id)}
@@ -419,9 +419,9 @@ export const HelpdeskView: React.FC = () => {
                     </button>
                   )}
                 </div>
-                <h3 className="text-sm font-bold text-[#082b3d] mt-1.5">{selectedTicket.subject}</h3>
-                <div className="text-[11px] text-[#777587] mt-1">
-                  Assigned to: <span className="font-semibold text-[#082b3d]">{selectedTicket.assignedTo}</span>
+                <h3 className="text-sm font-bold text-ink mt-1.5">{selectedTicket.subject}</h3>
+                <div className="text-[11px] text-ink-muted mt-1">
+                  Assigned to: <span className="font-semibold text-ink">{selectedTicket.assignedTo}</span>
                 </div>
               </div>
 
@@ -432,33 +432,33 @@ export const HelpdeskView: React.FC = () => {
                     key={idx}
                     className={`p-3 rounded-xl text-xs space-y-1 ${
                       m.isStaff
-                        ? 'bg-[#f0f7fb] ml-3 border border-[#cbe0ec]'
+                        ? 'bg-subtle ml-3 border border-line'
                         : 'bg-slate-50 border border-slate-200'
                     }`}
                   >
                     <div className="flex justify-between font-semibold">
-                      <span className={m.isStaff ? 'text-[#0e5d84]' : 'text-[#082b3d]'}>
+                      <span className={m.isStaff ? 'text-brand' : 'text-ink'}>
                         {m.sender}
                       </span>
-                      <span className="text-[10px] text-[#777587]">{m.time}</span>
+                      <span className="text-[10px] text-ink-muted">{m.time}</span>
                     </div>
-                    <p className="text-[#464555]">{m.text}</p>
+                    <p className="text-ink-soft">{m.text}</p>
                   </div>
                 ))}
               </div>
 
               {/* Reply Input */}
-              <div className="pt-2 border-t border-[#e0ecf4] space-y-2">
-                <label className="block text-[11px] font-bold text-[#777587] uppercase">Dispatch Reply / Update</label>
+              <div className="pt-2 border-t border-line-soft space-y-2">
+                <label className="block text-[11px] font-bold text-ink-muted uppercase">Dispatch Reply / Update</label>
                 <textarea
                   value={replyText}
                   onChange={e => setReplyText(e.target.value)}
                   placeholder="Type official response to parent..."
-                  className="w-full text-xs p-2.5 bg-[#f8f9ff] border border-[#e0ecf4] rounded-xl focus:outline-hidden focus:border-[#0e5d84] min-h-[70px]"
+                  className="w-full text-xs p-2.5 bg-wash border border-line-soft rounded-xl focus:outline-hidden focus:border-brand min-h-[70px]"
                 />
                 <button
                   onClick={handleSendReply}
-                  className="w-full py-2 bg-[#0e5d84] text-white rounded-xl text-xs font-bold hover:bg-[#2c1ea8] transition-all flex items-center justify-center gap-1.5"
+                  className="w-full py-2 bg-brand text-white rounded-xl text-xs font-bold hover:bg-brand-strong transition-all flex items-center justify-center gap-1.5"
                 >
                   <span className="material-symbols-outlined text-sm">send</span>
                   <span>Dispatch Reply via SMS/App</span>
@@ -466,7 +466,7 @@ export const HelpdeskView: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="text-center py-16 text-[#777587] space-y-2">
+            <div className="text-center py-16 text-ink-muted space-y-2">
               <span className="material-symbols-outlined text-4xl text-slate-300">chat</span>
               <p className="text-xs">Select any ticket from the list to view threaded conversation, SLA timer, and dispatch official replies.</p>
             </div>
@@ -476,12 +476,12 @@ export const HelpdeskView: React.FC = () => {
 
       {/* MODAL: Raise New Support Ticket */}
       {showNewTicketModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md p-6 space-y-4 text-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#0e5d84]">support_agent</span>
-                <h3 className="font-bold text-[#082b3d] text-sm">Raise Helpdesk Ticket / Grievance (HLP-001)</h3>
+                <span className="material-symbols-outlined text-brand">support_agent</span>
+                <h3 className="font-bold text-ink text-sm">Raise Helpdesk Ticket / Grievance (HLP-001)</h3>
               </div>
               <button
                 onClick={() => setShowNewTicketModal(false)}
@@ -499,7 +499,7 @@ export const HelpdeskView: React.FC = () => {
                   value={newRaisedBy}
                   onChange={e => setNewRaisedBy(e.target.value)}
                   placeholder="e.g. S. Venkatesh (Parent of Rahul, 7-A)"
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-[#0e5d84]"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
                 />
               </div>
 
@@ -509,7 +509,7 @@ export const HelpdeskView: React.FC = () => {
                   <select
                     value={newCategory}
                     onChange={e => setNewCategory(e.target.value as any)}
-                    className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
+                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
                   >
                     <option value="Fee Inquiries">Fee Inquiries</option>
                     <option value="Transport & Bus Routes">Transport & Bus Routes</option>
@@ -524,7 +524,7 @@ export const HelpdeskView: React.FC = () => {
                   <select
                     value={newPriority}
                     onChange={e => setNewPriority(e.target.value as any)}
-                    className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
+                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
                   >
                     <option value="Medium">Medium (24h SLA)</option>
                     <option value="High">High (12h SLA)</option>
@@ -539,7 +539,7 @@ export const HelpdeskView: React.FC = () => {
                   value={newSubject}
                   onChange={e => setNewSubject(e.target.value)}
                   placeholder="Describe inquiry or incident in detail..."
-                  className="w-full bg-[#f8f9ff] border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-[#0e5d84] min-h-[70px]"
+                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand min-h-[70px]"
                 />
               </div>
 
@@ -553,7 +553,7 @@ export const HelpdeskView: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#0e5d84] hover:bg-[#2c1ea8] text-white font-bold rounded-xl text-xs shadow-xs"
+                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
                 >
                   Create Ticket
                 </button>

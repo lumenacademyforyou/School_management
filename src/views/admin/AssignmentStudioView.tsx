@@ -111,14 +111,14 @@ export const AssignmentStudioView: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">assignment_turned_in</span>
             <span>Submissions & Competency-Based Assessment</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">
             Physics Practical #04: Prism Deviation Curve
           </h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <p className="text-xs text-ink-soft mt-1">
             Student: <strong>{currentStudent.name} ({currentStudent.roll})</strong> • Submitted: {currentStudent.submittedAt} • Turnitin: {currentStudent.turnitin}
           </p>
         </div>
@@ -126,7 +126,7 @@ export const AssignmentStudioView: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={handleDownloadGradedReport}
-            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-[#082b3d] text-xs font-semibold px-3 py-2 rounded-xl transition-colors"
+            className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-ink text-xs font-semibold px-3 py-2 rounded-xl transition-colors"
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Download Report</span>
@@ -142,7 +142,7 @@ export const AssignmentStudioView: React.FC = () => {
 
           <button
             onClick={handlePublishMarks}
-            className="flex items-center gap-1.5 bg-[#0e5d84] hover:bg-[#083a4f] text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-xs transition-colors"
+            className="flex items-center gap-1.5 bg-brand hover:bg-brand-strong text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-xs transition-colors"
           >
             <span className="material-symbols-outlined text-sm">publish</span>
             <span>Publish Marks & Sync</span>
@@ -151,36 +151,36 @@ export const AssignmentStudioView: React.FC = () => {
       </div>
 
       {/* Student Roster Selector Bar */}
-      <div className="bg-white p-3 rounded-2xl border border-[#e0ecf4] shadow-xs flex items-center justify-between gap-3 overflow-x-auto">
+      <div className="bg-surface p-3 rounded-2xl border border-line-soft shadow-sm flex items-center justify-between gap-3 overflow-x-auto">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-[#777587] uppercase tracking-wider pl-1">Evaluate Student:</span>
+          <span className="text-xs font-bold text-ink-muted uppercase tracking-wider pl-1">Evaluate Student:</span>
           {submissions.map(s => (
             <button
               key={s.id}
               onClick={() => handleStudentChange(s.id)}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                 selectedStudentId === s.id
-                  ? 'bg-[#0e5d84] text-white shadow-xs'
-                  : 'bg-[#f0f7fb] text-[#464555] hover:bg-slate-200'
+                  ? 'bg-brand text-white shadow-xs'
+                  : 'bg-subtle text-ink-soft hover:bg-slate-200'
               }`}
             >
               {s.name} ({s.roll.split('/')[1].trim()})
             </button>
           ))}
         </div>
-        <span className="text-xs font-mono text-[#0e5d84] font-bold pr-2">Class 10-A Lab Batch 1</span>
+        <span className="text-xs font-mono text-brand font-bold pr-2">Class 10-A Lab Batch 1</span>
       </div>
 
       {/* Main Grid: Student Document & Rubric Sliders */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left 2 Cols: Student Submission Preview */}
-        <div className="lg:col-span-2 bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#f0f7fb]">
+        <div className="lg:col-span-2 bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-subtle">
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[#0e5d84]">description</span>
+              <span className="material-symbols-outlined text-brand">description</span>
               <div>
-                <div className="text-xs font-bold text-[#082b3d]">{currentStudent.fileName}</div>
-                <div className="text-[11px] text-[#777587]">4.2 MB • Scanned with Apple Pencil & GoodNotes</div>
+                <div className="text-xs font-bold text-ink">{currentStudent.fileName}</div>
+                <div className="text-[11px] text-ink-muted">4.2 MB • Scanned with Apple Pencil & GoodNotes</div>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -192,18 +192,18 @@ export const AssignmentStudioView: React.FC = () => {
           </div>
 
           {/* Rendered Lab Document Sheet Preview */}
-          <div className="bg-[#f8f9ff] p-6 rounded-xl border border-[#cbe0ec] space-y-4 text-xs font-mono">
-            <div className="border-b border-[#cbe0ec] pb-3 flex justify-between text-[#082b3d]">
+          <div className="bg-wash p-6 rounded-xl border border-line space-y-4 text-xs font-mono">
+            <div className="border-b border-line pb-3 flex justify-between text-ink">
               <span>AIM: To plot angle of incidence (i) vs deviation (D)</span>
               <span>APPARATUS: Crown Glass Prism, Pins</span>
             </div>
 
-            <div className="space-y-1 text-[#464555]">
+            <div className="space-y-1 text-ink-soft">
               <div>OBSERVATION TABLE ({currentStudent.name}):</div>
-              <div className="bg-white p-3 rounded-lg border border-[#cbe0ec] text-[11px] space-y-1">
+              <div className="bg-white p-3 rounded-lg border border-line text-[11px] space-y-1">
                 <div>Run 1: i = 35° ➔ D = 40.0°</div>
                 <div>Run 2: i = 40° ➔ D = 38.0°</div>
-                <div className="font-bold text-[#0e5d84]">Run 3: i = 45° ➔ D = 37.2° (Minimum Deviation D_m)</div>
+                <div className="font-bold text-brand">Run 3: i = 45° ➔ D = 37.2° (Minimum Deviation D_m)</div>
                 <div>Run 4: i = 50° ➔ D = 38.5°</div>
                 <div>Run 5: i = 55° ➔ D = 41.0°</div>
               </div>
@@ -216,17 +216,17 @@ export const AssignmentStudioView: React.FC = () => {
         </div>
 
         {/* Right Col: 4-Criteria Rubric Grading Slider */}
-        <div className="bg-white p-5 rounded-2xl border border-[#e0ecf4] shadow-xs space-y-5">
-          <div className="flex items-center justify-between pb-2 border-b border-[#f0f7fb]">
-            <h2 className="text-sm font-bold text-[#082b3d]">Grading Rubric</h2>
-            <div className="text-base font-bold font-display text-[#0e5d84]">{total} / 20</div>
+        <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-5">
+          <div className="flex items-center justify-between pb-2 border-b border-subtle">
+            <h2 className="text-sm font-bold text-ink">Grading Rubric</h2>
+            <div className="text-base font-bold font-display text-brand">{total} / 20</div>
           </div>
 
           <div className="space-y-4 text-xs">
             <div>
-              <div className="flex justify-between font-semibold text-[#082b3d] mb-1">
+              <div className="flex justify-between font-semibold text-ink mb-1">
                 <span>1. Ray Diagram & Neatness</span>
-                <span className="text-[#0e5d84] font-bold">{rubric1} / 5</span>
+                <span className="text-brand font-bold">{rubric1} / 5</span>
               </div>
               <input
                 type="range"
@@ -235,14 +235,14 @@ export const AssignmentStudioView: React.FC = () => {
                 step="0.5"
                 value={rubric1}
                 onChange={e => setRubric1(Number(e.target.value))}
-                className="w-full accent-[#0e5d84]"
+                className="w-full accent-brand"
               />
             </div>
 
             <div>
-              <div className="flex justify-between font-semibold text-[#082b3d] mb-1">
+              <div className="flex justify-between font-semibold text-ink mb-1">
                 <span>2. Snell's Law & Calculations</span>
-                <span className="text-[#0e5d84] font-bold">{rubric2} / 5</span>
+                <span className="text-brand font-bold">{rubric2} / 5</span>
               </div>
               <input
                 type="range"
@@ -251,14 +251,14 @@ export const AssignmentStudioView: React.FC = () => {
                 step="0.5"
                 value={rubric2}
                 onChange={e => setRubric2(Number(e.target.value))}
-                className="w-full accent-[#0e5d84]"
+                className="w-full accent-brand"
               />
             </div>
 
             <div>
-              <div className="flex justify-between font-semibold text-[#082b3d] mb-1">
+              <div className="flex justify-between font-semibold text-ink mb-1">
                 <span>3. Error Margin & Graph</span>
-                <span className="text-[#0e5d84] font-bold">{rubric3} / 5</span>
+                <span className="text-brand font-bold">{rubric3} / 5</span>
               </div>
               <input
                 type="range"
@@ -267,14 +267,14 @@ export const AssignmentStudioView: React.FC = () => {
                 step="0.5"
                 value={rubric3}
                 onChange={e => setRubric3(Number(e.target.value))}
-                className="w-full accent-[#0e5d84]"
+                className="w-full accent-brand"
               />
             </div>
 
             <div>
-              <div className="flex justify-between font-semibold text-[#082b3d] mb-1">
+              <div className="flex justify-between font-semibold text-ink mb-1">
                 <span>4. Viva Voce & Scientific Deduction</span>
-                <span className="text-[#0e5d84] font-bold">{rubric4} / 5</span>
+                <span className="text-brand font-bold">{rubric4} / 5</span>
               </div>
               <input
                 type="range"
@@ -283,18 +283,18 @@ export const AssignmentStudioView: React.FC = () => {
                 step="0.5"
                 value={rubric4}
                 onChange={e => setRubric4(Number(e.target.value))}
-                className="w-full accent-[#0e5d84]"
+                className="w-full accent-brand"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#082b3d] mb-1">Faculty Feedback & Voice Memo</label>
+            <label className="block text-xs font-semibold text-ink mb-1">Faculty Feedback & Voice Memo</label>
             <textarea
               rows={3}
               value={feedback}
               onChange={e => setFeedback(e.target.value)}
-              className="w-full bg-[#f0f7fb] border border-[#cbe0ec] rounded-lg p-2 text-xs text-[#082b3d] outline-hidden focus:border-[#0e5d84]"
+              className="w-full bg-subtle border border-line rounded-lg p-2 text-xs text-ink outline-hidden focus:border-brand"
             />
             <div className="mt-2 flex items-center justify-between">
               <button
@@ -314,7 +314,7 @@ export const AssignmentStudioView: React.FC = () => {
                     ? 'bg-rose-100 text-rose-700 animate-pulse'
                     : voiceRecorded
                     ? 'bg-emerald-100 text-emerald-800'
-                    : 'text-[#0e5d84] hover:underline'
+                    : 'text-brand hover:underline'
                 }`}
               >
                 <span className="material-symbols-outlined text-sm">
@@ -331,44 +331,44 @@ export const AssignmentStudioView: React.FC = () => {
 
       {/* Modal: Request Revision */}
       {showResubmitModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-2xs animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#cbe0ec] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#f0f7fb] pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
+          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
+            <div className="flex items-center justify-between border-b border-subtle pb-3">
               <div>
-                <h3 className="font-bold text-base text-[#082b3d]">Request Assignment Revision</h3>
-                <span className="text-xs text-[#777587]">Return to {currentStudent.name}</span>
+                <h3 className="font-bold text-base text-ink">Request Assignment Revision</h3>
+                <span className="text-xs text-ink-muted">Return to {currentStudent.name}</span>
               </div>
-              <button onClick={() => setShowResubmitModal(false)} className="text-[#777587] hover:text-[#082b3d]">
+              <button onClick={() => setShowResubmitModal(false)} className="text-ink-muted hover:text-ink">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <form onSubmit={handleConfirmResubmit} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Reason for Resubmission Request</label>
+                <label className="block font-bold text-ink-soft mb-1">Reason for Resubmission Request</label>
                 <textarea
                   rows={3}
                   value={resubmitReason}
                   onChange={e => setResubmitReason(e.target.value)}
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                   required
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-[#464555] mb-1">Revised Due Date</label>
+                <label className="block font-bold text-ink-soft mb-1">Revised Due Date</label>
                 <input
                   type="date"
                   defaultValue="2025-03-02"
-                  className="w-full bg-[#f8f9ff] border border-[#cbe0ec] rounded-xl p-2.5 text-xs text-[#082b3d]"
+                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#f0f7fb]">
+              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
                 <button
                   type="button"
                   onClick={() => setShowResubmitModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#082b3d] rounded-xl font-semibold"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
                 >
                   Cancel
                 </button>

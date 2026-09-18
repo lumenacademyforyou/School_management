@@ -59,15 +59,15 @@ const fmt = (iso: string) => {
 };
 const nowTime = () => new Date().toTimeString().slice(0, 5);
 
-const inputCls = 'text-xs border border-[#cbe0ec] rounded-lg px-2 py-1.5 bg-white';
+const inputCls = 'text-xs border border-line rounded-lg px-2 py-1.5 bg-white';
 const btn = 'text-xs font-semibold px-3 py-1.5 rounded-lg disabled:opacity-40';
-const btnPrimary = `${btn} bg-[#0e5d84] text-white hover:bg-[#083a4f]`;
-const btnSoft = `${btn} bg-slate-100 hover:bg-slate-200 text-[#082b3d]`;
+const btnPrimary = `${btn} bg-brand text-white hover:bg-brand-strong`;
+const btnSoft = `${btn} bg-slate-100 hover:bg-slate-200 text-ink`;
 
 const Panel: React.FC<{ title: React.ReactNode; actions?: React.ReactNode; children: React.ReactNode; className?: string }> = ({ title, actions, children, className = '' }) => (
-  <div className={`bg-white rounded-2xl border border-[#e0ecf4] shadow-xs overflow-hidden ${className}`}>
-    <div className="p-3 bg-[#f0f7fb] border-b border-[#cbe0ec] flex flex-wrap items-center justify-between gap-2">
-      <span className="text-xs font-bold text-[#082b3d]">{title}</span>
+  <div className={`bg-white rounded-2xl border border-line-soft shadow-xs overflow-hidden ${className}`}>
+    <div className="p-3 bg-subtle border-b border-line flex flex-wrap items-center justify-between gap-2">
+      <span className="text-xs font-bold text-ink">{title}</span>
       {actions}
     </div>
     {children}
@@ -347,16 +347,16 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#0e5d84] uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
             <span className="material-symbols-outlined text-sm">fact_check</span>
             <span>Module 18 · Attendance (ATT)</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold font-display text-[#082b3d]">Attendance Desk</h1>
-          <p className="text-xs text-[#464555] mt-1">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">Attendance Desk</h1>
+          <p className="text-xs text-ink-soft mt-1">
             Monday {fmt(asOf)} · {days.length} working days since {fmt(REGISTER_FROM)} · {remaining} left this year
           </p>
         </div>
-        <p className="text-[10px] text-[#777587] max-w-xs sm:text-right">ATT-013 to ATT-023 are built from the PDF feature names. Their rules should be checked against the catalogue text.</p>
+        <p className="text-[10px] text-ink-muted max-w-xs sm:text-right">ATT-013 to ATT-023 are built from the PDF feature names. Their rules should be checked against the catalogue text.</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -366,15 +366,15 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
           { label: 'Chronic absence alerts', value: chronic.length, sub: 'last 30 days' },
           { label: 'Leave awaiting approval', value: leaves.filter(l => l.status === 'Pending').length, sub: `${corrections.filter(c => c.status === 'Pending approval').length} correction(s) pending` },
         ].map(k => (
-          <div key={k.label} className="bg-white rounded-2xl border border-[#e0ecf4] p-3 shadow-xs">
-            <p className="text-2xl font-bold text-[#082b3d]">{k.value}</p>
-            <p className="text-[11px] font-semibold text-[#082b3d]">{k.label}</p>
-            <p className="text-[10px] text-[#777587]">{k.sub}</p>
+          <div key={k.label} className="bg-surface rounded-2xl border border-line-soft p-3 shadow-sm">
+            <p className="text-2xl font-bold text-ink">{k.value}</p>
+            <p className="text-[11px] font-semibold text-ink">{k.label}</p>
+            <p className="text-[10px] text-ink-muted">{k.sub}</p>
           </div>
         ))}
       </div>
 
-      <div className="flex gap-1 overflow-x-auto border-b border-[#e0ecf4]">
+      <div className="flex gap-1 overflow-x-auto border-b border-line-soft">
         {TABS.map(t => (
           <button
             key={t.id}
@@ -382,7 +382,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
             aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
-              tab === t.id ? 'border-[#0e5d84] text-[#0e5d84]' : 'border-transparent text-[#777587] hover:text-[#082b3d]'
+              tab === t.id ? 'border-brand text-brand' : 'border-transparent text-ink-muted hover:text-ink'
             }`}
           >
             <span className="material-symbols-outlined text-sm">{t.icon}</span>
@@ -421,13 +421,13 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
           >
             {!dayKind.working ? (
               <div className="p-6 text-center text-xs">
-                <span className="material-symbols-outlined text-3xl text-[#777587]">beach_access</span>
-                <p className="font-semibold text-[#082b3d]">No attendance on this day — {dayKind.reason}</p>
-                <p className="text-[#777587]">Holidays and weekly offs are skipped automatically and never count towards percentages.</p>
+                <span className="material-symbols-outlined text-3xl text-ink-muted">beach_access</span>
+                <p className="font-semibold text-ink">No attendance on this day — {dayKind.reason}</p>
+                <p className="text-ink-muted">Holidays and weekly offs are skipped automatically and never count towards percentages.</p>
               </div>
             ) : (
               <>
-                <div className="p-3 flex flex-wrap items-center gap-2 border-b border-[#f0f7fb] text-xs">
+                <div className="p-3 flex flex-wrap items-center gap-2 border-b border-subtle text-xs">
                   {alreadyMarked ? (
                     <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200">Marked · {markingStatus(register, students, markSection, markDate).at}</Badge>
                   ) : (
@@ -443,7 +443,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     All present
                   </button>
                 </div>
-                <div className="divide-y divide-[#f0f7fb]">
+                <div className="divide-y divide-subtle">
                   {sectionStudents.map(s => {
                     const d = draftFor(s.id);
                     const leave = plannedAbsence(leaves, s.id, markDate);
@@ -452,7 +452,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     return (
                       <div key={s.id} className="p-2.5 text-xs flex flex-col md:flex-row md:items-center gap-2">
                         <div className="md:w-48">
-                          <p className="font-semibold text-[#082b3d]">
+                          <p className="font-semibold text-ink">
                             {s.rollNo}. {s.name}
                           </p>
                           {leave && <p className="text-[10px] text-sky-700">Planned leave {leave.id}</p>}
@@ -467,7 +467,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                               title={c.label}
                               aria-label={`${s.name} ${c.label}`}
                               aria-pressed={d.code === c.code}
-                              className={`w-9 py-1 rounded-md text-[10px] font-bold border disabled:opacity-30 ${d.code === c.code ? `${c.colour} text-white border-transparent` : 'bg-white text-[#464555] border-[#cbe0ec]'}`}
+                              className={`w-9 py-1 rounded-md text-[10px] font-bold border disabled:opacity-30 ${d.code === c.code ? `${c.colour} text-white border-transparent` : 'bg-white text-ink-soft border-line'}`}
                             >
                               {c.code}
                             </button>
@@ -491,11 +491,11 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     );
                   })}
                 </div>
-                <div className="p-3 border-t border-[#f0f7fb] flex flex-wrap items-center gap-2">
+                <div className="p-3 border-t border-subtle flex flex-wrap items-center gap-2">
                   {isPast && alreadyMarked && (
                     <input value={correctionReason} onChange={e => setCorrectionReason(e.target.value)} placeholder="Why is this being corrected?" className={`${inputCls} flex-1 min-w-[200px]`} aria-label="Correction reason" />
                   )}
-                  <span className="text-[11px] text-[#777587]">{changed.length} change(s)</span>
+                  <span className="text-[11px] text-ink-muted">{changed.length} change(s)</span>
                   <button onClick={save} disabled={!changed.length} className={btnPrimary}>
                     {isPast && alreadyMarked ? (needsApproval ? 'Request correction' : 'Apply correction') : 'Save attendance'}
                   </button>
@@ -514,7 +514,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
               }
             >
               <div className="p-3 space-y-1 text-xs">
-                {alertQueue.length === 0 && <p className="text-[#777587]">No unplanned absences or late arrivals saved for this day.</p>}
+                {alertQueue.length === 0 && <p className="text-ink-muted">No unplanned absences or late arrivals saved for this day.</p>}
                 {alertQueue.map(a => (
                   <p key={a.student.id} className="flex justify-between gap-2">
                     <span>
@@ -524,13 +524,13 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     {alertsSent.includes(`${a.student.id}|${markDate}`) && <span className="text-emerald-700 font-semibold">Sent</span>}
                   </p>
                 ))}
-                <p className="text-[10px] text-[#777587] pt-1">Students on approved leave are left out.</p>
+                <p className="text-[10px] text-ink-muted pt-1">Students on approved leave are left out.</p>
               </div>
             </Panel>
 
             <Panel title="Corrections">
-              <div className="divide-y divide-[#f0f7fb]">
-                {corrections.length === 0 && <p className="p-3 text-xs text-[#777587]">None yet. Open a past date to correct it.</p>}
+              <div className="divide-y divide-subtle">
+                {corrections.length === 0 && <p className="p-3 text-xs text-ink-muted">None yet. Open a past date to correct it.</p>}
                 {corrections.map(c => (
                   <div key={c.id} className="p-2.5 text-xs space-y-1">
                     <p>
@@ -564,14 +564,14 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
       {tab === 'compliance' && (
         <Panel title={`Today’s marking · cut-off ${MARKING_CUTOFF}`}>
           <table className="w-full text-xs">
-            <thead className="bg-slate-50 text-[#464555]">
+            <thead className="bg-slate-50 text-ink-soft">
               <tr>
                 {['Section', 'Class teacher', 'Mode', 'Status', 'Marked at', ''].map(h => (
                   <th key={h} className="text-left p-2.5 font-semibold">{h}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#f0f7fb]">
+            <tbody className="divide-y divide-subtle">
               {compliance.map(x => (
                 <tr key={x.c.key}>
                   <td className="p-2.5 font-semibold">{x.c.key}</td>
@@ -649,7 +649,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
             <div className="overflow-x-auto">
               <table className="text-[10px] border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 text-[#464555]">
+                  <tr className="bg-slate-50 text-ink-soft">
                     <th className="p-1.5 text-left sticky left-0 bg-slate-50 min-w-[150px]">Student</th>
                     {monthDays.map(d => {
                       const k = classifyDay(d, holidays);
@@ -668,7 +668,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     const m = attendancePct(register, s.id, monthWorking, codes);
                     const y = attendancePct(register, s.id, days, codes);
                     return (
-                      <tr key={s.id} className="border-t border-[#f0f7fb]">
+                      <tr key={s.id} className="border-t border-subtle">
                         <td className="p-1.5 sticky left-0 bg-white font-semibold whitespace-nowrap">
                           {s.rollNo}. {s.name}
                         </td>
@@ -697,7 +697,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                 </tbody>
               </table>
             </div>
-            <div className="p-3 flex flex-wrap gap-2 text-[10px] text-[#464555] border-t border-[#f0f7fb]">
+            <div className="p-3 flex flex-wrap gap-2 text-[10px] text-ink-soft border-t border-subtle">
               {codes.map(c => (
                 <span key={c.code} className="flex items-center gap-1">
                   <span className={`w-3 h-3 rounded ${c.colour}`} /> {c.code} {c.label} (counts {c.weight})
@@ -714,7 +714,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                   <tr>
                     <th className="pr-2 text-left">Section</th>
                     {monthDays.map(d => (
-                      <th key={d} className="font-mono font-normal text-[#777587] w-6">
+                      <th key={d} className="font-mono font-normal text-ink-muted w-6">
                         {d.slice(8)}
                       </th>
                     ))}
@@ -737,7 +737,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                   ))}
                 </tbody>
               </table>
-              <p className="text-[10px] text-[#777587] mt-2">Green ≥ 95% · light green ≥ 85% · amber ≥ 75% · red below 75% · grey not marked · dashed = no school</p>
+              <p className="text-[10px] text-ink-muted mt-2">Green ≥ 95% · light green ≥ 85% · amber ≥ 75% · red below 75% · grey not marked · dashed = no school</p>
             </div>
           </Panel>
         </div>
@@ -766,17 +766,17 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
             }
           >
             <table className="w-full text-xs">
-              <thead className="bg-slate-50 text-[#464555]">
+              <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   {['Student', 'Class', 'Attendance', 'Days counted', 'Full days needed from here'].map(h => (
                     <th key={h} className="text-left p-2.5 font-semibold">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {shortfall.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="p-3 text-[#777587]">
+                    <td colSpan={5} className="p-3 text-ink-muted">
                       Everyone is on track.
                     </td>
                   </tr>
@@ -801,23 +801,23 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <Panel title="Chronic absence alerts">
               <div className="p-3 space-y-2 text-xs">
-                {chronic.length === 0 && <p className="text-[#777587]">No alerts.</p>}
+                {chronic.length === 0 && <p className="text-ink-muted">No alerts.</p>}
                 {chronic.map(x => (
                   <div key={x.s.id} className="p-2 rounded-lg bg-rose-50 border border-rose-200">
                     <p className="font-semibold text-rose-800">
                       {x.s.name} · {x.s.classLevel}-{x.s.section}
                     </p>
                     <p className="text-rose-700">{x.reasons.join(' · ')}</p>
-                    <p className="text-[10px] text-[#464555]">Guardian {x.s.guardianMobile} · class teacher {sections.find(c => c.key === `${x.s.classLevel}-${x.s.section}`)?.classTeacher}</p>
+                    <p className="text-[10px] text-ink-soft">Guardian {x.s.guardianMobile} · class teacher {sections.find(c => c.key === `${x.s.classLevel}-${x.s.section}`)?.classTeacher}</p>
                   </div>
                 ))}
-                <p className="text-[10px] text-[#777587]">Rule: 3 or more absences in a row, or 4 or more in the last 30 days. Medical leave and approved leave are not counted.</p>
+                <p className="text-[10px] text-ink-muted">Rule: 3 or more absences in a row, or 4 or more in the last 30 days. Medical leave and approved leave are not counted.</p>
               </div>
             </Panel>
 
             <Panel title="Repeated lateness (3+ since August)">
               <div className="p-3 space-y-1 text-xs">
-                {lateList.length === 0 && <p className="text-[#777587]">No repeat late-comers.</p>}
+                {lateList.length === 0 && <p className="text-ink-muted">No repeat late-comers.</p>}
                 {lateList.map(x => (
                   <p key={x.s.id} className="flex justify-between">
                     <span>
@@ -840,7 +840,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                       <span className="font-mono">{c.pct}%</span>
                     </div>
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden relative">
-                      <div className={`h-full ${c.pct >= threshold ? 'bg-[#0e5d84]' : 'bg-rose-500'}`} style={{ width: `${c.pct}%` }} />
+                      <div className={`h-full ${c.pct >= threshold ? 'bg-brand' : 'bg-rose-500'}`} style={{ width: `${c.pct}%` }} />
                       <div className="absolute top-0 h-full w-0.5 bg-rose-600" style={{ left: `${threshold}%` }} />
                     </div>
                   </div>
@@ -867,7 +867,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                 <input type="date" value={leaveForm.from} onChange={e => setLeaveForm({ ...leaveForm, from: e.target.value })} className={inputCls} aria-label="Leave from" />
                 <input type="date" value={leaveForm.to} onChange={e => setLeaveForm({ ...leaveForm, to: e.target.value })} className={inputCls} aria-label="Leave to" />
               </div>
-              <p className="text-[10px] text-[#777587]">{workingDays(leaveForm.from, leaveForm.to < leaveForm.from ? leaveForm.from : leaveForm.to, holidays).length} working day(s)</p>
+              <p className="text-[10px] text-ink-muted">{workingDays(leaveForm.from, leaveForm.to < leaveForm.from ? leaveForm.from : leaveForm.to, holidays).length} working day(s)</p>
               <input value={leaveForm.reason} onChange={e => setLeaveForm({ ...leaveForm, reason: e.target.value })} placeholder="Reason" className={`${inputCls} w-full`} aria-label="Leave reason" />
               <input value={leaveForm.document} onChange={e => setLeaveForm({ ...leaveForm, document: e.target.value })} placeholder="Supporting document name (optional)" className={`${inputCls} w-full`} aria-label="Leave document" />
               <button type="submit" className={`${btnPrimary} w-full`}>
@@ -877,14 +877,14 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
           </Panel>
           <Panel className="lg:col-span-2" title="Leave requests">
             <table className="w-full text-xs">
-              <thead className="bg-slate-50 text-[#464555]">
+              <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   {['Id', 'Student', 'Dates', 'Reason', 'Status', ''].map(h => (
                     <th key={h} className="text-left p-2.5 font-semibold">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f0f7fb]">
+              <tbody className="divide-y divide-subtle">
                 {leaves.map(l => (
                   <tr key={l.id}>
                     <td className="p-2.5 font-mono">{l.id}</td>
@@ -895,11 +895,11 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     </td>
                     <td className="p-2.5">
                       {l.reason}
-                      {l.document && <span className="block text-[10px] text-[#777587]">📎 {l.document}</span>}
+                      {l.document && <span className="block text-[10px] text-ink-muted">📎 {l.document}</span>}
                     </td>
                     <td className="p-2.5">
                       {l.status}
-                      {l.decidedBy && <span className="block text-[10px] text-[#777587]">by {l.decidedBy}</span>}
+                      {l.decidedBy && <span className="block text-[10px] text-ink-muted">by {l.decidedBy}</span>}
                     </td>
                     <td className="p-2.5 text-right whitespace-nowrap">
                       {l.status === 'Pending' && (
@@ -927,7 +927,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Panel title="Marking mode per section">
               <table className="w-full text-xs">
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {sections.map(c => (
                     <tr key={c.key}>
                       <td className="p-2.5 font-semibold">{c.key}</td>
@@ -947,12 +947,12 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                   ))}
                 </tbody>
               </table>
-              <p className="p-3 text-[10px] text-[#777587]">Period-wise sections record the first period for the daily register. Per-period marking comes from the teacher app.</p>
+              <p className="p-3 text-[10px] text-ink-muted">Period-wise sections record the first period for the daily register. Per-period marking comes from the teacher app.</p>
             </Panel>
 
             <Panel title="Status codes">
               <table className="w-full text-xs">
-                <thead className="bg-slate-50 text-[#464555]">
+                <thead className="bg-slate-50 text-ink-soft">
                   <tr>
                     <th className="text-left p-2.5">Code</th>
                     <th className="text-left p-2.5">Label</th>
@@ -960,7 +960,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     <th className="text-left p-2.5">Reason</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#f0f7fb]">
+                <tbody className="divide-y divide-subtle">
                   {codes.map(c => (
                     <tr key={c.code}>
                       <td className="p-2.5">
@@ -989,7 +989,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
           </div>
 
           <Panel title="Holidays (automatically skipped) · second Saturdays and Sundays are weekly offs">
-            <div className="p-3 flex flex-wrap gap-2 border-b border-[#f0f7fb] text-xs">
+            <div className="p-3 flex flex-wrap gap-2 border-b border-subtle text-xs">
               <input type="date" value={newHoliday.date} onChange={e => setNewHoliday({ ...newHoliday, date: e.target.value })} className={inputCls} aria-label="Holiday date" />
               <input value={newHoliday.name} onChange={e => setNewHoliday({ ...newHoliday, name: e.target.value })} placeholder="Holiday name" className={inputCls} aria-label="Holiday name" />
               <button onClick={addHoliday} disabled={!newHoliday.name.trim()} className={btnPrimary}>

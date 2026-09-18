@@ -11,19 +11,19 @@ export const PTMBookingModal: React.FC = () => {
   if (!ptmModalOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 fade-in" onClick={() => setPtmModalOpen(false)}>
-      <div className="bg-white rounded-2xl shadow-2xl border border-[#cbe0ec] max-w-md w-full overflow-hidden zoom-in" onClick={e => e.stopPropagation()}>
-        <div className="p-4 bg-[#f0f7fb] border-b border-[#cbe0ec] flex items-center justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 fade-in bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setPtmModalOpen(false)}>
+      <div className="bg-surface rounded-2xl shadow-2xl max-w-md w-full overflow-hidden zoom-in ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
+        <div className="p-4 bg-subtle border-b border-line flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#0e5d84]">event_available</span>
+            <span className="material-symbols-outlined text-brand">event_available</span>
             <div>
-              <h2 className="text-sm font-bold text-[#082b3d]">Schedule Parent-Teacher Meeting</h2>
-              <div className="text-[11px] text-[#464555]">Child: {student.name} ({student.class}-{student.section})</div>
+              <h2 className="text-sm font-bold text-ink">Schedule Parent-Teacher Meeting</h2>
+              <div className="text-[11px] text-ink-soft">Child: {student.name} ({student.class}-{student.section})</div>
             </div>
           </div>
           <button
             onClick={() => setPtmModalOpen(false)}
-            className="text-[#777587] hover:text-[#082b3d] p-1 rounded-lg"
+            className="text-ink-muted hover:text-ink p-1 rounded-lg"
           >
             <span className="material-symbols-outlined text-base">close</span>
           </button>
@@ -31,11 +31,11 @@ export const PTMBookingModal: React.FC = () => {
 
         <div className="p-4 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-[#082b3d] mb-1">Select Faculty Member</label>
+            <label className="block text-xs font-semibold text-ink mb-1">Select Faculty Member</label>
             <select
               value={selectedTeacher}
               onChange={e => setSelectedTeacher(e.target.value)}
-              className="w-full bg-white border border-[#cbe0ec] rounded-lg p-2 text-xs text-[#082b3d] outline-hidden focus:border-[#0e5d84]"
+              className="w-full bg-white border border-line rounded-lg p-2 text-xs text-ink outline-hidden focus:border-brand"
             >
               <option value="Mrs. Malini Iyer (Physics)">Mrs. Malini Iyer (PGT Physics & Class Mentor)</option>
               <option value="Dr. V. Raghavan (Mathematics)">Dr. V. Raghavan (HOD Mathematics)</option>
@@ -45,7 +45,7 @@ export const PTMBookingModal: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#082b3d] mb-1">Select Available Slot (Saturday, 1 Mar)</label>
+            <label className="block text-xs font-semibold text-ink mb-1">Select Available Slot (Saturday, 1 Mar)</label>
             <div className="grid grid-cols-2 gap-2">
               {['10:00 AM - 10:15 AM', '11:15 AM - 11:30 AM', '02:30 PM - 02:45 PM', '03:45 PM - 04:00 PM'].map(s => (
                 <button
@@ -53,8 +53,8 @@ export const PTMBookingModal: React.FC = () => {
                   onClick={() => setSlot(s)}
                   className={`p-2 rounded-lg text-xs font-medium border text-center transition-all ${
                     slot === s
-                      ? 'bg-[#0e5d84] text-white border-[#0e5d84] font-semibold'
-                      : 'bg-[#f0f7fb] border-[#cbe0ec] text-[#082b3d] hover:bg-[#e0ecf4]'
+                      ? 'bg-brand text-white border-brand font-semibold'
+                      : 'bg-subtle border-line text-ink hover:bg-line-soft'
                   }`}
                 >
                   {s}
@@ -64,14 +64,14 @@ export const PTMBookingModal: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#082b3d] mb-1">Interaction Mode</label>
+            <label className="block text-xs font-semibold text-ink mb-1">Interaction Mode</label>
             <div className="flex gap-2">
               <button
                 onClick={() => setMode('In-Person')}
                 className={`flex-1 p-2 rounded-lg text-xs font-medium border flex items-center justify-center gap-1.5 ${
                   mode === 'In-Person'
-                    ? 'bg-[#0e5d84] text-white border-[#0e5d84]'
-                    : 'bg-[#f0f7fb] border-[#cbe0ec] text-[#082b3d]'
+                    ? 'bg-brand text-white border-brand'
+                    : 'bg-subtle border-line text-ink'
                 }`}
               >
                 <span className="material-symbols-outlined text-sm">meeting_room</span>
@@ -81,8 +81,8 @@ export const PTMBookingModal: React.FC = () => {
                 onClick={() => setMode('Google Meet')}
                 className={`flex-1 p-2 rounded-lg text-xs font-medium border flex items-center justify-center gap-1.5 ${
                   mode === 'Google Meet'
-                    ? 'bg-[#0e5d84] text-white border-[#0e5d84]'
-                    : 'bg-[#f0f7fb] border-[#cbe0ec] text-[#082b3d]'
+                    ? 'bg-brand text-white border-brand'
+                    : 'bg-subtle border-line text-ink'
                 }`}
               >
                 <span className="material-symbols-outlined text-sm">video_call</span>
@@ -97,10 +97,10 @@ export const PTMBookingModal: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-3 bg-[#f0f7fb] border-t border-[#cbe0ec] flex justify-end gap-2">
+        <div className="p-3 bg-subtle border-t border-line flex justify-end gap-2">
           <button
             onClick={() => setPtmModalOpen(false)}
-            className="px-3 py-1.5 text-xs text-[#464555] hover:text-[#082b3d] font-medium"
+            className="px-3 py-1.5 text-xs text-ink-soft hover:text-ink font-medium"
           >
             Cancel
           </button>
@@ -109,7 +109,7 @@ export const PTMBookingModal: React.FC = () => {
               setPtmModalOpen(false);
               addToast(`PTM Booked with ${selectedTeacher}`, 'success', `Confirmed for ${slot} (${mode}).`);
             }}
-            className="px-4 py-1.5 bg-[#0e5d84] hover:bg-[#083a4f] text-white text-xs font-semibold rounded-lg shadow-sm transition-colors"
+            className="px-4 py-1.5 bg-brand hover:bg-brand-strong text-white text-xs font-semibold rounded-lg shadow-sm transition-colors"
           >
             Confirm Appointment
           </button>
