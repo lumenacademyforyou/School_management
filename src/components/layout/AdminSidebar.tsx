@@ -17,7 +17,7 @@ const readLaterPref = () => {
 const isItemActive = (item: NavItem, view: AdminView) => item.id === view || Boolean(item.aliases?.includes(view));
 
 export const AdminSidebar: React.FC<{ collapsed?: boolean; onToggle?: () => void }> = ({ collapsed = false }) => {
-  const { adminView, setAdminView, currentUser } = useApp();
+  const { adminView, setAdminView, currentUser, toggleSidebarCollapsed, setSidebarOpen } = useApp();
   const role = currentUser.staffRole;
   const allotted = (groups: NavGroup[]) => groups.map(g => ({ ...g, items: g.items.filter(i => canView(role, i.id)) })).filter(g => g.items.length);
   const baseline = useMemo(() => allotted(BASELINE_GROUPS), [role]);
@@ -79,7 +79,28 @@ export const AdminSidebar: React.FC<{ collapsed?: boolean; onToggle?: () => void
       className={`bg-lumen-night text-lumen-50 border-r border-lumen-950 h-full min-h-0 overflow-hidden flex flex-col select-none transition-[width] duration-200 ${collapsed ? 'w-16' : 'w-64'}`}
     >
       {!collapsed && (
-        <div className="shrink-0 p-3 pb-2">
+        <div className="shrink-0 flex items-center justify-between px-3 pt-3 pb-1">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-lumen-200/55">Navigation</span>
+          <button
+            onClick={() => {
+              // On mobile, close the overlay; on desktop, collapse the sidebar
+              const isMobile = window.innerWidth < 768;
+              if (isMobile) {
+                setSidebarOpen(false);
+              } else {
+                toggleSidebarCollapsed();
+              }
+            }}
+            className="p-1 rounded-lg text-lumen-200/70 hover:bg-white/10 hover:text-white transition-colors"
+            title="Close sidebar"
+            aria-label="Close sidebar"
+          >
+            <span className="material-symbols-outlined text-[18px]">left_panel_close</span>
+          </button>
+        </div>
+      )}
+      {!collapsed && (
+        <div className="shrink-0 px-3 pb-2">
           <div className="relative">
             <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[16px] text-lumen-300/70">search</span>
             <input

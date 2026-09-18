@@ -109,6 +109,12 @@ export interface Student {
   guardianAltPhone?: string;
   address: string;
   prevSchool?: string;
+  /** Admission batch / cohort year, e.g. "2018–19" */
+  batch?: string;
+  /** Campus / school name the student belongs to */
+  school?: string;
+  /** Current academic year, e.g. "2024–25" */
+  academicYear?: string;
 }
 
 export interface AttendanceRecord {

@@ -23,6 +23,7 @@ import {
   fmtDate,
   fmtDay,
   inputClass,
+  useDesktopSidebar,
   useToasts,
 } from '../shared/mobileUi';
 import { InstallAppCard, InstallButton } from '../shared/webApp';
@@ -911,6 +912,7 @@ const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => v
   const session = useTeacherSession(teacher, onSignOut);
   const { tab, setTab, device, setDevice, resetDevice, awaitingReply, pendingLeaves, toasts, push, sync } = session;
   const [menu, setMenu] = useState(false);
+  const { sidebarOpen, toggleSidebar } = useDesktopSidebar('teacher');
   const waitingPapers = useWaitingPapers(teacher.id);
 
   const tabs: TabDef<Tab>[] = [
@@ -962,6 +964,7 @@ const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => v
       onChange={setTab}
       title="Lumen Teacher"
       subtitle={teacher.classTeacherOf ? `Class teacher · ${teacher.classTeacherOf}` : teacher.designation}
+      onClose={toggleSidebar}
       footer={
         <>
           <InstallButton appName="Lumen Teacher" />
@@ -984,9 +987,11 @@ const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => v
 
   return (
     <TeacherCtx.Provider value={session}>
-      <AppShell side={sidebar} bottom={<BottomNav<Tab> tabs={tabs} active={tab} onChange={setTab} />}>
+      <AppShell side={sidebarOpen ? sidebar : null} bottom={<BottomNav<Tab> tabs={tabs} active={tab} onChange={setTab} />}>
         <TopBar
           title={titles[tab]}
+          onToggleSidebar={toggleSidebar}
+          sidebarOpen={sidebarOpen}
           subtitle={device.online ? (pending ? `${pending} waiting to sync` : `Synced ${device.lastSync ?? device.snapshotAt}`) : `Offline · ${pending} waiting to sync`}
           right={
             <div className="flex items-center gap-1">
@@ -1034,4 +1039,3 @@ export const TeacherApp: React.FC = () => {
   const [teacher, setTeacher] = useState<TeacherAccount | null>(null);
   return <AppFrame accent="#125569">{teacher ? <TeacherSessionView teacher={teacher} onSignOut={() => setTeacher(null)} /> : <Login onLogin={setTeacher} />}</AppFrame>;
 };
-

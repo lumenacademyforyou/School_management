@@ -78,7 +78,7 @@ interface AppContextType {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   toggleSidebar: () => void;
-  /** Desktop: sidebar narrowed to icons. Remembered on this device. */
+  /** Desktop: sidebar hidden or shown. Remembered on this device. */
   sidebarCollapsed: boolean;
   toggleSidebarCollapsed: () => void;
 

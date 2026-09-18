@@ -212,10 +212,12 @@ const Console: React.FC = () => {
   return (
     <div data-density={density} className="h-screen flex flex-col overflow-hidden bg-wash text-ink font-sans antialiased">
       <AdminHeader />
-      <div className="flex-1 flex min-h-0 overflow-hidden relative">
-        <div className="hidden md:flex shrink-0 h-full" data-sidebar-collapsed={sidebarCollapsed}>
-          <AdminSidebar collapsed={sidebarCollapsed} />
-        </div>
+      <div className="flex-1 flex min-h-0 overflow-hidden relative" data-sidebar-hidden={sidebarCollapsed}>
+        {!sidebarCollapsed && (
+          <div className="hidden md:flex shrink-0 h-full">
+            <AdminSidebar />
+          </div>
+        )}
 
         {sidebarOpen && (
           <div className="md:hidden fixed inset-0 z-50 flex">

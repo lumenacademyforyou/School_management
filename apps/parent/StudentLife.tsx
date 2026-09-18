@@ -61,6 +61,20 @@ export const HallOfFameCard: React.FC<{ child: RosterStudent; onOpen: () => void
           View achievement <Icon name="arrow_forward" className="text-[14px]" />
         </span>
       </span>
+      <div className="shrink-0 pl-1">
+        {child.avatar ? (
+          <img
+            src={child.avatar}
+            alt={child.name}
+            className="w-14 h-14 rounded-2xl object-cover ring-2 ring-amber-400/60 shadow-sm"
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <span className="w-14 h-14 rounded-2xl bg-amber-100 ring-2 ring-amber-400/60 flex items-center justify-center text-[18px] font-bold text-amber-900 shadow-sm">
+            {child.name[0]}
+          </span>
+        )}
+      </div>
     </button>
   );
 };
@@ -98,6 +112,13 @@ export const HallOfFamePage: React.FC<{ child: RosterStudent; lowData: boolean; 
   return (
     <Screen>
       <section key={a.id} className={cx('relative rounded-3xl border p-6 text-center space-y-3 overflow-hidden', TIER[a.tier].card)} aria-labelledby="hof-title" data-hof-detail={a.tier}>
+        <div className="absolute top-4 right-4 shrink-0">
+          {!lowData && child.avatar ? (
+            <img src={child.avatar} alt={child.name} className="w-12 h-12 rounded-2xl object-cover ring-2 ring-amber-400/60 shadow-md" referrerPolicy="no-referrer" />
+          ) : (
+            <span className="w-12 h-12 rounded-2xl bg-amber-100 ring-2 ring-amber-400/60 flex items-center justify-center text-[16px] font-bold text-amber-900 shadow-md">{child.name[0]}</span>
+          )}
+        </div>
         <Trophy tier={a.tier} size="lg" animate />
         <div className="flex items-center justify-center gap-2">
           {!lowData && child.avatar ? (

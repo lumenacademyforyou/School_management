@@ -1,5 +1,5 @@
 // Student 360 roster and pure rules (LMN-SMS-FEAT-001 §13).
-import { PRIMARY_STUDENT } from './mockData';
+import { PRIMARY_STUDENT, CAMPUSES } from './mockData';
 import { Student } from '../types';
 
 export type StudentStatus = 'Active' | 'On leave' | 'Suspended' | 'TC issued' | 'Alumni' | 'Struck off';
@@ -238,28 +238,37 @@ export const planPromotion = (students: RosterStudent[], classLevel: number): Pr
 // Mapping to the Student 360 profile
 // ---------------------------------------------------------------------------
 
-export const toProfile = (s: RosterStudent): Student => ({
-  ...PRIMARY_STUDENT,
-  id: s.id,
-  name: s.name,
-  avatar: s.avatar ?? PRIMARY_STUDENT.avatar,
-  rollNo: String(s.rollNo),
-  class: `Class ${s.classLevel}`,
-  section: s.section,
-  house: s.house,
-  apaarId: s.apaar,
-  pen: s.pen,
-  emis: s.emis,
-  admissionNo: s.admissionNo,
-  gender: s.gender,
-  dob: s.dob,
-  feeStatus: s.feeStatus,
-  transportRoute: s.transportRoute ?? 'Own transport',
-  guardianName: s.guardianName,
-  guardianPhone: s.guardianMobile,
-  guardianAltName: s.emergencyContacts[0]?.name,
-  guardianAltPhone: s.emergencyContacts[0]?.phone,
-});
+export const toProfile = (s: RosterStudent): Student => {
+  const campus = CAMPUSES.find(c => c.id === s.campusId);
+  // Extract admission year from admission number (e.g. ADM-2018-0300 → 2018)
+  const admYear = s.admissionNo.match(/\d{4}/)?.[0];
+  const batchLabel = admYear ? `${admYear}–${String(Number(admYear) + 1).slice(-2)}` : undefined;
+  return {
+    ...PRIMARY_STUDENT,
+    id: s.id,
+    name: s.name,
+    avatar: s.avatar ?? PRIMARY_STUDENT.avatar,
+    rollNo: String(s.rollNo),
+    class: `Class ${s.classLevel}`,
+    section: s.section,
+    house: s.house,
+    apaarId: s.apaar,
+    pen: s.pen,
+    emis: s.emis,
+    admissionNo: s.admissionNo,
+    gender: s.gender,
+    dob: s.dob,
+    feeStatus: s.feeStatus,
+    transportRoute: s.transportRoute ?? 'Own transport',
+    guardianName: s.guardianName,
+    guardianPhone: s.guardianMobile,
+    guardianAltName: s.emergencyContacts[0]?.name,
+    guardianAltPhone: s.emergencyContacts[0]?.phone,
+    batch: batchLabel,
+    school: campus?.name ?? 'Lumen Academy',
+    academicYear: campus?.academicYear ?? 'AY 2024–25',
+  };
+};
 
 // ---------------------------------------------------------------------------
 // Seed roster

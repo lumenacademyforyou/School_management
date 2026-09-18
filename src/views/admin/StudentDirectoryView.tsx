@@ -561,6 +561,9 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                     ['Date of birth', fmt(open.dob)],
                     ['Category', open.category],
                     ['Branch', campuses.find(c => c.id === open.campusId)?.name ?? open.campusId],
+                    ['Batch', (() => { const y = open.admissionNo.match(/\d{4}/)?.[0]; return y ? `${y}–${String(Number(y) + 1).slice(-2)}` : '—'; })()],
+                    ['School', campuses.find(c => c.id === open.campusId)?.name ?? 'Lumen Academy'],
+                    ['Academic Year', campuses.find(c => c.id === open.campusId)?.academicYear ?? 'AY 2024–25'],
                   ].map(([k, v]) => (
                     <div key={k}>
                       <p className="text-[10px] text-ink-muted">{k}</p>

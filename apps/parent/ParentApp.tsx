@@ -27,6 +27,7 @@ import {
   LoadingCard,
   ErrorCard,
   useAsync,
+  useDesktopSidebar,
   useToasts,
   LOGO_SRC,
 } from '../shared/mobileUi';
@@ -1266,6 +1267,7 @@ const Signedin: React.FC<{ account: ParentAccount; onSignOut: () => void }> = ({
 const ChildSession: React.FC<{ account: ParentAccount; onSignOut: () => void }> = ({ account, onSignOut }) => {
   const session = useParentSession(account, onSignOut);
   const { toasts, prefs, t, tab, setTab, page, setPage, switcher, setSwitcher, setChildId, child, section, studentMode, tabs, back, titles } = session;
+  const { sidebarOpen, toggleSidebar } = useDesktopSidebar('parent');
 
   const childPicker = (
     <button onClick={() => setSwitcher(true)} className="flex items-center gap-2 rounded-full bg-white/15 pl-1 pr-2 py-1" aria-label="Switch child">
@@ -1339,6 +1341,7 @@ const ChildSession: React.FC<{ account: ParentAccount; onSignOut: () => void }> 
       }}
       title="Lumen Academy"
       subtitle={studentMode ? 'Student view' : 'Parent app'}
+      onClose={toggleSidebar}
       footer={
         <>
           <InstallButton appName="Lumen Parent" />
@@ -1364,11 +1367,24 @@ const ChildSession: React.FC<{ account: ParentAccount; onSignOut: () => void }> 
 
   return (
     <ParentCtx.Provider value={session}>
-      <AppShell side={sidebar} bottom={!page && <BottomNav<Tab> tabs={tabs} active={tab} onChange={setTab} />}>
+      <AppShell side={sidebarOpen ? sidebar : null} bottom={!page && <BottomNav<Tab> tabs={tabs} active={tab} onChange={setTab} />}>
         {page ? (
-          <TopBar title={titles[page]} subtitle={`${child.name} · ${section}`} onBack={back} right={childPicker} />
+          <TopBar
+            title={titles[page]}
+            subtitle={`${child.name} · ${section}`}
+            onBack={back}
+            onToggleSidebar={toggleSidebar}
+            sidebarOpen={sidebarOpen}
+            right={childPicker}
+          />
         ) : (
-          <TopBar title={tabTitle[tab]} subtitle={prefs.lowData ? 'Data saver on' : studentMode ? 'Student view' : undefined} right={childPicker} />
+          <TopBar
+            title={tabTitle[tab]}
+            subtitle={prefs.lowData ? 'Data saver on' : studentMode ? 'Student view' : undefined}
+            onToggleSidebar={toggleSidebar}
+            sidebarOpen={sidebarOpen}
+            right={childPicker}
+          />
         )}
         {page ? pageBody() : tabBody()}
       </AppShell>
@@ -1397,4 +1413,3 @@ const ChildSession: React.FC<{ account: ParentAccount; onSignOut: () => void }> 
     </ParentCtx.Provider>
   );
 };
-

@@ -35,6 +35,41 @@ export const AppFrame: React.FC<{ children: React.ReactNode; accent: string; the
   </div>
 );
 
+/** Desktop-only navigation preference shared by the parent and teacher apps. Ctrl/Cmd+B toggles it. */
+export const useDesktopSidebar = (app: 'parent' | 'teacher') => {
+  const key = `lumen.${app}.sidebar.hidden`;
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    try {
+      return window.localStorage.getItem(key) !== '1';
+    } catch {
+      return true;
+    }
+  });
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen(open => {
+      try {
+        window.localStorage.setItem(key, open ? '1' : '0');
+      } catch {
+        // The choice remains for the current session when storage is unavailable.
+      }
+      return !open;
+    });
+  }, [key]);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 'b') {
+        event.preventDefault();
+        toggleSidebar();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [toggleSidebar]);
+
+  return { sidebarOpen, toggleSidebar };
+};
+
 /** Signed-in layout: sidebar on desktop, bottom tabs on phones and tablets. */
 export const AppShell: React.FC<{ side: React.ReactNode; bottom?: React.ReactNode; children: React.ReactNode }> = ({ side, bottom, children }) => (
   <div className="flex-1 min-h-0 flex">
@@ -46,8 +81,26 @@ export const AppShell: React.FC<{ side: React.ReactNode; bottom?: React.ReactNod
   </div>
 );
 
-export const TopBar: React.FC<{ title: React.ReactNode; subtitle?: React.ReactNode; onBack?: () => void; right?: React.ReactNode }> = ({ title, subtitle, onBack, right }) => (
+export const TopBar: React.FC<{
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
+  onBack?: () => void;
+  onToggleSidebar?: () => void;
+  sidebarOpen?: boolean;
+  right?: React.ReactNode;
+}> = ({ title, subtitle, onBack, onToggleSidebar, sidebarOpen, right }) => (
   <header className="app-surface-transition shrink-0 bg-[var(--bar)] bg-[image:var(--bar-image)] border-b-2 border-[var(--bar-edge)] text-white px-4 lg:px-8 pt-4 pb-3 flex items-center gap-3 shadow-[0_2px_12px_-4px_rgb(7_32_47/0.35)]">
+    {onToggleSidebar && (
+      <button
+        onClick={onToggleSidebar}
+        className="hidden lg:inline-flex -ml-1 p-1 rounded-full hover:bg-white/15"
+        aria-label={sidebarOpen ? 'Hide navigation' : 'Show navigation'}
+        aria-pressed={sidebarOpen}
+        title={`${sidebarOpen ? 'Hide' : 'Show'} navigation (Ctrl+B)`}
+      >
+        <Icon name={sidebarOpen ? 'left_panel_close' : 'left_panel_open'} className="text-[22px]" />
+      </button>
+    )}
     {onBack && (
       <button onClick={onBack} className="-ml-1 p-1 rounded-full hover:bg-white/15" aria-label="Back">
         <Icon name="arrow_back" className="text-[22px]" />
@@ -94,6 +147,7 @@ export const SideNav = <T extends string>({
   subtitle,
   children,
   footer,
+  onClose,
 }: {
   tabs: TabDef<T>[];
   active: T | null;
@@ -102,14 +156,27 @@ export const SideNav = <T extends string>({
   subtitle: string;
   children?: React.ReactNode;
   footer?: React.ReactNode;
+  onClose?: () => void;
 }) => (
   <aside className="app-surface-transition hidden lg:flex w-64 shrink-0 flex-col bg-[var(--surface)] border-r border-slate-200" aria-label="Sidebar">
-    <div className="app-surface-transition flex items-center gap-3 px-5 py-4 bg-[var(--bar)] bg-[image:var(--bar-image)] border-b-2 border-[var(--bar-edge)] text-white">
-      <img src={LOGO_SRC} alt="" className="w-10 h-10 rounded-xl bg-cream-50 p-0.5 ring-1 ring-gold-300/60" />
-      <div className="min-w-0">
-        <p className="text-[15px] font-bold leading-tight truncate">{title}</p>
-        <p className="text-[12px] text-white/80 truncate">{subtitle}</p>
+    <div className="app-surface-transition flex items-center justify-between px-5 py-4 bg-[var(--bar)] bg-[image:var(--bar-image)] border-b-2 border-[var(--bar-edge)] text-white">
+      <div className="flex items-center gap-3 min-w-0">
+        <img src={LOGO_SRC} alt="" className="w-10 h-10 rounded-xl bg-cream-50 p-0.5 ring-1 ring-gold-300/60 shrink-0" />
+        <div className="min-w-0">
+          <p className="text-[15px] font-bold leading-tight truncate">{title}</p>
+          <p className="text-[12px] text-white/80 truncate">{subtitle}</p>
+        </div>
       </div>
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="p-1.5 -mr-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/15 transition-colors shrink-0"
+          title="Close sidebar (Ctrl+B)"
+          aria-label="Close sidebar"
+        >
+          <Icon name="left_panel_close" className="text-[20px]" />
+        </button>
+      )}
     </div>
     <nav className="flex-1 overflow-y-auto p-3 space-y-1" aria-label="Sections">
       {tabs.map(t => {

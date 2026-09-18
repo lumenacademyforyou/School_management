@@ -97,6 +97,26 @@ Generated on: ${new Date().toLocaleString()}`;
                 <span className="text-slate-300">·</span>
                 <span className="whitespace-nowrap">{student.house}</span>
               </p>
+              <div className="flex flex-wrap items-center gap-2 mt-2">
+                {student.batch && (
+                  <span className="inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200 text-[11px] font-semibold px-2 py-0.5 rounded-full">
+                    <span className="material-symbols-outlined text-[13px]">school</span>
+                    Batch {student.batch}
+                  </span>
+                )}
+                {student.school && (
+                  <span className="inline-flex items-center gap-1 bg-teal-50 text-teal-700 ring-1 ring-inset ring-teal-200 text-[11px] font-semibold px-2 py-0.5 rounded-full">
+                    <span className="material-symbols-outlined text-[13px]">apartment</span>
+                    {student.school}
+                  </span>
+                )}
+                {student.academicYear && (
+                  <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200 text-[11px] font-semibold px-2 py-0.5 rounded-full">
+                    <span className="material-symbols-outlined text-[13px]">calendar_today</span>
+                    {student.academicYear}
+                  </span>
+                )}
+              </div>
               <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-xs text-ink-muted mt-1">
                 <span>APAAR <strong className="font-mono font-semibold text-ink-soft">{student.apaarId}</strong></span>
                 <span>PEN <strong className="font-mono font-semibold text-ink-soft">{student.pen}</strong></span>
