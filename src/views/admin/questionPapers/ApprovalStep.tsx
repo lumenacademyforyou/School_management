@@ -5,6 +5,8 @@ import { ConfirmDialog, Field, Icon, btnDanger, btnPrimary, btnSoft, inputCls } 
 import { ACTION_LABEL, PaperAction, QuestionPaper, STATUS_STEPS, canApply, paperCounts, validateContent } from '../../../data/questionPapers';
 import { questionPaperService } from '../../../services/questionPaperService';
 import { Gate, PaperStatusBadge, fmtDate } from './qpgUi';
+import { EmptyNote } from '../../../components/common/EmptyNote';
+import { SendToTeacher, useLinkedRequest } from './TeacherRequests';
 
 const CONFIRM: Record<PaperAction, { title: string; body: string; danger?: boolean }> = {
   submit: { title: 'Submit for review?', body: 'The paper is locked while the Principal reviews it.' },
@@ -55,7 +57,9 @@ export const ApprovalStep: React.FC<{ paper: QuestionPaper; onSaved: (p: Questio
     }
   };
 
-  const actions = (['submit', 'approve', 'requestChanges', 'reject', 'publish'] as PaperAction[]).filter(a => canApply(paper, a));
+  const request = useLinkedRequest(paper.id);
+  // A paper a teacher asked for goes to that teacher (SendToTeacher), who approves it in the teacher app.
+  const actions = (request ? (['publish'] as PaperAction[]) : (['submit', 'approve', 'requestChanges', 'reject', 'publish'] as PaperAction[])).filter(a => canApply(paper, a));
   const needsComment = pending === 'reject' || pending === 'requestChanges';
 
   return (
@@ -125,8 +129,9 @@ export const ApprovalStep: React.FC<{ paper: QuestionPaper; onSaved: (p: Questio
 
       <aside className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3 xl:self-start">
         <h2 className="text-sm font-bold text-ink">Actions</h2>
-        {actions.length === 0 && <p className="text-xs text-ink-soft">{paper.status === 'Published' ? 'This paper is published and archived.' : 'No actions are open for this paper.'}</p>}
-        {actions.length > 0 && (
+        {request && <SendToTeacher paper={paper} request={request} beforeSubmit={beforeSubmit} onSaved={onSaved} />}
+        {actions.length === 0 && !request && <EmptyNote>{paper.status === 'Published' ? 'This paper is published and archived.' : 'No actions are open for this paper.'}</EmptyNote>}
+        {actions.some(a => a === 'approve' || a === 'reject' || a === 'requestChanges') && (
           <Field label="Comment" hint="Required to reject or request changes">
             <textarea value={comment} onChange={e => setComment(e.target.value)} rows={3} className={`${inputCls} w-full`} aria-label="Review comment" placeholder="What should the author know?" />
           </Field>
@@ -147,7 +152,7 @@ export const ApprovalStep: React.FC<{ paper: QuestionPaper; onSaved: (p: Questio
             </Gate>
           ))}
         </div>
-        {mine && paper.status === 'Under review' && <p className="text-[11px] text-ink-soft">Waiting for the Principal. You cannot review your own paper.</p>}
+        {mine && paper.status === 'Under review' && !request && <p className="text-[11px] text-ink-soft">Waiting for the Principal. You cannot review your own paper.</p>}
       </aside>
 
       <ConfirmDialog

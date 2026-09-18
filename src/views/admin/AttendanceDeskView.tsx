@@ -35,6 +35,8 @@ import {
   studentsInSection,
   workingDays,
 } from '../../data/attendance';
+import { Figure } from '../../components/common/Figure';
+import { EmptyNote } from '../../components/common/EmptyNote';
 
 type Tab = 'roll' | 'mark' | 'compliance' | 'register' | 'insights' | 'leave' | 'settings';
 
@@ -434,7 +436,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     <Badge className="bg-amber-50 text-amber-700 border-amber-200">Not marked yet — everyone starts as Present</Badge>
                   )}
                   {isPast && alreadyMarked && (
-                    <Badge className={needsApproval ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-sky-50 text-sky-700 border-sky-200'}>
+                    <Badge className={needsApproval ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-amber-50 text-amber-700 border-amber-200'}>
                       {needsApproval ? `Correction older than ${CORRECTION_WINDOW_DAYS} days — needs Principal approval` : 'Correction mode'}
                     </Badge>
                   )}
@@ -514,7 +516,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
               }
             >
               <div className="p-3 space-y-1 text-xs">
-                {alertQueue.length === 0 && <p className="text-ink-muted">No unplanned absences or late arrivals saved for this day.</p>}
+                {alertQueue.length === 0 && <EmptyNote>No unplanned absences or late arrivals saved for this day.</EmptyNote>}
                 {alertQueue.map(a => (
                   <p key={a.student.id} className="flex justify-between gap-2">
                     <span>
@@ -530,7 +532,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
 
             <Panel title="Corrections">
               <div className="divide-y divide-subtle">
-                {corrections.length === 0 && <p className="p-3 text-xs text-ink-muted">None yet. Open a past date to correct it.</p>}
+                {corrections.length === 0 && <EmptyNote>None yet. Open a past date to correct it.</EmptyNote>}
                 {corrections.map(c => (
                   <div key={c.id} className="p-2.5 text-xs space-y-1">
                     <p>
@@ -737,7 +739,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                   ))}
                 </tbody>
               </table>
-              <p className="text-[10px] text-ink-muted mt-2">Green ≥ 95% · light green ≥ 85% · amber ≥ 75% · red below 75% · grey not marked · dashed = no school</p>
+              <p className="text-[10px] text-ink-muted mt-2">Green ≥ <Figure value="95" suffix="%" /> · light green ≥ <Figure value="85" suffix="%" /> · amber ≥ <Figure value="75" suffix="%" /> · red below <Figure value="75" suffix="%" /> · grey not marked · dashed = no school</p>
             </div>
           </Panel>
         </div>
@@ -787,11 +789,11 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     <td className="p-2.5">
                       {x.s.classLevel}-{x.s.section} · {x.s.status}
                     </td>
-                    <td className={`p-2.5 font-mono ${x.pct < threshold ? 'text-rose-600 font-bold' : ''}`}>{x.pct}%</td>
+                    <td className={`p-2.5 font-mono ${x.pct < threshold ? 'text-rose-600 font-bold' : ''}`}><Figure value={x.pct} suffix="%" /></td>
                     <td className="p-2.5 font-mono">
                       {x.score} / {x.days}
                     </td>
-                    <td className="p-2.5">{x.need === null ? <span className="text-rose-700 font-semibold">Cannot reach {threshold}% this year</span> : `${x.need} of ${remaining}`}</td>
+                    <td className="p-2.5">{x.need === null ? <span className="text-rose-700 font-semibold">Cannot reach <Figure value={threshold} suffix="%" /> this year</span> : `${x.need} of ${remaining}`}</td>
                   </tr>
                 ))}
               </tbody>
@@ -801,7 +803,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <Panel title="Chronic absence alerts">
               <div className="p-3 space-y-2 text-xs">
-                {chronic.length === 0 && <p className="text-ink-muted">No alerts.</p>}
+                {chronic.length === 0 && <EmptyNote>No alerts.</EmptyNote>}
                 {chronic.map(x => (
                   <div key={x.s.id} className="p-2 rounded-lg bg-rose-50 border border-rose-200">
                     <p className="font-semibold text-rose-800">
@@ -817,7 +819,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
 
             <Panel title="Repeated lateness (3+ since August)">
               <div className="p-3 space-y-1 text-xs">
-                {lateList.length === 0 && <p className="text-ink-muted">No repeat late-comers.</p>}
+                {lateList.length === 0 && <EmptyNote>No repeat late-comers.</EmptyNote>}
                 {lateList.map(x => (
                   <p key={x.s.id} className="flex justify-between">
                     <span>
@@ -837,7 +839,7 @@ export const AttendanceDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                       <span>
                         {c.key} · {c.students} students
                       </span>
-                      <span className="font-mono">{c.pct}%</span>
+                      <span className="font-mono"><Figure value={c.pct} suffix="%" /></span>
                     </div>
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden relative">
                       <div className={`h-full ${c.pct >= threshold ? 'bg-brand' : 'bg-rose-500'}`} style={{ width: `${c.pct}%` }} />

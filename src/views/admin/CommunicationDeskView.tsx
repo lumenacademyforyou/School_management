@@ -55,6 +55,7 @@ import {
   summarise,
   templateVariables,
 } from '../../data/messaging';
+import { EmptyNote } from '../../components/common/EmptyNote';
 
 type Tab = 'compose' | 'outbox' | 'board' | 'threads' | 'log' | 'gallery' | 'setup' | 'costs';
 
@@ -83,7 +84,7 @@ const btnDanger = `${btn} bg-rose-600 text-white hover:bg-rose-700`;
 
 const STATUS_STYLE: Record<string, string> = {
   Read: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  Delivered: 'bg-sky-50 text-sky-700 border-sky-200',
+  Delivered: 'bg-slate-100 text-slate-700 border-slate-300',
   Held: 'bg-amber-50 text-amber-700 border-amber-200',
   Failed: 'bg-rose-50 text-rose-700 border-rose-200',
   Blocked: 'bg-rose-50 text-rose-700 border-rose-200',
@@ -1064,7 +1065,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
               ))}
             </tbody>
           </table>
-          {studentLog.length === 0 && studentThreads.length === 0 && <p className="p-3 text-xs text-ink-muted">Nothing sent yet.</p>}
+          {studentLog.length === 0 && studentThreads.length === 0 && <EmptyNote>Nothing sent yet.</EmptyNote>}
         </Panel>
       )}
 
@@ -1417,7 +1418,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
                     <span className="font-mono">{rupees(monthTotal(m))}</span>
                   </div>
                   <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-brand" style={{ width: `${(monthTotal(m) / maxMonth) * 100}%` }} />
+                    <div className="h-full bg-slate-500" style={{ width: `${(monthTotal(m) / maxMonth) * 100}%` }} />
                   </div>
                 </div>
               ))}
@@ -1426,7 +1427,7 @@ export const CommunicationDeskView: React.FC<{ initialTab?: Tab }> = ({ initialT
           </Panel>
           <Panel title={`Activity log · ${audit.length}`}>
             <div className="p-3 space-y-1 text-[11px] max-h-60 overflow-y-auto">
-              {audit.length === 0 && <p className="text-ink-muted">No actions yet.</p>}
+              {audit.length === 0 && <EmptyNote>No actions yet.</EmptyNote>}
               {audit.map((a, i) => (
                 <p key={i}>{a}</p>
               ))}

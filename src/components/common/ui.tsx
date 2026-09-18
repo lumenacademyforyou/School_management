@@ -1,4 +1,8 @@
 import React, { useEffect, useId, useRef } from 'react';
+import { Density, useApp } from '../../context/AppContext';
+
+export { Figure, Money } from './Figure';
+export { EmptyNote } from './EmptyNote';
 
 // Admin console building blocks, drawn from the Lumen tokens in index.css (teal, gold, cream).
 
@@ -90,7 +94,7 @@ export const StatCard: React.FC<{ label: string; value: React.ReactNode; icon: s
   );
 };
 
-export const Skeleton: React.FC<{ className?: string }> = ({ className = '' }) => <div className={`rounded-lg bg-slate-100 animate-pulse ${className}`} aria-hidden="true" />;
+export const Skeleton: React.FC<{ className?: string }> = ({ className = '' }) => <div className={`skeleton ${className}`} aria-hidden="true" />;
 
 export const LoadingRows: React.FC<{ rows?: number; label?: string }> = ({ rows = 4, label = 'Loading' }) => (
   <div className="p-4 space-y-2" role="status" aria-label={label}>
@@ -237,6 +241,35 @@ export const Stepper: React.FC<{ steps: StepDef[]; current: string; onSelect: (i
     </ol>
   </nav>
 );
+
+/** Comfortable / compact table density. The choice is the signed-in user's and applies to every data table. */
+export const DensityToggle: React.FC = () => {
+  const { density, setDensity } = useApp();
+  const options: { id: Density; label: string; icon: string }[] = [
+    { id: 'comfortable', label: 'Comfortable', icon: 'density_medium' },
+    { id: 'compact', label: 'Compact', icon: 'density_small' },
+  ];
+  return (
+    <div role="group" aria-label="Table density" className="inline-flex rounded-lg border border-line bg-surface p-0.5 shadow-xs">
+      {options.map(o => (
+        <button
+          key={o.id}
+          type="button"
+          onClick={() => setDensity(o.id)}
+          aria-pressed={density === o.id}
+          title={`${o.label} rows`}
+          data-density-option={o.id}
+          className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors ${
+            density === o.id ? 'bg-lumen-50 text-lumen-800 ring-1 ring-inset ring-lumen-200' : 'text-ink-muted hover:text-ink'
+          }`}
+        >
+          <Icon name={o.icon} className="text-sm" />
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+};
 
 /** Simple async loader state for mock services. */
 export type Loadable<T> = { state: 'loading' } | { state: 'error'; message: string } | { state: 'ready'; data: T };

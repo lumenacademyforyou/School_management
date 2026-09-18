@@ -27,6 +27,7 @@ import {
   totalState,
   validateBlueprint,
 } from '../../../data/questionPapers';
+import { EmptyNote } from '../../../components/common/EmptyNote';
 
 // ---------------------------------------------------------------------------
 // Step 1 — exam details
@@ -163,7 +164,7 @@ export const BlueprintStep: React.FC<{ sections: BlueprintSection[]; details: Ex
             </button>
           </div>
         </div>
-        {sections.length === 0 && <p className="rounded-xl border border-dashed border-line p-6 text-center text-xs text-ink-soft">No sections yet. Add a section or apply the board pattern.</p>}
+        {sections.length === 0 && <EmptyNote>No sections yet. Add a section or apply the board pattern.</EmptyNote>}
         <ol className="space-y-3">
           {sections.map((s, i) => {
             const available = availableFor(bank, s, details).length;
@@ -267,7 +268,7 @@ export const BlueprintStep: React.FC<{ sections: BlueprintSection[]; details: Ex
                 <span className="font-mono">{sectionMarks(s)}</span>
               </div>
               <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
-                <div className="h-full bg-brand" style={{ width: `${Math.min(100, (sectionMarks(s) / Math.max(1, details.maxMarks)) * 100)}%` }} />
+                <div className="h-full bg-slate-500" style={{ width: `${Math.min(100, (sectionMarks(s) / Math.max(1, details.maxMarks)) * 100)}%` }} />
               </div>
             </div>
           ))}

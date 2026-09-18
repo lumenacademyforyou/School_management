@@ -8,6 +8,8 @@ import { questionPaperService, statsOf, useQpgState } from '../../../services/qu
 import { BankPanel } from './BankPanel';
 import { PaperWizard, WizardStep, newPaperDraft } from './PaperWizard';
 import { Gate, PaperStatusBadge, fmtDate } from './qpgUi';
+import { TeacherRequestsPanel, useTeacherDecisionSync } from './TeacherRequests';
+import { usePaperRequests } from '../../../services/paperRequestService';
 
 type Tab = 'dashboard' | 'bank' | 'archive';
 
@@ -26,6 +28,7 @@ export const QuestionPaperGeneratorView: React.FC<{ initialTab?: Tab }> = ({ ini
   const [tab, setTab] = useState<Tab>(initialTab);
   const [open, setOpen] = useState<{ paper: QuestionPaper; step: WizardStep } | null>(null);
   const canCreate = g.can('QPG-003', 'C');
+  useTeacherDecisionSync();
 
   const create = () => setOpen({ paper: newPaperDraft(currentUser.name), step: 'details' });
   const openPaper = (paper: QuestionPaper) =>
@@ -114,8 +117,12 @@ const Dashboard: React.FC<{ onOpen: (p: QuestionPaper) => void; onCreate: () => 
   useEffect(fetch, []);
   const stats = statsOf(state);
   const reviewer = g.can('QPG-012', 'A');
+  // Papers a teacher asked for are reviewed by that teacher, not the Principal.
+  const teacherReviewed = new Set(usePaperRequests().flatMap(r => (r.paperId && r.status !== 'Declined' ? [r.paperId] : [])));
   const attention = state.papers.filter(p =>
-    reviewer ? p.status === 'Under review' && p.createdBy !== currentUser.name : p.createdBy === currentUser.name && (p.status === 'Draft' || p.status === 'Changes requested' || p.status === 'Approved')
+    reviewer
+      ? p.status === 'Under review' && p.createdBy !== currentUser.name && !teacherReviewed.has(p.id)
+      : p.createdBy === currentUser.name && (p.status === 'Draft' || p.status === 'Changes requested' || p.status === 'Approved')
   );
   const recent = [...state.papers].sort((a, b) => b.createdOn.localeCompare(a.createdOn) || b.id.localeCompare(a.id)).slice(0, 6);
 
@@ -136,6 +143,7 @@ const Dashboard: React.FC<{ onOpen: (p: QuestionPaper) => void; onCreate: () => 
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <TeacherRequestsPanel onOpen={onOpen} />
         <Panel title={reviewer ? 'Waiting for your review' : 'Needs your attention'} className="xl:col-span-1">
           {load === 'loading' ? (
             <LoadingRows rows={3} />

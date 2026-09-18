@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface NumberingSeriesItem {
   code: string;
@@ -367,10 +368,10 @@ export const MastersConfigView: React.FC = () => {
                       <span
                         className={`text-[10px] px-2 py-0.5 rounded-md font-semibold ${
                           bp.type.includes('Instructional')
-                            ? 'bg-blue-50 text-blue-700'
+                            ? 'bg-slate-100 text-slate-700'
                             : bp.type === 'Break' || bp.type === 'Lunch'
                             ? 'bg-amber-50 text-amber-700'
-                            : 'bg-subtle text-brand'
+                            : 'bg-slate-50 text-slate-600'
                         }`}
                       >
                         {bp.type}
@@ -427,7 +428,7 @@ export const MastersConfigView: React.FC = () => {
                 {gradingScales.map((g, idx) => (
                   <tr key={g.grade} className="hover:bg-wash transition-colors">
                     <td className="py-3 px-4 font-bold text-brand font-mono text-sm">{g.grade}</td>
-                    <td className="py-3 px-4 font-mono font-semibold text-ink">{g.minMarks} — {g.maxMarks}%</td>
+                    <td className="py-3 px-4 font-mono font-semibold text-ink">{g.minMarks} — <Figure value={g.maxMarks} suffix="%" /></td>
                     <td className="py-3 px-4 font-mono font-bold text-emerald-700">{g.gpa}</td>
                     <td className="py-3 px-4 text-ink-soft">{g.remark}</td>
                     <td className="py-3 px-4 text-right">

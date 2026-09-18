@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { ExportData, ExportFormat, exportData } from '../../src/lib/exporters';
 
 // Mobile-first building blocks shared by the parent and teacher apps.
 
@@ -176,12 +177,11 @@ export const Card: React.FC<{ children: React.ReactNode; className?: string; onC
   );
 };
 
-export const Pill: React.FC<{ tone?: 'green' | 'red' | 'amber' | 'blue' | 'grey'; children: React.ReactNode }> = ({ tone = 'grey', children }) => {
+export const Pill: React.FC<{ tone?: 'green' | 'red' | 'amber' | 'grey'; children: React.ReactNode }> = ({ tone = 'grey', children }) => {
   const tones = {
     green: 'bg-emerald-50 text-emerald-700',
     red: 'bg-rose-50 text-rose-700',
     amber: 'bg-amber-50 text-amber-800',
-    blue: 'bg-sky-50 text-sky-700',
     grey: 'bg-slate-100 text-slate-600',
   };
   return <span className={cx('inline-flex items-center text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap', tones[tone])}>{children}</span>;
@@ -279,14 +279,54 @@ export const PhaseNotice: React.FC<{ ids: string[]; phase: string; note: string 
   </div>
 );
 
-export const EmptyState: React.FC<{ icon: string; text: string }> = ({ icon, text }) => (
-  <div className="py-8 flex flex-col items-center gap-2 text-slate-500">
-    <Icon name={icon} className="text-[32px]" />
-    <p className="text-[13px]">{text}</p>
+/** Whole-screen or whole-card empty state: the same tile, title and next action as the console's. */
+export const EmptyState: React.FC<{ icon: string; text: string; action?: React.ReactNode }> = ({ icon, text, action }) => (
+  <div className="py-8 flex flex-col items-center gap-2 text-center text-slate-500">
+    <span className="w-14 h-14 mb-1 rounded-2xl bg-slate-100 ring-1 ring-inset ring-slate-200 flex items-center justify-center">
+      <Icon name={icon} className="text-[28px] text-[var(--accent-ink)]" />
+    </span>
+    <p className="text-[14px] font-semibold text-slate-800 max-w-xs">{text}</p>
+    {action}
   </div>
 );
 
-export const Skeleton: React.FC<{ className?: string }> = ({ className }) => <div className={cx('rounded-xl bg-slate-100 animate-pulse', className)} aria-hidden="true" />;
+export { EmptyNote } from '../../src/components/common/EmptyNote';
+
+/** Download a list as Excel, CSV or print / PDF. Big targets for phones; the data is read when tapped. */
+export const DownloadButton: React.FC<{ title: string; getData: () => ExportData; onDone?: (message: string) => void; className?: string }> = ({ title, getData, onDone, className }) => {
+  const [open, setOpen] = useState(false);
+  const run = (format: ExportFormat) => {
+    const data = getData();
+    exportData(data, format);
+    setOpen(false);
+    onDone?.(format === 'print' ? `Opening print for ${title}` : `${title} downloaded (${data.rows.length} rows)`);
+  };
+  return (
+    <>
+      <SecondaryButton onClick={() => setOpen(true)} className={cx('min-h-11 inline-flex items-center justify-center gap-1.5', className)} data-download={title}>
+        <Icon name="download" className="text-[18px]" />
+        Download
+      </SecondaryButton>
+      <Sheet open={open} onClose={() => setOpen(false)} title={`Download ${title}`}>
+        {([
+          ['xlsx', 'table_view', 'Excel file', 'Opens in Excel or Google Sheets'],
+          ['csv', 'description', 'CSV file', 'For other programs'],
+          ['print', 'print', 'Print or save as PDF', 'Choose “Save as PDF” in the print window'],
+        ] as [ExportFormat, string, string, string][]).map(([f, icon, label, hint]) => (
+          <button key={f} onClick={() => run(f)} className="w-full min-h-14 flex items-center gap-3 rounded-xl border border-slate-200 px-3 py-2 text-left hover:bg-slate-50" data-download-format={f}>
+            <Icon name={icon} className="text-[24px] text-[var(--accent-ink)]" />
+            <span>
+              <span className="block text-[15px] font-semibold text-slate-900">{label}</span>
+              <span className="block text-[13px] text-slate-500">{hint}</span>
+            </span>
+          </button>
+        ))}
+      </Sheet>
+    </>
+  );
+};
+
+export const Skeleton: React.FC<{ className?: string }> = ({ className }) => <div className={cx('skeleton rounded-xl', className)} aria-hidden="true" />;
 
 export const LoadingCard: React.FC<{ label: string; lines?: number }> = ({ label, lines = 3 }) => (
   <div className="rounded-2xl border border-slate-200 bg-[var(--surface)] p-4 space-y-2" role="status" aria-label={label}>

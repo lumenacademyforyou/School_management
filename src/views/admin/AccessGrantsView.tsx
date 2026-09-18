@@ -13,6 +13,7 @@ import {
   systemProducedFeatures,
   verbString,
 } from '../../data/permissions';
+import { EmptyNote } from '../../components/common/EmptyNote';
 
 const QUESTIONS: { q: string; grants: string }[] = [
   { q: 'Who is accountable for the outcome being produced?', grants: 'C, U, D — exactly one role' },
@@ -27,7 +28,7 @@ const VERB_STYLE: Record<string, string> = {
   D: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   R: 'bg-slate-50 text-slate-600 border-slate-200',
   A: 'bg-amber-50 text-amber-800 border-amber-200',
-  E: 'bg-sky-50 text-sky-700 border-sky-200',
+  E: 'bg-slate-100 text-slate-700 border-slate-300',
 };
 
 const Verbs: React.FC<{ verbs: string[] }> = ({ verbs }) =>
@@ -192,7 +193,7 @@ export const AccessGrantsView: React.FC = () => {
             </tbody>
           </table>
           {rows.length > shown.length && <p className="p-3 text-[11px] text-ink-muted">Showing the first {shown.length} rows — pick a module or role to narrow the list.</p>}
-          {rows.length === 0 && <p className="p-6 text-center text-xs text-ink-muted">No rows match.</p>}
+          {rows.length === 0 && <EmptyNote>No rows match.</EmptyNote>}
         </div>
         <p className="p-3 text-[10px] text-ink-muted border-t border-subtle">
           Legend: {VERB_ORDER.map(v => `${v} ${VERB_LABEL[v]}`).join(' · ')}. Roles not listed for a feature have no access to it.

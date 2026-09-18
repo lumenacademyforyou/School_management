@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { BUS_ROUTE_14 } from '../../data/mockData';
+import { Figure } from '../../components/common/Figure';
 
 export const TransportView: React.FC = () => {
   const {
@@ -109,7 +110,7 @@ export const TransportView: React.FC = () => {
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[10px] uppercase font-bold text-ink-muted">Diesel Tank Level</div>
-          <div className="text-2xl font-bold font-mono text-ink mt-0.5">74%</div>
+          <div className="text-2xl font-bold font-mono text-ink mt-0.5"><Figure value="74" suffix="%" /></div>
           <div className="text-[11px] text-ink-soft">Est. Range: 310 km</div>
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">

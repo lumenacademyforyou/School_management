@@ -263,7 +263,7 @@ export const BankPanel: React.FC<{
               <li key={q.id} className="p-3 space-y-2" data-question={q.id}>
                 <div className="flex flex-wrap items-center gap-1">
                   <span className="font-mono text-[11px] text-brand mr-1">{q.id}</span>
-                  <Badge tone="blue">{q.type}</Badge>
+                  <Badge>{q.type}</Badge>
                   <Badge>{q.marks} mark(s)</Badge>
                   <DifficultyBadge value={q.difficulty} />
                   <QuestionStatusBadge value={q.status} />

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { useExportLog } from '../../services/exportLog';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface AuditEvent {
   id: string;
@@ -90,7 +92,21 @@ export const AuditLogView: React.FC = () => {
     addToast('Exported Cryptographic Forensic Audit Trail (CSV)', 'success');
   };
 
-  const filteredEvents = auditEvents.filter(
+  // Exports made in this session, newest first, recorded by the header Export menu.
+  const exportEvents: AuditEvent[] = useExportLog().map(x => ({
+    id: x.id,
+    timestamp: x.at,
+    actor: `${x.by} (${x.role})`,
+    action: 'DATA_EXPORTED',
+    target: `${x.screen} · ${x.list}`,
+    hash: 'sha256: signed by the server when connected',
+    prevHash: '—',
+    ip: 'This browser',
+    status: 'VERIFIED',
+    payloadSummary: JSON.stringify({ rows: x.rows, format: x.format }),
+  }));
+
+  const filteredEvents = [...exportEvents, ...auditEvents].filter(
     e =>
       e.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
       e.actor.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -144,7 +160,7 @@ export const AuditLogView: React.FC = () => {
         <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-3xl text-accent">account_tree</span>
           <div>
-            <div className="text-xs font-mono text-accent font-bold">MERKLE ROOT HASH: BLOCK #48,201</div>
+            <div className="text-xs font-mono text-ink font-bold">MERKLE ROOT HASH: BLOCK #48,201</div>
             <div className="text-sm font-mono font-bold text-white mt-0.5">
               0x8F3C92B104EAA5098DF4C12E79B5A0329910D701A
             </div>
@@ -155,7 +171,7 @@ export const AuditLogView: React.FC = () => {
         </div>
 
         <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold px-3 py-1.5 rounded-xl font-mono text-center">
-          100% UNTAMPERED
+          <Figure value="100" suffix="%" /> UNTAMPERED
         </span>
       </div>
 

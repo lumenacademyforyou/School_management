@@ -76,7 +76,7 @@ export const AdminSidebar: React.FC<{ collapsed?: boolean; onToggle?: () => void
 
   return (
     <aside
-      className={`bg-lumen-night text-lumen-50 border-r border-lumen-950 h-full min-h-0 overflow-hidden flex flex-col select-none ${collapsed ? 'w-16' : 'w-64'}`}
+      className={`bg-lumen-night text-lumen-50 border-r border-lumen-950 h-full min-h-0 overflow-hidden flex flex-col select-none transition-[width] duration-200 ${collapsed ? 'w-16' : 'w-64'}`}
     >
       {!collapsed && (
         <div className="shrink-0 p-3 pb-2">

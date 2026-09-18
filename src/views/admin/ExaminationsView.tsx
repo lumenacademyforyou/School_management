@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { CLASS_10A_STUDENTS } from '../../data/mockData';
 import { FeatureTags, PhaseNotice, downloadCsv } from '../../components/common/FeatureTags';
+import { Figure } from '../../components/common/Figure';
 
 // ---------------------------------------------------------------------------
 // Domain model
@@ -517,7 +518,7 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                       <td className="p-3">{e.type}</td>
                       <td className="p-3">{e.term}</td>
                       <td className="p-3">{e.classes}</td>
-                      <td className="p-3">{e.weightage}%</td>
+                      <td className="p-3"><Figure value={e.weightage} suffix="%" /></td>
                       <td className="p-3">
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
@@ -610,7 +611,7 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                 <div key={g.grade} className="text-center p-2 rounded-lg border border-line-soft">
                   <p className="font-bold text-brand">{g.grade}</p>
                   <p className="text-[10px] text-ink-muted">
-                    {g.min}–{i === 0 ? 100 : GRADE_SCALE[i - 1].min - 1}%
+                    {g.min}–<Figure value={i === 0 ? 100 : GRADE_SCALE[i - 1].min - 1} suffix="%" />
                   </p>
                 </div>
               ))}
@@ -620,8 +621,8 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
           <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-3">
             <p className="text-xs font-bold text-ink">Board computation & promotion rules</p>
             <ul className="text-[11px] text-ink-soft space-y-1 list-disc pl-4">
-              <li>Pass mark: {PASS_PCT}% in every subject and {PASS_PCT}% overall</li>
-              <li>Failing 1–{MAX_COMPARTMENT_SUBJECTS} subjects with {PASS_PCT}% overall → Compartment (supplementary exam)</li>
+              <li>Pass mark: <Figure value={PASS_PCT} suffix="%" /> in every subject and <Figure value={PASS_PCT} suffix="%" /> overall</li>
+              <li>Failing 1–{MAX_COMPARTMENT_SUBJECTS} subjects with <Figure value={PASS_PCT} suffix="%" /> overall → Compartment (supplementary exam)</li>
               <li>Failing more than {MAX_COMPARTMENT_SUBJECTS} subjects → Fail</li>
               <li>Exempt (EX) subjects are removed from the total and maximum</li>
               <li>Absent (AB) scores zero for the student and is excluded from the class average</li>
@@ -855,7 +856,7 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
             <p className="text-xs font-bold text-ink">Class 10-A summary</p>
             <div className="grid grid-cols-3 gap-2 text-center">
               <div className="p-2 rounded-lg bg-slate-50">
-                <p className="text-lg font-bold text-ink">{analytics.passPct}%</p>
+                <p className="text-lg font-bold text-ink"><Figure value={analytics.passPct} suffix="%" /></p>
                 <p className="text-[10px] text-ink-muted">Pass rate</p>
               </div>
               <div className="p-2 rounded-lg bg-slate-50">
@@ -875,7 +876,7 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                   <span className="font-mono">{s.avg}</span>
                 </div>
                 <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-brand" style={{ width: `${s.avg}%` }} />
+                  <div className={`h-full ${s.avg >= 75 ? 'bg-emerald-500' : s.avg >= 50 ? 'bg-amber-500' : 'bg-rose-500'}`} style={{ width: `${s.avg}%` }} />
                 </div>
               </div>
             ))}
@@ -923,7 +924,7 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                 <span>
                   #{t.rank} {t.name}
                 </span>
-                <span className="font-mono font-bold">{t.pct}%</span>
+                <span className="font-mono font-bold"><Figure value={t.pct} suffix="%" /></span>
               </div>
             ))}
             <p className="text-[10px] text-ink-muted">

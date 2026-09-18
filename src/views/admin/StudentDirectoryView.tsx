@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { FeatureTags, downloadCsv } from '../../components/common/FeatureTags';
-import { AddStudentModal, EditIdentifiersModal, EmisDisplay, EmisStatusBadge } from '../../components/students/StudentIdentifiers';
+import { AddStudentModal, EditIdentifiersModal, EmisDisplay, EmisStatusBadge, StudentStatusBadge } from '../../components/students/StudentIdentifiers';
 import { useGrants } from '../../hooks/useGrants';
+import { DensityToggle } from '../../components/common/ui';
 import { rosterStore, useRoster } from '../../services/studentService';
 import {
   AuditEntry,
@@ -26,6 +27,8 @@ import {
   planPromotion,
   toProfile,
 } from '../../data/students';
+import { Figure } from '../../components/common/Figure';
+import { EmptyNote } from '../../components/common/EmptyNote';
 
 type Tab = 'directory' | 'quality' | 'requests' | 'promotion' | 'audit';
 
@@ -38,14 +41,6 @@ const TABS: { id: Tab; label: string; icon: string; ids: string[] }[] = [
 ];
 
 const STATUSES: StudentStatus[] = ['Active', 'On leave', 'Suspended', 'TC issued', 'Alumni', 'Struck off'];
-const STATUS_STYLE: Record<StudentStatus, string> = {
-  Active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  'On leave': 'bg-sky-50 text-sky-700 border-sky-200',
-  Suspended: 'bg-amber-50 text-amber-700 border-amber-200',
-  'TC issued': 'bg-slate-100 text-slate-600 border-slate-200',
-  Alumni: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-  'Struck off': 'bg-rose-50 text-rose-700 border-rose-200',
-};
 const SECTIONS = ['A', 'B', 'C'];
 
 const fmt = (iso: string) => {
@@ -58,9 +53,6 @@ const btn = 'text-xs font-semibold px-3 py-1.5 rounded-lg disabled:opacity-40';
 const btnPrimary = `${btn} bg-brand text-white hover:bg-brand-strong`;
 const btnSoft = `${btn} bg-slate-100 hover:bg-slate-200 text-ink`;
 
-const Badge: React.FC<{ className: string; children: React.ReactNode }> = ({ className, children }) => (
-  <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap ${className}`}>{children}</span>
-);
 
 const Panel: React.FC<{ title: React.ReactNode; actions?: React.ReactNode; children: React.ReactNode; className?: string }> = ({ title, actions, children, className = '' }) => (
   <div className={`bg-white rounded-2xl border border-line-soft shadow-xs overflow-hidden ${className}`}>
@@ -416,7 +408,8 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
               <span>
                 {rows.length} shown · {selected.size} selected
               </span>
-              <span className="flex items-center gap-3">
+              <span className="flex flex-wrap items-center gap-3">
+                <DensityToggle />
                 <label className="flex items-center gap-1 cursor-pointer">
                   <input type="checkbox" checked={showEmis} onChange={e => setShowEmis(e.target.checked)} className="accent-brand" aria-label="Show EMIS column" />
                   Show EMIS column
@@ -481,10 +474,10 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
             <div className={`bg-white rounded-2xl border border-line-soft shadow-xs overflow-hidden ${open ? 'xl:col-span-2' : 'xl:col-span-3'}`}>
               <div className="overflow-x-auto">
-                <table className="w-full text-xs">
+                <table className="data-table w-full">
                   <thead className="bg-slate-50 text-ink-soft">
                     <tr>
-                      <th className="p-2.5 w-8">
+                      <th className="cell w-8">
                         <input
                           type="checkbox"
                           checked={allSelected}
@@ -500,46 +493,46 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                         />
                       </th>
                       {['Student', 'Class', 'Admission no', ...(showEmis ? ['EMIS no'] : []), 'Guardian', 'Fee', 'Status'].map(h => (
-                        <th key={h} className="text-left p-2.5 font-semibold whitespace-nowrap">{h}</th>
+                        <th key={h} className="text-left cell font-semibold whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-subtle">
                     {rows.map(s => (
                       <tr key={s.id} className={`cursor-pointer ${openId === s.id ? 'bg-subtle' : 'hover:bg-wash'}`} onClick={() => openDrawer(s)}>
-                        <td className="p-2.5" onClick={e => e.stopPropagation()}>
+                        <td className="cell" onClick={e => e.stopPropagation()}>
                           <input type="checkbox" checked={selected.has(s.id)} onChange={() => toggle(s.id)} className="accent-brand" aria-label={`Select ${s.name} ${s.admissionNo}`} />
                         </td>
-                        <td className="p-2.5">
+                        <td className="cell">
                           <p className="font-semibold text-ink">{s.name}</p>
                           <p className="text-[10px] text-ink-muted">
                             {s.gender} · {s.house}
                             {s.transportRoute ? ` · ${s.transportRoute}` : ''}
                           </p>
                         </td>
-                        <td className="p-2.5 whitespace-nowrap">
+                        <td className="cell whitespace-nowrap">
                           {s.classLevel}-{s.section} · #{s.rollNo}
                         </td>
-                        <td className="p-2.5 font-mono whitespace-nowrap">{s.admissionNo}</td>
+                        <td className="cell font-mono whitespace-nowrap">{s.admissionNo}</td>
                         {showEmis && (
-                          <td className="p-2.5 whitespace-nowrap" data-emis-cell={s.id}>
+                          <td className="cell whitespace-nowrap" data-emis-cell={s.id}>
                             <p className="font-mono">{s.emis ? formatEmis(s.emis) : '—'}</p>
                             <EmisStatusBadge check={checkEmis(s.emis, s.id, live)} />
                           </td>
                         )}
-                        <td className="p-2.5">
+                        <td className="cell">
                           <p>{s.guardianName}</p>
                           <p className="text-[10px] text-ink-muted font-mono">{s.guardianMobile}</p>
                         </td>
-                        <td className={`p-2.5 ${s.feeStatus === 'Overdue' ? 'text-rose-600 font-semibold' : ''}`}>{s.feeStatus}</td>
-                        <td className="p-2.5">
-                          <Badge className={STATUS_STYLE[s.status]}>{s.status}</Badge>
+                        <td className={`cell ${s.feeStatus === 'Overdue' ? 'text-rose-600 font-semibold' : ''}`}>{s.feeStatus}</td>
+                        <td className="cell">
+                          <StudentStatusBadge status={s.status} />
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-                {rows.length === 0 && <p className="p-6 text-center text-xs text-ink-muted">No students match.</p>}
+                {rows.length === 0 && <EmptyNote>No students match.</EmptyNote>}
               </div>
             </div>
 
@@ -551,7 +544,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                     <p className="text-[11px] text-ink-muted">
                       {open.admissionNo} · Class {open.classLevel}-{open.section} · Roll {open.rollNo}
                     </p>
-                    <Badge className={STATUS_STYLE[open.status]}>{open.status}</Badge>
+                    <StudentStatusBadge status={open.status} />
                   </div>
                   <button onClick={() => setOpenId(null)} className="text-ink-muted hover:text-ink" aria-label="Close details">
                     <span className="material-symbols-outlined text-base">close</span>
@@ -639,7 +632,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                     </button>
                   </div>
                   {drawerStatus && <p className="text-[10px] text-amber-700">{STATUS_EFFECTS[drawerStatus]}</p>}
-                  {STATUS_TRANSITIONS[open.status].length === 0 && <p className="text-[10px] text-ink-muted">No further status changes allowed.</p>}
+                  {STATUS_TRANSITIONS[open.status].length === 0 && <EmptyNote>No further status changes allowed.</EmptyNote>}
                 </div>
 
                 <div className="space-y-1">
@@ -675,7 +668,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
 
                 <div>
                   <p className="font-semibold text-ink mb-1">Transfer history</p>
-                  {transfers.filter(t => t.studentId === open.id).length === 0 && <p className="text-ink-muted">No transfers.</p>}
+                  {transfers.filter(t => t.studentId === open.id).length === 0 && <EmptyNote>No transfers.</EmptyNote>}
                   {transfers
                     .filter(t => t.studentId === open.id)
                     .map((t, i) => (
@@ -746,7 +739,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Panel title={`Identifier problems · ${issues.length}`}>
             <div className="divide-y divide-subtle">
-              {issues.length === 0 && <p className="p-4 text-xs text-ink-muted">All PEN, APAAR and EMIS numbers are present and valid.</p>}
+              {issues.length === 0 && <EmptyNote>All PEN, APAAR and EMIS numbers are present and valid.</EmptyNote>}
               {issues.map((i, idx) => {
                 const s = byId(i.studentId);
                 return (
@@ -779,7 +772,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
 
           <Panel title={`Probable duplicates · ${dups.length}`}>
             <div className="divide-y divide-subtle">
-              {dups.length === 0 && <p className="p-4 text-xs text-ink-muted">No duplicates. Twins with different names are never flagged.</p>}
+              {dups.length === 0 && <EmptyNote>No duplicates. Twins with different names are never flagged.</EmptyNote>}
               {dups.map(([a, b]) => {
                 const keep = a.status === 'Active' ? a : b.status === 'Active' ? b : a;
                 const drop = keep === a ? b : a;
@@ -813,11 +806,11 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
       {tab === 'requests' && (
         <Panel title="Profile changes requested by parents">
           <div className="overflow-x-auto">
-            <table className="w-full text-xs">
+            <table className="data-table w-full">
               <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   {['Student', 'Field', 'Current', 'Requested', 'From', 'Status', ''].map(h => (
-                    <th key={h} className="text-left p-2.5 font-semibold">{h}</th>
+                    <th key={h} className="text-left cell font-semibold">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -826,19 +819,19 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                   const s = byId(r.studentId);
                   return (
                     <tr key={r.id}>
-                      <td className="p-2.5 font-semibold text-ink">{s.name}</td>
-                      <td className="p-2.5">{r.label}</td>
-                      <td className="p-2.5 font-mono">{fieldValue(s, r.field)}</td>
-                      <td className="p-2.5 font-mono text-brand">{r.after}</td>
-                      <td className="p-2.5">
+                      <td className="cell font-semibold text-ink">{s.name}</td>
+                      <td className="cell">{r.label}</td>
+                      <td className="cell font-mono">{fieldValue(s, r.field)}</td>
+                      <td className="cell font-mono text-brand">{r.after}</td>
+                      <td className="cell">
                         {r.requestedBy}
                         <p className="text-[10px] text-ink-muted">{fmt(r.requestedOn)}</p>
                       </td>
-                      <td className="p-2.5">
+                      <td className="cell">
                         {r.status}
                         {r.reason && <p className="text-[10px] text-ink-muted">{r.reason}</p>}
                       </td>
-                      <td className="p-2.5 whitespace-nowrap text-right">
+                      <td className="cell whitespace-nowrap text-right">
                         {r.status === 'Pending' && (
                           <span className="inline-flex gap-1">
                             <button onClick={() => setRejecting(r)} className={btnSoft}>
@@ -874,25 +867,25 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
             </button>
           </div>
           <Panel title={`Class ${promoClass} · ${plan.filter(l => l.outcome === 'Promote').length} promote · ${plan.filter(l => l.outcome === 'Detain').length} detain · ${plan.filter(l => l.outcome === 'Hold').length} hold`}>
-            <table className="w-full text-xs">
+            <table className="data-table w-full">
               <thead className="bg-slate-50 text-ink-soft">
                 <tr>
                   {['Student', 'Section', 'Outcome', 'Moves to', 'Note', 'Exception'].map(h => (
-                    <th key={h} className="text-left p-2.5 font-semibold">{h}</th>
+                    <th key={h} className="text-left cell font-semibold">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-subtle">
                 {plan.map(l => (
                   <tr key={l.student.id}>
-                    <td className="p-2.5 font-semibold text-ink">{l.student.name}</td>
-                    <td className="p-2.5">
+                    <td className="cell font-semibold text-ink">{l.student.name}</td>
+                    <td className="cell">
                       {l.student.section} · #{l.student.rollNo}
                     </td>
-                    <td className={`p-2.5 font-bold ${l.outcome === 'Promote' ? 'text-emerald-700' : l.outcome === 'Detain' ? 'text-rose-700' : 'text-amber-700'}`}>{l.outcome}</td>
-                    <td className="p-2.5">Class {l.toClass}</td>
-                    <td className="p-2.5 text-ink-soft">{l.note}</td>
-                    <td className="p-2.5">
+                    <td className={`cell font-bold ${l.outcome === 'Promote' ? 'text-emerald-700' : l.outcome === 'Detain' ? 'text-rose-700' : 'text-amber-700'}`}>{l.outcome}</td>
+                    <td className="cell">Class {l.toClass}</td>
+                    <td className="cell text-ink-soft">{l.note}</td>
+                    <td className="cell">
                       {l.student.yearResult === 'Pass' && !promoted.has(promoClass) && (
                         <select
                           value={holdOverrides[l.student.id] ?? ''}
@@ -908,7 +901,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                           aria-label={`Hold ${l.student.name}`}
                         >
                           <option value="">No exception</option>
-                          <option>Attendance below 75%</option>
+                          <option>Attendance below <Figure value="75" suffix="%" /></option>
                           <option>Fee clearance pending</option>
                           <option>Parent requested repeat</option>
                         </select>
@@ -918,7 +911,7 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
                 ))}
               </tbody>
             </table>
-            {plan.length === 0 && <p className="p-4 text-xs text-ink-muted">No active students in this class are awaiting promotion.</p>}
+            {plan.length === 0 && <EmptyNote>No active students in this class are awaiting promotion.</EmptyNote>}
             {alreadyMoved > 0 && (
               <p className="px-3 pb-2 text-[11px] text-ink-soft">{alreadyMoved} student(s) promoted into this class earlier this year are excluded from this run.</p>
             )}
@@ -935,23 +928,23 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
             <p className="p-4 text-xs text-ink-muted">No changes yet.</p>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-xs">
+              <table className="data-table w-full">
                 <thead className="bg-slate-50 text-ink-soft">
                   <tr>
                     {['When', 'Who', 'Student', 'Action', 'Before', 'After'].map(h => (
-                      <th key={h} className="text-left p-2.5 font-semibold whitespace-nowrap">{h}</th>
+                      <th key={h} className="text-left cell font-semibold whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-subtle">
                   {audit.map((a, i) => (
                     <tr key={i}>
-                      <td className="p-2.5 font-mono whitespace-nowrap">{a.at}</td>
-                      <td className="p-2.5">{a.actor}</td>
-                      <td className="p-2.5">{a.studentId === '—' ? '—' : byId(a.studentId).name}</td>
-                      <td className="p-2.5 font-semibold">{a.action}</td>
-                      <td className="p-2.5 text-ink-muted">{a.before}</td>
-                      <td className="p-2.5">{a.after}</td>
+                      <td className="cell font-mono whitespace-nowrap">{a.at}</td>
+                      <td className="cell">{a.actor}</td>
+                      <td className="cell">{a.studentId === '—' ? '—' : byId(a.studentId).name}</td>
+                      <td className="cell font-semibold">{a.action}</td>
+                      <td className="cell text-ink-muted">{a.before}</td>
+                      <td className="cell">{a.after}</td>
                     </tr>
                   ))}
                 </tbody>

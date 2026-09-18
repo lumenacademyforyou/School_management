@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface StudentHpc {
   rollNo: string;
@@ -252,7 +253,7 @@ export const ReportCardsView: React.FC = () => {
               <div className="p-3 bg-amber-50/70 rounded-xl border border-amber-200 space-y-1">
                 <div className="font-bold text-amber-950 flex items-center justify-between">
                   <span>1. Self Assessment (Student)</span>
-                  <span className="font-mono text-amber-800">Weight: {selfWeight}%</span>
+                  <span className="font-mono text-amber-800">Weight: <Figure value={selfWeight} suffix="%" /></span>
                 </div>
                 <p className="text-amber-900 text-[11px]">
                   Self-reflection on learning goals, curiosity, and habits of mind.
@@ -262,7 +263,7 @@ export const ReportCardsView: React.FC = () => {
               <div className="p-3 bg-blue-50/70 rounded-xl border border-blue-200 space-y-1">
                 <div className="font-bold text-blue-950 flex items-center justify-between">
                   <span>2. Peer Assessment (Classmate)</span>
-                  <span className="font-mono text-blue-700">Weight: {peerWeight}%</span>
+                  <span className="font-mono text-blue-700">Weight: <Figure value={peerWeight} suffix="%" /></span>
                 </div>
                 <p className="text-blue-900 text-[11px]">
                   Collaboration, peer respect, communication, and sportsmanship.
@@ -272,7 +273,7 @@ export const ReportCardsView: React.FC = () => {
               <div className="p-3 bg-emerald-50/70 rounded-xl border border-emerald-200 space-y-1">
                 <div className="font-bold text-emerald-950 flex items-center justify-between">
                   <span>3. Teacher Assessment (Subject & Class)</span>
-                  <span className="font-mono text-emerald-700">Weight: {teacherWeight}%</span>
+                  <span className="font-mono text-emerald-700">Weight: <Figure value={teacherWeight} suffix="%" /></span>
                 </div>
                 <p className="text-emerald-900 text-[11px]">
                   Academic domain mastery, conceptual understanding, and attendance (96.4%).
@@ -348,7 +349,7 @@ export const ReportCardsView: React.FC = () => {
                 <div>Class & Section: <strong>{selectedGrade} - Section A</strong></div>
                 <div className="text-right">APAAR ID: <strong className="font-mono">9012-4410-8821</strong></div>
                 <div>Academic Term: <strong>{selectedTerm}</strong></div>
-                <div className="text-right">Attendance: <strong className="text-emerald-700">97.1% (204/210 Days)</strong></div>
+                <div className="text-right">Attendance: <strong className="text-emerald-700"><Figure value="97.1" suffix="%" /> (204/210 Days)</strong></div>
               </div>
 
               {/* 360 Evaluation Radar Scores */}
@@ -456,14 +457,14 @@ export const ReportCardsView: React.FC = () => {
             </div>
 
             <p className="text-xs text-slate-600">
-              Set the multidimensional weightages according to your school board policy. The three dimensions must sum to 100%.
+              Set the multidimensional weightages according to your school board policy. The three dimensions must sum to <Figure value="100" suffix="%" />.
             </p>
 
             <form onSubmit={handleSaveRubric} className="space-y-4 text-xs">
               <div>
                 <div className="flex justify-between font-semibold text-slate-700 mb-1">
                   <span>1. Student Self-Assessment:</span>
-                  <span className="font-mono font-bold text-brand">{selfWeight}%</span>
+                  <span className="font-mono font-bold text-ink"><Figure value={selfWeight} suffix="%" /></span>
                 </div>
                 <input
                   type="range"
@@ -479,7 +480,7 @@ export const ReportCardsView: React.FC = () => {
               <div>
                 <div className="flex justify-between font-semibold text-slate-700 mb-1">
                   <span>2. Peer Assessment:</span>
-                  <span className="font-mono font-bold text-brand">{peerWeight}%</span>
+                  <span className="font-mono font-bold text-ink"><Figure value={peerWeight} suffix="%" /></span>
                 </div>
                 <input
                   type="range"
@@ -495,7 +496,7 @@ export const ReportCardsView: React.FC = () => {
               <div>
                 <div className="flex justify-between font-semibold text-slate-700 mb-1">
                   <span>3. Teacher Assessment:</span>
-                  <span className="font-mono font-bold text-brand">{teacherWeight}%</span>
+                  <span className="font-mono font-bold text-ink"><Figure value={teacherWeight} suffix="%" /></span>
                 </div>
                 <input
                   type="range"
@@ -509,7 +510,7 @@ export const ReportCardsView: React.FC = () => {
               </div>
 
               <div className={`p-2.5 rounded-lg text-xs font-bold text-center ${selfWeight + peerWeight + teacherWeight === 100 ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'}`}>
-                Sum: {selfWeight + peerWeight + teacherWeight}% {selfWeight + peerWeight + teacherWeight === 100 ? '✓ (Valid 100%)' : '✗ (Must equal 100%)'}
+                Sum: <Figure value={selfWeight + peerWeight + teacherWeight} suffix="%" /> {selfWeight + peerWeight + teacherWeight === 100 ? '✓ (Valid 100%)' : '✗ (Must equal 100%)'}
               </div>
 
               <div className="flex justify-end gap-2 pt-3 border-t">

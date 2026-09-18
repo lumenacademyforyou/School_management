@@ -1,8 +1,196 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { AdminView } from '../../types';
+import { ROLE_LABEL, StaffRole } from '../../data/staffAccess';
+import { Figure, Icon } from '../../components/common/ui';
+
+// ---------------------------------------------------------------------------
+// Role overview: one headline answer to "is everything okay?", then the rest
+// ---------------------------------------------------------------------------
+
+type MetricId = 'attendance' | 'realisation' | 'admissions' | 'outstanding' | 'teachers' | 'students' | 'results';
+
+interface Metric {
+  id: MetricId;
+  label: string;
+  value: string;
+  prefix?: string;
+  suffix?: string;
+  icon: string;
+  view: AdminView;
+  viewLabel: string;
+  /** Semantic state: ok (success), watch (warning). Brand colours never carry a data state. */
+  state: 'ok' | 'watch';
+  verdict: string;
+  note: string;
+  breakdown: { label: string; value: string; prefix?: string; suffix?: string; state?: 'ok' | 'watch' | 'bad' }[];
+}
+
+/** Dashboard figures (demo data, as of today). */
+const METRICS: Record<MetricId, Metric> = {
+  attendance: {
+    id: 'attendance', label: 'Attendance today', value: '94.6', suffix: '%', icon: 'fact_check', view: 'attendance', viewLabel: 'Open attendance',
+    state: 'ok', verdict: 'On track', note: 'Above the 90% daily threshold; 82 absences are being followed up.',
+    breakdown: [
+      { label: 'Present', value: '2,352', state: 'ok' },
+      { label: 'Absent', value: '82', state: 'bad' },
+      { label: 'Late', value: '38', state: 'watch' },
+      { label: 'On leave', value: '14' },
+    ],
+  },
+  realisation: {
+    id: 'realisation', label: 'Term 3 fees realised', value: '81.2', suffix: '%', icon: 'payments', view: 'fees', viewLabel: 'Open fees desk',
+    state: 'watch', verdict: 'Needs attention', note: '₹10.4L is overdue and SMS reminders have gone out; ₹22.4L is still within the grace period.',
+    breakdown: [
+      { label: 'Collected', value: '1.42', prefix: '₹', suffix: 'Cr', state: 'ok' },
+      { label: 'Pending (within grace)', value: '22.4', prefix: '₹', suffix: 'L', state: 'watch' },
+      { label: 'Overdue', value: '10.4', prefix: '₹', suffix: 'L', state: 'bad' },
+      { label: 'Collected today', value: '18.4', prefix: '₹', suffix: 'L' },
+    ],
+  },
+  admissions: {
+    id: 'admissions', label: 'Admissions pending', value: '126', icon: 'how_to_reg', view: 'admissions', viewLabel: 'Open admissions',
+    state: 'watch', verdict: 'Needs attention', note: '88 applications are waiting on documents before they can move to interview.',
+    breakdown: [
+      { label: 'Waiting on documents', value: '88', state: 'watch' },
+      { label: 'Interview scheduled', value: '38' },
+      { label: 'Enquiries this cycle', value: '480' },
+      { label: 'Applications submitted', value: '312' },
+    ],
+  },
+  outstanding: {
+    id: 'outstanding', label: 'Outstanding fees', value: '32.8', prefix: '₹', suffix: 'L', icon: 'receipt_long', view: 'fees', viewLabel: 'Open fees desk',
+    state: 'watch', verdict: 'Needs attention', note: 'Term 3 closing window: ₹10.4L of this is already overdue.',
+    breakdown: [
+      { label: 'Within grace period', value: '22.4', prefix: '₹', suffix: 'L', state: 'watch' },
+      { label: 'Overdue', value: '10.4', prefix: '₹', suffix: 'L', state: 'bad' },
+    ],
+  },
+  teachers: {
+    id: 'teachers', label: 'Teachers present', value: '168', suffix: ' / 174', icon: 'co_present', view: 'teacher-management', viewLabel: 'Open teachers',
+    state: 'ok', verdict: 'On track', note: '96.5% on duty; substitutions cover the six absences.',
+    breakdown: [
+      { label: 'On duty', value: '168', state: 'ok' },
+      { label: 'Absent (covered)', value: '6', state: 'watch' },
+    ],
+  },
+  students: {
+    id: 'students', label: 'Students enrolled', value: '2,486', icon: 'school', view: 'students', viewLabel: 'Open students',
+    state: 'ok', verdict: 'On track', note: 'Up 4.2% on last term.',
+    breakdown: [{ label: 'Change vs last term', value: '+4.2', suffix: '%', state: 'ok' }],
+  },
+  results: {
+    id: 'results', label: 'Pre-board pass rate', value: '98.6', suffix: '%', icon: 'workspace_premium', view: 'exams', viewLabel: 'Open examinations',
+    state: 'ok', verdict: 'On track', note: 'No failures in Class 10 or Class 12; aggregates between 87% and 91%.',
+    breakdown: [
+      { label: 'Class 10-A aggregate', value: '91.2', suffix: '%', state: 'ok' },
+      { label: 'Class 12-Science aggregate', value: '89.4', suffix: '%', state: 'ok' },
+      { label: 'Class 12-Commerce / Humanities', value: '87.5', suffix: '%', state: 'ok' },
+      { label: 'Failures', value: '0', state: 'ok' },
+    ],
+  },
+};
+
+/** Each role's single most important number (README → Dashboards by role). */
+export const HEADLINE_BY_ROLE: Record<StaffRole, MetricId> = {
+  principal: 'attendance',
+  accountant: 'realisation',
+  admissions: 'admissions',
+  auditor: 'outstanding',
+  'exam-coordinator': 'results',
+};
+
+const SECONDARY: MetricId[] = ['attendance', 'realisation', 'outstanding', 'admissions', 'teachers', 'students'];
+
+const STATE_PILL = {
+  ok: 'bg-emerald-50 text-emerald-800 ring-emerald-200',
+  watch: 'bg-amber-50 text-amber-800 ring-amber-200',
+  bad: 'bg-rose-50 text-rose-800 ring-rose-200',
+};
+const STATE_TEXT = { ok: 'text-emerald-700', watch: 'text-amber-800', bad: 'text-rose-700' };
+
+const Breakdown: React.FC<{ m: Metric; onOpen: () => void }> = ({ m, onOpen }) => (
+  <div className="mt-3 border-t border-line-soft pt-3 space-y-2" data-breakdown={m.id}>
+    <dl className="grid gap-1.5">
+      {m.breakdown.map(b => (
+        <div key={b.label} className="flex items-baseline justify-between gap-3 text-xs">
+          <dt className="text-ink-soft">{b.label}</dt>
+          <dd className={`font-semibold ${b.state ? STATE_TEXT[b.state] : 'text-ink'}`}>
+            <Figure value={b.value} prefix={b.prefix} suffix={b.suffix} />
+          </dd>
+        </div>
+      ))}
+    </dl>
+    <button onClick={onOpen} className="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline">
+      {m.viewLabel}
+      <Icon name="arrow_forward" className="text-sm" />
+    </button>
+  </div>
+);
+
+const RoleOverview: React.FC = () => {
+  const { currentUser, setAdminView } = useApp();
+  const headline = METRICS[HEADLINE_BY_ROLE[currentUser.staffRole]];
+  const rest = SECONDARY.filter(id => id !== headline.id).map(id => METRICS[id]);
+  // Progressive disclosure: at most one breakdown is open at a time.
+  const [open, setOpen] = useState<MetricId | null>(null);
+  const toggle = (id: MetricId) => setOpen(o => (o === id ? null : id));
+
+  return (
+    <section className="grid grid-cols-1 lg:grid-cols-12 gap-4" aria-label="Is everything okay?" data-testid="role-overview">
+      <article className="lg:col-span-5 bg-surface rounded-2xl border border-line-soft shadow-sm p-5 md:p-6 flex flex-col" data-headline={headline.id}>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-ink flex items-center gap-1.5">
+          <Icon name={headline.icon} className="text-sm text-accent" />
+          {ROLE_LABEL[currentUser.staffRole]} · today at a glance
+        </p>
+        <div className="mt-3 text-[56px] leading-none font-bold font-display tracking-tight text-ink">
+          <Figure value={headline.value} prefix={headline.prefix} suffix={headline.suffix} />
+        </div>
+        <p className="mt-2 text-sm font-semibold text-ink">{headline.label}</p>
+        <div className="mt-3 flex items-start gap-2">
+          <span className={`shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 ring-inset ${STATE_PILL[headline.state]}`} data-state={headline.state}>
+            <Icon name={headline.state === 'ok' ? 'check_circle' : 'error'} className="text-sm" />
+            {headline.verdict}
+          </span>
+          <p className="text-xs text-ink-soft">{headline.note}</p>
+        </div>
+        <button
+          onClick={() => toggle(headline.id)}
+          aria-expanded={open === headline.id}
+          className="mt-4 self-start inline-flex items-center gap-1 text-xs font-semibold text-ink-soft hover:text-ink"
+        >
+          <Icon name={open === headline.id ? 'expand_less' : 'expand_more'} className="text-base" />
+          {open === headline.id ? 'Hide breakdown' : 'Show breakdown'}
+        </button>
+        {open === headline.id && <Breakdown m={headline} onOpen={() => setAdminView(headline.view)} />}
+      </article>
+
+      <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 content-start items-start">
+        {rest.map(m => (
+          <article key={m.id} className="bg-surface rounded-xl border border-line-soft p-3.5 shadow-xs" data-metric={m.id}>
+            <button onClick={() => toggle(m.id)} aria-expanded={open === m.id} className="w-full text-left">
+              <span className="flex items-center justify-between gap-2 text-[11px] font-semibold text-ink-muted">
+                {m.label}
+                <span className={`w-2 h-2 rounded-full ${m.state === 'ok' ? 'bg-emerald-500' : 'bg-amber-500'}`} title={m.verdict} aria-label={m.verdict} />
+              </span>
+              <span className="mt-1 block text-xl font-bold font-display tracking-tight text-ink">
+                <Figure value={m.value} prefix={m.prefix} suffix={m.suffix} />
+              </span>
+              <span className="mt-0.5 flex items-center justify-between gap-2 text-[10px] text-ink-muted">
+                <span className="truncate">{m.verdict}</span>
+                <Icon name={open === m.id ? 'expand_less' : 'expand_more'} className="text-sm" />
+              </span>
+            </button>
+            {open === m.id && <Breakdown m={m} onOpen={() => setAdminView(m.view)} />}
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+};
 
 export const DashboardView: React.FC = () => {
-  const { setAdminView, selectedCampus, addToast } = useApp();
+  const { setAdminView, selectedCampus, addToast, currentUser } = useApp();
   const [selectedPeriod, setSelectedPeriod] = useState<number>(2);
 
   // Approvals State
@@ -56,7 +244,7 @@ export const DashboardView: React.FC = () => {
             </span>
           </div>
           <h1 className="text-2xl md:text-[32px] leading-tight font-bold font-display tracking-tight text-white">
-            Good morning, Administrator
+            Good morning, {currentUser.name}
           </h1>
           <p className="text-xs md:text-sm text-lumen-100/80 mt-1">
             Here's what's happening across your school today.
@@ -87,111 +275,7 @@ export const DashboardView: React.FC = () => {
         </div>
       </div>
 
-      {/* Top 6 KPI Cards (Exact user specification) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
-        {/* KPI 1: Total Students */}
-        <div
-          onClick={() => setAdminView('students')}
-          className="bg-surface p-4 rounded-2xl border border-line-soft shadow-sm hover:-translate-y-px hover:shadow-md hover:border-brand transition-all cursor-pointer group flex flex-col justify-between"
-        >
-          <div className="flex items-center justify-between text-xs text-ink-muted">
-            <span className="text-[11px] font-semibold">Total Students</span>
-            <span className="material-symbols-outlined text-base text-brand">school</span>
-          </div>
-          <div className="mt-2">
-            <div className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">2,486</div>
-            <div className="text-[10px] text-emerald-700 font-semibold flex items-center gap-0.5 mt-0.5">
-              <span className="material-symbols-outlined text-xs">trending_up</span>
-              <span>+4.2% vs last term</span>
-            </div>
-          </div>
-        </div>
-
-        {/* KPI 2: Attendance Today */}
-        <div
-          onClick={() => setAdminView('attendance')}
-          className="bg-surface p-4 rounded-2xl border border-line-soft shadow-sm hover:-translate-y-px hover:shadow-md hover:border-emerald-500 transition-all cursor-pointer group flex flex-col justify-between"
-        >
-          <div className="flex items-center justify-between text-xs text-ink-muted">
-            <span className="text-[11px] font-semibold">Attendance Today</span>
-            <span className="material-symbols-outlined text-base text-emerald-600">fact_check</span>
-          </div>
-          <div className="mt-2">
-            <div className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">94.6%</div>
-            <div className="text-[10px] text-ink-soft mt-0.5">
-              2,352 present • 82 absent
-            </div>
-          </div>
-        </div>
-
-        {/* KPI 3: Fee Collection */}
-        <div
-          onClick={() => setAdminView('fees')}
-          className="bg-surface p-4 rounded-2xl border border-line-soft shadow-sm hover:-translate-y-px hover:shadow-md hover:border-teal-500 transition-all cursor-pointer group flex flex-col justify-between"
-        >
-          <div className="flex items-center justify-between text-xs text-ink-muted">
-            <span className="text-[11px] font-semibold">Fee Collection</span>
-            <span className="material-symbols-outlined text-base text-teal-600">payments</span>
-          </div>
-          <div className="mt-2">
-            <div className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">₹18.4L</div>
-            <div className="text-[10px] text-teal-700 font-semibold mt-0.5">
-              Today's collections
-            </div>
-          </div>
-        </div>
-
-        {/* KPI 4: Pending Admissions */}
-        <div
-          onClick={() => setAdminView('admissions')}
-          className="bg-surface p-4 rounded-2xl border border-line-soft shadow-sm hover:-translate-y-px hover:shadow-md hover:border-amber-500 transition-all cursor-pointer group flex flex-col justify-between"
-        >
-          <div className="flex items-center justify-between text-xs text-ink-muted">
-            <span className="text-[11px] font-semibold">Pending Admissions</span>
-            <span className="material-symbols-outlined text-base text-amber-600">how_to_reg</span>
-          </div>
-          <div className="mt-2">
-            <div className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">126</div>
-            <div className="text-[10px] text-amber-700 font-semibold mt-0.5">
-              38 interview • 88 docs
-            </div>
-          </div>
-        </div>
-
-        {/* KPI 5: Teachers Present */}
-        <div
-          onClick={() => setAdminView('teacher-management')}
-          className="bg-surface p-4 rounded-2xl border border-line-soft shadow-sm hover:-translate-y-px hover:shadow-md hover:border-brand transition-all cursor-pointer group flex flex-col justify-between"
-        >
-          <div className="flex items-center justify-between text-xs text-ink-muted">
-            <span className="text-[11px] font-semibold">Teachers Present</span>
-            <span className="material-symbols-outlined text-base text-brand">co_present</span>
-          </div>
-          <div className="mt-2">
-            <div className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">168 / 174</div>
-            <div className="text-[10px] text-emerald-700 font-semibold mt-0.5">
-              96.5% active on duty
-            </div>
-          </div>
-        </div>
-
-        {/* KPI 6: Outstanding Fees */}
-        <div
-          onClick={() => setAdminView('fees')}
-          className="bg-surface p-4 rounded-2xl border border-line-soft shadow-sm hover:-translate-y-px hover:shadow-md hover:border-rose-500 transition-all cursor-pointer group flex flex-col justify-between"
-        >
-          <div className="flex items-center justify-between text-xs text-ink-muted">
-            <span className="text-[11px] font-semibold">Outstanding Fees</span>
-            <span className="material-symbols-outlined text-base text-rose-600">receipt_long</span>
-          </div>
-          <div className="mt-2">
-            <div className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">₹32.8L</div>
-            <div className="text-[10px] text-rose-700 font-semibold mt-0.5">
-              Term 3 closing window
-            </div>
-          </div>
-        </div>
-      </div>
+      <RoleOverview />
 
       {/* Row 2: Attendance Overview & Admissions Funnel */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -235,17 +319,17 @@ export const DashboardView: React.FC = () => {
               <path
                 d="M 0 140 Q 60 130, 100 90 T 200 40 T 300 20 T 400 35 T 500 25"
                 fill="none"
-                stroke="#2a8193"
+                stroke="#354b57"
                 strokeWidth="2.5"
                 strokeLinecap="round"
               />
-              <circle cx="300" cy="20" r="4.5" fill="#2a8193" stroke="#ffffff" strokeWidth="2" />
+              <circle cx="300" cy="20" r="4.5" fill="#354b57" stroke="#ffffff" strokeWidth="2" />
             </svg>
           </div>
           <div className="flex justify-between text-[11px] text-ink-muted font-mono border-t border-line-soft pt-2">
             <span>07:00 AM (Buses Arrive)</span>
             <span>07:45 AM (Gate Inflow)</span>
-            <span className="font-bold text-teal-700">08:30 AM (Assembly Peak: 94.6%)</span>
+            <span className="font-bold text-ink">08:30 AM (Assembly Peak: <Figure value="94.6" suffix="%" />)</span>
             <span>10:30 AM (Interval)</span>
             <span>01:30 PM (Post-Lunch)</span>
           </div>
@@ -287,7 +371,7 @@ export const DashboardView: React.FC = () => {
                 <span className="font-mono">312 Forms (65%)</span>
               </div>
               <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500 rounded-full w-[65%]"></div>
+                <div className="h-full bg-slate-500 rounded-full w-[65%]"></div>
               </div>
             </div>
             {/* Step 3: Shortlisted */}
@@ -342,17 +426,17 @@ export const DashboardView: React.FC = () => {
           <div className="grid grid-cols-3 gap-2">
             <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100">
               <div className="text-[10px] uppercase font-bold text-emerald-800">Collected</div>
-              <div className="text-base font-bold text-emerald-950 mt-0.5">₹1.42 Cr</div>
-              <div className="text-[10px] text-emerald-700">81.2% realized</div>
+              <div className="text-base font-bold text-emerald-950 mt-0.5"><Figure prefix="₹" value="1.42" suffix=" Cr" /></div>
+              <div className="text-[10px] text-emerald-700"><Figure value="81.2" suffix="%" /> realized</div>
             </div>
             <div className="p-3 bg-amber-50 rounded-xl border border-amber-100">
               <div className="text-[10px] uppercase font-bold text-amber-800">Pending</div>
-              <div className="text-base font-bold text-amber-950 mt-0.5">₹22.4L</div>
+              <div className="text-base font-bold text-amber-950 mt-0.5"><Figure prefix="₹" value="22.4" suffix="L" /></div>
               <div className="text-[10px] text-amber-700">Within grace period</div>
             </div>
             <div className="p-3 bg-rose-50 rounded-xl border border-rose-100">
               <div className="text-[10px] uppercase font-bold text-rose-800">Overdue</div>
-              <div className="text-base font-bold text-rose-950 mt-0.5">₹10.4L</div>
+              <div className="text-base font-bold text-rose-950 mt-0.5"><Figure prefix="₹" value="10.4" suffix="L" /></div>
               <div className="text-[10px] text-rose-700">Auto SMS dispatched</div>
             </div>
           </div>
@@ -392,7 +476,7 @@ export const DashboardView: React.FC = () => {
               <p className="text-xs text-ink-muted">Class aggregate & subject pass benchmark</p>
             </div>
             <span className="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full font-bold">
-              98.6% Pass Rate
+              <Figure value="98.6" suffix="%" /> Pass Rate
             </span>
           </div>
 
@@ -400,49 +484,49 @@ export const DashboardView: React.FC = () => {
             <div className="space-y-1">
               <div className="flex justify-between font-semibold">
                 <span>Class 10-A (Secondary)</span>
-                <span className="font-mono text-brand font-bold">91.2% Aggregate • 0 Failures</span>
+                <span className="font-semibold text-ink"><Figure value="91.2" suffix="%" /> Aggregate • 0 Failures</span>
               </div>
               <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-brand rounded-full w-[91%]"></div>
+                <div className="h-full bg-emerald-500 rounded-full w-[91%]"></div>
               </div>
             </div>
 
             <div className="space-y-1">
               <div className="flex justify-between font-semibold">
                 <span>Class 12-Science (Senior Secondary)</span>
-                <span className="font-mono text-teal-700 font-bold">89.4% Aggregate • 0 Failures</span>
+                <span className="font-semibold text-ink"><Figure value="89.4" suffix="%" /> Aggregate • 0 Failures</span>
               </div>
               <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-teal-600 rounded-full w-[89%]"></div>
+                <div className="h-full bg-emerald-500 rounded-full w-[89%]"></div>
               </div>
             </div>
 
             <div className="space-y-1">
               <div className="flex justify-between font-semibold">
                 <span>Class 12-Commerce / Humanities</span>
-                <span className="font-mono text-brand font-bold">87.5% Aggregate • 0 Failures</span>
+                <span className="font-semibold text-ink"><Figure value="87.5" suffix="%" /> Aggregate • 0 Failures</span>
               </div>
               <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-brand rounded-full w-[87%]"></div>
+                <div className="h-full bg-emerald-500 rounded-full w-[87%]"></div>
               </div>
             </div>
 
             <div className="pt-2 grid grid-cols-4 gap-2 text-center text-[10px]">
               <div className="p-2 bg-slate-50 rounded-lg">
                 <div className="text-ink-muted">Maths</div>
-                <div className="font-bold text-ink text-xs">92%</div>
+                <div className="font-bold text-ink text-xs"><Figure value="92" suffix="%" /></div>
               </div>
               <div className="p-2 bg-slate-50 rounded-lg">
                 <div className="text-ink-muted">Physics</div>
-                <div className="font-bold text-ink text-xs">88%</div>
+                <div className="font-bold text-ink text-xs"><Figure value="88" suffix="%" /></div>
               </div>
               <div className="p-2 bg-slate-50 rounded-lg">
                 <div className="text-ink-muted">English</div>
-                <div className="font-bold text-ink text-xs">94%</div>
+                <div className="font-bold text-ink text-xs"><Figure value="94" suffix="%" /></div>
               </div>
               <div className="p-2 bg-slate-50 rounded-lg">
                 <div className="text-ink-muted">Chemistry</div>
-                <div className="font-bold text-ink text-xs">85%</div>
+                <div className="font-bold text-ink text-xs"><Figure value="85" suffix="%" /></div>
               </div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { viewMeta } from '../../data/adminNav';
+import { ExportMenu } from './ExportMenu';
 
 export const AdminHeader: React.FC = () => {
   const {
@@ -12,6 +13,8 @@ export const AdminHeader: React.FC = () => {
     setQuickActionOpen,
     sidebarOpen,
     toggleSidebar,
+    sidebarCollapsed,
+    toggleSidebarCollapsed,
     addToast,
     currentUser,
     logout,
@@ -60,6 +63,18 @@ export const AdminHeader: React.FC = () => {
       <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-gold-400/70 to-transparent" />
       {/* Left: Mobile Menu Toggle, Multi-Campus Selector & Dynamic Breadcrumb */}
       <div className="flex items-center gap-2 md:gap-3">
+        {/* Desktop: hide or show the sidebar (Ctrl+B) */}
+        <button
+          onClick={toggleSidebarCollapsed}
+          className="hidden md:inline-flex p-1.5 rounded-lg text-ink-soft hover:bg-subtle hover:text-brand transition-colors"
+          title={`${sidebarCollapsed ? 'Show' : 'Hide'} the menu (Ctrl+B)`}
+          aria-label={sidebarCollapsed ? 'Show menu' : 'Hide menu'}
+          aria-pressed={sidebarCollapsed}
+          data-sidebar-toggle
+        >
+          <span className="material-symbols-outlined text-2xl">{sidebarCollapsed ? 'left_panel_open' : 'left_panel_close'}</span>
+        </button>
+
         {/* Mobile Hamburger Menu */}
         <button
           onClick={toggleSidebar}
@@ -163,6 +178,7 @@ export const AdminHeader: React.FC = () => {
 
       {/* Right: Quick Action, Alerts & User Profile */}
       <div className="flex items-center gap-2.5">
+        <ExportMenu />
         <button
           onClick={() => setQuickActionOpen(true)}
           className="flex items-center gap-1.5 bg-brand hover:bg-brand-strong text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-[inset_0_1px_0_rgb(255_255_255/0.14),0_1px_2px_rgb(7_32_47/0.24)] transition-colors"

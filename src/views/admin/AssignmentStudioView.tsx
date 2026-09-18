@@ -219,7 +219,7 @@ export const AssignmentStudioView: React.FC = () => {
         <div className="bg-surface p-5 rounded-2xl border border-line-soft shadow-sm space-y-5">
           <div className="flex items-center justify-between pb-2 border-b border-subtle">
             <h2 className="text-sm font-bold text-ink">Grading Rubric</h2>
-            <div className="text-base font-bold font-display text-brand">{total} / 20</div>
+            <div className="text-base font-bold font-display text-ink">{total} / 20</div>
           </div>
 
           <div className="space-y-4 text-xs">

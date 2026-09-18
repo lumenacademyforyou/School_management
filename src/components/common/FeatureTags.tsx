@@ -39,7 +39,8 @@ export const PhaseNotice: React.FC<{ ids: string[]; phase: string; note: string 
 
 export const downloadCsv = (filename: string, headers: string[], rows: (string | number)[][]) => {
   const escape = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
-  const csv = [headers.map(escape).join(','), ...rows.map(r => r.map(escape).join(','))].join('\n');
+  // The UTF-8 marker makes Excel read ₹ and Tamil correctly instead of showing garbled characters.
+  const csv = '﻿' + [headers.map(escape).join(','), ...rows.map(r => r.map(escape).join(','))].join('\r\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);

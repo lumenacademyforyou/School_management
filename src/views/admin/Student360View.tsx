@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { EditIdentifiersModal, EmisDisplay } from '../../components/students/StudentIdentifiers';
+import { EditIdentifiersModal, EmisDisplay, StudentStatusBadge } from '../../components/students/StudentIdentifiers';
 import { useGrants } from '../../hooks/useGrants';
 import { useRoster } from '../../services/studentService';
+import { Figure } from '../../components/common/Figure';
 
 export const Student360View: React.FC = () => {
   const { student, setAdminView, setPtmModalOpen, setLeaveModalOpen, addToast } = useApp();
@@ -73,40 +74,33 @@ Generated on: ${new Date().toLocaleString()}`;
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-subtle to-transparent rounded-full -mr-20 -mt-20 pointer-events-none"></div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-5 md:flex-1 min-w-0">
             <div className="relative">
               <img
                 src={student.avatar}
                 alt={student.name}
                 className="w-24 h-24 rounded-2xl object-cover border-4 border-subtle shadow-md"
               />
-              <span className="absolute -bottom-1 -right-1 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-white shadow-xs">
-                Active
-              </span>
             </div>
 
             <div>
-              <div className="flex flex-wrap items-center gap-2 mb-1">
-                <h1 className="text-xl font-bold font-display text-ink">{student.name}</h1>
-                <span className="bg-subtle text-brand text-xs font-bold px-2.5 py-0.5 rounded-full border border-line">
-                  {student.class} - Section {student.section}
-                </span>
-                <span className="bg-amber-100 text-amber-900 text-xs font-semibold px-2 py-0.5 rounded-full">
-                  Roll #{student.rollNo}
-                </span>
-                <span className="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2 py-0.5 rounded-full">
-                  {student.house}
-                </span>
+              <div className="flex flex-wrap items-center gap-2" data-testid="s360-identity">
+                <h1 className="text-2xl font-bold font-display tracking-tight text-ink">{student.name}</h1>
+                <StudentStatusBadge status={record?.status ?? 'Active'} className="text-[11px]" />
               </div>
-
-              <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-xs text-ink-soft mt-1.5">
-                <span>APAAR ID: <strong className="font-mono text-ink">{student.apaarId}</strong></span>
-                <span>•</span>
-                <span>PEN: <strong className="font-mono text-ink">{student.pen}</strong></span>
-                <span>•</span>
-                <span>Adm No: <strong className="font-mono text-ink">{student.admissionNo}</strong></span>
-                <span>•</span>
-                <span>DOB: <strong>{student.dob}</strong></span>
+              <p className="mt-1 text-sm text-ink-soft flex flex-wrap items-center gap-x-1.5">
+                <span className="font-mono font-semibold text-ink">{student.admissionNo}</span>
+                <span className="text-slate-300">·</span>
+                <span className="whitespace-nowrap">{student.class} – Section {student.section}</span>
+                <span className="text-slate-300">·</span>
+                <span className="whitespace-nowrap">Roll {student.rollNo}</span>
+                <span className="text-slate-300">·</span>
+                <span className="whitespace-nowrap">{student.house}</span>
+              </p>
+              <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-xs text-ink-muted mt-1">
+                <span>APAAR <strong className="font-mono font-semibold text-ink-soft">{student.apaarId}</strong></span>
+                <span>PEN <strong className="font-mono font-semibold text-ink-soft">{student.pen}</strong></span>
+                <span>DOB <strong className="font-semibold text-ink-soft">{student.dob}</strong></span>
               </div>
               {record && (
                 <div className="mt-3 max-w-md">
@@ -116,7 +110,7 @@ Generated on: ${new Date().toLocaleString()}`;
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2.5 md:max-w-[46%] md:justify-end">
             <button
               onClick={() => {
                 window.print();
@@ -171,21 +165,21 @@ Generated on: ${new Date().toLocaleString()}`;
         {/* Holistic Stats Banner */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-subtle">
           <div className="bg-subtle/60 p-3 rounded-xl border border-line">
-            <div className="text-[10px] uppercase font-bold text-ink-muted">Cumulative GPA</div>
-            <div className="text-xl font-bold text-brand mt-0.5">{student.gpa} / 10.0</div>
-            <div className="text-[11px] text-emerald-700 font-semibold">Distinction Track (A1)</div>
-          </div>
-          <div className="bg-subtle/60 p-3 rounded-xl border border-line">
-            <div className="text-[10px] uppercase font-bold text-ink-muted">Term 3 Attendance</div>
-            <div className="text-xl font-bold text-emerald-700 mt-0.5">{student.attendancePct}%</div>
-            <div className="text-[11px] text-ink-soft">Above CBSE 75% quota</div>
-          </div>
-          <div className="bg-subtle/60 p-3 rounded-xl border border-line">
             <div className="text-[10px] uppercase font-bold text-ink-muted">Fee Status</div>
-            <div className="text-xl font-bold text-amber-700 mt-0.5">₹24,500 Due</div>
+            <div className="text-xl font-bold text-amber-700 mt-0.5"><Figure prefix="₹" value="24,500" /> Due</div>
             <div className="text-[11px] text-amber-800 font-semibold cursor-pointer hover:underline" onClick={() => setAdminView('fees')}>
               Pay via Ledger →
             </div>
+          </div>
+          <div className="bg-subtle/60 p-3 rounded-xl border border-line">
+            <div className="text-[10px] uppercase font-bold text-ink-muted">Term 3 Attendance</div>
+            <div className="text-xl font-bold text-emerald-700 mt-0.5"><Figure value={student.attendancePct} suffix="%" /></div>
+            <div className="text-[11px] text-ink-soft">Above CBSE <Figure value="75" suffix="%" /> quota</div>
+          </div>
+          <div className="bg-subtle/60 p-3 rounded-xl border border-line">
+            <div className="text-[10px] uppercase font-bold text-ink-muted">Cumulative GPA</div>
+            <div className="text-xl font-bold text-ink mt-0.5"><Figure value={student.gpa} suffix=" / 10.0" /></div>
+            <div className="text-[11px] text-emerald-700 font-semibold">Distinction Track (A1)</div>
           </div>
           <div className="bg-subtle/60 p-3 rounded-xl border border-line">
             <div className="text-[10px] uppercase font-bold text-ink-muted">Transport & Boarding</div>

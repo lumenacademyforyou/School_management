@@ -92,6 +92,18 @@ export const questionPaperService = {
       return next;
     }),
 
+  /**
+   * A teacher-requested unit test is reviewed by the requesting teacher in the teacher app. Their decision is
+   * applied here with the same rules as any review (reviewer is not the author; sending back needs a comment).
+   */
+  applyTeacherDecision: (paperId: string, action: 'approve' | 'requestChanges', teacher: string, comment: string) => {
+    const paper = qpgStore.get().papers.find(p => p.id === paperId);
+    if (!paper) return;
+    const next = transitionPaper(paper, action, teacher, QPG_TODAY, comment);
+    if ('error' in next) return;
+    qpgStore.set(s => ({ ...s, papers: s.papers.map(p => (p.id === paperId ? next : p)) }));
+  },
+
   saveQuestion: (q: BankQuestion) =>
     respond(() => {
       qpgStore.set(s => ({ ...s, bank: s.bank.some(x => x.id === q.id) ? s.bank.map(x => (x.id === q.id ? q : x)) : [q, ...s.bank] }));

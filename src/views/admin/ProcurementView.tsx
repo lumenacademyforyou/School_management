@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface PurchaseOrder {
   poNo: string;
@@ -155,8 +156,8 @@ export const ProcurementView: React.FC = () => {
           <div className="text-xs space-y-1 text-ink-soft">
             <div>Vendor: <strong>{activePo.vendor}</strong></div>
             <div>Item: {activePo.items}</div>
-            <div>Approved Rate: ₹290 / unit</div>
-            <div className="font-bold text-ink pt-1">Total PO: ₹{activePo.amount.toLocaleString('en-IN')} (incl. GST)</div>
+            <div>Approved Rate: <Figure prefix="₹" value="290" /> / unit</div>
+            <div className="font-bold text-ink pt-1">Total PO: <Figure prefix="₹" value={activePo.amount.toLocaleString('en-IN')} /> (incl. GST)</div>
           </div>
         </div>
 
@@ -187,8 +188,8 @@ export const ProcurementView: React.FC = () => {
           <div className="text-xs space-y-1 text-ink-soft">
             <div>GSTIN: <strong>33AAAC1234F1Z5 (Tamil Nadu)</strong></div>
             <div>GSTR-2B ITC Match: <strong>Auto-Reconciled</strong></div>
-            <div>Invoice Amount: ₹{activePo.amount.toLocaleString('en-IN')}</div>
-            <div className="font-bold text-emerald-700 pt-1">Rate & Quantity Match: 100%</div>
+            <div>Invoice Amount: <Figure prefix="₹" value={activePo.amount.toLocaleString('en-IN')} /></div>
+            <div className="font-bold text-emerald-700 pt-1">Rate & Quantity Match: <Figure value="100" suffix="%" /></div>
           </div>
         </div>
       </div>
@@ -230,7 +231,7 @@ export const ProcurementView: React.FC = () => {
                 <td className="p-3 font-semibold text-ink">{o.vendor}</td>
                 <td className="p-3 text-ink-soft">{o.items}</td>
                 <td className="p-3 text-right font-mono font-bold text-ink">
-                  ₹{o.amount.toLocaleString('en-IN')}
+                  <Figure prefix="₹" value={o.amount.toLocaleString('en-IN')} />
                 </td>
                 <td className="p-3">
                   <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">
@@ -346,10 +347,10 @@ export const ProcurementView: React.FC = () => {
             </div>
 
             <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900 space-y-2">
-              <div className="font-bold text-sm">Releasing ₹{activePo.amount.toLocaleString('en-IN')}</div>
+              <div className="font-bold text-sm">Releasing <Figure prefix="₹" value={activePo.amount.toLocaleString('en-IN')} /></div>
               <div className="text-[11px]">Payee: {activePo.vendor}</div>
               <div className="text-[11px]">Debit A/c: HDFC Escrow Institutional #401099238</div>
-              <div className="text-[11px]">3-Way Match Verification: <strong className="text-emerald-800">100% PASSED</strong></div>
+              <div className="text-[11px]">3-Way Match Verification: <strong className="text-emerald-800"><Figure value="100" suffix="%" /> PASSED</strong></div>
             </div>
 
             <div className="flex justify-end gap-2 pt-2 border-t">

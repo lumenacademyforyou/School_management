@@ -174,7 +174,7 @@ export const LMSCoursesView: React.FC = () => {
                 onChange={e => setAngle(Number(e.target.value))}
                 className="flex-1 accent-accent"
               />
-              <span className="font-mono text-accent font-bold">{angle}°</span>
+              <span className="font-mono text-ink font-bold">{angle}°</span>
             </div>
             <button
               onClick={() => setShowPushModal(true)}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface SubstitutionSuggestion {
   id: string;
@@ -160,7 +161,7 @@ export const TimetableSubstitutionView: React.FC = () => {
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Periods Requiring Coverage</div>
           <div className="text-xl font-bold font-mono text-ink mt-1">{substitutions.length} Periods</div>
-          <div className="text-[11px] text-emerald-600 mt-0.5">100% Covered by Substitutes</div>
+          <div className="text-[11px] text-emerald-600 mt-0.5"><Figure value="100" suffix="%" /> Covered by Substitutes</div>
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Schedule Clashes</div>
@@ -169,7 +170,7 @@ export const TimetableSubstitutionView: React.FC = () => {
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Weekly Workload Balance</div>
-          <div className="text-xl font-bold font-mono text-brand mt-1">26.4 hrs / wk</div>
+          <div className="text-xl font-bold font-mono text-ink mt-1">26.4 hrs / wk</div>
           <div className="text-[11px] text-ink-muted mt-0.5">Target: 28 hrs maximum</div>
         </div>
       </div>

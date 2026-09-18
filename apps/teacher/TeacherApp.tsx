@@ -6,6 +6,7 @@ import {
   LOGO_SRC,
   SideNav,
   Card,
+  DownloadButton,
   EmptyState,
   FeatureFooter,
   Field,
@@ -25,6 +26,7 @@ import {
   useToasts,
 } from '../shared/mobileUi';
 import { InstallAppCard, InstallButton } from '../shared/webApp';
+import { TestPapersScreen, useWaitingPapers } from './TestPapers';
 import { nowStamp, resetBackend, serverMark, updateBackend, useBackend } from '../shared/demoBackend';
 import {
   APP_NOW,
@@ -43,8 +45,10 @@ import { moderationFlags } from '../../src/data/messaging';
 import { DEFAULT_LATE_FEE, FEES_AS_OF, INITIAL_CONCESSIONS, INITIAL_INVOICES, INITIAL_PAYMENTS, computeLedger } from '../../src/data/fees';
 import { grantFor } from '../../src/data/permissions';
 import { OutboxEntry, refreshSnapshot, resolveConflict, syncOutbox, useDevice } from './teacherDevice';
+import { Money } from '../../src/components/common/Figure';
+import { EmptyNote } from '../shared/mobileUi';
 
-type Tab = 'today' | 'attendance' | 'marks' | 'homework' | 'messages';
+type Tab = 'today' | 'attendance' | 'marks' | 'tests' | 'homework' | 'messages';
 
 const CODE_LABEL = Object.fromEntries(DEFAULT_STATUS_CODES.map(c => [c.code, c.label])) as Record<StatusCode, string>;
 const CODE_STYLE: Record<StatusCode, string> = {
@@ -52,7 +56,7 @@ const CODE_STYLE: Record<StatusCode, string> = {
   L: 'bg-lime-500 text-white',
   HD: 'bg-amber-400 text-white',
   A: 'bg-rose-500 text-white',
-  LV: 'bg-sky-500 text-white',
+  LV: 'bg-slate-500 text-white',
   EX: 'bg-indigo-400 text-white',
   MD: 'bg-violet-500 text-white',
 };
@@ -221,7 +225,7 @@ const TodayScreen: React.FC = () => {
       </div>
 
       <Card title="My periods today">
-        {periods.length === 0 && <p className="text-[13px] text-slate-500">No classes today.</p>}
+        {periods.length === 0 && <EmptyNote>No classes today.</EmptyNote>}
         {periods.map(p => {
           const now = p.start <= APP_NOW && APP_NOW < p.end;
           return (
@@ -238,7 +242,7 @@ const TodayScreen: React.FC = () => {
 
       {classSection && (
         <Card title={`Leave requests · ${classSection}`}>
-          {pendingLeaves.length === 0 && <p className="text-[13px] text-slate-500">Nothing waiting.</p>}
+          {pendingLeaves.length === 0 && <EmptyNote>Nothing waiting.</EmptyNote>}
           {pendingLeaves.map(l => {
             const kid = liveChildren().find(s => s.id === l.studentId);
             return (
@@ -263,7 +267,7 @@ const TodayScreen: React.FC = () => {
 
       {classSection && (
         <Card title="Class notices" action={<button onClick={() => setNoticeOpen(true)} className="text-[12px] font-semibold text-[var(--accent)]">New</button>}>
-          {myNotices.length === 0 && <p className="text-[13px] text-slate-500">No notices sent.</p>}
+          {myNotices.length === 0 && <EmptyNote>No notices sent.</EmptyNote>}
           {myNotices.map(n => {
             const families = new Set(roster(n.section).map(s => s.guardianMobile)).size;
             const acks = (backend.acks[n.id] ?? []).length;
@@ -304,7 +308,6 @@ const TodayScreen: React.FC = () => {
 // Class fee dues (FEE-028 — class teacher: own section only, amount visible, concession reason hidden)
 // ---------------------------------------------------------------------------
 
-const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
 
 const ClassDuesCard: React.FC = () => {
   const { classSection, roster, backend } = useTeacher();
@@ -342,7 +345,7 @@ const ClassDuesCard: React.FC = () => {
       }
     >
       <p className="text-[13px]">
-        <span className="font-semibold">{rows.length}</span> student(s) owe <span className="font-semibold">{inr(total)}</span>
+        <span className="font-semibold">{rows.length}</span> student(s) owe <span className="font-semibold"><Money value={total} /></span>
       </p>
       {open && (
         <div className="mt-2 divide-y divide-slate-100">
@@ -353,12 +356,12 @@ const ClassDuesCard: React.FC = () => {
                 {r.concession && <span className="ml-1"><Pill tone="grey">Concession</Pill></span>}
               </span>
               <span className="text-right">
-                <span className="block text-[14px] font-semibold">{inr(r.due)}</span>
+                <span className="block text-[14px] font-semibold"><Money value={r.due} /></span>
                 {r.overdueDays > 0 && <span className="block text-[11px] text-rose-600">{r.overdueDays} days overdue</span>}
               </span>
             </div>
           ))}
-          {rows.length === 0 && <p className="py-2 text-[13px] text-slate-500">Nothing due.</p>}
+          {rows.length === 0 && <EmptyNote>Nothing due.</EmptyNote>}
         </div>
       )}
       <p className="mt-2 text-[11px] text-slate-500">
@@ -445,6 +448,15 @@ const AttendanceScreen: React.FC = () => {
     }
   };
 
+  const registerData = () => ({
+    title: `Attendance ${section} ${date}`,
+    headers: ['Roll no', 'Student', 'Status', 'Reason', 'Arrived at'],
+    rows: students.map(s => {
+      const d = current(s.id);
+      return [s.rollNo, s.name, CODE_LABEL[d.code], d.reason, d.arrivedAt];
+    }),
+  });
+
   const refresh = () => {
     if (!device.online) return push('Connect to the internet to refresh', 'warn');
     setDevice(refreshSnapshot(device, section, date));
@@ -479,7 +491,7 @@ const AttendanceScreen: React.FC = () => {
         </div>
         <div className="mt-2 flex flex-wrap gap-1.5">
           {Object.entries(counts).map(([c, n]) => (
-            <Pill key={c} tone={c === 'P' ? 'green' : c === 'A' ? 'red' : 'blue'}>
+            <Pill key={c} tone={c === 'P' ? 'green' : c === 'A' ? 'red' : 'grey'}>
               {CODE_LABEL[c as StatusCode]} {n}
             </Pill>
           ))}
@@ -582,6 +594,7 @@ const AttendanceScreen: React.FC = () => {
           Sync {device.outbox.length} saved list(s) now
         </SecondaryButton>
       )}
+      <DownloadButton className="w-full" title={`${section} register`} getData={registerData} onDone={m => push(m)} />
       <FeatureFooter ids={['ATT-002', 'ATT-003', 'ATT-004', 'ATT-005', 'ATT-006', 'ATT-012']} />
     </Screen>
   );
@@ -625,7 +638,7 @@ const MarksScreen: React.FC = () => {
                 {s?.status === 'Submitted' ? <Pill tone="green">Submitted</Pill> : a.dueOn < APP_TODAY ? <Pill tone="red">Overdue</Pill> : <Pill tone="amber">Due {fmtDate(a.dueOn)}</Pill>}
               </div>
               <div className="mt-2 h-1.5 rounded-full bg-slate-100 overflow-hidden">
-                <div className="h-full bg-[var(--accent)]" style={{ width: `${(entered / total) * 100}%` }} />
+                <div className="h-full bg-slate-500" style={{ width: `${(entered / total) * 100}%` }} />
               </div>
               <p className="mt-1 text-[11px] text-slate-500">
                 {entered} of {total} entered
@@ -661,6 +674,19 @@ const MarksScreen: React.FC = () => {
           Class average {avg ?? '—'} · {missing} missing · {errs.length} invalid
         </p>
         {locked && <p className="mt-1 text-[12px] text-emerald-700">Submitted {sheet?.savedAt} — sent to the HOD for moderation. Ask the HOD to reopen it for changes.</p>}
+        <DownloadButton
+          className="mt-3 w-full"
+          title={`${assessment.title} marks ${assessment.section}`}
+          onDone={m => push(m)}
+          getData={() => ({
+            title: `${assessment.title} · ${assessment.section} · ${assessment.subject}`,
+            headers: ['Roll no', 'Student', `Marks (out of ${assessment.max})`],
+            rows: students.map(s => {
+              const v = (values[s.id] ?? '').trim().toUpperCase();
+              return [s.rollNo, s.name, /^\d+(\.\d+)?$/.test(v) ? Number(v) : v];
+            }),
+          })}
+        />
       </Card>
       <Card className="!p-0">
         <div className="divide-y divide-slate-100">
@@ -885,15 +911,17 @@ const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => v
   const session = useTeacherSession(teacher, onSignOut);
   const { tab, setTab, device, setDevice, resetDevice, awaitingReply, pendingLeaves, toasts, push, sync } = session;
   const [menu, setMenu] = useState(false);
+  const waitingPapers = useWaitingPapers(teacher.id);
 
   const tabs: TabDef<Tab>[] = [
     { id: 'today', label: 'Today', icon: 'today', badge: pendingLeaves.length },
     { id: 'attendance', label: 'Attendance', icon: 'fact_check', badge: device.conflicts.length },
     { id: 'marks', label: 'Marks', icon: 'grading' },
+    { id: 'tests', label: 'Tests', icon: 'quiz', badge: waitingPapers },
     { id: 'homework', label: 'Homework', icon: 'menu_book' },
     { id: 'messages', label: 'Messages', icon: 'chat', badge: awaitingReply },
   ];
-  const titles: Record<Tab, string> = { today: 'Lumen Teacher', attendance: 'Attendance', marks: 'Marks entry', homework: 'Homework', messages: 'Parent messages' };
+  const titles: Record<Tab, string> = { today: 'Lumen Teacher', attendance: 'Attendance', marks: 'Marks entry', tests: 'Unit test papers', homework: 'Homework', messages: 'Parent messages' };
   const pending = device.outbox.length;
 
   const signOut = () => {
@@ -920,10 +948,12 @@ const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => v
         return <HomeworkScreen />;
       case 'messages':
         return <MessagesScreen />;
+      case 'tests':
+        return <TestPapersScreen teacher={teacher} push={push} />;
       default:
         return <TodayScreen />;
     }
-  }, [tab]);
+  }, [tab, teacher, push]);
 
   const sidebar = (
     <SideNav<Tab>

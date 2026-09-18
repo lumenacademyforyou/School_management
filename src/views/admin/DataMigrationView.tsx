@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface MappingRow {
   source: string;
@@ -281,7 +282,7 @@ export const DataMigrationView: React.FC = () => {
               </p>
             </div>
             <span className="text-xs font-mono font-bold bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg border border-emerald-200">
-              100% Schema Compatible
+              <Figure value="100" suffix="%" /> Schema Compatible
             </span>
           </div>
 

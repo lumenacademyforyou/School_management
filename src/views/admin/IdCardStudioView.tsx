@@ -22,6 +22,7 @@ import {
   isValidRfid,
   nextCardNumber,
 } from '../../data/idCards';
+import { EmptyNote } from '../../components/common/EmptyNote';
 
 // ---------------------------------------------------------------------------
 // Template model
@@ -648,7 +649,7 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                 ))}
               </tbody>
             </table>
-            {rows.length === 0 && <p className="p-6 text-center text-xs text-ink-muted">No holders match these filters.</p>}
+            {rows.length === 0 && <EmptyNote>No holders match these filters.</EmptyNote>}
           </div>
           {printLog.length > 0 && (
             <div className="p-3 border-t border-subtle text-[11px] text-ink-soft space-y-0.5">

@@ -10,6 +10,7 @@ import { hostelService } from '../../src/services/hostelService';
 import { APP_NOW } from '../shared/schoolData';
 import { THEME_OPTIONS, ThemeChoice, resolveTheme, useTheme } from '../shared/settingsService';
 import { Card, EmptyState, ErrorCard, FeatureFooter, Icon, LoadingCard, Pill, Screen, SecondaryButton, cx, fmtDate, useAsync } from '../shared/mobileUi';
+import { Figure } from '../../src/components/common/Figure';
 
 const firstName = (name: string) => name.split(' ')[0];
 const time12 = (hhmm: string) => {
@@ -156,10 +157,10 @@ export const HallOfFamePage: React.FC<{ child: RosterStudent; lowData: boolean; 
 // Transport
 // ---------------------------------------------------------------------------
 
-const PHASE_TONE: Record<TripState['phase'], 'green' | 'amber' | 'blue' | 'grey'> = {
+const PHASE_TONE: Record<TripState['phase'], 'green' | 'amber' | 'grey'> = {
   'Not started': 'grey',
   'On route': 'green',
-  'Reached school': 'blue',
+  'Reached school': 'green',
   'Drop trip on route': 'green',
   'All dropped': 'grey',
 };
@@ -366,7 +367,7 @@ export const TransportPage: React.FC<{ child: RosterStudent }> = ({ child }) => 
 // Hostel
 // ---------------------------------------------------------------------------
 
-const ROLL_TONE: Record<RollCallStatus, 'green' | 'amber' | 'blue' | 'red'> = { Present: 'green', Late: 'amber', 'On outpass': 'blue', Absent: 'red' };
+const ROLL_TONE: Record<RollCallStatus, 'green' | 'amber' | 'grey' | 'red'> = { Present: 'green', Late: 'amber', 'On outpass': 'grey', Absent: 'red' };
 const OUTPASS_TONE = { Pending: 'amber', Approved: 'green', Rejected: 'red', Returned: 'grey' } as const;
 
 export const HostelCard: React.FC<{ child: RosterStudent; onOpen: () => void }> = ({ child, onOpen }) => {
@@ -464,7 +465,7 @@ export const HostelPage: React.FC<{ child: RosterStudent }> = ({ child }) => {
         <Row label="Mess" value={r.mess} />
       </Card>
 
-      <Card title="Night roll call" action={<span className="text-[12px] font-semibold text-slate-700">{h.attendancePct}% present</span>}>
+      <Card title="Night roll call" action={<span className="text-[12px] font-semibold text-slate-700"><Figure value={h.attendancePct} suffix="%" /> present</span>}>
         {h.rollCalls.map(c => (
           <div key={c.date} className="flex items-center justify-between py-1.5 border-b last:border-0 border-slate-100 text-[13px]">
             <span>{fmtDate(c.date)}</span>

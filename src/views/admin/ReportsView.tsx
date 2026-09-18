@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { FeatureTags, PhaseNotice, downloadCsv } from '../../components/common/FeatureTags';
+import { Figure } from '../../components/common/Figure';
 
 type DashboardRole = 'Principal' | 'Branch Admin' | 'Teacher' | 'Accountant' | 'Admissions Officer' | 'Parent';
 
@@ -359,7 +360,7 @@ export const ReportsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'dash
                         </td>
                         <td className="p-3">{i.dueDate}</td>
                         <td className="p-3 font-bold">{i.status}</td>
-                        <td className="p-3 text-right font-mono">₹{(i.balance ?? i.amount).toLocaleString('en-IN')}</td>
+                        <td className="p-3 text-right font-mono"><Figure prefix="₹" value={(i.balance ?? i.amount).toLocaleString('en-IN')} /></td>
                       </tr>
                     ))}
                   {drill === 'funnel' &&

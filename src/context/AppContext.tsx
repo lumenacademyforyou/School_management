@@ -15,6 +15,9 @@ import {
 import { HOME_VIEW, STAFF_ACCOUNTS, StaffAccount } from '../data/staffAccess';
 import { INITIAL_ROSTER, toProfile } from '../data/students';
 
+/** Table density; a per-user display preference. */
+export type Density = 'comfortable' | 'compact';
+
 export interface ToastMessage {
   id: string;
   title: string;
@@ -28,6 +31,10 @@ interface AppContextType {
   currentUser: AuthUser;
   signIn: (account: StaffAccount) => void;
   logout: () => void;
+
+  // Display preferences (per signed-in user, for this browser session)
+  density: Density;
+  setDensity: (density: Density) => void;
 
   // Navigation
   adminView: AdminView;
@@ -71,6 +78,9 @@ interface AppContextType {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   toggleSidebar: () => void;
+  /** Desktop: sidebar narrowed to icons. Remembered on this device. */
+  sidebarCollapsed: boolean;
+  toggleSidebarCollapsed: () => void;
 
   // Toast
   toasts: ToastMessage[];
@@ -79,6 +89,8 @@ interface AppContextType {
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
+
+const SIDEBAR_KEY = 'lumen.sidebar.collapsed';
 
 const toAuthUser = (a: StaffAccount): AuthUser => ({
   id: a.id,
@@ -99,6 +111,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentUser, setCurrentUser] = useState<AuthUser>(() => toAuthUser(STAFF_ACCOUNTS[0]));
 
   const [adminView, setAdminView] = useState<AdminView>('dashboard');
+  const [densityByUser, setDensityByUser] = useState<Record<string, Density>>({});
+  const density = densityByUser[currentUser.id] ?? 'comfortable';
+  const setDensity = useCallback((next: Density) => setDensityByUser(prev => ({ ...prev, [currentUser.id]: next })), [currentUser.id]);
 
   const [campuses, setCampuses] = useState<Campus[]>(CAMPUSES);
   const [selectedCampus, setSelectedCampus] = useState<Campus>(CAMPUSES[0]);
@@ -117,6 +132,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+    try {
+      return window.localStorage.getItem(SIDEBAR_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
+  const toggleSidebarCollapsed = useCallback(() => {
+    setSidebarCollapsed(prev => {
+      try {
+        window.localStorage.setItem(SIDEBAR_KEY, prev ? '0' : '1');
+      } catch {
+        // Storage unavailable: the choice lasts until reload
+      }
+      return !prev;
+    });
+  }, []);
 
   const toggleSidebar = useCallback(() => {
     setSidebarOpen(prev => !prev);
@@ -198,6 +231,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         currentUser,
         signIn,
         logout,
+        density,
+        setDensity,
         adminView,
         setAdminView,
         selectedCampus,
@@ -225,6 +260,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         sidebarOpen,
         setSidebarOpen,
         toggleSidebar,
+        sidebarCollapsed,
+        toggleSidebarCollapsed,
         toasts,
         addToast,
         removeToast,

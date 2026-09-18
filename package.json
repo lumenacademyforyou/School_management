@@ -9,6 +9,7 @@
     "dev:parent": "vite --mode parent --port=3001 --host=0.0.0.0",
     "dev:teacher": "vite --mode teacher --port=3002 --host=0.0.0.0",
     "dev:apps": "vite --mode apps --port=3003 --host=0.0.0.0",
+    "dev:demo": "vite --mode demo --port=3004 --host=0.0.0.0",
     "build": "vite build && vite build --mode parent && vite build --mode teacher",
     "build:admin": "vite build",
     "build:parent": "vite build --mode parent",

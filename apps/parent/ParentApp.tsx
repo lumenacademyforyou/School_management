@@ -69,13 +69,15 @@ import { hostelFor } from '../../src/data/hostel';
 import { hallOfFameService } from '../../src/services/hallOfFameService';
 import { useTheme } from '../shared/settingsService';
 import { AppearancePage, HallOfFameCard, HallOfFamePage, HostelCard, HostelPage, TransportCard, TransportPage } from './StudentLife';
+import { Figure, Money } from '../../src/components/common/Figure';
+import { DownloadButton, EmptyNote } from '../shared/mobileUi';
 
 type Tab = 'home' | 'attendance' | 'fees' | 'messages' | 'more' | 'homework';
 type Page = null | 'results' | 'timetable' | 'homework' | 'notices' | 'profile' | 'consent' | 'settings' | 'appearance' | 'hall-of-fame' | 'transport' | 'hostel' | 'later';
 
-const STATUS_TONE: Record<string, 'green' | 'red' | 'amber' | 'blue' | 'grey'> = { P: 'green', L: 'amber', HD: 'amber', A: 'red', LV: 'blue', EX: 'blue', MD: 'blue' };
+const STATUS_TONE: Record<string, 'green' | 'red' | 'amber' | 'grey'> = { P: 'green', L: 'amber', HD: 'amber', A: 'red', LV: 'grey', EX: 'grey', MD: 'grey' };
 const CODE_LABEL = Object.fromEntries(DEFAULT_STATUS_CODES.map(c => [c.code, c.label])) as Record<string, string>;
-const CAL_COLOUR: Record<string, string> = { P: 'bg-emerald-500', L: 'bg-lime-500', HD: 'bg-amber-400', A: 'bg-rose-500', LV: 'bg-sky-500', EX: 'bg-indigo-400', MD: 'bg-violet-500' };
+const CAL_COLOUR: Record<string, string> = { P: 'bg-emerald-500', L: 'bg-lime-500', HD: 'bg-amber-400', A: 'bg-rose-500', LV: 'bg-slate-400', EX: 'bg-indigo-400', MD: 'bg-violet-500' };
 
 // ---------------------------------------------------------------------------
 // Login (IAM-002: mobile + OTP)
@@ -206,7 +208,7 @@ const HomeScreen: React.FC = () => {
         {!studentMode ? (
           <Card onClick={() => setTab('fees')}>
             <p className="text-[12px] text-slate-500">{due > 0 ? t('feeDue') : t('allPaid')}</p>
-            <p className={cx('mt-1 text-[22px] font-bold', due > 0 ? 'text-rose-600' : 'text-emerald-600')}>{inrWhole(due)}</p>
+            <p className={cx('mt-1 text-[22px] font-bold', due > 0 ? 'text-rose-600' : 'text-emerald-600')}><Money value={due} /></p>
             {due > 0 && <p className="text-[11px] text-slate-500">{ledger.invoices.filter(i => i.balance > 0).length} open invoice(s)</p>}
           </Card>
         ) : (
@@ -304,7 +306,7 @@ const AttendanceScreen: React.FC = () => {
         </Card>
         <Card>
           <p className={cx('text-[20px] font-bold', pct && pct.pct < 75 ? 'text-rose-600' : 'text-emerald-600')}>{pct && pct.pct < 75 ? 'Low' : 'OK'}</p>
-          <p className="text-[11px] text-slate-500">75% needed</p>
+          <p className="text-[11px] text-slate-500"><Figure value="75" suffix="%" /> needed</p>
         </Card>
       </div>
 
@@ -355,7 +357,7 @@ const AttendanceScreen: React.FC = () => {
       <PrimaryButton onClick={() => setLeaveOpen(true)}>{t('applyLeave')}</PrimaryButton>
 
       <Card title="Leave requests">
-        {leaves.length === 0 && <p className="text-[13px] text-slate-500">No leave requests.</p>}
+        {leaves.length === 0 && <EmptyNote>No leave requests.</EmptyNote>}
         {leaves.map(l => (
           <div key={l.id} className="py-2 border-b last:border-0 border-slate-100 flex items-start justify-between gap-2">
             <div>
@@ -431,7 +433,7 @@ const FeesScreen: React.FC = () => {
     <Screen>
       <Card>
         <p className="text-[12px] text-slate-500">{due > 0 ? t('feeDue') : t('allPaid')}</p>
-        <p className={cx('text-[30px] font-bold', due > 0 ? 'text-rose-600' : 'text-emerald-600')}>{inrWhole(due)}</p>
+        <p className={cx('text-[30px] font-bold', due > 0 ? 'text-rose-600' : 'text-emerald-600')}><Money value={due} /></p>
         {due > 0 && (
           <PrimaryButton onClick={() => setPaying(true)} className="mt-3">
             {t('payNow')}
@@ -446,38 +448,58 @@ const FeesScreen: React.FC = () => {
               <span>
                 <span className="block text-[14px] text-slate-900">{s.invoice.instalment} instalment</span>
                 <span className="block text-[12px] text-slate-500">
-                  Due {fmtDate(s.invoice.dueDate)} · {inrWhole(s.principal)}
+                  Due {fmtDate(s.invoice.dueDate)} · <Money value={s.principal} />
                 </span>
               </span>
-              {s.balance > 0 ? <Pill tone={s.daysOverdue > 0 ? 'red' : 'amber'}>{inrWhole(s.balance)} due</Pill> : <Pill tone="green">Paid</Pill>}
+              {s.balance > 0 ? <Pill tone={s.daysOverdue > 0 ? 'red' : 'amber'}><Money value={s.balance} /> due</Pill> : <Pill tone="green">Paid</Pill>}
             </summary>
             <div className="mt-2 rounded-xl bg-slate-50 p-2 text-[12px] space-y-1">
               {s.invoice.lines.map(l => (
                 <p key={l.head} className="flex justify-between">
                   <span>
                     {headByCode(l.head).name}
-                    {l.concession > 0 && <span className="text-emerald-700"> (−{inrWhole(l.concession)})</span>}
+                    {l.concession > 0 && <span className="text-emerald-700"> (−<Money value={l.concession} />)</span>}
                   </span>
-                  <span className="font-mono">{inrWhole(l.net)}</span>
+                  <span className="font-mono"><Money value={l.net} /></span>
                 </p>
               ))}
               {s.lateFee > 0 && (
                 <p className="flex justify-between text-rose-700">
                   <span>Late fee</span>
-                  <span className="font-mono">{inrWhole(s.lateFee)}</span>
+                  <span className="font-mono"><Money value={s.lateFee} /></span>
                 </p>
               )}
             </div>
           </details>
         ))}
+        <DownloadButton
+          className="mt-3 w-full"
+          title={`fee statement ${child.name.split(' ')[0]}`}
+          onDone={m => push(m)}
+          getData={() => ({
+            title: `Fee statement · ${child.name} · ${child.admissionNo}`,
+            headers: ['Item', 'Date', 'Amount', 'Paid', 'Balance', 'Status'],
+            rows: [
+              ...ledger.invoices.map(s => [
+                `${s.invoice.invoiceNo} · ${s.invoice.instalment} instalment`,
+                s.invoice.dueDate,
+                { v: s.principal + s.lateFee, fmt: 'money' as const },
+                { v: s.principalPaid + s.lateFeePaid, fmt: 'money' as const },
+                { v: s.balance, fmt: 'money' as const },
+                s.balance <= 0 ? 'Paid' : s.daysOverdue > 0 ? `Overdue ${s.daysOverdue} days` : 'Due',
+              ]),
+              ...myPayments.map(p => [`Receipt ${p.receiptNo ?? p.id} · ${p.mode}`, p.date, '', { v: p.amount, fmt: 'money' as const }, '', 'Received']),
+            ],
+          })}
+        />
       </Card>
 
       <Card title="Payments">
-        {myPayments.length === 0 && <p className="text-[13px] text-slate-500">No payments yet.</p>}
+        {myPayments.length === 0 && <EmptyNote>No payments yet.</EmptyNote>}
         {myPayments.map(p => (
           <button key={p.id} onClick={() => setReceipt(p)} className="w-full text-left py-2 border-b last:border-0 border-slate-100 flex items-center justify-between">
             <span>
-              <span className="block text-[14px] text-slate-900">{inrWhole(p.amount)}</span>
+              <span className="block text-[14px] text-slate-900"><Money value={p.amount} /></span>
               <span className="block text-[12px] text-slate-500">
                 {fmtDate(p.date)} · {p.mode} · {p.receiptNo}
               </span>
@@ -497,12 +519,12 @@ const FeesScreen: React.FC = () => {
               </button>
             ))}
             <p className="text-[12px] text-slate-500">The amount is settled against the oldest invoice first. A receipt is issued straight away.</p>
-            <PrimaryButton onClick={pay}>Pay {inrWhole(due)}</PrimaryButton>
+            <PrimaryButton onClick={pay}>Pay <Money value={due} /></PrimaryButton>
           </>
         ) : (
-          <div className="py-6 text-center text-[14px] text-slate-600">
-            <Icon name="progress_activity" className="text-[32px] animate-spin text-[var(--accent-ink)]" />
-            <p className="mt-2">Waiting for {method} confirmation…</p>
+          <div className="py-6 space-y-3 text-center text-[14px] text-slate-600" role="status">
+            <div className="progress-indeterminate mx-auto max-w-[220px]" aria-hidden="true" />
+            <p>Waiting for {method} confirmation…</p>
           </div>
         )}
       </Sheet>
@@ -521,12 +543,12 @@ const FeesScreen: React.FC = () => {
               {allocations.map((a, i) => (
                 <p key={i} className="flex justify-between">
                   <span>{a.head === 'LATE' ? 'Late fee' : headByCode(a.head).name}</span>
-                  <span className="font-mono">{inrWhole(a.amount)}</span>
+                  <span className="font-mono"><Money value={a.amount} /></span>
                 </p>
               ))}
               <p className="flex justify-between font-semibold border-t border-slate-200 pt-1">
                 <span>Total</span>
-                <span className="font-mono">{inrWhole(receipt.amount)}</span>
+                <span className="font-mono"><Money value={receipt.amount} /></span>
               </p>
             </div>
             <SecondaryButton onClick={() => window.print()} className="w-full">
@@ -595,7 +617,7 @@ const MessagesScreen: React.FC = () => {
               </p>
             </div>
           ))}
-          {thread.messages.length === 0 && <p className="text-center text-[13px] text-slate-500">Say hello to {thread.teacher}.</p>}
+          {thread.messages.length === 0 && <EmptyNote>Say hello to {thread.teacher}.</EmptyNote>}
           <p className="text-center text-[11px] text-slate-400">Your phone number is not shared with teachers.</p>
         </div>
         <div className="shrink-0 bg-[var(--surface)] border-t border-slate-200 p-2 flex gap-2">
@@ -703,7 +725,7 @@ const TermResultsCard: React.FC = () => {
   const max = results.reduce((n, r) => n + r.max, 0);
   const p = Math.round((total / max) * 1000) / 10;
   return (
-    <Card title={term.name} action={<Pill tone="blue">{gradeFor(p)}</Pill>}>
+    <Card title={term.name} action={<Pill>{gradeFor(p)}</Pill>}>
       {results.map(r => (
         <div key={r.subject} className="py-1.5" data-term-result={r.subject}>
           <div className="flex justify-between gap-2 text-[13px]">
@@ -726,7 +748,7 @@ const TermResultsCard: React.FC = () => {
         </div>
       ))}
       <p className="mt-2 text-[13px] font-semibold">
-        Total {total}/{max} · {p}%
+        Total {total}/{max} · <Figure value={p} suffix="%" />
       </p>
       <p className="text-[11px] text-slate-500">
         {term.academicYear} · published {fmtDate(term.publishedOn)}
@@ -751,7 +773,7 @@ return (
       const max = rows.length * exam.max;
       const p = Math.round((total / max) * 1000) / 10;
       return (
-        <Card key={exam.id} title={exam.name} action={<Pill tone="blue">{gradeFor(p)}</Pill>}>
+        <Card key={exam.id} title={exam.name} action={<Pill>{gradeFor(p)}</Pill>}>
           {rows.map(r => (
             <div key={r.subject} className="py-1.5">
               <div className="flex justify-between text-[13px]">
@@ -768,7 +790,7 @@ return (
             </div>
           ))}
           <p className="mt-2 text-[13px] font-semibold">
-            Total {total}/{max} · {p}%
+            Total {total}/{max} · <Figure value={p} suffix="%" />
           </p>
           <p className="text-[11px] text-slate-500">Published {fmtDate(exam.publishedOn)}</p>
         </Card>

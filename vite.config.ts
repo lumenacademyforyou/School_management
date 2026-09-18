@@ -8,12 +8,15 @@ import {defineConfig, type Plugin} from 'vite';
 //   parent          -> apps/parent/        -> dist/parent
 //   teacher         -> apps/teacher/       -> dist/teacher
 //   apps (dev only) -> both web apps on one origin (/parent/, /teacher/) so they share the demo store
+//   demo (dev only) -> all three on one origin (/, /apps/parent/, /apps/teacher/), so work handed between the
+//                      console and the web apps (e.g. unit-test paper requests) is shared in the browser
 // The parent and teacher apps are installable web apps: each build also gets manifest.webmanifest and sw.js.
 const APPS = {
   admin: '.',
   parent: 'apps/parent',
   teacher: 'apps/teacher',
   apps: 'apps',
+  demo: '.',
 } as const;
 type AppName = keyof typeof APPS;
 
@@ -126,7 +129,8 @@ self.addEventListener('fetch', event => {
 
 /** Adds the manifest link, serves the manifest in development and emits manifest + service worker at build. */
 const webAppFiles = (only?: WebAppName): Plugin => {
-  const appOf = (urlPath: string): WebAppName | undefined => only ?? (Object.keys(WEB_APPS) as WebAppName[]).find(a => urlPath.startsWith(`/${a}/`));
+  const appOf = (urlPath: string): WebAppName | undefined =>
+    only ?? (Object.keys(WEB_APPS) as WebAppName[]).find(a => urlPath.startsWith(`/${a}/`) || urlPath.startsWith(`/apps/${a}/`));
   return {
     name: 'lumen-web-app-files',
     transformIndexHtml(html, ctx) {
@@ -145,8 +149,8 @@ const webAppFiles = (only?: WebAppName): Plugin => {
         const app = appOf(url);
         if (!app) return next();
         res.setHeader('Content-Type', 'application/manifest+json');
-        // In the combined dev server the logos live at the root, one level above /parent/ and /teacher/.
-        res.end(manifestFor(app, only ? '' : '../'));
+        // In the combined dev servers the logos live at the root, above /parent/ or /apps/parent/.
+        res.end(manifestFor(app, only ? '' : url.startsWith('/apps/') ? '../../' : '../'));
       });
     },
     generateBundle(_options, bundle) {
@@ -172,7 +176,12 @@ export default defineConfig(({mode}) => {
     // Each app keeps its own pre-bundle cache so running all three together doesn't thrash it.
     cacheDir: path.resolve(__dirname, 'node_modules/.vite', app),
     publicDir: path.resolve(__dirname, 'public'),
-    plugins: [react(), tailwindcss(), ...(app === 'admin' ? [hideOtherApps()] : [webAppFiles(app === 'apps' ? undefined : app)])],
+    plugins: [react(), tailwindcss(), ...(app === 'admin' ? [hideOtherApps()] : [webAppFiles(app === 'apps' || app === 'demo' ? undefined : app)])],
+    // The demo server hosts the web apps itself, so the console's links point to them on the same origin.
+    define:
+      app === 'demo'
+        ? {'import.meta.env.VITE_PARENT_APP_URL': JSON.stringify('/apps/parent/'), 'import.meta.env.VITE_TEACHER_APP_URL': JSON.stringify('/apps/teacher/')}
+        : undefined,
     build: {
       outDir: path.resolve(__dirname, 'dist', app),
       emptyOutDir: true,
@@ -181,7 +190,7 @@ export default defineConfig(({mode}) => {
       fs: {allow: [__dirname]},
     },
     preview: {
-      port: {admin: 4000, parent: 4001, teacher: 4002, apps: 4003}[app],
+      port: {admin: 4000, parent: 4001, teacher: 4002, apps: 4003, demo: 4004}[app],
     },
   };
 });

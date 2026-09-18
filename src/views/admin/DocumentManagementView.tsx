@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface DocumentRecord {
   id: string;
@@ -181,10 +182,10 @@ export const DocumentManagementView: React.FC = () => {
           <div className="text-[11px] font-bold text-ink-muted uppercase">Cloud Storage Quota (DOC-014)</div>
           <div className="flex items-baseline justify-between mt-1">
             <span className="text-lg font-bold font-mono text-ink">42.8 GB / 100 GB</span>
-            <span className="text-xs font-bold text-emerald-600">42.8% used</span>
+            <span className="text-xs font-bold text-ink-soft"><Figure value="42.8" suffix="%" /> used</span>
           </div>
           <div className="w-full h-1.5 bg-slate-100 rounded-full mt-2 overflow-hidden">
-            <div className="h-full bg-brand rounded-full w-[42.8%]"></div>
+            <div className="h-full bg-slate-500 rounded-full w-[42.8%]"></div>
           </div>
         </div>
 
@@ -194,7 +195,7 @@ export const DocumentManagementView: React.FC = () => {
             <span className="material-symbols-outlined text-emerald-600 text-base">verified_user</span>
             <span>ClamAV Engine Clean</span>
           </div>
-          <div className="text-[11px] text-ink-muted mt-1">100% of uploaded files scanned before preview</div>
+          <div className="text-[11px] text-ink-muted mt-1"><Figure value="100" suffix="%" /> of uploaded files scanned before preview</div>
         </div>
 
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">

@@ -44,6 +44,8 @@ import {
   seatStatus,
   waitlistFor,
 } from '../../data/admissions';
+import { Figure } from '../../components/common/Figure';
+import { EmptyNote } from '../../components/common/EmptyNote';
 
 type Tab = 'pipeline' | 'enquiries' | 'applications' | 'decisions' | 'offers' | 'analytics';
 
@@ -60,11 +62,11 @@ const PIPELINE: Stage[] = ['Document check', 'Assessment', 'Decision', 'Waitlist
 const CLOSED: Stage[] = ['Rejected', 'Withdrawn'];
 
 const STAGE_STYLE: Record<Stage, string> = {
-  'Document check': 'bg-sky-50 text-sky-700 border-sky-200',
+  'Document check': 'bg-slate-100 text-slate-700 border-slate-300',
   Assessment: 'bg-indigo-50 text-indigo-700 border-indigo-200',
   Decision: 'bg-amber-50 text-amber-700 border-amber-200',
   Waitlisted: 'bg-orange-50 text-orange-700 border-orange-200',
-  Offer: 'bg-teal-50 text-teal-700 border-teal-200',
+  Offer: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   Enrolled: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   Rejected: 'bg-rose-50 text-rose-700 border-rose-200',
   Withdrawn: 'bg-slate-100 text-slate-600 border-slate-200',
@@ -72,7 +74,7 @@ const STAGE_STYLE: Record<Stage, string> = {
 
 const DOC_STYLE: Record<string, string> = {
   Missing: 'text-slate-500',
-  Uploaded: 'text-sky-700',
+  Uploaded: 'text-amber-700',
   Verified: 'text-emerald-700',
   Rejected: 'text-rose-700',
 };
@@ -662,7 +664,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
             }
           >
             <div className="divide-y divide-subtle">
-              {visibleEnquiries.length === 0 && <p className="p-4 text-xs text-ink-muted">No enquiries in this view.</p>}
+              {visibleEnquiries.length === 0 && <EmptyNote>No enquiries in this view.</EmptyNote>}
               {visibleEnquiries.map(e => {
                 const isOverdue = e.status === 'Open' && e.nextFollowUp < asOf;
                 const open = expandedEnq === e.id;
@@ -703,7 +705,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                             <span className="font-mono">{e.utm.source}</span>
                           </p>
                         )}
-                        {e.interactions.length === 0 && <p className="text-[11px] text-ink-muted">No interactions yet.</p>}
+                        {e.interactions.length === 0 && <EmptyNote>No interactions yet.</EmptyNote>}
                         {e.interactions.map((i, idx) => (
                           <p key={idx} className="text-[11px]">
                             <span className="font-mono text-ink-muted">{fmt(i.at)}</span> · <span className="font-semibold">{i.channel}</span> · {i.outcome}
@@ -1081,7 +1083,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     ))}
                   </tbody>
                 </table>
-                {classMerit.length === 0 && <p className="p-4 text-xs text-ink-muted">No scored applicants in this class yet.</p>}
+                {classMerit.length === 0 && <EmptyNote>No scored applicants in this class yet.</EmptyNote>}
               </div>
             </Panel>
           </div>
@@ -1102,7 +1104,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                   </div>
                 );
               })}
-              {QUOTAS.every(q => waitlistFor(apps, decisionClass, q).length === 0) && <p className="text-ink-muted">Nobody is waitlisted in this class.</p>}
+              {QUOTAS.every(q => waitlistFor(apps, decisionClass, q).length === 0) && <EmptyNote>Nobody is waitlisted in this class.</EmptyNote>}
             </div>
           </Panel>
         </div>
@@ -1243,7 +1245,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                       <td className="p-2.5 font-mono">{s.enquiries}</td>
                       <td className="p-2.5 font-mono">{s.applications}</td>
                       <td className="p-2.5 font-mono">{s.enrolled}</td>
-                      <td className="p-2.5 font-mono">{s.conversion}%</td>
+                      <td className="p-2.5 font-mono"><Figure value={s.conversion} suffix="%" /></td>
                       <td className="p-2.5 font-mono">{rupees(s.cost)}</td>
                       <td className="p-2.5 font-mono">{s.costPerEnrolment === null ? '—' : rupees(s.costPerEnrolment)}</td>
                     </tr>
@@ -1253,7 +1255,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                     <td className="p-2.5 font-mono">{analytics.totals.enquiries}</td>
                     <td className="p-2.5 font-mono">{analytics.totals.applications}</td>
                     <td className="p-2.5 font-mono">{analytics.totals.enrolled}</td>
-                    <td className="p-2.5 font-mono">{Math.round((analytics.totals.enrolled / analytics.totals.enquiries) * 1000) / 10}%</td>
+                    <td className="p-2.5 font-mono"><Figure value={Math.round((analytics.totals.enrolled / analytics.totals.enquiries) * 1000) / 10} suffix="%" /></td>
                     <td className="p-2.5" colSpan={2} />
                   </tr>
                 </tbody>
@@ -1273,7 +1275,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                         {y.now} vs {y.last}{' '}
                         <span className={change >= 0 ? 'text-emerald-700' : 'text-rose-700'}>
                           ({change >= 0 ? '+' : ''}
-                          {change}%)
+                          <Figure value={change} suffix="%" />)
                         </span>
                       </span>
                     </div>
@@ -1293,7 +1295,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                       </span>
                     </div>
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden relative">
-                      <div className="h-full bg-brand" style={{ width: `${(s.avgDays / 14) * 100}%` }} />
+                      <div className="h-full bg-slate-500" style={{ width: `${(s.avgDays / 14) * 100}%` }} />
                       <div className="absolute top-0 h-full w-0.5 bg-rose-500" style={{ left: `${(s.p90Days / 14) * 100}%` }} />
                     </div>
                   </div>
@@ -1317,7 +1319,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
                       <td className="p-2.5">{c.counsellor}</td>
                       <td className="p-2.5 font-mono">{c.handled}</td>
                       <td className="p-2.5 font-mono">{c.converted}</td>
-                      <td className="p-2.5 font-mono">{c.rate}%</td>
+                      <td className="p-2.5 font-mono"><Figure value={c.rate} suffix="%" /></td>
                       <td className={`p-2.5 font-mono ${c.overdue ? 'text-rose-600 font-bold' : ''}`}>{c.overdue}</td>
                     </tr>
                   ))}
@@ -1327,7 +1329,7 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
 
             <Panel title="Why we lose applicants">
               <div className="p-3 space-y-1.5 text-xs">
-                {analytics.lossList.length === 0 && <p className="text-ink-muted">No losses recorded yet.</p>}
+                {analytics.lossList.length === 0 && <EmptyNote>No losses recorded yet.</EmptyNote>}
                 {analytics.lossList.map(([reason, count]) => (
                   <div key={reason} className="flex justify-between p-2 rounded-lg bg-slate-50">
                     <span>{reason}</span>
@@ -1510,7 +1512,7 @@ const OfferLetter: React.FC<{ app: Application; campusName: string; campusAddres
           </tr>
           <tr>
             <td className="p-2">Instalment option</td>
-            <td className="p-2 text-right">50% on acceptance, balance before joining</td>
+            <td className="p-2 text-right"><Figure value="50" suffix="%" /> on acceptance, balance before joining</td>
           </tr>
         </tbody>
       </table>

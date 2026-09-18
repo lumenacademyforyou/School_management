@@ -5,6 +5,7 @@ import { AdminView } from '../../types';
 import { canView } from '../../data/staffAccess';
 import { openExternalApp } from '../../lib/externalApps';
 import { FEATURE_COVERAGE } from '../../data/featureCoverageScan';
+import { Figure } from '../../components/common/Figure';
 
 type CoverageStatus = 'On screen' | 'Deferred' | 'Not built';
 const coverageOf = (code: string): CoverageStatus => FEATURE_COVERAGE.get(code) ?? 'Not built';
@@ -91,7 +92,7 @@ export const FeatureMasterView: React.FC = () => {
       case 'P1':
         return 'bg-amber-100 text-amber-900 border-amber-300';
       case 'P2':
-        return 'bg-blue-100 text-blue-900 border-blue-200';
+        return 'bg-slate-100 text-slate-800 border-slate-300';
       case 'P3':
         return 'bg-emerald-100 text-emerald-900 border-emerald-200';
       case 'P4':
@@ -108,7 +109,7 @@ export const FeatureMasterView: React.FC = () => {
       case 'S':
         return 'bg-amber-50 text-amber-700 border-amber-200 font-semibold';
       case 'C':
-        return 'bg-teal-50 text-teal-700 border-teal-200';
+        return 'bg-slate-50 text-slate-600 border-slate-200';
       default:
         return 'bg-slate-50 text-slate-700 border-slate-200';
     }
@@ -227,7 +228,7 @@ export const FeatureMasterView: React.FC = () => {
         <div className="hidden sm:flex items-center gap-2 text-xs text-ink-muted">
           <span>{TOTAL_SPEC_STATS.totalFeatures} total spec capabilities</span>
           <span>•</span>
-          <span className="text-emerald-700 font-bold">100% System Scoped</span>
+          <span className="text-emerald-700 font-bold"><Figure value="100" suffix="%" /> System Scoped</span>
         </div>
       </div>
 
@@ -535,7 +536,7 @@ export const FeatureMasterView: React.FC = () => {
                   <span className="font-mono">{TOTAL_SPEC_STATS.p2Academic} (29%)</span>
                 </div>
                 <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-600 rounded-full w-[29%]"></div>
+                  <div className="h-full bg-slate-500 rounded-full w-[29%]"></div>
                 </div>
               </div>
               <div>

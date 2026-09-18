@@ -6,7 +6,7 @@ export const PORTAL_TONE: Record<PortalState, Tone> = {
   linked: 'green',
   mismatch: 'red',
   class: 'amber',
-  'not-uploaded': 'blue',
+  'not-uploaded': 'amber',
   missing: 'grey',
   fix: 'red',
   release: 'amber',
@@ -19,7 +19,7 @@ export const PortalBadge: React.FC<{ state: PortalState }> = ({ state }) => (
   </Badge>
 );
 
-const KIND_TONE: Record<ChangeKind, Tone> = { add: 'blue', class: 'amber', release: 'violet', correct: 'gold' };
+const KIND_TONE: Record<ChangeKind, Tone> = { add: 'grey', class: 'amber', release: 'violet', correct: 'grey' };
 
 export const ChangeBadge: React.FC<{ kind: ChangeKind }> = ({ kind }) => <Badge tone={KIND_TONE[kind]}>{CHANGE_LABEL[kind]}</Badge>;
 

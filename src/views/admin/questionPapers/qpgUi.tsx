@@ -18,7 +18,7 @@ export const STATUS_TONE: Record<PaperStatus, Tone> = {
   Draft: 'grey',
   'Under review': 'amber',
   'Changes requested': 'violet',
-  Approved: 'blue',
+  Approved: 'green',
   Published: 'green',
   Rejected: 'red',
 };
@@ -70,7 +70,7 @@ export const QuestionPreview: React.FC<{ q: BankQuestion | null; onClose: () => 
     {q && (
       <>
         <div className="flex flex-wrap gap-1">
-          <Badge tone="blue">{q.type}</Badge>
+          <Badge>{q.type}</Badge>
           <DifficultyBadge value={q.difficulty} />
           <Badge>{q.marks} mark(s)</Badge>
           <QuestionStatusBadge value={q.status} />

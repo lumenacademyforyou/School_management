@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface AssetRecord {
   sku: string;
@@ -83,7 +84,7 @@ export const InventoryView: React.FC = () => {
             Campus Asset Registry & QR Depreciation Tracking
           </h1>
           <p className="text-xs text-ink-soft mt-1">
-            Total Capitalized Asset Value: ₹4.85 Cr • Straight-Line Depreciation • Automated Stock Alerts
+            Total Capitalized Asset Value: <Figure prefix="₹" value="4.85" suffix=" Cr" /> • Straight-Line Depreciation • Automated Stock Alerts
           </p>
         </div>
 
@@ -116,7 +117,7 @@ export const InventoryView: React.FC = () => {
       <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
         <div className="p-4 bg-subtle border-b border-line flex items-center justify-between">
           <span className="text-xs font-bold text-ink">High-Value Scientific & Academic Equipment</span>
-          <span className="text-xs font-mono text-brand">100% Barcoded & RFID Tagged</span>
+          <span className="text-xs font-mono text-ink-soft"><Figure value="100" suffix="%" /> Barcoded & RFID Tagged</span>
         </div>
 
         <table className="w-full text-xs text-left">
@@ -332,7 +333,7 @@ export const InventoryView: React.FC = () => {
               <div className="space-y-1.5">
                 <div className="flex justify-between font-bold text-slate-700">
                   <span>Physics Lab Audit Status</span>
-                  <span className="text-emerald-700 font-mono">100% (45/45)</span>
+                  <span className="text-emerald-700 font-mono"><Figure value="100" suffix="%" /> (45/45)</span>
                 </div>
                 <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                   <div className="bg-emerald-500 h-2 rounded-full w-full"></div>
@@ -342,7 +343,7 @@ export const InventoryView: React.FC = () => {
               <div className="space-y-1.5">
                 <div className="flex justify-between font-bold text-slate-700">
                   <span>Robotics & iPad Lab Status</span>
-                  <span className="text-emerald-700 font-mono">100% (120/120)</span>
+                  <span className="text-emerald-700 font-mono"><Figure value="100" suffix="%" /> (120/120)</span>
                 </div>
                 <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                   <div className="bg-emerald-500 h-2 rounded-full w-full"></div>

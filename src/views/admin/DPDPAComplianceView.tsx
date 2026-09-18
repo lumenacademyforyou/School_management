@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface ConsentRecord {
   purpose: string;
@@ -106,7 +107,7 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
         <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-200 shadow-xs">
           <div className="text-[10px] uppercase font-bold text-emerald-800">Verifiable Parental Consent</div>
-          <div className="text-2xl font-bold font-display text-emerald-900 mt-0.5">100%</div>
+          <div className="text-2xl font-bold font-display text-emerald-900 mt-0.5"><Figure value="100" suffix="%" /></div>
           <div className="text-[11px] text-emerald-700 font-semibold">2,450 / 2,450 Verified</div>
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
@@ -116,12 +117,12 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[10px] uppercase font-bold text-ink-muted">Targeted Advertising</div>
-          <div className="text-2xl font-bold font-display text-rose-700 mt-0.5">0% BANNED</div>
+          <div className="text-2xl font-bold font-display text-rose-700 mt-0.5"><Figure value="0" suffix="%" /> BANNED</div>
           <div className="text-[11px] text-ink-soft">Strict DPDPA compliance</div>
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[10px] uppercase font-bold text-ink-muted">Data Subject Requests (SAR)</div>
-          <div className="text-2xl font-bold font-display text-brand mt-0.5">0 Pending</div>
+          <div className="text-2xl font-bold font-display text-emerald-700 mt-0.5">0 Pending</div>
           <div className="text-[11px] text-emerald-700 font-semibold">Average SLA: 4 hours</div>
         </div>
       </div>

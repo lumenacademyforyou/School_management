@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface FacultyMember {
   id: string;
@@ -208,24 +209,24 @@ export const TeacherManagementView: React.FC = () => {
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Total Teaching Faculty</div>
           <div className="text-xl font-bold font-mono text-ink mt-1">174 Faculty</div>
-          <div className="text-[11px] text-emerald-600 font-semibold mt-0.5">100% CTET / B.Ed Qualified</div>
+          <div className="text-[11px] text-emerald-600 font-semibold mt-0.5"><Figure value="100" suffix="%" /> CTET / B.Ed Qualified</div>
         </div>
 
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Avg Teaching Load (TCH-005)</div>
-          <div className="text-xl font-bold font-mono text-brand mt-1">23.4 / 28 hrs</div>
+          <div className="text-xl font-bold font-mono text-ink mt-1">23.4 / 28 hrs</div>
           <div className="text-[11px] text-ink-muted mt-0.5">CBSE Max Cap: 28 periods/week</div>
         </div>
 
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Syllabus Coverage (TCH-015)</div>
-          <div className="text-xl font-bold font-mono text-emerald-700 mt-1">86.8% Avg</div>
+          <div className="text-xl font-bold font-mono text-emerald-700 mt-1"><Figure value="86.8" suffix="%" /> Avg</div>
           <div className="text-[11px] text-emerald-600 mt-0.5">+4.2% ahead of term plan</div>
         </div>
 
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Notes of Lesson Approval (TCH-016)</div>
-          <div className="text-xl font-bold font-mono text-ink mt-1">96.2% Approved</div>
+          <div className="text-xl font-bold font-mono text-ink mt-1"><Figure value="96.2" suffix="%" /> Approved</div>
           <div className="text-[11px] text-ink-muted mt-0.5">Reviewed weekly by HODs</div>
         </div>
       </div>
@@ -333,7 +334,7 @@ export const TeacherManagementView: React.FC = () => {
                       </div>
                     </td>
                     <td className="py-3 px-4 text-center">
-                      <span className="font-mono font-bold text-emerald-700">{teacher.syllabusCoverage}%</span>
+                      <span className="font-mono font-bold text-emerald-700"><Figure value={teacher.syllabusCoverage} suffix="%" /></span>
                     </td>
                     <td className="py-3 px-4 text-center">
                       <span
@@ -341,7 +342,7 @@ export const TeacherManagementView: React.FC = () => {
                           teacher.status === 'Active Duty'
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                             : teacher.status === 'CPD Training'
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                            ? 'bg-slate-100 text-slate-700 border border-slate-200'
                             : 'bg-amber-50 text-amber-700 border border-amber-200'
                         }`}
                       >
@@ -628,7 +629,7 @@ export const TeacherManagementView: React.FC = () => {
                 <div>Academic Qualifications: <strong>{selectedTeacher.qualification}</strong></div>
                 <div className="text-right">Class Teacher: <strong>{selectedTeacher.classTeacherOf || 'None Assigned'}</strong></div>
                 <div>Classes Handled: <strong>{selectedTeacher.classes}</strong></div>
-                <div className="text-right">Syllabus Coverage: <strong className="text-emerald-700">{selectedTeacher.syllabusCoverage}%</strong></div>
+                <div className="text-right">Syllabus Coverage: <strong className="text-emerald-700"><Figure value={selectedTeacher.syllabusCoverage} suffix="%" /></strong></div>
               </div>
 
               {/* Notes of Lesson Audit */}

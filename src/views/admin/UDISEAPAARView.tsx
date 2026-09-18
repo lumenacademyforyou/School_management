@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface DcfSection {
   sec: string;
@@ -111,7 +112,7 @@ export const UDISEAPAARView: React.FC = () => {
             UDISE+ & APAAR "One Nation, One Student ID" Sync
           </h1>
           <p className="text-xs text-ink-soft mt-1">
-            School UDISE Code: <strong>33020701402</strong> • 12-Digit APAAR IDs 100% Seeded • DCF Validation Cleared
+            School UDISE Code: <strong>33020701402</strong> • 12-Digit APAAR IDs <Figure value="100" suffix="%" /> Seeded • DCF Validation Cleared
           </p>
         </div>
 
@@ -176,7 +177,7 @@ export const UDISEAPAARView: React.FC = () => {
         <div className="p-4 bg-subtle border-b border-line flex items-center justify-between">
           <span className="text-xs font-bold text-ink">UDISE+ 2025–26 Data Capture Format (DCF) Sections</span>
           <span className="text-xs font-mono text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded font-bold">
-            100% ERROR-FREE
+            <Figure value="100" suffix="%" /> ERROR-FREE
           </span>
         </div>
 
@@ -298,7 +299,7 @@ export const UDISEAPAARView: React.FC = () => {
                   <div className="text-sm font-bold text-white">Aarav S. Ramanathan</div>
                   <div className="text-[11px] text-slate-300">DOB: 14 Oct 2009 • Gender: Male</div>
                   <div className="text-[11px] text-slate-300">School: Lumen Academy Sr. Sec. School</div>
-                  <div className="text-[11px] text-accent font-mono font-bold">PEN: 20241094821</div>
+                  <div className="text-[11px] text-ink font-mono font-bold">PEN: 20241094821</div>
                 </div>
               </div>
 

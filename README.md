@@ -55,6 +55,18 @@ Every colour comes from the logo, and all three apps use the same tokens (`src/i
 - **Contrast.** Every text and background pair meets WCAG AA; the weakest, captions on `subtle`, is 4.6:1.
 - **Parent app themes** (Settings → Appearance): Light (teal bar, cream paper), School (navy bar, gold edge, deeper cream) and Dark (teal-navy night with cream type).
 
+## Dashboards by role
+
+The dashboard leads with one number per role, top left, with a verdict ("On track" or "Needs attention") that answers "is everything okay?". The other figures sit to the right at a smaller size, and each opens its breakdown on demand; only one breakdown is open at a time. Set in `HEADLINE_BY_ROLE` (`src/views/admin/DashboardView.tsx`).
+
+| Role | Headline | Why |
+| --- | --- | --- |
+| Principal | Attendance today | The whole school is in and safe; everything else can wait. |
+| Accountant | Term fees realised (%) | Collection against demand is the accountant's outcome. |
+| Admissions Officer | Admissions pending | The open pipeline is the admissions officer's queue. |
+| Auditor | Outstanding fees | The largest open balance an auditor tests. |
+| Exam Coordinator | Pre-board pass rate | The result the coordinator's papers exist to produce. |
+
 ## Apps in this repository
 
 The admin console, parent app and teacher app are separate apps. Each has its own entry folder, build and output, and none of them ships another app's screens.

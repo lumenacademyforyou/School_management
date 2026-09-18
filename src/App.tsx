@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { AdminView } from './types';
 import { HOME_VIEW, ROLE_LABEL, canChangeView, canView, viewModules } from './data/staffAccess';
@@ -186,7 +186,19 @@ const Screen: React.FC<{ view: AdminView }> = ({ view }) => {
 };
 
 const Console: React.FC = () => {
-  const { adminView, sidebarOpen, setSidebarOpen, isAuthenticated } = useApp();
+  const { adminView, sidebarOpen, setSidebarOpen, isAuthenticated, density, sidebarCollapsed, toggleSidebarCollapsed } = useApp();
+
+  // Ctrl+B / Cmd+B hides or shows the desktop sidebar, as in most desktop apps.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        toggleSidebarCollapsed();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [toggleSidebarCollapsed]);
 
   if (!isAuthenticated) {
     return (
@@ -198,11 +210,11 @@ const Console: React.FC = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-wash text-ink font-sans antialiased">
+    <div data-density={density} className="h-screen flex flex-col overflow-hidden bg-wash text-ink font-sans antialiased">
       <AdminHeader />
       <div className="flex-1 flex min-h-0 overflow-hidden relative">
-        <div className="hidden md:flex shrink-0 h-full">
-          <AdminSidebar />
+        <div className="hidden md:flex shrink-0 h-full" data-sidebar-collapsed={sidebarCollapsed}>
+          <AdminSidebar collapsed={sidebarCollapsed} />
         </div>
 
         {sidebarOpen && (

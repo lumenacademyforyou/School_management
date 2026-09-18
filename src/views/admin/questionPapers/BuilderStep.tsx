@@ -22,6 +22,8 @@ import {
 import { questionPaperService, useQpgState } from '../../../services/questionPaperService';
 import { BankPanel } from './BankPanel';
 import { DifficultyBadge, Gate, QuestionEditor, minutesLabel, fmtDate } from './qpgUi';
+import { EmptyNote } from '../../../components/common/EmptyNote';
+import { useLinkedRequest } from './TeacherRequests';
 
 /** The printable top of a paper, shared by the builder, sets and answer key previews. */
 export const PaperHeader: React.FC<{ paper: QuestionPaper; setLabel?: string; subtitle?: string }> = ({ paper, setLabel, subtitle }) => {
@@ -52,7 +54,9 @@ export const PaperHeader: React.FC<{ paper: QuestionPaper; setLabel?: string; su
 };
 
 export const BuilderStep: React.FC<{ paper: QuestionPaper; editable: boolean; onChange: (p: QuestionPaper) => void }> = ({ paper, editable, onChange }) => {
-  const { addToast } = useApp();
+  const { addToast, currentUser } = useApp();
+  const request = useLinkedRequest(paper.id);
+  const [aiBusy, setAiBusy] = useState(false);
   const g = useGrants();
   const { bank, papers } = useQpgState();
   const byId = new Map(bank.map(q => [q.id, q]));
@@ -80,6 +84,51 @@ export const BuilderStep: React.FC<{ paper: QuestionPaper; editable: boolean; on
     setContent(next);
     if (shortfall.length) addToast('Some sections could not be filled', 'warning', shortfall.map(s => `${paper.blueprint.find(b => b.id === s.sectionId)?.title}: ${s.missing} short`).join(' · '));
     else addToast('Empty slots filled from the bank', 'success', allowRepeats ? 'Recently used questions were allowed.' : 'Questions from the last paper were skipped (QPG-014).');
+  };
+
+  /** Slots the bank could not fill, per section. */
+  const openSlots = paper.blueprint
+    .map(s => ({ section: s, missing: s.count - (content.find(c => c.sectionId === s.id)?.questions.length ?? 0) }))
+    .filter(x => x.missing > 0);
+  const openCount = openSlots.reduce((n, x) => n + x.missing, 0);
+
+  /**
+   * QPG-006: generates draft questions for every empty slot (the bank often has too few for a unit test) and adds
+   * them to the paper. Like accepting in the AI step, the coordinator takes responsibility for them; they are
+   * tagged "AI generated" in the bank and the preview so they can be read before the paper goes out.
+   */
+  const fillWithAi = async () => {
+    setAiBusy(true);
+    try {
+      let next = content;
+      const topic = request?.chapters ?? '';
+      for (const [i, { section, missing }] of openSlots.entries()) {
+        const drafts = await questionPaperService.generateQuestions(
+          {
+            subject: paper.details.subject,
+            classLevel: paper.details.classLevel,
+            chapter: section.chapter !== 'Any' ? section.chapter : topic || paper.details.subject,
+            topic: section.topic !== 'Any' ? section.topic : topic,
+            type: section.type,
+            difficulty: section.difficulty === 'Mixed' ? 'Medium' : section.difficulty,
+            marks: section.marksEach,
+            language: paper.details.language,
+            count: missing,
+          },
+          Date.now() + i
+        );
+        for (const d of drafts.slice(0, missing)) {
+          const saved = await questionPaperService.saveQuestion({ ...d, status: 'Approved', author: `AI assistant, accepted by ${currentUser.name}` });
+          next = addQuestion(next, section.id, saved.id, section.marksEach);
+        }
+      }
+      setContent(next);
+      addToast(`${openCount} AI question(s) added`, 'success', 'Read each one in the preview before sending the paper — they are marked “AI generated” in the question bank.');
+    } catch (e) {
+      addToast('AI generation did not finish', 'error', `${(e as Error).message} The questions already in the paper are kept; try again.`);
+    } finally {
+      setAiBusy(false);
+    }
   };
 
   const add = (q: BankQuestion, section: BlueprintSection) => {
@@ -156,7 +205,7 @@ export const BuilderStep: React.FC<{ paper: QuestionPaper; editable: boolean; on
                   )}
                 </div>
               </div>
-              {rows.length === 0 && <p className="text-xs text-ink-muted italic">No questions yet. Use “Auto-fill” or add questions from the bank.</p>}
+              {rows.length === 0 && <EmptyNote>No questions yet. Use “Auto-fill” or add questions from the bank.</EmptyNote>}
               <ol className="space-y-1">
                 {rows.map((pq, idx) => {
                   number += 1;
@@ -276,6 +325,12 @@ export const BuilderStep: React.FC<{ paper: QuestionPaper; editable: boolean; on
               <button onClick={fill} className={`${btnPrimary} w-full`}>
                 <Icon name="auto_mode" className="text-sm" />
                 Auto-fill empty slots
+              </button>
+            </Gate>
+            <Gate allowed={g.can('QPG-006', 'C')} why={g.why('QPG-006', 'C')}>
+              <button onClick={fillWithAi} disabled={aiBusy || openCount === 0} className={`${btnSoft} w-full`} data-fill-ai>
+                <Icon name="auto_awesome" className="text-sm" />
+                {aiBusy ? 'Generating…' : openCount ? `Fill the remaining ${openCount} with AI` : 'No empty slots'}
               </button>
             </Gate>
             <button onClick={() => setContent([])} disabled={!content.length} className={`${btnSoft} w-full`}>

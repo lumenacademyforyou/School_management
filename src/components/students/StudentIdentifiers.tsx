@@ -1,10 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Badge, Field, Icon, Modal, Tone, btnPrimary, btnSoft, inputCls } from '../common/ui';
-import { EMIS_FORMAT, EMIS_HELP, EmisCheck, EmisState, RosterStudent, checkEmis, formatEmis, isValidApaar } from '../../data/students';
+import { EMIS_FORMAT, EMIS_HELP, EmisCheck, EmisState, RosterStudent, StudentStatus, checkEmis, formatEmis, isValidApaar } from '../../data/students';
 import { IdentifierPatch, NewStudent, identifierErrors, nextStudentId, studentService, suggestAdmissionNo, useRoster } from '../../services/studentService';
 
 // Student 360 identifier block: EMIS (STU-026), APAAR (STU-027), admission number and student ID (STU-002, STU-003).
+
+/** Lifecycle status in semantic colours: on the rolls (success), paused (neutral / warning), off the rolls (danger). */
+export const STUDENT_STATUS_STYLE: Record<StudentStatus, string> = {
+  Active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  'On leave': 'bg-slate-100 text-slate-700 border-slate-300',
+  Suspended: 'bg-amber-50 text-amber-700 border-amber-200',
+  'TC issued': 'bg-slate-100 text-slate-600 border-slate-200',
+  Alumni: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+  'Struck off': 'bg-rose-50 text-rose-700 border-rose-200',
+};
+
+export const StudentStatusBadge: React.FC<{ status: StudentStatus; className?: string }> = ({ status, className = '' }) => (
+  <Badge className={`${STUDENT_STATUS_STYLE[status]} ${className}`}>{status}</Badge>
+);
 
 const EMIS_BADGE: Record<EmisState, { tone: Tone; label: string; icon: string }> = {
   valid: { tone: 'green', label: 'Valid', icon: 'verified' },

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { FeatureTags, PhaseNotice, downloadCsv } from '../../components/common/FeatureTags';
+import { Figure } from '../../components/common/Figure';
 
 type SubjectType = 'Core' | 'Elective' | 'Co-scholastic';
 type Applicability = 'M' | 'E' | '-';
@@ -152,7 +153,7 @@ const TABS: { id: Tab; label: string; icon: string; ids: string[] }[] = [
 ];
 
 const APPLICABILITY_STYLE: Record<Applicability, string> = {
-  M: 'bg-brand text-white',
+  M: 'bg-slate-700 text-white',
   E: 'bg-amber-100 text-amber-900 border border-amber-300',
   '-': 'bg-slate-50 text-slate-300',
 };
@@ -440,7 +441,7 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
           <div className="bg-surface rounded-2xl border border-line-soft shadow-sm p-4 space-y-4">
             <div>
               <p className="text-xs font-bold text-ink">Coverage vs plan</p>
-              <p className="text-3xl font-bold text-brand mt-1">{coverage.pct}%</p>
+              <p className="text-3xl font-bold text-ink mt-1"><Figure value={coverage.pct} suffix="%" /></p>
               <p className="text-[11px] text-ink-muted">
                 {coverage.done} of {coverage.total} planned hours taught
               </p>
@@ -449,10 +450,10 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
               <div key={u.unit}>
                 <div className="flex justify-between text-[11px] mb-1">
                   <span className="text-ink font-semibold">{u.unit}</span>
-                  <span className="text-ink-soft">{u.pct}%</span>
+                  <span className="text-ink-soft"><Figure value={u.pct} suffix="%" /></span>
                 </div>
                 <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-brand" style={{ width: `${u.pct}%` }} />
+                  <div className={`h-full ${u.pct >= 75 ? 'bg-emerald-500' : u.pct >= 40 ? 'bg-amber-500' : 'bg-rose-500'}`} style={{ width: `${u.pct}%` }} />
                 </div>
               </div>
             ))}

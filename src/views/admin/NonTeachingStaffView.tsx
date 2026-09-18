@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface SupportStaff {
   id: string;
@@ -272,19 +273,19 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
 
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Shift Coverage Today (NTS-014)</div>
-          <div className="text-xl font-bold font-mono text-emerald-700 mt-1">98.4% Present</div>
+          <div className="text-xl font-bold font-mono text-emerald-700 mt-1"><Figure value="98.4" suffix="%" /> Present</div>
           <div className="text-[11px] text-emerald-600 mt-0.5">Zero unstaffed campus posts</div>
         </div>
 
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Police Verification (NTS-007)</div>
-          <div className="text-xl font-bold font-mono text-emerald-700 mt-1">100% Cleared</div>
+          <div className="text-xl font-bold font-mono text-emerald-700 mt-1"><Figure value="100" suffix="%" /> Cleared</div>
           <div className="text-[11px] text-ink-muted mt-0.5">Mandatory POCSO Act protocol</div>
         </div>
 
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Work Order Completion (NTS-020)</div>
-          <div className="text-xl font-bold font-mono text-brand mt-1">94.8% SLA</div>
+          <div className="text-xl font-bold font-mono text-ink mt-1"><Figure value="94.8" suffix="%" /> SLA</div>
           <div className="text-[11px] text-ink-muted mt-0.5">Avg turnaround: 2.1 hours</div>
         </div>
       </div>
@@ -439,7 +440,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-sm text-ink">Shift 1 · Morning</span>
-                <span className="font-mono text-brand font-bold">06:00 — 14:00</span>
+                <span className="font-mono text-ink font-bold">06:00 — 14:00</span>
               </div>
               <p className="text-ink-muted">Bus boarding arrival, gates 1 & 2 morning intake, main building housekeeping prep.</p>
               <div className="font-bold text-emerald-700 text-[11px] pt-1 border-t border-slate-200">24 Staff Assigned</div>
@@ -448,7 +449,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-sm text-ink">Shift 2 · General</span>
-                <span className="font-mono text-brand font-bold">08:30 — 17:00</span>
+                <span className="font-mono text-ink font-bold">08:30 — 17:00</span>
               </div>
               <p className="text-ink-muted">Laboratory attendants, library circulation assistants, office messengers, canteen.</p>
               <div className="font-bold text-emerald-700 text-[11px] pt-1 border-t border-slate-200">28 Staff Assigned</div>
@@ -457,7 +458,7 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-sm text-ink">Shift 3 · Night</span>
-                <span className="font-mono text-brand font-bold">22:00 — 06:00</span>
+                <span className="font-mono text-ink font-bold">22:00 — 06:00</span>
               </div>
               <p className="text-ink-muted">Perimeter campus security, hostel gatekeepers, overnight maintenance & CCTV monitor.</p>
               <div className="font-bold text-emerald-700 text-[11px] pt-1 border-t border-slate-200">12 Staff Assigned</div>

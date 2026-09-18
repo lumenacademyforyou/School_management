@@ -2,7 +2,7 @@
 // Parents and teachers use their own apps (apps/parent, apps/teacher); they have no access here.
 import type { AdminView } from '../types';
 import { SMS_MODULES } from './featureCatalog';
-import { canChangeModule, hasModuleAccess } from './permissions';
+import { FEATURE_GRANTS, canChangeModule, hasModuleAccess } from './permissions';
 
 export type StaffRole = 'principal' | 'accountant' | 'admissions' | 'auditor' | 'exam-coordinator';
 
@@ -135,6 +135,19 @@ export const canChangeView = (role: StaffRole, view: AdminView): boolean => {
   const modules = viewModules(view);
   if (!modules.length) return role === 'principal';
   return modules.some(m => canChangeModule(role, m));
+};
+
+/**
+ * Taking a screen's data out of the system (Excel, CSV, print). Allowed to a role that holds the export verb (E)
+ * on a feature of the screen's modules, or that owns those records (C, U or D). Read-only roles without E — for
+ * example the Principal on student records — can view but not export. The grant matrix is unchanged; this only
+ * reads it. The dashboard's summary figures can be exported by anyone who sees them.
+ */
+export const canExportView = (role: StaffRole, view: AdminView): boolean => {
+  if (view === 'dashboard') return true;
+  const modules = viewModules(view);
+  if (!modules.length) return role === 'principal';
+  return modules.some(m => canChangeModule(role, m) || FEATURE_GRANTS.some(f => f.module === m && f.rows.some(r => r.role === role && r.verbs.includes('E'))));
 };
 
 export const ROLE_LABEL: Record<StaffRole, string> = {

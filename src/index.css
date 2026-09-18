@@ -303,6 +303,8 @@
     color: var(--color-ink);
     background-color: var(--color-canvas);
     font-feature-settings: 'cv11', 'ss03';
+    /* Tabular figures everywhere, so amounts, counts and percentages line up in columns */
+    font-variant-numeric: tabular-nums;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -441,6 +443,99 @@
   }
 }
 
+/* ─── Figures ───
+   Units (₹, %, L, Cr) sit lighter and smaller than the number they qualify, and keep its colour, so a
+   red overdue amount stays red. Pair with tabular-nums (the Figure component does both). */
+@utility unit {
+  font-size: 0.78em;
+  font-weight: 500;
+  opacity: 0.62;
+  letter-spacing: 0;
+}
+
+/* ─── Loading and empty states ───
+   One treatment everywhere, console and web apps: a soft sweep for content that is on its way, a dashed
+   note for "nothing here", and a thin bar for a process the user is waiting on. Built on the slate scale,
+   which each web-app theme regrades, so the same classes work in the School and Dark themes. */
+@keyframes skeletonSweep {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+@utility skeleton {
+  border-radius: 0.5rem;
+  background-color: var(--color-slate-100);
+  background-image: linear-gradient(90deg, transparent 0%, var(--color-slate-50) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: skeletonSweep 1.4s ease-in-out infinite;
+}
+
+@utility empty-note {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px dashed var(--color-slate-300);
+  border-radius: 0.625rem;
+  background-color: var(--color-slate-50);
+  color: var(--color-slate-500);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+@keyframes indeterminate {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(260%); }
+}
+
+@utility progress-indeterminate {
+  position: relative;
+  height: 0.25rem;
+  overflow: hidden;
+  border-radius: 9999px;
+  background-color: var(--color-slate-100);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 40%;
+    border-radius: inherit;
+    background-color: var(--color-slate-500);
+    animation: indeterminate 1.2s ease-in-out infinite;
+  }
+}
+
+/* ─── Table density ───
+   A per-user setting (AppContext.density) written to data-density on the console root. Tables opt in with
+   data-table and their cells with cell, so one component serves both densities. Comfortable matches the
+   original p-2.5 spacing; compact trims padding, row height and type for long registers. */
+:root {
+  --cell-py: 0.625rem;
+  --cell-px: 0.625rem;
+  --row-h: 2.5rem;
+  --table-font: 0.75rem;
+  --table-leading: 1.125rem;
+}
+
+[data-density='compact'] {
+  --cell-py: 0.3125rem;
+  --cell-px: 0.5rem;
+  --row-h: 1.875rem;
+  --table-font: 0.6875rem;
+  --table-leading: 1rem;
+}
+
+@utility data-table {
+  font-size: var(--table-font);
+  line-height: var(--table-leading);
+}
+
+@utility cell {
+  padding: var(--cell-py) var(--cell-px);
+  height: var(--row-h);
+}
+
 /* Actions blocked for read-only roles (ReadOnlyGuard) */
 [data-readonly-blocked] {
   opacity: 0.4;
@@ -564,6 +659,8 @@
 
 @media (prefers-reduced-motion: reduce) {
 
+  .skeleton,
+  .progress-indeterminate::after,
   .hof-reveal,
   .hof-shine,
   .fade-in,

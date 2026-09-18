@@ -198,7 +198,7 @@ export const AiPanel: React.FC<{ paper: QuestionPaper; editable: boolean; onAdd:
             >
               <div className="flex flex-wrap items-center gap-1">
                 <AiBadge />
-                <Badge tone="blue">{card.q.type}</Badge>
+                <Badge>{card.q.type}</Badge>
                 <DifficultyBadge value={card.q.difficulty} />
                 <Badge>{card.q.marks} mark(s)</Badge>
                 <Badge>{card.q.topic}</Badge>

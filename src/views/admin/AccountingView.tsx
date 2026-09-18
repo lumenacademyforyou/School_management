@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface GLAccount {
   code: string;
@@ -179,13 +180,13 @@ export const AccountingView: React.FC = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Total Fee Inflow (YTD)</div>
-          <div className="text-xl font-bold font-mono text-emerald-600 mt-1">₹2,42,50,000</div>
-          <div className="text-[11px] text-ink-muted mt-0.5">100% Fee Head GL Mapped</div>
+          <div className="text-xl font-bold font-mono text-emerald-600 mt-1"><Figure prefix="₹" value="2,42,50,000" /></div>
+          <div className="text-[11px] text-ink-muted mt-0.5"><Figure value="100" suffix="%" /> Fee Head GL Mapped</div>
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Total Operating Expenses</div>
-          <div className="text-xl font-bold font-mono text-ink mt-1">₹1,08,10,000</div>
-          <div className="text-[11px] text-emerald-600 mt-0.5">Within 84% Annual Budget</div>
+          <div className="text-xl font-bold font-mono text-ink mt-1"><Figure prefix="₹" value="1,08,10,000" /></div>
+          <div className="text-[11px] text-emerald-600 mt-0.5">Within <Figure value="84" suffix="%" /> Annual Budget</div>
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Pending Vouchers</div>
@@ -196,7 +197,7 @@ export const AccountingView: React.FC = () => {
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Escrow Bank Balance</div>
-          <div className="text-xl font-bold font-mono text-brand mt-1">₹62,75,000</div>
+          <div className="text-xl font-bold font-mono text-ink mt-1"><Figure prefix="₹" value="62,75,000" /></div>
           <div className="text-[11px] text-ink-muted mt-0.5">HDFC Escrow + SBI Current</div>
         </div>
       </div>
@@ -278,7 +279,7 @@ export const AccountingView: React.FC = () => {
                       <span
                         className={`text-[10px] px-2 py-0.5 rounded-md font-medium ${
                           acc.type === 'Asset'
-                            ? 'bg-blue-50 text-blue-700'
+                            ? 'bg-slate-100 text-slate-700'
                             : acc.type === 'Income'
                             ? 'bg-emerald-50 text-emerald-700'
                             : acc.type === 'Expense'
@@ -300,7 +301,7 @@ export const AccountingView: React.FC = () => {
                       )}
                     </td>
                     <td className="py-3 px-4 font-mono font-bold text-right text-ink">
-                      ₹{acc.balance.toLocaleString('en-IN')}
+                      <Figure prefix="₹" value={acc.balance.toLocaleString('en-IN')} />
                     </td>
                     <td className="py-3 px-4 text-center">
                       <span className="text-emerald-700 font-bold text-[11px] flex items-center justify-center gap-1">
@@ -351,7 +352,7 @@ export const AccountingView: React.FC = () => {
                     <td className="py-3 px-4 font-semibold text-ink">{exp.payee}</td>
                     <td className="py-3 px-4 text-ink-soft">{exp.category}</td>
                     <td className="py-3 px-4 font-mono font-bold text-right text-ink">
-                      ₹{exp.amount.toLocaleString('en-IN')}
+                      <Figure prefix="₹" value={exp.amount.toLocaleString('en-IN')} />
                     </td>
                     <td className="py-3 px-4 text-center">
                       <span
@@ -393,7 +394,7 @@ export const AccountingView: React.FC = () => {
               <p className="text-xs text-ink-muted">Closing balance verified daily at 5:00 PM</p>
             </div>
             <span className="font-mono text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg font-bold border border-emerald-200">
-              Cash Drawer Balanced: ₹45,000.00
+              Cash Drawer Balanced: <Figure prefix="₹" value="45,000.00" />
             </span>
           </div>
 
@@ -403,15 +404,15 @@ export const AccountingView: React.FC = () => {
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between py-1 border-b border-slate-200">
                   <span>Fee Counter Collection (Cash)</span>
-                  <span className="font-mono font-bold text-emerald-700">+ ₹34,200</span>
+                  <span className="font-mono font-bold text-emerald-700">+ <Figure prefix="₹" value="34,200" /></span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-200">
                   <span>Fee Gateway UPI (Direct to HDFC)</span>
-                  <span className="font-mono font-bold text-emerald-700">+ ₹1,48,500</span>
+                  <span className="font-mono font-bold text-emerald-700">+ <Figure prefix="₹" value="1,48,500" /></span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-200">
                   <span>Library Late Fine Receipts</span>
-                  <span className="font-mono font-bold text-emerald-700">+ ₹1,850</span>
+                  <span className="font-mono font-bold text-emerald-700">+ <Figure prefix="₹" value="1,850" /></span>
                 </div>
               </div>
             </div>
@@ -421,15 +422,15 @@ export const AccountingView: React.FC = () => {
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between py-1 border-b border-slate-200">
                   <span>Diesel for Bus Fleet #12 & #15</span>
-                  <span className="font-mono font-bold text-rose-700">- ₹12,400</span>
+                  <span className="font-mono font-bold text-rose-700">- <Figure prefix="₹" value="12,400" /></span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-200">
                   <span>Emergency Plumber Repair (Hostel)</span>
-                  <span className="font-mono font-bold text-rose-700">- ₹3,200</span>
+                  <span className="font-mono font-bold text-rose-700">- <Figure prefix="₹" value="3,200" /></span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-200">
                   <span>Office Refreshments & Courier</span>
-                  <span className="font-mono font-bold text-rose-700">- ₹1,450</span>
+                  <span className="font-mono font-bold text-rose-700">- <Figure prefix="₹" value="1,450" /></span>
                 </div>
               </div>
             </div>

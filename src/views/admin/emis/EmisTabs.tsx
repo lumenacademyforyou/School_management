@@ -8,6 +8,7 @@ import { emisService, useEmisState } from '../../../services/emisService';
 import { useRoster } from '../../../services/studentService';
 import { Gate } from '../questionPapers/qpgUi';
 import { ChangeBadge, PortalBadge, fmtDate, fmtStamp, td, th } from './emisUi';
+import { Figure } from '../../../components/common/Figure';
 
 interface ActionProps {
   canUpdate: boolean;
@@ -435,7 +436,7 @@ export const AttendanceTab: React.FC<ActionProps> = ({ canUpdate, why }) => {
                 <td className={`${td} font-semibold whitespace-nowrap`}>{fmtDate(d.date)}</td>
                 <td className={td}>{d.onRoll.toLocaleString('en-IN')}</td>
                 <td className={td}>{d.present.toLocaleString('en-IN')}</td>
-                <td className={td}>{((d.present / d.onRoll) * 100).toFixed(1)}%</td>
+                <td className={td}><Figure value={((d.present / d.onRoll) * 100).toFixed(1)} suffix="%" /></td>
                 <td className={`${td} max-w-xs`}>
                   <Badge tone={d.status === 'Uploaded' ? 'green' : d.status === 'Failed' ? 'red' : 'amber'}>{d.status}</Badge>
                   <p className="mt-1 text-[10px] text-ink-soft">

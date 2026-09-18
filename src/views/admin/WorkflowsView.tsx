@@ -3,6 +3,8 @@ import { useApp } from '../../context/AppContext';
 import { FeatureTags } from '../../components/common/FeatureTags';
 import { canChangeModule } from '../../data/permissions';
 import type { StaffRole } from '../../data/staffAccess';
+import { Figure } from '../../components/common/Figure';
+import { EmptyNote } from '../../components/common/EmptyNote';
 
 type Role = 'AO' | 'BA' | 'PR' | 'AC' | 'CO' | 'HR';
 
@@ -369,7 +371,7 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
               Approve selected ({selected.size})
             </button>
           </div>
-          {pending.length === 0 && <p className="p-6 text-center text-xs text-ink-muted">Nothing awaiting your action.</p>}
+          {pending.length === 0 && <EmptyNote>Nothing awaiting your action.</EmptyNote>}
           <div className="divide-y divide-subtle">
             {pending.map(item => {
               const stage = stageOf(item);
@@ -548,7 +550,7 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
                 Escalate ({breached.length})
               </button>
             </div>
-            {breached.length === 0 && <p className="p-4 text-xs text-ink-muted">No items past their SLA.</p>}
+            {breached.length === 0 && <EmptyNote>No items past their SLA.</EmptyNote>}
             {breached.map(item => (
               <div key={item.id} className="p-3 text-xs border-b border-subtle">
                 <p className="font-semibold text-ink">
@@ -589,7 +591,7 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
                           style={{ width: `${Math.min(b.ratio * 100, 100)}%` }}
                         />
                       </div>
-                      <span className="text-[10px] font-mono">{Math.round(b.ratio * 100)}%</span>
+                      <span className="text-[10px] font-mono"><Figure value={Math.round(b.ratio * 100)} suffix="%" /></span>
                     </td>
                     <td className="p-3 font-mono">{b.completed}</td>
                   </tr>

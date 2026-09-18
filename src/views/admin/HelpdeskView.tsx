@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface TicketMessage {
   sender: string;
@@ -296,7 +297,7 @@ export const HelpdeskView: React.FC = () => {
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">SLA Compliance Rate</div>
-          <div className="text-xl font-bold font-mono text-emerald-600 mt-1">98.4%</div>
+          <div className="text-xl font-bold font-mono text-emerald-600 mt-1"><Figure value="98.4" suffix="%" /></div>
           <div className="text-[11px] text-ink-muted mt-0.5">Under 24h Resolution SLA</div>
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
@@ -308,7 +309,7 @@ export const HelpdeskView: React.FC = () => {
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[11px] font-bold text-ink-muted uppercase">Parent CSAT Rating</div>
-          <div className="text-xl font-bold font-mono text-brand mt-1">4.8 / 5.0 ⭐</div>
+          <div className="text-xl font-bold font-mono text-ink mt-1">4.8 / 5.0 ⭐</div>
           <div className="text-[11px] text-ink-muted mt-0.5">Based on 340 ratings</div>
         </div>
       </div>
@@ -360,7 +361,7 @@ export const HelpdeskView: React.FC = () => {
                         ? 'bg-rose-50 text-rose-700 border border-rose-200'
                         : ticket.priority === 'High'
                         ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                        : 'bg-blue-50 text-blue-700 border border-blue-200'
+                        : 'bg-slate-100 text-slate-700 border border-slate-200'
                     }`}
                   >
                     {ticket.priority} Priority
@@ -373,7 +374,7 @@ export const HelpdeskView: React.FC = () => {
                     ticket.status === 'Resolved'
                       ? 'bg-emerald-50 text-emerald-700'
                       : ticket.status === 'In Progress'
-                      ? 'bg-blue-50 text-blue-700'
+                      ? 'bg-amber-50 text-amber-700'
                       : 'bg-slate-100 text-slate-700'
                   }`}
                 >

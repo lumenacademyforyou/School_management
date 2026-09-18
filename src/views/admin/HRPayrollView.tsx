@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Figure } from '../../components/common/Figure';
 
 interface StaffMember {
   id: string;
@@ -234,23 +235,23 @@ export const HRPayrollView: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[10px] uppercase font-bold text-ink-muted">Monthly Gross Wage Bill</div>
-          <div className="text-2xl font-bold font-display text-ink mt-0.5">₹88.4 Lakh</div>
+          <div className="text-2xl font-bold font-display text-ink mt-0.5"><Figure prefix="₹" value="88.4" suffix=" Lakh" /></div>
           <div className="text-[11px] text-ink-soft">{staff.length} displayed (184 total on roll)</div>
         </div>
         <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-200 shadow-xs">
           <div className="text-[10px] uppercase font-bold text-emerald-800">Statutory EPF Transfer</div>
-          <div className="text-2xl font-bold font-display text-emerald-900 mt-0.5">₹10.60 Lakh</div>
-          <div className="text-[11px] text-emerald-700 font-semibold">12% Employee + Employer</div>
+          <div className="text-2xl font-bold font-display text-emerald-900 mt-0.5"><Figure prefix="₹" value="10.60" suffix=" Lakh" /></div>
+          <div className="text-[11px] text-emerald-700 font-semibold"><Figure value="12" suffix="%" /> Employee + Employer</div>
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[10px] uppercase font-bold text-ink-muted">TDS Section 192 Deducted</div>
-          <div className="text-2xl font-bold font-display text-brand mt-0.5">₹7.20 Lakh</div>
+          <div className="text-2xl font-bold font-display text-ink mt-0.5"><Figure prefix="₹" value="7.20" suffix=" Lakh" /></div>
           <div className="text-[11px] text-ink-soft">TRACES 24Q Form Gen</div>
         </div>
         <div className="bg-surface p-4 rounded-xl border border-line-soft shadow-sm">
           <div className="text-[10px] uppercase font-bold text-ink-muted">Staff In-Campus Today</div>
           <div className="text-2xl font-bold font-display text-emerald-700 mt-0.5">178 / 184</div>
-          <div className="text-[11px] text-emerald-700 font-semibold">96.7% Biometric Present</div>
+          <div className="text-[11px] text-emerald-700 font-semibold"><Figure value="96.7" suffix="%" /> Biometric Present</div>
         </div>
       </div>
 
@@ -283,8 +284,8 @@ export const HRPayrollView: React.FC = () => {
                   <div className="text-[10px] text-ink-muted font-normal">{s.role}</div>
                 </td>
                 <td className="p-3 font-mono font-bold text-brand">{s.level}</td>
-                <td className="p-3 font-mono text-ink">₹{(s.basic + s.da).toLocaleString()}</td>
-                <td className="p-3 font-mono text-ink-soft">₹{s.epf.toLocaleString()}</td>
+                <td className="p-3 font-mono text-ink"><Figure prefix="₹" value={(s.basic + s.da).toLocaleString()} /></td>
+                <td className="p-3 font-mono text-ink-soft"><Figure prefix="₹" value={s.epf.toLocaleString()} /></td>
                 <td className="p-3">
                   <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">
                     {s.status}
@@ -338,27 +339,27 @@ export const HRPayrollView: React.FC = () => {
             <div className="grid grid-cols-2 gap-4 text-xs">
               <div className="border border-emerald-200 bg-emerald-50/40 p-3 rounded-xl space-y-1.5">
                 <div className="font-bold text-emerald-900 border-b border-emerald-200 pb-1">Earnings</div>
-                <div className="flex justify-between"><span>Basic Pay:</span> <span className="font-mono font-semibold">₹{selectedStaffPayslip.basic.toLocaleString()}</span></div>
-                <div className="flex justify-between"><span>Dearness Allowance (DA 50%):</span> <span className="font-mono font-semibold">₹{selectedStaffPayslip.da.toLocaleString()}</span></div>
-                <div className="flex justify-between"><span>House Rent (HRA 27%):</span> <span className="font-mono font-semibold">₹{selectedStaffPayslip.hra.toLocaleString()}</span></div>
-                <div className="flex justify-between"><span>Transport Allowance:</span> <span className="font-mono font-semibold">₹{selectedStaffPayslip.ta.toLocaleString()}</span></div>
+                <div className="flex justify-between"><span>Basic Pay:</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.basic.toLocaleString()} /></span></div>
+                <div className="flex justify-between"><span>Dearness Allowance (DA 50%):</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.da.toLocaleString()} /></span></div>
+                <div className="flex justify-between"><span>House Rent (HRA 27%):</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.hra.toLocaleString()} /></span></div>
+                <div className="flex justify-between"><span>Transport Allowance:</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.ta.toLocaleString()} /></span></div>
                 <div className="border-t border-emerald-200 pt-1 flex justify-between font-bold text-emerald-950">
                   <span>Gross Pay:</span>
                   <span className="font-mono">
-                    ₹{(selectedStaffPayslip.basic + selectedStaffPayslip.da + selectedStaffPayslip.hra + selectedStaffPayslip.ta).toLocaleString()}
+                    <Figure prefix="₹" value={(selectedStaffPayslip.basic + selectedStaffPayslip.da + selectedStaffPayslip.hra + selectedStaffPayslip.ta).toLocaleString()} />
                   </span>
                 </div>
               </div>
 
               <div className="border border-red-200 bg-red-50/40 p-3 rounded-xl space-y-1.5">
                 <div className="font-bold text-red-900 border-b border-red-200 pb-1">Deductions</div>
-                <div className="flex justify-between"><span>Provident Fund (EPF):</span> <span className="font-mono font-semibold">₹{selectedStaffPayslip.epf.toLocaleString()}</span></div>
-                <div className="flex justify-between"><span>TDS (Sec 192):</span> <span className="font-mono font-semibold">₹{selectedStaffPayslip.tax.toLocaleString()}</span></div>
-                <div className="flex justify-between"><span>Professional Tax:</span> <span className="font-mono font-semibold">₹200</span></div>
+                <div className="flex justify-between"><span>Provident Fund (EPF):</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.epf.toLocaleString()} /></span></div>
+                <div className="flex justify-between"><span>TDS (Sec 192):</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.tax.toLocaleString()} /></span></div>
+                <div className="flex justify-between"><span>Professional Tax:</span> <span className="font-mono font-semibold"><Figure prefix="₹" value="200" /></span></div>
                 <div className="border-t border-red-200 pt-1 flex justify-between font-bold text-red-950">
                   <span>Total Deductions:</span>
                   <span className="font-mono">
-                    ₹{(selectedStaffPayslip.epf + selectedStaffPayslip.tax + 200).toLocaleString()}
+                    <Figure prefix="₹" value={(selectedStaffPayslip.epf + selectedStaffPayslip.tax + 200).toLocaleString()} />
                   </span>
                 </div>
               </div>
@@ -371,13 +372,13 @@ export const HRPayrollView: React.FC = () => {
                 <span className="text-[11px] text-ink-soft">Direct NEFT Credit to Bank</span>
               </div>
               <div className="text-xl font-bold font-mono text-brand">
-                ₹{(
+                <Figure prefix="₹" value={(
                   selectedStaffPayslip.basic +
                   selectedStaffPayslip.da +
                   selectedStaffPayslip.hra +
                   selectedStaffPayslip.ta -
                   (selectedStaffPayslip.epf + selectedStaffPayslip.tax + 200)
-                ).toLocaleString()}
+                ).toLocaleString()} />
               </div>
             </div>
 
@@ -430,8 +431,8 @@ export const HRPayrollView: React.FC = () => {
               <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900">
                 <span className="font-bold block">Summary of Disbursal:</span>
                 <div>Total Employees: 184</div>
-                <div>Net Payment Volume: <strong>₹88,42,100</strong></div>
-                <div>Statutory EPF & TDS Withholdings: <strong>₹17,80,000</strong></div>
+                <div>Net Payment Volume: <strong><Figure prefix="₹" value="88,42,100" /></strong></div>
+                <div>Statutory EPF & TDS Withholdings: <strong><Figure prefix="₹" value="17,80,000" /></strong></div>
               </div>
 
               <div>
@@ -468,7 +469,7 @@ export const HRPayrollView: React.FC = () => {
                   type="submit"
                   className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold"
                 >
-                  Confirm & Disburse ₹88.4L
+                  Confirm & Disburse <Figure prefix="₹" value="88.4" suffix="L" />
                 </button>
               </div>
             </form>
