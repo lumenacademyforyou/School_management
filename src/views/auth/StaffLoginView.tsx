@@ -110,8 +110,8 @@ export const StaffLoginView: React.FC = () => {
         </div>
       </aside>
 
-      <main className="flex items-center justify-center px-4 py-10 lg:px-12">
-        <div className="w-full max-w-md bg-surface rounded-2xl border border-line-soft shadow-lg p-7 space-y-6">
+      <main className="flex items-center justify-center px-4 py-10 lg:px-12 fade-in">
+        <div className="w-full max-w-md bg-surface rounded-2xl border border-line-soft shadow-lg p-7 space-y-6 zoom-in">
           {!pending ? (
             <form onSubmit={submitPassword} className="space-y-4">
               <div>
@@ -151,7 +151,7 @@ export const StaffLoginView: React.FC = () => {
               </button>
               <div className="flex justify-between text-xs">
                 <span className="text-ink-muted">Demo code: {DEMO_TOTP}</span>
-                <button type="button" onClick={() => setPending(null)} className="text-brand font-semibold">
+                <button type="button" onClick={() => setPending(null)} className="text-brand font-semibold hover:underline cursor-pointer">
                   Use a different account
                 </button>
               </div>
@@ -166,7 +166,11 @@ export const StaffLoginView: React.FC = () => {
                   key={a.id}
                   type="button"
                   onClick={() => { setEmail(a.email); setPending(null); setError(''); }}
-                  className={`w-full flex items-center gap-3 rounded-xl border px-3 py-2 text-left transition-colors ${email === a.email ? 'border-lumen-400 bg-lumen-50/70 shadow-[inset_3px_0_0_var(--color-gold-400)]' : 'border-line-soft hover:bg-wash hover:border-line'}`}
+                  className={`w-full flex items-center gap-3 rounded-xl border px-3 py-2 text-left transition-all duration-150 cursor-pointer ${
+                    email === a.email
+                      ? 'border-lumen-400 bg-lumen-50/70 shadow-[inset_3px_0_0_var(--color-gold-400)] scale-[1.01]'
+                      : 'border-line-soft hover:bg-wash hover:border-line hover:-translate-y-0.5'
+                  }`}
                 >
                   <img src={a.avatar} alt="" className={`w-8 h-8 rounded-full object-cover ring-2 ${email === a.email ? 'ring-gold-300' : 'ring-transparent'}`} />
                   <span className="min-w-0">

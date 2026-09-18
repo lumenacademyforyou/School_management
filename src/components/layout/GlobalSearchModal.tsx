@@ -60,11 +60,18 @@ export const GlobalSearchModal: React.FC = () => {
     return [...students, ...screens];
   }, [query, role, setAdminView, setSearchModalOpen, setStudent]);
 
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // Reset selected index when query changes
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [query]);
+
   if (!searchModalOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setSearchModalOpen(false)}>
-      <div className="bg-surface w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()} role="dialog" aria-label="Search">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-lumen-950/55 backdrop-blur-[2px] fade-in" onClick={() => setSearchModalOpen(false)}>
+      <div className="bg-surface w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden ring-1 ring-lumen-950/10 zoom-in" onClick={e => e.stopPropagation()} role="dialog" aria-label="Search">
         <div className="p-3 border-b border-subtle flex items-center gap-3">
           <span className="material-symbols-outlined text-brand text-xl">search</span>
           <input
@@ -73,13 +80,22 @@ export const GlobalSearchModal: React.FC = () => {
             value={query}
             onChange={e => setQuery(e.target.value)}
             onKeyDown={e => {
-              if (e.key === 'Enter' && results[0]) results[0].open();
+              if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setSelectedIndex(i => (i + 1) % (results.length || 1));
+              } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                setSelectedIndex(i => (i - 1 + results.length) % (results.length || 1));
+              } else if (e.key === 'Enter' && results[selectedIndex]) {
+                e.preventDefault();
+                results[selectedIndex].open();
+              }
             }}
             autoFocus
             className="flex-1 text-sm outline-hidden text-ink placeholder:text-ink-muted"
             aria-label="Search"
           />
-          <button onClick={() => setSearchModalOpen(false)} className="text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded text-ink-soft">
+          <button onClick={() => setSearchModalOpen(false)} className="text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded text-ink-soft cursor-pointer transition-colors">
             Esc
           </button>
         </div>
@@ -87,20 +103,32 @@ export const GlobalSearchModal: React.FC = () => {
           {results.length === 0 ? (
             <p className="py-8 text-center text-xs text-ink-muted">Nothing matches “{query}”.</p>
           ) : (
-            results.map(r => (
-              <button key={r.id} onClick={r.open} className="w-full text-left p-2.5 rounded-xl hover:bg-subtle flex items-center justify-between gap-3">
-                <span className="flex items-center gap-3 min-w-0">
-                  <span className="w-8 h-8 rounded-lg bg-subtle text-brand flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined text-lg">{r.icon}</span>
+            results.map((r, idx) => {
+              const isSelected = idx === selectedIndex;
+              return (
+                <button
+                  key={r.id}
+                  onClick={r.open}
+                  onMouseEnter={() => setSelectedIndex(idx)}
+                  className={`w-full text-left p-2.5 rounded-xl transition-colors flex items-center justify-between gap-3 cursor-pointer ${
+                    isSelected ? 'bg-subtle ring-1 ring-brand/20' : 'hover:bg-subtle/60'
+                  }`}
+                >
+                  <span className="flex items-center gap-3 min-w-0">
+                    <span className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                      isSelected ? 'bg-brand text-white shadow-xs' : 'bg-subtle text-brand'
+                    }`}>
+                      <span className="material-symbols-outlined text-lg">{r.icon}</span>
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-xs font-bold text-ink truncate">{r.title}</span>
+                      <span className="block text-[11px] text-ink-soft truncate">{r.subtitle}</span>
+                    </span>
                   </span>
-                  <span className="min-w-0">
-                    <span className="block text-xs font-bold text-ink truncate">{r.title}</span>
-                    <span className="block text-[11px] text-ink-soft truncate">{r.subtitle}</span>
-                  </span>
-                </span>
-                <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded font-medium text-ink-muted">{r.category}</span>
-              </button>
-            ))
+                  <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded font-medium text-ink-muted">{r.category}</span>
+                </button>
+              );
+            })
           )}
         </div>
       </div>
