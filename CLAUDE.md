@@ -128,6 +128,9 @@ PowerShell. `.env` needs `ADMIN_DATABASE_URL` (migrations, seeding) and
   design tokens and their reasoning are in `web/src/index.css`.
 - `docs/auth-rbac-tenancy.md` — design decisions and reasoning.
 - `docs/sis-data-model.md` — the school schema, ownership filter and setup API.
+- `docs/frontend-integration.md` — how the web apps get wired onto the API, the
+  three places the two halves disagree, and what the design pass already fixed.
+  Read it before starting anything in LS-162…LS-176.
 - `docs/environments.md` — Supabase projects and connection strings.
 - `docs/integration-map.md` — how School MMS, QPG and Assessment fit together.
 - `docs/project-log.md` — what was done, day by day.
