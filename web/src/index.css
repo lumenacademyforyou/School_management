@@ -1,0 +1,671 @@
+@import "tailwindcss";
+@source "./";
+@source "../apps";
+@source "../index.html";
+
+/* ─── Lumen design tokens ───────────────────────────────────────────────────────────────────────
+   Every colour comes from the logo: the teal of the mountains and ring (#17667d), the navy of the
+   mortarboard (#0c3147), the gold of the sun and tassel (#dea02d) and the cream of the lettering band.
+
+   Colour grade: warm highlights, cool shadows. Light steps lean cream; dark steps lean teal-navy,
+   so a screen reads as warm paper with ink in the brand's own blue. Tailwind's slate scale is
+   regraded the same way, so every neutral in the product follows without per-screen edits.
+
+   Use the semantic names (ink, line, subtle, brand…) in components; the scales are for the few
+   places that need a specific step. */
+@theme {
+  /* Brand teal — logo mountains (600) to mortarboard navy (900) */
+  --color-lumen-50: #eef7f7;
+  --color-lumen-100: #d6ecee;
+  --color-lumen-200: #b0d9de;
+  --color-lumen-300: #80bfc8;
+  --color-lumen-400: #4f9fad;
+  --color-lumen-500: #2a8193;
+  --color-lumen-600: #17667d;
+  --color-lumen-700: #125569;
+  --color-lumen-800: #0f4557;
+  --color-lumen-900: #0c3147;
+  --color-lumen-950: #07202f;
+
+  /* Gold — sun rays (400) and tassel (500) */
+  --color-gold-50: #fef9ec;
+  --color-gold-100: #fcefcc;
+  --color-gold-200: #f8dd97;
+  --color-gold-300: #f5c85f;
+  --color-gold-400: #f0b43a;
+  --color-gold-500: #dea02d;
+  --color-gold-600: #b97e1b;
+  --color-gold-700: #936117;
+  --color-gold-800: #764d18;
+  --color-gold-900: #603f17;
+
+  /* Cream — lettering band and paper */
+  --color-cream-50: #fffdf8;
+  --color-cream-100: #fbf8f0;
+  --color-cream-200: #f5f0e3;
+  --color-cream-300: #ebe3cf;
+  --color-cream-400: #dcd0b3;
+
+  /* Semantic roles */
+  /* headings, primary text */
+  --color-ink: #0c3147;
+  /* body and secondary text (7.4:1 on the canvas) */
+  --color-ink-soft: #3b5361;
+  /* captions and hints (4.8:1 on the canvas, 4.6:1 on subtle) */
+  --color-ink-muted: #5b6e78;
+  /* primary actions, links, selection */
+  --color-brand: #17667d;
+  /* hover and pressed */
+  --color-brand-strong: #0f4557;
+  /* gold highlights, never body text */
+  --color-accent: #dea02d;
+  /* gold as text (5.3:1 on white) */
+  --color-accent-ink: #936117;
+  /* page background */
+  --color-canvas: #f7f4ec;
+  /* cards and panels */
+  --color-surface: #fffefb;
+  /* quiet fills: table rows, inputs at rest */
+  --color-wash: #faf7f0;
+  /* panel headers, hover */
+  --color-subtle: #f3eee2;
+  /* borders, inputs */
+  --color-line: #ddd4bf;
+  /* dividers */
+  --color-line-soft: #ebe5d6;
+
+  /* Neutral scale, regraded: cream highlights, teal-navy shadows */
+  --color-slate-50: #f8f5ee;
+  --color-slate-100: #f1ece1;
+  --color-slate-200: #e3dccc;
+  --color-slate-300: #cdc5b2;
+  --color-slate-400: #97a2a3;
+  --color-slate-500: #5f7079;
+  --color-slate-600: #4a5d67;
+  --color-slate-700: #354b57;
+  --color-slate-800: #1f3a48;
+  --color-slate-900: #0c3147;
+  --color-slate-950: #07202f;
+
+  /* Information uses the brand teal instead of a separate blue */
+  --color-sky-50: #eef7f7;
+  --color-sky-100: #d6ecee;
+  --color-sky-200: #b0d9de;
+  --color-sky-300: #80bfc8;
+  --color-sky-400: #4f9fad;
+  --color-sky-500: #2a8193;
+  --color-sky-600: #17667d;
+  --color-sky-700: #125569;
+  --color-sky-800: #0f4557;
+  --color-sky-900: #0c3147;
+  --color-blue-50: #eef7f7;
+  --color-blue-100: #d6ecee;
+  --color-blue-200: #b0d9de;
+  --color-blue-300: #80bfc8;
+  --color-blue-400: #4f9fad;
+  --color-blue-500: #2a8193;
+  --color-blue-600: #17667d;
+  --color-blue-700: #125569;
+  --color-blue-800: #0f4557;
+  --color-blue-900: #0c3147;
+  --color-teal-50: #eef7f7;
+  --color-teal-100: #d6ecee;
+  --color-teal-200: #b0d9de;
+  --color-teal-300: #80bfc8;
+  --color-teal-400: #4f9fad;
+  --color-teal-500: #2a8193;
+  --color-teal-600: #17667d;
+  --color-teal-700: #125569;
+  --color-teal-800: #0f4557;
+  --color-teal-900: #0c3147;
+
+  /* Warnings sit on the gold side of amber so they belong to the palette */
+  --color-amber-50: #fef8e8;
+  --color-amber-100: #fcecc4;
+  --color-amber-200: #f8d88c;
+  --color-amber-300: #f3c056;
+  --color-amber-400: #eca631;
+  --color-amber-500: #d98a1c;
+  --color-amber-600: #b86c14;
+  --color-amber-700: #935213;
+  --color-amber-800: #784316;
+  --color-amber-900: #633816;
+
+  /* Elevation: shadows tinted with the navy, never grey */
+  --shadow-xs: 0 1px 2px rgb(12 49 71 / 0.05);
+  --shadow-sm: 0 1px 2px rgb(12 49 71 / 0.06), 0 1px 3px rgb(12 49 71 / 0.06);
+  --shadow-md: 0 2px 4px rgb(12 49 71 / 0.05), 0 6px 16px -4px rgb(12 49 71 / 0.1);
+  --shadow-lg: 0 4px 8px rgb(12 49 71 / 0.05), 0 16px 32px -8px rgb(12 49 71 / 0.16);
+  --shadow-xl: 0 8px 16px rgb(12 49 71 / 0.06), 0 24px 48px -12px rgb(12 49 71 / 0.22);
+  --shadow-2xl: 0 32px 64px -16px rgb(12 49 71 / 0.32);
+
+  --font-display: "Plus Jakarta Sans", "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+/* ─── Keyframe Animations ─── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes toastProgress {
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: 0%;
+  }
+}
+
+@keyframes staggerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dropdownReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ─── Animation Utility Classes ─── */
+.animate-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+.slide-in-from-bottom-2 {
+  animation: slideInFromBottom 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.zoom-in {
+  animation: zoomIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-dropdown {
+  animation: dropdownReveal 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-toast-progress {
+  animation: toastProgress 4s linear forwards;
+}
+
+/* Staggered entrance for card grids */
+.stagger-children>* {
+  opacity: 0;
+  animation: staggerFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.stagger-children>*:nth-child(1) {
+  animation-delay: 0.03s;
+}
+
+.stagger-children>*:nth-child(2) {
+  animation-delay: 0.06s;
+}
+
+.stagger-children>*:nth-child(3) {
+  animation-delay: 0.09s;
+}
+
+.stagger-children>*:nth-child(4) {
+  animation-delay: 0.12s;
+}
+
+.stagger-children>*:nth-child(5) {
+  animation-delay: 0.15s;
+}
+
+.stagger-children>*:nth-child(6) {
+  animation-delay: 0.18s;
+}
+
+.stagger-children>*:nth-child(7) {
+  animation-delay: 0.21s;
+}
+
+.stagger-children>*:nth-child(8) {
+  animation-delay: 0.24s;
+}
+
+@layer base {
+
+  /* Icon font defaults; size utilities (text-sm, text-[56px]…) override them. */
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    font-feature-settings: 'liga';
+    vertical-align: middle;
+  }
+
+  html {
+    background-color: var(--color-canvas);
+  }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    background-color: var(--color-canvas);
+    font-feature-settings: 'cv11', 'ss03';
+    /* Tabular figures everywhere, so amounts, counts and percentages line up in columns */
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background-color: var(--color-gold-200);
+    color: var(--color-lumen-950);
+  }
+
+  /* Focus: a teal ring with a cream gap reads on cream, white and navy alike */
+  *:focus-visible {
+    outline: 2px solid var(--color-lumen-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--color-lumen-500);
+    outline-offset: 2px;
+  }
+}
+
+/* ─── Signature surfaces ───
+   lumen-night: the navy of the mortarboard lit by the logo's sun — a gold light leak from the top right,
+   a teal glow from the bottom left, over a navy-to-ink gradient. Used for the sidebar and sign-in panels. */
+@utility bg-lumen-night {
+  background-color: var(--color-lumen-900);
+  background-image:
+    radial-gradient(120% 70% at 100% 0%, rgb(240 180 58 / 0.16) 0%, transparent 42%),
+    radial-gradient(90% 60% at 0% 100%, rgb(42 129 147 / 0.28) 0%, transparent 60%),
+    linear-gradient(165deg, var(--color-lumen-800) 0%, var(--color-lumen-900) 48%, var(--color-lumen-950) 100%);
+}
+
+/* The logo's sun rays, as a faint conic texture anchored top right. */
+@utility bg-sunburst {
+  background-image: repeating-conic-gradient(from 0deg at 100% 0%, rgb(240 180 58 / 0.055) 0deg 4deg, transparent 4deg 11deg);
+}
+
+/* Paper: cream canvas with a barely-there warm vignette, so long pages don't feel flat. */
+@utility bg-paper {
+  background-color: var(--color-canvas);
+  background-image:
+    radial-gradient(100% 60% at 50% 0%, rgb(255 253 248 / 0.9) 0%, transparent 70%),
+    radial-gradient(80% 50% at 100% 100%, rgb(222 160 45 / 0.05) 0%, transparent 70%);
+}
+
+
+/* The Google Fonts stylesheet sets a fixed 24px on this class outside any cascade layer, which beat
+   every Tailwind size utility. Hand sizing back to the layers: a size class wins, otherwise 24px (base). */
+.material-symbols-outlined {
+  font-size: revert-layer;
+}
+
+/* ─── Custom Scrollbar (Themed) ─── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-slate-300) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-slate-300);
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background-clip: content-box;
+  transition: background-color 0.2s;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-lumen-400);
+}
+
+/* ─── Print portal (ID card sheets, offer letters) ─── */
+.print-portal {
+  display: none;
+}
+
+.id-card {
+  flex-shrink: 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  body.printing-portal>*:not(.print-portal) {
+    display: none !important;
+  }
+
+  body.printing-portal .print-portal {
+    display: block;
+  }
+
+  .id-print-page {
+    display: flex;
+    flex-direction: column;
+    gap: 4mm;
+    break-after: page;
+  }
+
+  .id-print-page:last-child {
+    break-after: auto;
+  }
+
+  .id-print-row {
+    display: flex;
+    gap: 4mm;
+    break-inside: avoid;
+  }
+}
+
+/* ─── Figures ───
+   Units (₹, %, L, Cr) sit lighter and smaller than the number they qualify, and keep its colour, so a
+   red overdue amount stays red. Pair with tabular-nums (the Figure component does both). */
+@utility unit {
+  font-size: 0.78em;
+  font-weight: 500;
+  opacity: 0.62;
+  letter-spacing: 0;
+}
+
+/* ─── Loading and empty states ───
+   One treatment everywhere, console and web apps: a soft sweep for content that is on its way, a dashed
+   note for "nothing here", and a thin bar for a process the user is waiting on. Built on the slate scale,
+   which each web-app theme regrades, so the same classes work in the School and Dark themes. */
+@keyframes skeletonSweep {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+@utility skeleton {
+  border-radius: 0.5rem;
+  background-color: var(--color-slate-100);
+  background-image: linear-gradient(90deg, transparent 0%, var(--color-slate-50) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: skeletonSweep 1.4s ease-in-out infinite;
+}
+
+@utility empty-note {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px dashed var(--color-slate-300);
+  border-radius: 0.625rem;
+  background-color: var(--color-slate-50);
+  color: var(--color-slate-500);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+@keyframes indeterminate {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(260%); }
+}
+
+@utility progress-indeterminate {
+  position: relative;
+  height: 0.25rem;
+  overflow: hidden;
+  border-radius: 9999px;
+  background-color: var(--color-slate-100);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 40%;
+    border-radius: inherit;
+    background-color: var(--color-slate-500);
+    animation: indeterminate 1.2s ease-in-out infinite;
+  }
+}
+
+/* ─── Table density ───
+   A per-user setting (AppContext.density) written to data-density on the console root. Tables opt in with
+   data-table and their cells with cell, so one component serves both densities. Comfortable matches the
+   original p-2.5 spacing; compact trims padding, row height and type for long registers. */
+:root {
+  --cell-py: 0.625rem;
+  --cell-px: 0.625rem;
+  --row-h: 2.5rem;
+  --table-font: 0.75rem;
+  --table-leading: 1.125rem;
+}
+
+[data-density='compact'] {
+  --cell-py: 0.3125rem;
+  --cell-px: 0.5rem;
+  --row-h: 1.875rem;
+  --table-font: 0.6875rem;
+  --table-leading: 1rem;
+}
+
+@utility data-table {
+  font-size: var(--table-font);
+  line-height: var(--table-leading);
+}
+
+@utility cell {
+  padding: var(--cell-py) var(--cell-px);
+  height: var(--row-h);
+}
+
+/* Actions blocked for read-only roles (ReadOnlyGuard) */
+[data-readonly-blocked] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ─── Web app themes (parent app → Settings → Appearance) ───
+   Surfaces use the tokens below; Tailwind's slate scale is remapped per theme so existing
+   text, border and muted colours follow without per-component dark classes. */
+[data-app-theme] {
+  --app-bg: var(--color-canvas);
+  --surface: var(--color-surface);
+  --accent-ink: var(--accent);
+  --bar: var(--accent);
+  --bar-image: linear-gradient(135deg, color-mix(in oklab, var(--accent) 88%, white) 0%, var(--accent) 45%, color-mix(in oklab, var(--accent) 70%, var(--color-lumen-950)) 100%);
+  --bar-edge: var(--color-gold-400);
+  --gold: var(--color-gold-600);
+  color: var(--color-slate-900);
+}
+
+[data-app-theme].app-surface-transition,
+[data-app-theme] .app-surface-transition {
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* School: the logo itself — navy bar, gold edge, cream paper with a teal cast in the shadows */
+[data-app-theme='school'] {
+  --app-bg: var(--color-cream-200);
+  --surface: var(--color-cream-50);
+  --bar: var(--color-lumen-900);
+  --bar-image: linear-gradient(135deg, var(--color-lumen-800) 0%, var(--color-lumen-900) 55%, var(--color-lumen-950) 100%);
+  --bar-edge: var(--color-gold-400);
+  --accent-ink: var(--color-lumen-700);
+  --color-slate-50: #f6f0e1;
+  --color-slate-100: #eee5d0;
+  --color-slate-200: #e0d4b8;
+  --color-slate-300: #c9bb98;
+  --color-slate-400: #8f9b95;
+  --color-slate-500: #566a72;
+  --color-slate-600: #435964;
+  --color-slate-700: #304955;
+  --color-slate-800: #1b3a49;
+  --color-slate-900: #0c3147;
+}
+
+/* Dark: deep teal-navy night, cream type, gold kept for emphasis only */
+[data-app-theme='dark'] {
+  color-scheme: dark;
+  --app-bg: #061b26;
+  --surface: #0b2533;
+  --accent-ink: #8fcfd8;
+  --bar: #0a2230;
+  --bar-image: linear-gradient(135deg, #0f3446 0%, #0a2230 60%, #06182a 100%);
+  --bar-edge: rgb(240 180 58 / 0.55);
+  --gold: #f5c85f;
+  --color-slate-50: #0f2c3a;
+  --color-slate-100: #133443;
+  --color-slate-200: #1d4252;
+  --color-slate-300: #2d5465;
+  --color-slate-400: #6c8d98;
+  --color-slate-500: #9fb6bb;
+  --color-slate-600: #bccbcb;
+  --color-slate-700: #d6ddd6;
+  --color-slate-800: #e9e8dd;
+  --color-slate-900: #f7f3e7;
+  --color-emerald-50: #0f2e28;
+  --color-emerald-600: #34d399;
+  --color-emerald-700: #6ee7b7;
+  --color-rose-50: #3a1a22;
+  --color-rose-700: #fda4af;
+  --color-amber-50: #3a2c12;
+  --color-amber-800: #fcd34d;
+  --color-sky-50: #0f2c3d;
+  --color-sky-700: #8fcfd8;
+  --color-gold-50: #2e2410;
+  --color-gold-100: #3a2d12;
+  --color-gold-700: #f5c85f;
+  --color-gold-800: #f8dd97;
+}
+
+/* Hall of Fame reveal */
+@keyframes hofReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(8px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes hofShine {
+  0% {
+    transform: translateX(-120%) rotate(20deg);
+  }
+
+  100% {
+    transform: translateX(220%) rotate(20deg);
+  }
+}
+
+.hof-reveal {
+  animation: hofReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hof-shine {
+  position: absolute;
+  inset: -20% auto -20% 0;
+  width: 35%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  animation: hofShine 2.4s ease-in-out 0.6s 2;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .skeleton,
+  .progress-indeterminate::after,
+  .hof-reveal,
+  .hof-shine,
+  .fade-in,
+  .zoom-in,
+  .slide-in-from-bottom-2 {
+    animation: none !important;
+  }
+}

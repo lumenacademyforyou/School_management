@@ -4,7 +4,19 @@ Context for anyone (human or Claude) picking up work in this repo.
 
 ## What this repo is
 
-The **shared multi-tenant platform base** for three products:
+One repository, two npm workspaces:
+
+| Workspace | What it holds |
+| --- | --- |
+| `server/` | The multi-tenant API: auth, RBAC, the tenant boundary, SIS schema and migrations. |
+| `web/` | Three React apps: the staff admin console (`web/src`), the parent app and the teacher app (`web/apps`). |
+
+The workspaces keep their own `package.json`, TypeScript version and test
+runner for now; unifying the toolchain is tracked separately. Run anything from
+the repo root with `--workspace server` or `--workspace web`, or use the root
+scripts below.
+
+The server is the **shared multi-tenant platform base** for three products:
 
 1. **School MMS** — admissions, student info, attendance, fees.
 2. **QPG** — Question Paper Generator.
@@ -25,13 +37,14 @@ concept at all, which is the main cost of integrating it — see
 | --- | --- | --- |
 | Santhosh Kumar | SD1 | `CSK-branch` |
 
-Work is committed to `CSK-branch`. Feature branches merge into it.
+Work is committed to `CSK-branch`. Feature branches merge into it. The web apps
+arrived from `ui_design`, which is now folded into `web/`.
 
 ## Stack
 
-Node 20+ · TypeScript · Express 5 · PostgreSQL 17 (Supabase) · Vitest · ESLint.
-Web front end will be React + TypeScript (Phase 2 reuses the logic layer for
-React Native / Expo).
+Node 20+ · TypeScript · Express 5 · PostgreSQL 17 (Supabase) · Vitest · ESLint
+in `server/`. React 19 · Vite 6 · Tailwind 4 in `web/` (Phase 2 reuses the
+logic layer for React Native / Expo).
 
 ## The three rules that matter most
 
@@ -66,13 +79,26 @@ security"*, that guard is working — fix `DATABASE_URL`, don't remove the guard
 
 ## Commands
 
+From the repo root:
+
 ```bash
+npm install        # installs both workspaces
 npm run migrate    # admin connection; also sets the lumen_app password
 npm run seed       # demo school: one user per role, classes, sections, students
-npm run dev        # local server on :3000
-npm run check      # typecheck + lint + test — run before every commit
-npm test           # 148 tests; needs a LOCAL PostgreSQL (it truncates tables)
+npm run dev:api    # the API on :4000
+npm run dev        # the three web apps on :3000 (admin), :3001, :3002
+npm run typecheck  # both workspaces
+npm run test       # both workspaces
 ```
+
+The API listens on **4000**, not 3000: the web dev servers already use
+3000-3004. Inside a workspace the original commands still apply, e.g.
+`npm run check --workspace server` (typecheck + lint + test before every
+commit) and `npm run build:admin --workspace web`.
+
+`npm run test --workspace server` is 148 tests and needs a **local
+PostgreSQL** (it truncates tables); 62 of them are unit tests that run without
+one. `npm run test --workspace web` is 96 logic tests and needs nothing.
 
 **On a fresh database the order above is load-bearing**: `dev` connects as
 `lumen_app`, which has no password until `migrate` sets it.
@@ -98,6 +124,8 @@ PowerShell. `.env` needs `ADMIN_DATABASE_URL` (migrations, seeding) and
 ## Where to read next
 
 - `README.md` — how to run it.
+- `web/README` conventions live in the web app's own source comments; the
+  design tokens and their reasoning are in `web/src/index.css`.
 - `docs/auth-rbac-tenancy.md` — design decisions and reasoning.
 - `docs/sis-data-model.md` — the school schema, ownership filter and setup API.
 - `docs/environments.md` — Supabase projects and connection strings.

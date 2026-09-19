@@ -1,33 +1,56 @@
-# Lumen Platform — Shared Foundation
+# Lumen Academy Platform
 
-The multi-tenant base that School MMS, the Question Paper Generator and
-Assessment all build on: **authentication, role-based access control and the
-tenant boundary**, written once.
+One repository, two npm workspaces:
 
-Jira: `FND: Extend shared auth, RBAC and tenant model for all three products`
-(epic *FND: Foundation & Shared Platform*).
+| Workspace | What it is |
+| --- | --- |
+| [`server/`](server) | The multi-tenant API — authentication, role-based access control and the tenant boundary, written once for School MMS, the Question Paper Generator and Assessment. |
+| [`web/`](web) | Three React apps — the staff admin console, the parent app and the teacher app. |
 
-## What is in here
+```
+server/   src/ migrations/ tests/ scripts/      Express 5 · PostgreSQL · Vitest
+web/      src/ apps/ tests/ scripts/            React 19 · Vite 6 · Tailwind 4
+docs/                                           design notes, roadmap, Jira export
+```
+
+Each workspace keeps its own `package.json`, TypeScript version and test runner;
+unifying the toolchain is tracked separately.
+
+## Quick start
+
+```bash
+npm install        # both workspaces
+npm run dev:api    # API on :4000   (needs a database — see below)
+npm run dev        # admin :3000 · parent :3001 · teacher :3002
+```
+
+The API listens on **4000** because the web dev servers occupy 3000-3004.
+
+`npm run typecheck` and `npm run test` run across both workspaces. The web
+tests need nothing; the server's 148 tests need a local PostgreSQL, though 62
+of them are unit tests that run without one.
+
+## What is in the server
 
 | Area | Where |
 | --- | --- |
-| Tenant, user, role and refresh-token schema | `migrations/0001_foundation.sql` |
-| Unprivileged application DB role | `migrations/0002_app_role.sql` |
-| School schema: years, classes, sections, staff, students, guardians, enrollments | `migrations/0004_sis_core.sql` |
-| Role → permission matrix for all six roles | `src/rbac/permissions.ts` |
-| Tenant-scoped database access | `src/db/tenantContext.ts` |
-| Startup guard for the tenant boundary | `src/db/assertRlsEnforced.ts` |
-| Login, refresh, logout | `src/auth/authService.ts` |
-| `authenticate` / `requirePermission` middleware | `src/http/middleware/` |
-| Shared error contract, and constraint violations mapped into it | `src/http/errors.ts`, `src/http/databaseErrors.ts` |
-| School setup API: academic years, classes, sections, wizard status | `src/http/routes/` (`setup`, `academicYear`, `class`, `section`) |
-| Students, with the parent/student ownership filter | `src/http/routes/studentRoutes.ts`, `src/rbac/authorize.ts` |
+| Tenant, user, role and refresh-token schema | `server/migrations/0001_foundation.sql` |
+| Unprivileged application DB role | `server/migrations/0002_app_role.sql` |
+| School schema: years, classes, sections, staff, students, guardians, enrollments | `server/migrations/0004_sis_core.sql` |
+| Role → permission matrix for all six roles | `server/src/rbac/permissions.ts` |
+| Tenant-scoped database access | `server/src/db/tenantContext.ts` |
+| Startup guard for the tenant boundary | `server/src/db/assertRlsEnforced.ts` |
+| Login, refresh, logout | `server/src/auth/authService.ts` |
+| `authenticate` / `requirePermission` middleware | `server/src/http/middleware/` |
+| Shared error contract, and constraint violations mapped into it | `server/src/http/errors.ts`, `server/src/http/databaseErrors.ts` |
+| School setup API: academic years, classes, sections, wizard status | `server/src/http/routes/` (`setup`, `academicYear`, `class`, `section`) |
+| Students, with the parent/student ownership filter | `server/src/http/routes/studentRoutes.ts`, `server/src/rbac/authorize.ts` |
 
 Design notes and the reasoning behind them:
 [`docs/auth-rbac-tenancy.md`](docs/auth-rbac-tenancy.md) (auth, RBAC, tenancy) and
 [`docs/sis-data-model.md`](docs/sis-data-model.md) (school schema and setup API).
 
-## Running it locally
+## Running the server locally
 
 Requires Node 20+ and a PostgreSQL database (local, or a Supabase project).
 
