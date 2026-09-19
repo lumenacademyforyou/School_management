@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Figure } from '../../components/common/Figure';
+import { DialogClose, DialogShell, Modal } from '../../components/common/ui';
 
 interface FacultyMember {
   id: string;
@@ -21,6 +22,8 @@ interface FacultyMember {
 
 export const TeacherManagementView: React.FC = () => {
   const { addToast } = useApp();
+  const assignFormId = useId();
+  const dossierTitleId = useId();
   const [activeTab, setActiveTab] = useState<'roster' | 'lesson-plans' | 'competency' | 'cpd'>('roster');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeacher, setSelectedTeacher] = useState<FacultyMember | null>(null);
@@ -185,7 +188,7 @@ export const TeacherManagementView: React.FC = () => {
             </span>
             <span className="text-xs text-ink-muted">34 Master Features</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-ink mt-1">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">
             Teacher Management & Academic Pedagogical Governance
           </h1>
           <p className="text-xs md:text-sm text-ink-soft">
@@ -483,225 +486,211 @@ export const TeacherManagementView: React.FC = () => {
       )}
 
       {/* MODAL 1: Assign Workload & Class Teacher Modal */}
-      {showAssignModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-brand">assignment_ind</span>
-                <h3 className="font-bold text-ink text-sm">Assign Faculty Workload & Classes (TCH-002)</h3>
-              </div>
-              <button
-                onClick={() => setShowAssignModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
+      <Modal
+        open={showAssignModal}
+        onClose={() => setShowAssignModal(false)}
+        title="Assign Faculty Workload & Classes (TCH-002)"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setShowAssignModal(false)}
+              className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form={assignFormId}
+              className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
+            >
+              Confirm Assignment
+            </button>
+          </>
+        }
+      >
+        <form id={assignFormId} onSubmit={handleAssignLoad} className="space-y-4 text-xs">
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Select Faculty Educator</label>
+            <select
+              value={assignTeacherId}
+              onChange={e => setAssignTeacherId(e.target.value)}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800"
+            >
+              {teachers.map(t => (
+                <option key={t.id} value={t.id}>
+                  {t.name} ({t.code} • {t.subject} • Current: {t.weeklyLoad}/{t.maxLoad} periods)
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Target Class / Section</label>
+              <select
+                value={assignClass}
+                onChange={e => setAssignClass(e.target.value)}
+                className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800"
               >
-                <span className="material-symbols-outlined">close</span>
-              </button>
+                <option value="Grade 10-A">Grade 10-A</option>
+                <option value="Grade 10-B">Grade 10-B</option>
+                <option value="Grade 11-A">Grade 11-A</option>
+                <option value="Grade 11-B">Grade 11-B</option>
+                <option value="Grade 12-A">Grade 12-A</option>
+                <option value="Grade 12-B">Grade 12-B</option>
+                <option value="Grade 9-A">Grade 9-A</option>
+                <option value="Grade 9-B">Grade 9-B</option>
+              </select>
             </div>
 
-            <form onSubmit={handleAssignLoad} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Select Faculty Educator</label>
-                <select
-                  value={assignTeacherId}
-                  onChange={e => setAssignTeacherId(e.target.value)}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800"
-                >
-                  {teachers.map(t => (
-                    <option key={t.id} value={t.id}>
-                      {t.name} ({t.code} • {t.subject} • Current: {t.weeklyLoad}/{t.maxLoad} periods)
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Target Class / Section</label>
-                  <select
-                    value={assignClass}
-                    onChange={e => setAssignClass(e.target.value)}
-                    className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800"
-                  >
-                    <option value="Grade 10-A">Grade 10-A</option>
-                    <option value="Grade 10-B">Grade 10-B</option>
-                    <option value="Grade 11-A">Grade 11-A</option>
-                    <option value="Grade 11-B">Grade 11-B</option>
-                    <option value="Grade 12-A">Grade 12-A</option>
-                    <option value="Grade 12-B">Grade 12-B</option>
-                    <option value="Grade 9-A">Grade 9-A</option>
-                    <option value="Grade 9-B">Grade 9-B</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Subject</label>
-                  <input
-                    type="text"
-                    value={assignSubject}
-                    onChange={e => setAssignSubject(e.target.value)}
-                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs font-semibold text-slate-800"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Additional Weekly Periods</label>
-                <select
-                  value={assignPeriods}
-                  onChange={e => setAssignPeriods(e.target.value)}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800"
-                >
-                  <option value="2">2 Periods / Week</option>
-                  <option value="4">4 Periods / Week (Standard)</option>
-                  <option value="6">6 Periods / Week (Lab & Core)</option>
-                  <option value="8">8 Periods / Week (Senior Core)</option>
-                </select>
-              </div>
-
-              <label className="flex items-center gap-2 p-3 bg-amber-50/70 border border-amber-200 rounded-xl cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={isClassTeacher}
-                  onChange={e => setIsClassTeacher(e.target.checked)}
-                  className="accent-brand rounded"
-                />
-                <span className="text-amber-950 font-semibold text-xs">
-                  Designate as Official Class Teacher for {assignClass}
-                </span>
-              </label>
-
-              <div className="flex justify-end gap-2 pt-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setShowAssignModal(false)}
-                  className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
-                >
-                  Confirm Assignment
-                </button>
-              </div>
-            </form>
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Subject</label>
+              <input
+                type="text"
+                value={assignSubject}
+                onChange={e => setAssignSubject(e.target.value)}
+                className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs font-semibold text-slate-800"
+              />
+            </div>
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Additional Weekly Periods</label>
+            <select
+              value={assignPeriods}
+              onChange={e => setAssignPeriods(e.target.value)}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800"
+            >
+              <option value="2">2 Periods / Week</option>
+              <option value="4">4 Periods / Week (Standard)</option>
+              <option value="6">6 Periods / Week (Lab & Core)</option>
+              <option value="8">8 Periods / Week (Senior Core)</option>
+            </select>
+          </div>
+
+          <label className="flex items-center gap-2 p-3 bg-amber-50/70 border border-amber-200 rounded-xl cursor-pointer">
+            <input
+              type="checkbox"
+              checked={isClassTeacher}
+              onChange={e => setIsClassTeacher(e.target.checked)}
+              className="accent-brand rounded"
+            />
+            <span className="text-amber-950 font-semibold text-xs">
+              Designate as Official Class Teacher for {assignClass}
+            </span>
+          </label>
+        </form>
+      </Modal>
 
       {/* MODAL 2: CBSE Faculty Inspection Dossier Modal */}
-      {selectedTeacher && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-5 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
+      <DialogShell open={Boolean(selectedTeacher)} onClose={() => setSelectedTeacher(null)} labelledBy={dossierTitleId} className="max-w-2xl">
+        {selectedTeacher && (
+          <>
+            <div className="flex items-center justify-between border-b px-6 pt-6 pb-3">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-brand">verified_user</span>
-                <h3 className="font-bold text-ink text-sm">CBSE Faculty Inspection Dossier (TCH-022)</h3>
+                <h3 id={dossierTitleId} className="font-bold text-ink text-sm">CBSE Faculty Inspection Dossier (TCH-022)</h3>
               </div>
-              <button
-                onClick={() => setSelectedTeacher(null)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
+              <DialogClose onClose={() => setSelectedTeacher(null)} />
             </div>
 
-            {/* Dossier Content Sheet */}
-            <div className="border border-slate-300 rounded-xl p-5 bg-wash space-y-4 text-xs text-ink">
-              <div className="text-center border-b pb-3">
-                <div className="font-black text-base">LUMEN ACADEMY SENIOR SECONDARY SCHOOL</div>
-                <div className="text-[11px] text-slate-500">Board Affiliation No. 1930412 • Faculty Verification Record</div>
-                <div className="inline-block mt-1 px-3 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded font-bold text-[11px]">
-                  OFFICIAL CBSE AFFILIATION & INSPECTION DOSSIER
-                </div>
-              </div>
-
-              {/* Faculty Summary Grid */}
-              <div className="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-lg border border-slate-200 text-[11px]">
-                <div>Faculty Name: <strong>{selectedTeacher.name}</strong></div>
-                <div className="text-right">Code: <strong className="font-mono">{selectedTeacher.code}</strong></div>
-                <div>Designation: <strong>{selectedTeacher.designation}</strong></div>
-                <div className="text-right">Status: <strong className="text-emerald-700">{selectedTeacher.status}</strong></div>
-                <div>Subject Department: <strong>{selectedTeacher.subject}</strong></div>
-                <div className="text-right">Weekly Load: <strong className="font-mono">{selectedTeacher.weeklyLoad} / {selectedTeacher.maxLoad} periods</strong></div>
-                <div>Academic Qualifications: <strong>{selectedTeacher.qualification}</strong></div>
-                <div className="text-right">Class Teacher: <strong>{selectedTeacher.classTeacherOf || 'None Assigned'}</strong></div>
-                <div>Classes Handled: <strong>{selectedTeacher.classes}</strong></div>
-                <div className="text-right">Syllabus Coverage: <strong className="text-emerald-700"><Figure value={selectedTeacher.syllabusCoverage} suffix="%" /></strong></div>
-              </div>
-
-              {/* Notes of Lesson Audit */}
-              <div className="space-y-1.5">
-                <div className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex justify-between">
-                  <span>Pedagogical Unit Plans (Notes of Lesson)</span>
-                  <span className="text-emerald-700">{selectedTeacher.lessonPlansApproved} / {selectedTeacher.lessonPlansSubmitted} Certified</span>
-                </div>
-                <div className="p-2.5 bg-white border border-slate-200 rounded-lg text-[11px] space-y-1">
-                  <div className="flex justify-between">
-                    <span>Term 2 Unit 4: "Differential Equations & Mathematical Modeling"</span>
-                    <span className="font-mono text-emerald-700 font-bold">Approved by HOD</span>
-                  </div>
-                  <div className="flex justify-between text-slate-500">
-                    <span>Bloom's Taxonomy: Evaluation & Creation • NEP 2020 Real-world application</span>
-                    <span>Verified</span>
+            <div className="overflow-y-auto px-6 pb-6 pt-5 space-y-5">
+              {/* Dossier Content Sheet */}
+              <div className="border border-slate-300 rounded-xl p-5 bg-wash space-y-4 text-xs text-ink">
+                <div className="text-center border-b pb-3">
+                  <div className="font-black text-base">LUMEN ACADEMY SENIOR SECONDARY SCHOOL</div>
+                  <div className="text-[11px] text-slate-500">Board Affiliation No. 1930412 • Faculty Verification Record</div>
+                  <div className="inline-block mt-1 px-3 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded font-bold text-[11px]">
+                    OFFICIAL CBSE AFFILIATION & INSPECTION DOSSIER
                   </div>
                 </div>
+
+                {/* Faculty Summary Grid */}
+                <div className="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-lg border border-slate-200 text-[11px]">
+                  <div>Faculty Name: <strong>{selectedTeacher.name}</strong></div>
+                  <div className="text-right">Code: <strong className="font-mono">{selectedTeacher.code}</strong></div>
+                  <div>Designation: <strong>{selectedTeacher.designation}</strong></div>
+                  <div className="text-right">Status: <strong className="text-emerald-700">{selectedTeacher.status}</strong></div>
+                  <div>Subject Department: <strong>{selectedTeacher.subject}</strong></div>
+                  <div className="text-right">Weekly Load: <strong className="font-mono">{selectedTeacher.weeklyLoad} / {selectedTeacher.maxLoad} periods</strong></div>
+                  <div>Academic Qualifications: <strong>{selectedTeacher.qualification}</strong></div>
+                  <div className="text-right">Class Teacher: <strong>{selectedTeacher.classTeacherOf || 'None Assigned'}</strong></div>
+                  <div>Classes Handled: <strong>{selectedTeacher.classes}</strong></div>
+                  <div className="text-right">Syllabus Coverage: <strong className="text-emerald-700"><Figure value={selectedTeacher.syllabusCoverage} suffix="%" /></strong></div>
+                </div>
+
+                {/* Notes of Lesson Audit */}
+                <div className="space-y-1.5">
+                  <div className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex justify-between">
+                    <span>Pedagogical Unit Plans (Notes of Lesson)</span>
+                    <span className="text-emerald-700">{selectedTeacher.lessonPlansApproved} / {selectedTeacher.lessonPlansSubmitted} Certified</span>
+                  </div>
+                  <div className="p-2.5 bg-white border border-slate-200 rounded-lg text-[11px] space-y-1">
+                    <div className="flex justify-between">
+                      <span>Term 2 Unit 4: "Differential Equations & Mathematical Modeling"</span>
+                      <span className="font-mono text-emerald-700 font-bold">Approved by HOD</span>
+                    </div>
+                    <div className="flex justify-between text-slate-500">
+                      <span>Bloom's Taxonomy: Evaluation & Creation • NEP 2020 Real-world application</span>
+                      <span>Verified</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 50-Hour CPD Register */}
+                <div className="space-y-1.5">
+                  <div className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex justify-between">
+                    <span>NEP 2020 Continuous Professional Development (50-Hour Mandate)</span>
+                    <span className="text-emerald-700 font-bold">48 / 50 Hours Completed</span>
+                  </div>
+                  <div className="p-2.5 bg-white border border-slate-200 rounded-lg text-[11px] space-y-1 text-slate-600">
+                    <div>✓ CBSE COE: "Pedagogical Leadership & Art-Integrated Learning" (16 Hours)</div>
+                    <div>✓ DIKSHA: "Foundational Literacy & Holistic Progress Card (HPC)" (18 Hours)</div>
+                    <div>✓ Institutional: "DPDPA 2023 Student Data Privacy & Safe Lab Protocols" (14 Hours)</div>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-[10px] text-slate-500">
+                  <div>Digital Certificate Stamp: <strong className="font-mono">SHA256:d8c199..cbse_verified</strong></div>
+                  <div>Superintendent of Examination</div>
+                </div>
               </div>
 
-              {/* 50-Hour CPD Register */}
-              <div className="space-y-1.5">
-                <div className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex justify-between">
-                  <span>NEP 2020 Continuous Professional Development (50-Hour Mandate)</span>
-                  <span className="text-emerald-700 font-bold">48 / 50 Hours Completed</span>
-                </div>
-                <div className="p-2.5 bg-white border border-slate-200 rounded-lg text-[11px] space-y-1 text-slate-600">
-                  <div>✓ CBSE COE: "Pedagogical Leadership & Art-Integrated Learning" (16 Hours)</div>
-                  <div>✓ DIKSHA: "Foundational Literacy & Holistic Progress Card (HPC)" (18 Hours)</div>
-                  <div>✓ Institutional: "DPDPA 2023 Student Data Privacy & Safe Lab Protocols" (14 Hours)</div>
-                </div>
-              </div>
+              <div className="flex justify-between gap-2">
+                <button
+                  onClick={() => {
+                    window.print();
+                    addToast('Dispatched Faculty Dossier to print dialog', 'info');
+                  }}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-bold flex items-center gap-1.5"
+                >
+                  <span className="material-symbols-outlined text-sm">print</span>
+                  <span>Print Official Dossier</span>
+                </button>
 
-              <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-[10px] text-slate-500">
-                <div>Digital Certificate Stamp: <strong className="font-mono">SHA256:d8c199..cbse_verified</strong></div>
-                <div>Superintendent of Examination</div>
+                <button
+                  onClick={() => {
+                    const dossierText = `CBSE FACULTY INSPECTION DOSSIER\nFaculty: ${selectedTeacher.name} (${selectedTeacher.code})\nDesignation: ${selectedTeacher.designation}\nQualifications: ${selectedTeacher.qualification}\nClasses: ${selectedTeacher.classes}\nWorkload: ${selectedTeacher.weeklyLoad}/${selectedTeacher.maxLoad} periods\nNoL Units Approved: ${selectedTeacher.lessonPlansApproved}/${selectedTeacher.lessonPlansSubmitted}\nCPD Hours: 48/50 Completed\nStatus: Certified Valid`;
+                    const link = document.createElement('a');
+                    link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(dossierText);
+                    link.download = `CBSE_Dossier_${selectedTeacher.code}_${selectedTeacher.name.replace(/\s+/g, '_')}.txt`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    addToast(`Downloaded CBSE Inspection Dossier for ${selectedTeacher.name}`, 'success');
+                    setSelectedTeacher(null);
+                  }}
+                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5"
+                >
+                  <span className="material-symbols-outlined text-sm">download</span>
+                  <span>Download Dossier</span>
+                </button>
               </div>
             </div>
-
-            <div className="flex justify-between gap-2">
-              <button
-                onClick={() => {
-                  window.print();
-                  addToast('Dispatched Faculty Dossier to print dialog', 'info');
-                }}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-bold flex items-center gap-1.5"
-              >
-                <span className="material-symbols-outlined text-sm">print</span>
-                <span>Print Official Dossier</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  const dossierText = `CBSE FACULTY INSPECTION DOSSIER\nFaculty: ${selectedTeacher.name} (${selectedTeacher.code})\nDesignation: ${selectedTeacher.designation}\nQualifications: ${selectedTeacher.qualification}\nClasses: ${selectedTeacher.classes}\nWorkload: ${selectedTeacher.weeklyLoad}/${selectedTeacher.maxLoad} periods\nNoL Units Approved: ${selectedTeacher.lessonPlansApproved}/${selectedTeacher.lessonPlansSubmitted}\nCPD Hours: 48/50 Completed\nStatus: Certified Valid`;
-                  const link = document.createElement('a');
-                  link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(dossierText);
-                  link.download = `CBSE_Dossier_${selectedTeacher.code}_${selectedTeacher.name.replace(/\s+/g, '_')}.txt`;
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                  addToast(`Downloaded CBSE Inspection Dossier for ${selectedTeacher.name}`, 'success');
-                  setSelectedTeacher(null);
-                }}
-                className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5"
-              >
-                <span className="material-symbols-outlined text-sm">download</span>
-                <span>Download Dossier</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </DialogShell>
     </div>
   );
 };

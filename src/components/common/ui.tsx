@@ -126,44 +126,110 @@ export const ErrorState: React.FC<{ message?: string; onRetry: () => void }> = (
   </div>
 );
 
-/** Accessible modal: labelled, closes on Escape and backdrop click, focuses the first control. */
-export const Modal: React.FC<{ open: boolean; onClose: () => void; title: string; children: React.ReactNode; footer?: React.ReactNode; wide?: boolean }> = ({ open, onClose, title, children, footer, wide }) => {
-  const id = useId();
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+/**
+ * Dialog behaviour shared by every overlay: Escape closes, focus moves into the panel on open,
+ * Tab is trapped inside it, and the previously focused element is restored on close.
+ *
+ * `onClose` is read through a ref so an inline arrow from the caller does not re-run the effect
+ * and steal focus back to the first control on every render.
+ */
+export const useDialogBehavior = (open: boolean, onClose: () => void) => {
   const ref = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement | null;
-    ref.current?.querySelector<HTMLElement>('input, select, textarea, button:not([data-close])')?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    document.addEventListener('keydown', onKey);
+    const panel = ref.current;
+    const visible = () => Array.from(panel?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? []).filter(el => el.offsetParent !== null);
+    (panel?.querySelector<HTMLElement>('input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]):not([data-close])') ?? visible()[0])?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        onCloseRef.current();
+        return;
+      }
+      if (e.key !== 'Tab' || !panel) return;
+      const items = visible();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && (active === first || !panel.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey, true);
     return () => {
-      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('keydown', onKey, true);
       previous?.focus?.();
     };
-  }, [open, onClose]);
+  }, [open]);
+  return ref;
+};
+
+/**
+ * Backdrop, elevation and dialog semantics for an overlay that keeps its own inner layout.
+ * Use this for bespoke panels; use `Modal` when the standard title/body/footer shape fits.
+ * Pass `labelledBy` when the panel renders its own visible heading, otherwise `label`.
+ */
+export const DialogShell: React.FC<{
+  open: boolean;
+  onClose: () => void;
+  label?: string;
+  labelledBy?: string;
+  className?: string;
+  closeOnBackdrop?: boolean;
+  children: React.ReactNode;
+}> = ({ open, onClose, label, labelledBy, className = 'max-w-lg', closeOnBackdrop = true, children }) => {
+  const ref = useDialogBehavior(open, onClose);
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px] fade-in" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px] fade-in" onClick={closeOnBackdrop ? onClose : undefined}>
       <div
         ref={ref}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={id}
-        className={`bg-surface rounded-2xl shadow-2xl ring-1 ring-lumen-950/10 w-full ${wide ? 'max-w-3xl' : 'max-w-lg'} max-h-[90vh] flex flex-col zoom-in`}
+        aria-label={labelledBy ? undefined : label}
+        aria-labelledby={labelledBy}
+        className={`bg-surface rounded-2xl shadow-2xl ring-1 ring-lumen-950/10 w-full max-h-[90vh] flex flex-col zoom-in ${className}`}
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between gap-2 px-5 py-4 border-b border-line-soft">
-          <h2 id={id} className="text-[15px] font-semibold font-display tracking-tight text-ink">
-            {title}
-          </h2>
-          <button data-close onClick={onClose} className="p-1 rounded-lg text-ink-muted hover:bg-slate-100" aria-label="Close dialog">
-            <Icon name="close" className="text-lg" />
-          </button>
-        </div>
-        <div className="px-5 py-4 overflow-y-auto text-xs text-ink space-y-3">{children}</div>
-        {footer && <div className="px-5 py-3 bg-wash border-t border-line-soft rounded-b-2xl flex flex-wrap justify-end gap-2">{footer}</div>}
+        {children}
       </div>
     </div>
+  );
+};
+
+/** The standard dialog close affordance, so every overlay closes the same way and is labelled. */
+export const DialogClose: React.FC<{ onClose: () => void; label?: string; className?: string }> = ({ onClose, label = 'Close dialog', className = '' }) => (
+  <button data-close type="button" onClick={onClose} className={`p-1 rounded-lg text-ink-muted hover:bg-slate-100 hover:text-ink transition-colors ${className}`} aria-label={label}>
+    <Icon name="close" className="text-lg" />
+  </button>
+);
+
+/** Accessible modal: labelled, closes on Escape and backdrop click, traps and restores focus. */
+export const Modal: React.FC<{ open: boolean; onClose: () => void; title: string; children: React.ReactNode; footer?: React.ReactNode; wide?: boolean }> = ({ open, onClose, title, children, footer, wide }) => {
+  const id = useId();
+  return (
+    <DialogShell open={open} onClose={onClose} labelledBy={id} className={wide ? 'max-w-3xl' : 'max-w-lg'}>
+      <div className="flex items-center justify-between gap-2 px-5 py-4 border-b border-line-soft">
+        <h2 id={id} className="text-[15px] font-semibold font-display tracking-tight text-ink">
+          {title}
+        </h2>
+        <DialogClose onClose={onClose} />
+      </div>
+      <div className="px-5 py-4 overflow-y-auto text-xs text-ink space-y-3">{children}</div>
+      {footer && <div className="px-5 py-3 bg-wash border-t border-line-soft rounded-b-2xl flex flex-wrap justify-end gap-2">{footer}</div>}
+    </DialogShell>
   );
 };
 

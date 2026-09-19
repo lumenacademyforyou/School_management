@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Modal } from '../../components/common/ui';
 
 export const HostelView: React.FC = () => {
   const { addToast } = useApp();
+  const outingFormId = useId();
   const [selectedBlock, setSelectedBlock] = useState('Godavari');
   const [showCurfewAuditModal, setShowCurfewAuditModal] = useState(false);
   const [showOutingPassModal, setShowOutingPassModal] = useState(false);
@@ -100,7 +102,10 @@ export const HostelView: React.FC = () => {
           >
             <div className="flex items-center justify-between text-xs text-ink-muted">
               <span className="font-semibold uppercase tracking-wider text-[10px]">{b.type}</span>
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span className="flex items-center gap-1 font-semibold text-[10px] text-emerald-700">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true"></span>
+                Active
+              </span>
             </div>
             <div className="text-base font-bold text-ink mt-1">{b.name}</div>
             <div className="text-xs text-ink-soft mt-1 flex justify-between">
@@ -192,126 +197,101 @@ export const HostelView: React.FC = () => {
       </div>
 
       {/* MODAL 1: Curfew Audit Modal */}
-      {showCurfewAuditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-brand">lock_clock</span>
-                <h3 className="font-bold text-ink text-sm">21:00 Curfew Biometric Audit Report</h3>
-              </div>
-              <button
-                onClick={() => setShowCurfewAuditModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
-                <div className="text-xl font-bold font-mono text-emerald-800">426</div>
-                <div className="text-[10px] text-emerald-700 font-semibold mt-0.5">In Rooms / Mess</div>
-              </div>
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                <div className="text-xl font-bold font-mono text-amber-800">2</div>
-                <div className="text-[10px] text-amber-700 font-semibold mt-0.5">Infirmary (Monitored)</div>
-              </div>
-              <div className="p-3 bg-slate-100 border border-slate-200 rounded-xl">
-                <div className="text-xl font-bold font-mono text-slate-800">0</div>
-                <div className="text-[10px] text-slate-600 font-semibold mt-0.5">Unaccounted For</div>
-              </div>
-            </div>
-
-            <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900 text-[11px] leading-relaxed">
-              ✓ All 4 residential block perimeter turnstiles locked at 21:00. CCTV perimeter sensors active. Zero unauthorized exits detected.
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2 border-t">
-              <button
-                type="button"
-                onClick={() => setShowCurfewAuditModal(false)}
-                className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs"
-              >
-                Close Audit Roster
-              </button>
-            </div>
+      <Modal
+        open={showCurfewAuditModal}
+        onClose={() => setShowCurfewAuditModal(false)}
+        title="21:00 Curfew Biometric Audit Report"
+        footer={
+          <button
+            type="button"
+            onClick={() => setShowCurfewAuditModal(false)}
+            className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs"
+          >
+            Close Audit Roster
+          </button>
+        }
+      >
+        <div className="grid grid-cols-3 gap-3 text-center">
+          <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+            <div className="text-xl font-bold font-mono text-emerald-800">426</div>
+            <div className="text-[10px] text-emerald-700 font-semibold mt-0.5">In Rooms / Mess</div>
+          </div>
+          <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+            <div className="text-xl font-bold font-mono text-amber-800">2</div>
+            <div className="text-[10px] text-amber-700 font-semibold mt-0.5">Infirmary (Monitored)</div>
+          </div>
+          <div className="p-3 bg-slate-100 border border-slate-200 rounded-xl">
+            <div className="text-xl font-bold font-mono text-slate-800">0</div>
+            <div className="text-[10px] text-slate-600 font-semibold mt-0.5">Unaccounted For</div>
           </div>
         </div>
-      )}
+
+        <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900 text-[11px] leading-relaxed">
+          ✓ All 4 residential block perimeter turnstiles locked at 21:00. CCTV perimeter sensors active. Zero unauthorized exits detected.
+        </div>
+      </Modal>
 
       {/* MODAL 2: Issue Outing Pass Modal */}
-      {showOutingPassModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-emerald-600">badge</span>
-                <h3 className="font-bold text-ink text-sm">Issue Weekend Outing Gatepass (HST-014)</h3>
-              </div>
-              <button
-                onClick={() => setShowOutingPassModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleIssueOutingPass} className="space-y-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Scholar Name & Room</label>
-                <select
-                  value={outingStudent}
-                  onChange={e => setOutingStudent(e.target.value)}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                >
-                  <option value="Aarav S. Ramanathan">Aarav S. Ramanathan (Godavari Room 204-A)</option>
-                  <option value="Farah N. Siddiqui">Farah N. Siddiqui (Kaveri Room 102-B)</option>
-                  <option value="Rohan Venkatesh">Rohan Venkatesh (Godavari Room 301-A)</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Destination & Escort</label>
-                <input
-                  type="text"
-                  value={outingDestination}
-                  onChange={e => setOutingDestination(e.target.value)}
-                  placeholder="e.g., Local Guardian Residence (Adyar)"
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Mandatory Return Deadline</label>
-                <input
-                  type="text"
-                  value={outingReturnTime}
-                  onChange={e => setOutingReturnTime(e.target.value)}
-                  placeholder="18:00 Sunday"
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2 border-t">
-                <button
-                  type="button"
-                  onClick={() => setShowOutingPassModal(false)}
-                  className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs"
-                >
-                  Authorize Gatepass
-                </button>
-              </div>
-            </form>
+      <Modal
+        open={showOutingPassModal}
+        onClose={() => setShowOutingPassModal(false)}
+        title="Issue Weekend Outing Gatepass (HST-014)"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setShowOutingPassModal(false)}
+              className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form={outingFormId}
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs"
+            >
+              Authorize Gatepass
+            </button>
+          </>
+        }
+      >
+        <form id={outingFormId} onSubmit={handleIssueOutingPass} className="space-y-3">
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Scholar Name & Room</label>
+            <select
+              value={outingStudent}
+              onChange={e => setOutingStudent(e.target.value)}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+            >
+              <option value="Aarav S. Ramanathan">Aarav S. Ramanathan (Godavari Room 204-A)</option>
+              <option value="Farah N. Siddiqui">Farah N. Siddiqui (Kaveri Room 102-B)</option>
+              <option value="Rohan Venkatesh">Rohan Venkatesh (Godavari Room 301-A)</option>
+            </select>
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Destination & Escort</label>
+            <input
+              type="text"
+              value={outingDestination}
+              onChange={e => setOutingDestination(e.target.value)}
+              placeholder="e.g., Local Guardian Residence (Adyar)"
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
+            />
+          </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Mandatory Return Deadline</label>
+            <input
+              type="text"
+              value={outingReturnTime}
+              onChange={e => setOutingReturnTime(e.target.value)}
+              placeholder="18:00 Sunday"
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
+            />
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

@@ -8,7 +8,6 @@ import { hallOfFameService } from '../../src/services/hallOfFameService';
 import { transportService } from '../../src/services/transportService';
 import { hostelService } from '../../src/services/hostelService';
 import { APP_NOW } from '../shared/schoolData';
-import { THEME_OPTIONS, ThemeChoice, resolveTheme, useTheme } from '../shared/settingsService';
 import { Card, EmptyState, ErrorCard, FeatureFooter, Icon, LoadingCard, Pill, Screen, SecondaryButton, cx, fmtDate, useAsync } from '../shared/mobileUi';
 import { Figure } from '../../src/components/common/Figure';
 
@@ -332,7 +331,12 @@ export const TransportPage: React.FC<{ child: RosterStudent }> = ({ child }) => 
         <div className="mt-3 flex items-center gap-1.5" role="group" aria-label="Demo clock">
           <span className="text-[11px] text-slate-500 mr-1">Demo clock</span>
           {DEMO_TIMES.map(d => (
-            <button key={d.at} onClick={() => setNow(d.at)} aria-pressed={now === d.at} className={cx('px-2.5 py-1 rounded-full text-[11px] border', now === d.at ? 'bg-[var(--accent)] text-white border-[var(--accent)]' : 'border-slate-300 text-slate-600')}>
+            <button
+              key={d.at}
+              onClick={() => setNow(d.at)}
+              aria-pressed={now === d.at}
+              className={cx('min-h-11 inline-flex items-center px-3.5 rounded-full text-[11px] border', now === d.at ? 'bg-[var(--accent)] text-white border-[var(--accent)]' : 'border-slate-300 text-slate-600')}
+            >
               {d.label}
             </button>
           ))}
@@ -540,61 +544,5 @@ export const HostelPage: React.FC<{ child: RosterStudent }> = ({ child }) => {
 // Appearance
 // ---------------------------------------------------------------------------
 
-const ThemePreview: React.FC<{ choice: ThemeChoice }> = ({ choice }) => {
-  const previews = choice === 'system' ? (['light', 'dark'] as const) : ([resolveTheme(choice, false)] as const);
-  return (
-    <span className="flex w-full h-20 rounded-lg overflow-hidden border border-slate-200" aria-hidden="true">
-      {previews.map(t => (
-        <span key={t} data-app-theme={t} className="flex-1 flex flex-col bg-[var(--app-bg)]" style={{ ['--accent' as string]: '#17667d' }}>
-          <span className="h-4 bg-[var(--bar)] border-b-2 border-[var(--bar-edge)]" />
-          <span className="m-1.5 flex-1 rounded-md bg-[var(--surface)] border border-slate-200 p-1 space-y-1">
-            <span className="block h-1.5 w-2/3 rounded bg-slate-300" />
-            <span className="block h-1.5 w-1/2 rounded bg-slate-200" />
-            <span className="block h-2 w-1/3 rounded bg-[var(--accent)]" />
-          </span>
-        </span>
-      ))}
-    </span>
-  );
-};
-
-export const AppearancePage: React.FC<{ onSaved: (text: string) => void }> = ({ onSaved }) => {
-  const { choice, applied, setTheme } = useTheme();
-  return (
-    <Screen>
-      <Card title="Theme">
-        <p className="text-[12px] text-slate-500 -mt-1 mb-3">Choose your preferred appearance.</p>
-        <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label="Theme">
-          {THEME_OPTIONS.map(o => {
-            const on = o.id === choice;
-            return (
-              <button
-                key={o.id}
-                role="radio"
-                aria-checked={on}
-                onClick={() => {
-                  setTheme(o.id);
-                  onSaved(`Theme set to ${o.label}`);
-                }}
-                className={cx('rounded-2xl border-2 p-2 text-left space-y-2 transition-colors', on ? 'border-[var(--accent-ink)] bg-slate-50' : 'border-slate-200')}
-                data-theme-option={o.id}
-              >
-                <ThemePreview choice={o.id} />
-                <span className="flex items-center gap-1.5">
-                  <Icon name={o.icon} className="text-[18px] text-[var(--accent-ink)]" />
-                  <span className="text-[13px] font-semibold text-slate-900 flex-1">{o.label}</span>
-                  {on && <Icon name="check_circle" filled className="text-[18px] text-[var(--accent-ink)]" />}
-                </span>
-                <span className="block text-[11px] text-slate-500">{o.hint}</span>
-              </button>
-            );
-          })}
-        </div>
-        <p className="mt-3 text-[11px] text-slate-500" aria-live="polite">
-          Showing the {applied === 'school' ? 'School' : applied === 'dark' ? 'Dark' : 'Light'} theme{choice === 'system' ? ', following your phone' : ''}. Saved on this device.
-        </p>
-      </Card>
-      <FeatureFooter ids={['APP-015', 'APP-017']} />
-    </Screen>
-  );
-};
+// The theme picker lives in the shared kit so the teacher app shows the same one (APP-015).
+export { AppearancePage } from '../shared/mobileUi';

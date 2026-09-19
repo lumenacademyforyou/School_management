@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Figure } from '../../components/common/Figure';
+import { DialogClose, DialogShell } from '../../components/common/ui';
 
 interface StaffMember {
   id: string;
@@ -21,6 +22,9 @@ interface StaffMember {
 
 export const HRPayrollView: React.FC = () => {
   const { addToast } = useApp();
+  const payslipTitleId = useId();
+  const disbursalTitleId = useId();
+  const addStaffTitleId = useId();
 
   const [staff, setStaff] = useState<StaffMember[]>([
     {
@@ -262,325 +266,311 @@ export const HRPayrollView: React.FC = () => {
           <span className="text-xs font-mono text-brand">Bank Disbursal: 1st of Month</span>
         </div>
 
-        <table className="w-full text-xs text-left">
-          <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
-            <tr>
-              <th className="p-3">Staff Member & Designation</th>
-              <th className="p-3">7th CPC Pay Scale</th>
-              <th className="p-3">Basic + DA</th>
-              <th className="p-3">EPF Contribution</th>
-              <th className="p-3">Biometric Punch</th>
-              <th className="p-3 text-right">Payslip</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-subtle">
-            {staff.map(s => (
-              <tr key={s.id} className="hover:bg-wash transition-colors">
-                <td className="p-3 font-bold text-ink">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-[11px] text-brand">{s.id}</span>
-                    <span>{s.name}</span>
-                  </div>
-                  <div className="text-[10px] text-ink-muted font-normal">{s.role}</div>
-                </td>
-                <td className="p-3 font-mono font-bold text-brand">{s.level}</td>
-                <td className="p-3 font-mono text-ink"><Figure prefix="₹" value={(s.basic + s.da).toLocaleString()} /></td>
-                <td className="p-3 font-mono text-ink-soft"><Figure prefix="₹" value={s.epf.toLocaleString()} /></td>
-                <td className="p-3">
-                  <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">
-                    {s.status}
-                  </span>
-                </td>
-                <td className="p-3 text-right">
-                  <button
-                    onClick={() => setSelectedStaffPayslip(s)}
-                    className="text-brand font-semibold hover:underline bg-subtle px-2.5 py-1 rounded-lg"
-                  >
-                    View Payslip
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-left">
+            <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
+              <tr>
+                <th className="p-3">Staff Member & Designation</th>
+                <th className="p-3">7th CPC Pay Scale</th>
+                <th className="p-3">Basic + DA</th>
+                <th className="p-3">EPF Contribution</th>
+                <th className="p-3">Biometric Punch</th>
+                <th className="p-3 text-right">Payslip</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-subtle">
+              {staff.map(s => (
+                <tr key={s.id} className="hover:bg-wash transition-colors">
+                  <td className="p-3 font-bold text-ink">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-[11px] text-brand">{s.id}</span>
+                      <span>{s.name}</span>
+                    </div>
+                    <div className="text-[10px] text-ink-muted font-normal">{s.role}</div>
+                  </td>
+                  <td className="p-3 font-mono font-bold text-brand">{s.level}</td>
+                  <td className="p-3 font-mono text-ink"><Figure prefix="₹" value={(s.basic + s.da).toLocaleString()} /></td>
+                  <td className="p-3 font-mono text-ink-soft"><Figure prefix="₹" value={s.epf.toLocaleString()} /></td>
+                  <td className="p-3">
+                    <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">
+                      {s.status}
+                    </span>
+                  </td>
+                  <td className="p-3 text-right">
+                    <button
+                      onClick={() => setSelectedStaffPayslip(s)}
+                      className="text-brand font-semibold hover:underline bg-subtle px-2.5 py-1 rounded-lg"
+                    >
+                      View Payslip
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Modal: View Payslip */}
       {selectedStaffPayslip && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <div>
-                <span className="text-[10px] font-mono text-brand font-bold">LUMENACADEMY · SALARY SLIP</span>
-                <h3 className="font-bold text-base text-ink">{selectedStaffPayslip.name}</h3>
-                <span className="text-xs text-ink-muted">{selectedStaffPayslip.role} • {selectedStaffPayslip.id}</span>
-              </div>
-              <button onClick={() => setSelectedStaffPayslip(null)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
+        <DialogShell open onClose={() => setSelectedStaffPayslip(null)} labelledBy={payslipTitleId} className="max-w-lg p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-subtle pb-3">
+            <div>
+              <span className="text-[10px] font-mono text-brand font-bold">LUMENACADEMY · SALARY SLIP</span>
+              <h3 id={payslipTitleId} className="font-bold text-base text-ink">{selectedStaffPayslip.name}</h3>
+              <span className="text-xs text-ink-muted">{selectedStaffPayslip.role} • {selectedStaffPayslip.id}</span>
             </div>
+            <DialogClose onClose={() => setSelectedStaffPayslip(null)} />
+          </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs bg-wash p-3 rounded-xl border border-line">
-              <div>
-                <span className="text-ink-muted block text-[10px]">PAN Number</span>
-                <span className="font-mono font-bold text-ink">{selectedStaffPayslip.pan}</span>
-              </div>
-              <div>
-                <span className="text-ink-muted block text-[10px]">EPFO UAN</span>
-                <span className="font-mono font-bold text-ink">{selectedStaffPayslip.uan}</span>
-              </div>
-              <div className="col-span-2">
-                <span className="text-ink-muted block text-[10px]">Bank Account</span>
-                <span className="font-mono font-semibold text-ink">{selectedStaffPayslip.bankAccount}</span>
-              </div>
+          <div className="grid grid-cols-2 gap-3 text-xs bg-wash p-3 rounded-xl border border-line">
+            <div>
+              <span className="text-ink-muted block text-[10px]">PAN Number</span>
+              <span className="font-mono font-bold text-ink">{selectedStaffPayslip.pan}</span>
             </div>
-
-            {/* Earnings vs Deductions Breakdown */}
-            <div className="grid grid-cols-2 gap-4 text-xs">
-              <div className="border border-emerald-200 bg-emerald-50/40 p-3 rounded-xl space-y-1.5">
-                <div className="font-bold text-emerald-900 border-b border-emerald-200 pb-1">Earnings</div>
-                <div className="flex justify-between"><span>Basic Pay:</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.basic.toLocaleString()} /></span></div>
-                <div className="flex justify-between"><span>Dearness Allowance (DA 50%):</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.da.toLocaleString()} /></span></div>
-                <div className="flex justify-between"><span>House Rent (HRA 27%):</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.hra.toLocaleString()} /></span></div>
-                <div className="flex justify-between"><span>Transport Allowance:</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.ta.toLocaleString()} /></span></div>
-                <div className="border-t border-emerald-200 pt-1 flex justify-between font-bold text-emerald-950">
-                  <span>Gross Pay:</span>
-                  <span className="font-mono">
-                    <Figure prefix="₹" value={(selectedStaffPayslip.basic + selectedStaffPayslip.da + selectedStaffPayslip.hra + selectedStaffPayslip.ta).toLocaleString()} />
-                  </span>
-                </div>
-              </div>
-
-              <div className="border border-red-200 bg-red-50/40 p-3 rounded-xl space-y-1.5">
-                <div className="font-bold text-red-900 border-b border-red-200 pb-1">Deductions</div>
-                <div className="flex justify-between"><span>Provident Fund (EPF):</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.epf.toLocaleString()} /></span></div>
-                <div className="flex justify-between"><span>TDS (Sec 192):</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.tax.toLocaleString()} /></span></div>
-                <div className="flex justify-between"><span>Professional Tax:</span> <span className="font-mono font-semibold"><Figure prefix="₹" value="200" /></span></div>
-                <div className="border-t border-red-200 pt-1 flex justify-between font-bold text-red-950">
-                  <span>Total Deductions:</span>
-                  <span className="font-mono">
-                    <Figure prefix="₹" value={(selectedStaffPayslip.epf + selectedStaffPayslip.tax + 200).toLocaleString()} />
-                  </span>
-                </div>
-              </div>
+            <div>
+              <span className="text-ink-muted block text-[10px]">EPFO UAN</span>
+              <span className="font-mono font-bold text-ink">{selectedStaffPayslip.uan}</span>
             </div>
-
-            {/* Net Pay */}
-            <div className="p-3.5 bg-subtle rounded-xl border border-line flex items-center justify-between text-xs">
-              <div>
-                <span className="text-brand font-bold text-sm block">Net Take-Home Salary</span>
-                <span className="text-[11px] text-ink-soft">Direct NEFT Credit to Bank</span>
-              </div>
-              <div className="text-xl font-bold font-mono text-brand">
-                <Figure prefix="₹" value={(
-                  selectedStaffPayslip.basic +
-                  selectedStaffPayslip.da +
-                  selectedStaffPayslip.hra +
-                  selectedStaffPayslip.ta -
-                  (selectedStaffPayslip.epf + selectedStaffPayslip.tax + 200)
-                ).toLocaleString()} />
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2 border-t border-subtle">
-              <button
-                type="button"
-                onClick={() => setSelectedStaffPayslip(null)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold text-xs"
-              >
-                Close
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const slipText = `LumenAcademy 7th CPC Salary Slip\nEmployee: ${selectedStaffPayslip.name} (${selectedStaffPayslip.id})\nRole: ${selectedStaffPayslip.role}\nGross Pay: ₹${(selectedStaffPayslip.basic + selectedStaffPayslip.da + selectedStaffPayslip.hra + selectedStaffPayslip.ta).toLocaleString()}\nNet Disbursal: ₹${(selectedStaffPayslip.basic + selectedStaffPayslip.da + selectedStaffPayslip.hra + selectedStaffPayslip.ta - (selectedStaffPayslip.epf + selectedStaffPayslip.tax + 200)).toLocaleString()}`;
-                  const blob = new Blob([slipText], { type: 'text/plain;charset=utf-8;' });
-                  const link = document.createElement('a');
-                  link.href = URL.createObjectURL(blob);
-                  link.download = `Payslip_${selectedStaffPayslip.id}_FEB2025.txt`;
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                  addToast(`Downloaded PDF Payslip for ${selectedStaffPayslip.name}`, 'success');
-                }}
-                className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold text-xs flex items-center gap-1.5"
-              >
-                <span className="material-symbols-outlined text-sm">download</span>
-                <span>Download Payslip</span>
-              </button>
+            <div className="col-span-2">
+              <span className="text-ink-muted block text-[10px]">Bank Account</span>
+              <span className="font-mono font-semibold text-ink">{selectedStaffPayslip.bankAccount}</span>
             </div>
           </div>
-        </div>
+
+          {/* Earnings vs Deductions Breakdown */}
+          <div className="grid grid-cols-2 gap-4 text-xs">
+            <div className="border border-emerald-200 bg-emerald-50/40 p-3 rounded-xl space-y-1.5">
+              <div className="font-bold text-emerald-900 border-b border-emerald-200 pb-1">Earnings</div>
+              <div className="flex justify-between"><span>Basic Pay:</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.basic.toLocaleString()} /></span></div>
+              <div className="flex justify-between"><span>Dearness Allowance (DA 50%):</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.da.toLocaleString()} /></span></div>
+              <div className="flex justify-between"><span>House Rent (HRA 27%):</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.hra.toLocaleString()} /></span></div>
+              <div className="flex justify-between"><span>Transport Allowance:</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.ta.toLocaleString()} /></span></div>
+              <div className="border-t border-emerald-200 pt-1 flex justify-between font-bold text-emerald-950">
+                <span>Gross Pay:</span>
+                <span className="font-mono">
+                  <Figure prefix="₹" value={(selectedStaffPayslip.basic + selectedStaffPayslip.da + selectedStaffPayslip.hra + selectedStaffPayslip.ta).toLocaleString()} />
+                </span>
+              </div>
+            </div>
+
+            <div className="border border-red-200 bg-red-50/40 p-3 rounded-xl space-y-1.5">
+              <div className="font-bold text-red-900 border-b border-red-200 pb-1">Deductions</div>
+              <div className="flex justify-between"><span>Provident Fund (EPF):</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.epf.toLocaleString()} /></span></div>
+              <div className="flex justify-between"><span>TDS (Sec 192):</span> <span className="font-mono font-semibold"><Figure prefix="₹" value={selectedStaffPayslip.tax.toLocaleString()} /></span></div>
+              <div className="flex justify-between"><span>Professional Tax:</span> <span className="font-mono font-semibold"><Figure prefix="₹" value="200" /></span></div>
+              <div className="border-t border-red-200 pt-1 flex justify-between font-bold text-red-950">
+                <span>Total Deductions:</span>
+                <span className="font-mono">
+                  <Figure prefix="₹" value={(selectedStaffPayslip.epf + selectedStaffPayslip.tax + 200).toLocaleString()} />
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Net Pay */}
+          <div className="p-3.5 bg-subtle rounded-xl border border-line flex items-center justify-between text-xs">
+            <div>
+              <span className="text-brand font-bold text-sm block">Net Take-Home Salary</span>
+              <span className="text-[11px] text-ink-soft">Direct NEFT Credit to Bank</span>
+            </div>
+            <div className="text-xl font-bold font-mono text-brand">
+              <Figure prefix="₹" value={(
+                selectedStaffPayslip.basic +
+                selectedStaffPayslip.da +
+                selectedStaffPayslip.hra +
+                selectedStaffPayslip.ta -
+                (selectedStaffPayslip.epf + selectedStaffPayslip.tax + 200)
+              ).toLocaleString()} />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2 border-t border-subtle">
+            <button
+              type="button"
+              onClick={() => setSelectedStaffPayslip(null)}
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold text-xs"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const slipText = `LumenAcademy 7th CPC Salary Slip\nEmployee: ${selectedStaffPayslip.name} (${selectedStaffPayslip.id})\nRole: ${selectedStaffPayslip.role}\nGross Pay: ₹${(selectedStaffPayslip.basic + selectedStaffPayslip.da + selectedStaffPayslip.hra + selectedStaffPayslip.ta).toLocaleString()}\nNet Disbursal: ₹${(selectedStaffPayslip.basic + selectedStaffPayslip.da + selectedStaffPayslip.hra + selectedStaffPayslip.ta - (selectedStaffPayslip.epf + selectedStaffPayslip.tax + 200)).toLocaleString()}`;
+                const blob = new Blob([slipText], { type: 'text/plain;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `Payslip_${selectedStaffPayslip.id}_FEB2025.txt`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                addToast(`Downloaded PDF Payslip for ${selectedStaffPayslip.name}`, 'success');
+              }}
+              className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold text-xs flex items-center gap-1.5"
+            >
+              <span className="material-symbols-outlined text-sm">download</span>
+              <span>Download Payslip</span>
+            </button>
+          </div>
+        </DialogShell>
       )}
 
       {/* Modal: Run Monthly Disbursal */}
-      {showDisbursalModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <div>
-                <h3 className="font-bold text-base text-ink">Run Monthly Payroll Disbursal</h3>
-                <span className="text-xs text-ink-muted">HDFC Corporate Banking NACH Portal</span>
-              </div>
-              <button onClick={() => setShowDisbursalModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleRunBatchDisbursal} className="space-y-3 text-xs">
-              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900">
-                <span className="font-bold block">Summary of Disbursal:</span>
-                <div>Total Employees: 184</div>
-                <div>Net Payment Volume: <strong><Figure prefix="₹" value="88,42,100" /></strong></div>
-                <div>Statutory EPF & TDS Withholdings: <strong><Figure prefix="₹" value="17,80,000" /></strong></div>
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Corporate Debit Account</label>
-                <select className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink">
-                  <option>HDFC Bank Corporate Current A/c - 50200019284 (Balance: ₹1.45 Cr)</option>
-                  <option>State Bank of India Treasury A/c - 30192847291 (Balance: ₹85 Lakh)</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Disbursal Mode</label>
-                <div className="space-y-1.5 text-xs">
-                  <label className="flex items-center gap-2">
-                    <input type="radio" name="mode" defaultChecked />
-                    <span>Direct Bank API Integration (Instant Host-to-Host NEFT)</span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input type="radio" name="mode" />
-                    <span>Generate Encrypted NACH / RTGS Batch TXT for Treasury Upload</span>
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
-                <button
-                  type="button"
-                  onClick={() => setShowDisbursalModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold"
-                >
-                  Confirm & Disburse <Figure prefix="₹" value="88.4" suffix="L" />
-                </button>
-              </div>
-            </form>
+      <DialogShell open={showDisbursalModal} onClose={() => setShowDisbursalModal(false)} labelledBy={disbursalTitleId} className="max-w-md p-6 space-y-4">
+        <div className="flex items-center justify-between border-b border-subtle pb-3">
+          <div>
+            <h3 id={disbursalTitleId} className="font-bold text-base text-ink">Run Monthly Payroll Disbursal</h3>
+            <span className="text-xs text-ink-muted">HDFC Corporate Banking NACH Portal</span>
           </div>
+          <DialogClose onClose={() => setShowDisbursalModal(false)} />
         </div>
-      )}
+
+        <form onSubmit={handleRunBatchDisbursal} className="space-y-3 text-xs">
+          <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900">
+            <span className="font-bold block">Summary of Disbursal:</span>
+            <div>Total Employees: 184</div>
+            <div>Net Payment Volume: <strong><Figure prefix="₹" value="88,42,100" /></strong></div>
+            <div>Statutory EPF & TDS Withholdings: <strong><Figure prefix="₹" value="17,80,000" /></strong></div>
+          </div>
+
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Corporate Debit Account</label>
+            <select className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink">
+              <option>HDFC Bank Corporate Current A/c - 50200019284 (Balance: ₹1.45 Cr)</option>
+              <option>State Bank of India Treasury A/c - 30192847291 (Balance: ₹85 Lakh)</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Disbursal Mode</label>
+            <div className="space-y-1.5 text-xs">
+              <label className="flex items-center gap-2">
+                <input type="radio" name="mode" defaultChecked />
+                <span>Direct Bank API Integration (Instant Host-to-Host NEFT)</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input type="radio" name="mode" />
+                <span>Generate Encrypted NACH / RTGS Batch TXT for Treasury Upload</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
+            <button
+              type="button"
+              onClick={() => setShowDisbursalModal(false)}
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold"
+            >
+              Confirm & Disburse <Figure prefix="₹" value="88.4" suffix="L" />
+            </button>
+          </div>
+        </form>
+      </DialogShell>
 
       {/* Modal: Add Employee */}
-      {showAddStaffModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <div>
-                <h3 className="font-bold text-base text-ink">Add Employee to Payroll</h3>
-                <span className="text-xs text-ink-muted">7th CPC Grade Allotment</span>
-              </div>
-              <button onClick={() => setShowAddStaffModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleAddStaff} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Employee Full Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Dr. Preeti Sharma"
-                  value={newStaff.name}
-                  onChange={e => setNewStaff({ ...newStaff, name: e.target.value })}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Designation / Role</label>
-                <input
-                  type="text"
-                  placeholder="e.g. TGT Social Sciences"
-                  value={newStaff.role}
-                  onChange={e => setNewStaff({ ...newStaff, role: e.target.value })}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-ink-soft mb-1">7th CPC Pay Scale</label>
-                  <select
-                    value={newStaff.level}
-                    onChange={e => {
-                      const level = e.target.value;
-                      let basic = 56100;
-                      if (level.includes('Level 13A')) basic = 131400;
-                      else if (level.includes('Level 12')) basic = 78800;
-                      else if (level.includes('Level 11')) basic = 67700;
-                      else if (level.includes('Level 4')) basic = 25500;
-                      setNewStaff({ ...newStaff, level, basic });
-                    }}
-                    className="w-full bg-wash border border-line rounded-xl p-2 text-xs text-ink"
-                  >
-                    <option value="Level 13A (₹1,31,400)">Level 13A (₹1,31,400)</option>
-                    <option value="Level 12 (₹78,800)">Level 12 (₹78,800)</option>
-                    <option value="Level 11 (₹67,700)">Level 11 (₹67,700)</option>
-                    <option value="Level 10 (₹56,100)">Level 10 (₹56,100)</option>
-                    <option value="Level 4 (₹25,500)">Level 4 (₹25,500)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-bold text-ink-soft mb-1">PAN Card</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. ABCPS1234D"
-                    value={newStaff.pan}
-                    onChange={e => setNewStaff({ ...newStaff, pan: e.target.value })}
-                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Bank Name & A/c Number</label>
-                <input
-                  type="text"
-                  placeholder="e.g. HDFC Bank - 50100291823"
-                  value={newStaff.bankAccount}
-                  onChange={e => setNewStaff({ ...newStaff, bankAccount: e.target.value })}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
-                <button
-                  type="button"
-                  onClick={() => setShowAddStaffModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
-                >
-                  Enroll in Payroll
-                </button>
-              </div>
-            </form>
+      <DialogShell open={showAddStaffModal} onClose={() => setShowAddStaffModal(false)} labelledBy={addStaffTitleId} className="max-w-md p-6 space-y-4">
+        <div className="flex items-center justify-between border-b border-subtle pb-3">
+          <div>
+            <h3 id={addStaffTitleId} className="font-bold text-base text-ink">Add Employee to Payroll</h3>
+            <span className="text-xs text-ink-muted">7th CPC Grade Allotment</span>
           </div>
+          <DialogClose onClose={() => setShowAddStaffModal(false)} />
         </div>
-      )}
+
+        <form onSubmit={handleAddStaff} className="space-y-3 text-xs">
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Employee Full Name</label>
+            <input
+              type="text"
+              placeholder="e.g. Dr. Preeti Sharma"
+              value={newStaff.name}
+              onChange={e => setNewStaff({ ...newStaff, name: e.target.value })}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Designation / Role</label>
+            <input
+              type="text"
+              placeholder="e.g. TGT Social Sciences"
+              value={newStaff.role}
+              onChange={e => setNewStaff({ ...newStaff, role: e.target.value })}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">7th CPC Pay Scale</label>
+              <select
+                value={newStaff.level}
+                onChange={e => {
+                  const level = e.target.value;
+                  let basic = 56100;
+                  if (level.includes('Level 13A')) basic = 131400;
+                  else if (level.includes('Level 12')) basic = 78800;
+                  else if (level.includes('Level 11')) basic = 67700;
+                  else if (level.includes('Level 4')) basic = 25500;
+                  setNewStaff({ ...newStaff, level, basic });
+                }}
+                className="w-full bg-wash border border-line rounded-xl p-2 text-xs text-ink"
+              >
+                <option value="Level 13A (₹1,31,400)">Level 13A (₹1,31,400)</option>
+                <option value="Level 12 (₹78,800)">Level 12 (₹78,800)</option>
+                <option value="Level 11 (₹67,700)">Level 11 (₹67,700)</option>
+                <option value="Level 10 (₹56,100)">Level 10 (₹56,100)</option>
+                <option value="Level 4 (₹25,500)">Level 4 (₹25,500)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">PAN Card</label>
+              <input
+                type="text"
+                placeholder="e.g. ABCPS1234D"
+                value={newStaff.pan}
+                onChange={e => setNewStaff({ ...newStaff, pan: e.target.value })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Bank Name & A/c Number</label>
+            <input
+              type="text"
+              placeholder="e.g. HDFC Bank - 50100291823"
+              value={newStaff.bankAccount}
+              onChange={e => setNewStaff({ ...newStaff, bankAccount: e.target.value })}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
+            <button
+              type="button"
+              onClick={() => setShowAddStaffModal(false)}
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
+            >
+              Enroll in Payroll
+            </button>
+          </div>
+        </form>
+      </DialogShell>
     </div>
   );
 };

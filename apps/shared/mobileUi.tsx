@@ -1,5 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { ExportData, ExportFormat, exportData } from '../../src/lib/exporters';
+import { DEFAULT_STATUS_CODES } from '../../src/data/attendance';
+import { THEME_OPTIONS, ThemeChoice, resolveTheme, useTheme } from './settingsService';
 
 // Mobile-first building blocks shared by the parent and teacher apps.
 
@@ -275,25 +277,86 @@ export const Field: React.FC<{ label: string; children: React.ReactNode; hint?: 
 
 export const inputClass = 'w-full rounded-xl border border-slate-300 bg-[var(--surface)] px-3 py-2.5 text-[14px] outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20';
 
-/** Bottom sheet for forms and details on phones; a centred dialog on desktop. Escape closes it. */
-export const Sheet: React.FC<{ open: boolean; onClose: () => void; title: string; children: React.ReactNode }> = ({ open, onClose, title, children }) => {
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+/**
+ * Modal behaviour for an overlay: Escape closes it, focus moves inside on open, Tab and Shift+Tab
+ * stay inside, and the trigger gets focus back on close. The same pattern as the console's
+ * `useDialogBehavior`; the phone apps keep their own copy so they do not depend on console code.
+ * `onClose` is read through a ref so an inline arrow from the caller cannot re-run the effect.
+ */
+export const useDialogBehavior = (open: boolean, onClose: () => void) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
   useEffect(() => {
     if (!open) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const panel = ref.current;
+    const visible = () => Array.from(panel?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? []).filter(el => el.offsetParent !== null);
+    (panel?.querySelector<HTMLElement>('input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]):not([data-close])') ?? visible()[0])?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        onCloseRef.current();
+        return;
+      }
+      if (e.key !== 'Tab' || !panel) return;
+      const items = visible();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && (active === first || !panel.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
+    document.addEventListener('keydown', onKey, true);
+    return () => {
+      document.removeEventListener('keydown', onKey, true);
+      previous?.focus?.();
+    };
+  }, [open]);
+  return ref;
+};
+
+/**
+ * Bottom padding that clears the home indicator on notched phones, as BottomNav does.
+ * Written out in full so Tailwind's scanner sees the class.
+ */
+export const SAFE_PAD_SHEET = 'pb-[calc(1.5rem+env(safe-area-inset-bottom))]';
+export const SAFE_PAD_BAR = 'pb-[calc(0.5rem+env(safe-area-inset-bottom))]';
+
+/** Bottom sheet for forms and details on phones; a centred dialog on desktop. Escape closes it and focus is trapped inside. */
+export const Sheet: React.FC<{ open: boolean; onClose: () => void; title: string; children: React.ReactNode }> = ({ open, onClose, title, children }) => {
+  const panel = useDialogBehavior(open, onClose);
+  const titleId = useId();
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-40 flex flex-col justify-end lg:justify-center lg:items-center lg:p-6" role="dialog" aria-modal="true" aria-label={title}>
-      <button className="absolute inset-0 bg-black/40" onClick={onClose} aria-label="Close" />
-      <div className="relative bg-[var(--surface)] rounded-t-3xl max-h-[88%] overflow-y-auto p-4 pb-6 space-y-3 lg:w-full lg:max-w-lg lg:rounded-3xl lg:max-h-[85vh] lg:p-6 lg:shadow-2xl">
-        <div className="mx-auto w-10 h-1 rounded-full bg-slate-300 lg:hidden" />
+    <div className="fixed inset-0 z-40 flex flex-col justify-end lg:justify-center lg:items-center lg:p-6">
+      <button className="absolute inset-0 bg-black/40" onClick={onClose} aria-label="Close" tabIndex={-1} />
+      <div
+        ref={panel}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className={cx(
+          'relative bg-[var(--surface)] rounded-t-3xl max-h-[88%] overflow-y-auto p-4 space-y-3 lg:w-full lg:max-w-lg lg:rounded-3xl lg:max-h-[85vh] lg:p-6 lg:shadow-2xl lg:pb-6',
+          SAFE_PAD_SHEET
+        )}
+      >
+        <div className="mx-auto w-10 h-1 rounded-full bg-slate-300 lg:hidden" aria-hidden="true" />
         <div className="flex items-center justify-between">
-          <h2 className="text-[16px] font-semibold text-slate-900">{title}</h2>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-slate-100" aria-label="Close sheet">
+          <h2 id={titleId} className="text-[16px] font-semibold text-slate-900">
+            {title}
+          </h2>
+          <button data-close onClick={onClose} className="p-1 rounded-full hover:bg-slate-100" aria-label="Close sheet">
             <Icon name="close" className="text-[20px]" />
           </button>
         </div>
@@ -431,4 +494,237 @@ export const useAsync = <T,>(load: () => Promise<T>, deps: React.DependencyList)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [...deps, attempt]);
   return { ...state, retry: () => setAttempt(a => a + 1) };
+};
+
+// ---------------------------------------------------------------------------
+// Attendance status (ATT-002): one presentation for both apps
+// ---------------------------------------------------------------------------
+
+/**
+ * How an attendance status looks and reads, defined once so the parent and teacher apps cannot drift.
+ *
+ * `letter` is the non-colour indicator: every place that tints a cell also shows the letter and an
+ * accessible name, so the status is readable without colour vision and without hovering.
+ * The tints use the slate / emerald / rose / amber / sky / gold steps that index.css re-defines for the
+ * school and dark themes, so they follow the theme (stock hues such as lime or violet do not).
+ */
+export interface AttendanceStatusStyle {
+  code: string;
+  label: string;
+  letter: string;
+  /** Background + text classes for a filled cell, chip or selected button. */
+  chip: string;
+  /** Ring colour that matches `chip`, for the selected state. */
+  ring: string;
+}
+
+const STATUS_LOOK: Record<string, Pick<AttendanceStatusStyle, 'letter' | 'chip' | 'ring'>> = {
+  P: { letter: 'P', chip: 'bg-emerald-50 text-emerald-700', ring: 'ring-emerald-600/40' },
+  L: { letter: 'L', chip: 'bg-amber-50 text-amber-800', ring: 'ring-amber-600/40' },
+  HD: { letter: 'H', chip: 'bg-gold-100 text-gold-800', ring: 'ring-gold-600/40' },
+  A: { letter: 'A', chip: 'bg-rose-50 text-rose-700', ring: 'ring-rose-600/40' },
+  LV: { letter: 'V', chip: 'bg-sky-50 text-sky-700', ring: 'ring-sky-600/40' },
+  EX: { letter: 'E', chip: 'bg-slate-100 text-slate-700', ring: 'ring-slate-500/40' },
+  MD: { letter: 'M', chip: 'bg-sky-50 text-sky-700', ring: 'ring-sky-600/40' },
+};
+
+export const ATTENDANCE_STATUS: Record<string, AttendanceStatusStyle> = Object.fromEntries(
+  DEFAULT_STATUS_CODES.map(c => [c.code, { code: c.code, label: c.label, ...(STATUS_LOOK[c.code] ?? { letter: c.code[0], chip: 'bg-slate-100 text-slate-700', ring: 'ring-slate-500/40' }) }])
+);
+
+/** The presentation for a status code, or a neutral one for an unknown code. */
+export const attendanceStatus = (code: string): AttendanceStatusStyle =>
+  ATTENDANCE_STATUS[code] ?? { code, label: code, letter: code[0] ?? '?', chip: 'bg-slate-100 text-slate-700', ring: 'ring-slate-500/40' };
+
+/** Letter + label chip. The letter carries the status when colour is not perceivable. */
+export const AttendanceChip: React.FC<{ code: string; count?: number }> = ({ code, count }) => {
+  const s = attendanceStatus(code);
+  return (
+    <span className={cx('inline-flex items-center gap-1.5 rounded-full pl-1 pr-2.5 py-0.5 text-[11px] font-semibold whitespace-nowrap', s.chip)}>
+      <span aria-hidden="true" className="w-4 h-4 rounded-full ring-1 ring-inset ring-current/40 flex items-center justify-center text-[10px] font-bold leading-none">
+        {s.letter}
+      </span>
+      <span>
+        {s.label}
+        {count === undefined ? '' : ` ${count}`}
+      </span>
+    </span>
+  );
+};
+
+/** Counts by status code, shown with the same letters and tints as the cells they explain. */
+export const AttendanceLegend: React.FC<{ counts: Record<string, number>; className?: string }> = ({ counts, className }) => {
+  const entries = Object.entries(counts).filter(([, n]) => n > 0);
+  if (!entries.length) return null;
+  return (
+    <ul className={cx('flex flex-wrap gap-1.5 list-none', className)} aria-label="Attendance key">
+      {entries.map(([code, n]) => (
+        <li key={code}>
+          <AttendanceChip code={code} count={n} />
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Connectivity (APP-016)
+// ---------------------------------------------------------------------------
+
+/** Real device connectivity, from navigator.onLine and the browser's online/offline events. */
+export const useOnline = () => {
+  const [online, setOnline] = useState(() => (typeof navigator === 'undefined' ? true : navigator.onLine));
+  useEffect(() => {
+    const update = () => setOnline(navigator.onLine);
+    update();
+    window.addEventListener('online', update);
+    window.addEventListener('offline', update);
+    return () => {
+      window.removeEventListener('online', update);
+      window.removeEventListener('offline', update);
+    };
+  }, []);
+  return online;
+};
+
+/** Top-bar indicator for the real connection. It is a status, not a control. */
+export const ConnectionStatus: React.FC<{ online: boolean }> = ({ online }) => (
+  <span
+    role="status"
+    aria-label={online ? 'Connected' : 'No internet connection'}
+    title={online ? 'Connected' : 'No internet connection'}
+    className={cx('inline-flex items-center justify-center rounded-full w-9 h-9', online ? 'text-white/80' : 'bg-amber-500 text-white')}
+  >
+    <Icon name={online ? 'wifi' : 'wifi_off'} className="text-[20px]" />
+  </span>
+);
+
+/** Strip under the top bar while the device has no connection. Hidden when online. */
+export const OfflineBanner: React.FC<{ online: boolean; note?: string }> = ({ online, note }) =>
+  online ? null : (
+    <div role="status" className="shrink-0 flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-4 py-1.5 text-[12px] text-amber-800 lg:px-8">
+      <Icon name="cloud_off" className="text-[16px]" />
+      <span className="flex-1">No internet connection{note ? ` · ${note}` : ''}</span>
+    </div>
+  );
+
+// ---------------------------------------------------------------------------
+// Conversations (COM-010): one thread view for both apps
+// ---------------------------------------------------------------------------
+
+export type ChatItem = { kind: 'message'; mine: boolean; text: string; meta?: string } | { kind: 'note'; text: string };
+
+/** Thread header, bubbles and composer. Each app supplies its own data, copy and send handler. */
+export const ChatThread: React.FC<{
+  title: string;
+  subtitle?: string;
+  onBack: () => void;
+  backLabel?: string;
+  items: ChatItem[];
+  empty?: React.ReactNode;
+  footnote?: string;
+  draft: string;
+  onDraft: (value: string) => void;
+  onSend: () => void;
+  placeholder: string;
+  composerLabel: string;
+  sendLabel: string;
+}> = ({ title, subtitle, onBack, backLabel = 'Back to conversations', items, empty, footnote, draft, onDraft, onSend, placeholder, composerLabel, sendLabel }) => (
+  <div className="flex-1 flex flex-col min-h-0">
+    <div className="app-surface-transition shrink-0 bg-[var(--surface)] border-b border-slate-200 px-4 py-2 flex items-center gap-2">
+      <button onClick={onBack} aria-label={backLabel} className="w-11 h-11 -ml-2 flex items-center justify-center rounded-full hover:bg-slate-100">
+        <Icon name="arrow_back" />
+      </button>
+      <div className="min-w-0">
+        <p className="text-[14px] font-semibold text-slate-900 truncate">{title}</p>
+        {subtitle && <p className="text-[12px] text-slate-500 truncate">{subtitle}</p>}
+      </div>
+    </div>
+    <div className="flex-1 overflow-y-auto p-4 space-y-2" role="log" aria-label={`Conversation with ${title}`}>
+      {items.map((m, i) =>
+        m.kind === 'note' ? (
+          <p key={i} className="text-center text-[12px] text-slate-500 italic">
+            {m.text}
+          </p>
+        ) : (
+          <div key={i} className={cx('max-w-[80%] rounded-2xl px-3 py-2 text-[14px]', m.mine ? 'ml-auto bg-[var(--accent)] text-white' : 'bg-[var(--surface)] border border-slate-200 text-slate-900')}>
+            <p>{m.text}</p>
+            {m.meta && <p className={cx('text-[10px] mt-0.5', m.mine ? 'text-white/70' : 'text-slate-400')}>{m.meta}</p>}
+          </div>
+        )
+      )}
+      {items.length === 0 && empty}
+      {footnote && <p className="text-center text-[11px] text-slate-400">{footnote}</p>}
+    </div>
+    <div className={cx('app-surface-transition shrink-0 bg-[var(--surface)] border-t border-slate-200 p-2 flex gap-2', SAFE_PAD_BAR)}>
+      <input value={draft} onChange={e => onDraft(e.target.value)} onKeyDown={e => e.key === 'Enter' && onSend()} placeholder={placeholder} className={cx(inputClass, 'py-2')} aria-label={composerLabel} />
+      <button onClick={onSend} disabled={!draft.trim()} className="rounded-full bg-[var(--accent)] text-white w-11 h-11 shrink-0 flex items-center justify-center disabled:opacity-40" aria-label={sendLabel}>
+        <Icon name="send" />
+      </button>
+    </div>
+  </div>
+);
+
+// ---------------------------------------------------------------------------
+// Appearance (APP-015): the same theme picker in both apps
+// ---------------------------------------------------------------------------
+
+const ThemePreview: React.FC<{ choice: ThemeChoice; accent: string }> = ({ choice, accent }) => {
+  const previews = choice === 'system' ? (['light', 'dark'] as const) : ([resolveTheme(choice, false)] as const);
+  return (
+    <span className="flex w-full h-20 rounded-lg overflow-hidden border border-slate-200" aria-hidden="true">
+      {previews.map(t => (
+        <span key={t} data-app-theme={t} className="flex-1 flex flex-col bg-[var(--app-bg)]" style={{ ['--accent' as string]: accent }}>
+          <span className="h-4 bg-[var(--bar)] border-b-2 border-[var(--bar-edge)]" />
+          <span className="m-1.5 flex-1 rounded-md bg-[var(--surface)] border border-slate-200 p-1 space-y-1">
+            <span className="block h-1.5 w-2/3 rounded bg-slate-300" />
+            <span className="block h-1.5 w-1/2 rounded bg-slate-200" />
+            <span className="block h-2 w-1/3 rounded bg-[var(--accent)]" />
+          </span>
+        </span>
+      ))}
+    </span>
+  );
+};
+
+/** Theme picker page. `accent` only tints the previews; the choice itself is shared by both apps. */
+export const AppearancePage: React.FC<{ onSaved: (text: string) => void; accent?: string }> = ({ onSaved, accent = '#17667d' }) => {
+  const { choice, applied, setTheme } = useTheme();
+  return (
+    <Screen>
+      <Card title="Theme">
+        <p className="text-[12px] text-slate-500 -mt-1 mb-3">Choose your preferred appearance.</p>
+        <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label="Theme">
+          {THEME_OPTIONS.map(o => {
+            const on = o.id === choice;
+            return (
+              <button
+                key={o.id}
+                role="radio"
+                aria-checked={on}
+                onClick={() => {
+                  setTheme(o.id);
+                  onSaved(`Theme set to ${o.label}`);
+                }}
+                className={cx('rounded-2xl border-2 p-2 text-left space-y-2 transition-colors', on ? 'border-[var(--accent-ink)] bg-slate-50' : 'border-slate-200')}
+                data-theme-option={o.id}
+              >
+                <ThemePreview choice={o.id} accent={accent} />
+                <span className="flex items-center gap-1.5">
+                  <Icon name={o.icon} className="text-[18px] text-[var(--accent-ink)]" />
+                  <span className="text-[13px] font-semibold text-slate-900 flex-1">{o.label}</span>
+                  {on && <Icon name="check_circle" filled className="text-[18px] text-[var(--accent-ink)]" />}
+                </span>
+                <span className="block text-[11px] text-slate-500">{o.hint}</span>
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-3 text-[11px] text-slate-500" aria-live="polite">
+          Showing the {applied === 'school' ? 'School' : applied === 'dark' ? 'Dark' : 'Light'} theme{choice === 'system' ? ', following your phone' : ''}. Saved on this device.
+        </p>
+      </Card>
+      <FeatureFooter ids={['APP-015', 'APP-017']} />
+    </Screen>
+  );
 };

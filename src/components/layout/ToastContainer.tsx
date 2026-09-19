@@ -4,10 +4,16 @@ import { useApp } from '../../context/AppContext';
 export const ToastContainer: React.FC = () => {
   const { toasts, removeToast } = useApp();
 
-  if (toasts.length === 0) return null;
-
+  // The live region stays mounted even with nothing in it: a region inserted at the same moment as its
+  // first message is not reliably announced.
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none">
+    <div
+      className="fixed bottom-4 right-4 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none"
+      role="log"
+      aria-live="polite"
+      aria-relevant="additions"
+      aria-label="Notifications"
+    >
       {toasts.map(toast => {
         const isSuccess = toast.type === 'success';
         const isError = toast.type === 'error';
@@ -16,6 +22,7 @@ export const ToastContainer: React.FC = () => {
         return (
           <div
             key={toast.id}
+            role={isError || isWarning ? 'alert' : undefined}
             className={`pointer-events-auto flex flex-col rounded-xl shadow-xl ring-1 text-xs transition-all duration-200 slide-in-from-bottom-2 overflow-hidden ${
               isError ? 'bg-rose-950 text-rose-50 ring-rose-800' : 'bg-lumen-900 text-cream-100 ring-white/10'
             }`}
@@ -42,6 +49,7 @@ export const ToastContainer: React.FC = () => {
               </div>
               <button
                 onClick={() => removeToast(toast.id)}
+                aria-label={`Dismiss notification: ${toast.title}`}
                 className="text-white/60 hover:text-white p-0.5 transition-colors"
               >
                 <span className="material-symbols-outlined text-sm">close</span>

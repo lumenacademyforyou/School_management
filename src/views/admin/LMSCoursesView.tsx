@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { DialogClose, DialogShell } from '../../components/common/ui';
 
 export const LMSCoursesView: React.FC = () => {
   const { setAdminView, addToast } = useApp();
+  const pushTitleId = useId();
+  const angleSliderId = useId();
   const [angle, setAngle] = useState(45);
   const [activeLessonId, setActiveLessonId] = useState('10.2');
   const [showPushModal, setShowPushModal] = useState(false);
@@ -165,8 +168,9 @@ export const LMSCoursesView: React.FC = () => {
           {/* Interactive Slider */}
           <div className="mt-4 pt-3 border-t border-lumen-800 flex items-center justify-between gap-4 text-xs">
             <div className="flex-1 flex items-center gap-3">
-              <span className="text-slate-300">Angle of Incidence (i):</span>
+              <label htmlFor={angleSliderId} className="text-slate-300">Angle of Incidence (i):</label>
               <input
+                id={angleSliderId}
                 type="range"
                 min="30"
                 max="60"
@@ -197,13 +201,15 @@ export const LMSCoursesView: React.FC = () => {
             {lessons.map(les => {
               const isSelected = activeLessonId === les.id;
               return (
-                <div
+                <button
                   key={les.id}
+                  type="button"
+                  aria-pressed={isSelected}
                   onClick={() => {
                     setActiveLessonId(les.id);
                     addToast(`Loaded ${les.title}`, 'info');
                   }}
-                  className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                  className={`block w-full text-left p-3 rounded-xl border cursor-pointer transition-all ${
                     isSelected
                       ? 'bg-brand text-white shadow-xs border-brand'
                       : 'bg-subtle text-ink border-line hover:border-brand/50'
@@ -219,7 +225,7 @@ export const LMSCoursesView: React.FC = () => {
                   <div className={`text-[10px] font-semibold mt-1 ${isSelected ? 'text-accent' : 'text-brand'}`}>
                     Weightage: {les.weightage}
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -231,67 +237,66 @@ export const LMSCoursesView: React.FC = () => {
       </div>
 
       {/* Modal: Push Simulation to Student Tablets */}
-      {showPushModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <div>
-                <h3 className="font-bold text-base text-ink">Broadcast to Student Tablets</h3>
-                <span className="text-xs text-ink-muted">MDM Class-Room Sync Protocol</span>
-              </div>
-              <button onClick={() => setShowPushModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleConfirmPush} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Target Classroom Batch</label>
-                <select
-                  value={selectedBatch}
-                  onChange={e => setSelectedBatch(e.target.value)}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                >
-                  <option value="10-A (38 Tablets)">Class 10-A (38 Tablets Connected)</option>
-                  <option value="10-B (40 Tablets)">Class 10-B (40 Tablets Connected)</option>
-                  <option value="Physics Lab Group 1 (18 Devices)">Physics Lab Group 1 (18 Devices)</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Interactive Task Prompt for Students</label>
-                <textarea
-                  rows={3}
-                  value={pushNotes}
-                  onChange={e => setPushNotes(e.target.value)}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  required
-                />
-              </div>
-
-              <div className="p-3 bg-subtle rounded-xl border border-line text-ink text-xs">
-                Current optical parameters (Incidence Angle = {angle}°, Deviation = {devAngle}°) will be locked onto student screens for active observation.
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
-                <button
-                  type="button"
-                  onClick={() => setShowPushModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
-                >
-                  Broadcast to Devices
-                </button>
-              </div>
-            </form>
+      <DialogShell
+        open={showPushModal}
+        onClose={() => setShowPushModal(false)}
+        labelledBy={pushTitleId}
+        className="max-w-md p-6 space-y-4 overflow-y-auto"
+      >
+        <div className="flex items-center justify-between border-b border-subtle pb-3">
+          <div>
+            <h3 id={pushTitleId} className="font-bold text-base text-ink">Broadcast to Student Tablets</h3>
+            <span className="text-xs text-ink-muted">MDM Class-Room Sync Protocol</span>
           </div>
+          <DialogClose onClose={() => setShowPushModal(false)} />
         </div>
-      )}
+
+        <form onSubmit={handleConfirmPush} className="space-y-3 text-xs">
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Target Classroom Batch</label>
+            <select
+              value={selectedBatch}
+              onChange={e => setSelectedBatch(e.target.value)}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+            >
+              <option value="10-A (38 Tablets)">Class 10-A (38 Tablets Connected)</option>
+              <option value="10-B (40 Tablets)">Class 10-B (40 Tablets Connected)</option>
+              <option value="Physics Lab Group 1 (18 Devices)">Physics Lab Group 1 (18 Devices)</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Interactive Task Prompt for Students</label>
+            <textarea
+              rows={3}
+              value={pushNotes}
+              onChange={e => setPushNotes(e.target.value)}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              required
+            />
+          </div>
+
+          <div className="p-3 bg-subtle rounded-xl border border-line text-ink text-xs">
+            Current optical parameters (Incidence Angle = {angle}°, Deviation = {devAngle}°) will be locked onto student screens for active observation.
+          </div>
+
+          <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
+            <button
+              type="button"
+              onClick={() => setShowPushModal(false)}
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
+            >
+              Broadcast to Devices
+            </button>
+          </div>
+        </form>
+      </DialogShell>
     </div>
   );
 };

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Modal } from '../../components/common/ui';
 
 interface BookIssue {
   id: string;
@@ -13,6 +14,7 @@ interface BookIssue {
 
 export const LibraryView: React.FC = () => {
   const { addToast } = useApp();
+  const issueFormId = useId();
   const [rfidScanning, setRfidScanning] = useState(false);
   const [scannedBook, setScannedBook] = useState<string>('Concepts of Physics Vol 1 - Dr. H.C. Verma');
   const [showIssueModal, setShowIssueModal] = useState(false);
@@ -251,130 +253,107 @@ export const LibraryView: React.FC = () => {
       </div>
 
       {/* MODAL 1: Issue Book to Student */}
-      {showIssueModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-emerald-600">book</span>
-                <h3 className="font-bold text-ink text-sm">Issue Library Book (LIB-003)</h3>
-              </div>
-              <button
-                onClick={() => setShowIssueModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleIssueBookSubmit} className="space-y-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Book Title</label>
-                <input
-                  type="text"
-                  value={issueBookName}
-                  onChange={e => setIssueBookName(e.target.value)}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Student Borrower</label>
-                <select
-                  value={issueStudent}
-                  onChange={e => setIssueStudent(e.target.value)}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                >
-                  <option value="Aarav S. Ramanathan (10-A, Roll 14)">Aarav S. Ramanathan (Class 10-A, Roll 14)</option>
-                  <option value="Farah N. Siddiqui (10-A, Roll 18)">Farah N. Siddiqui (Class 10-A, Roll 18)</option>
-                  <option value="Chetan R. Varma (10-A, Roll 12)">Chetan R. Varma (Class 10-A, Roll 12)</option>
-                  <option value="Rohan Venkatesh (11-PCM, Roll 03)">Rohan Venkatesh (Class 11-PCM, Roll 03)</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Loan Period (Days)</label>
-                <select
-                  value={issueDays}
-                  onChange={e => setIssueDays(e.target.value)}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                >
-                  <option value="7">7 Days (Weekly Borrow)</option>
-                  <option value="14">14 Days (Standard Student Loan)</option>
-                  <option value="28">28 Days (Reference / Scholar Loan)</option>
-                </select>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setShowIssueModal(false)}
-                  className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs"
-                >
-                  Confirm Issue
-                </button>
-              </div>
-            </form>
+      <Modal
+        open={showIssueModal}
+        onClose={() => setShowIssueModal(false)}
+        title="Issue Library Book (LIB-003)"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setShowIssueModal(false)}
+              className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form={issueFormId}
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs"
+            >
+              Confirm Issue
+            </button>
+          </>
+        }
+      >
+        <form id={issueFormId} onSubmit={handleIssueBookSubmit} className="space-y-3">
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Book Title</label>
+            <input
+              type="text"
+              value={issueBookName}
+              onChange={e => setIssueBookName(e.target.value)}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+            />
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Student Borrower</label>
+            <select
+              value={issueStudent}
+              onChange={e => setIssueStudent(e.target.value)}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+            >
+              <option value="Aarav S. Ramanathan (10-A, Roll 14)">Aarav S. Ramanathan (Class 10-A, Roll 14)</option>
+              <option value="Farah N. Siddiqui (10-A, Roll 18)">Farah N. Siddiqui (Class 10-A, Roll 18)</option>
+              <option value="Chetan R. Varma (10-A, Roll 12)">Chetan R. Varma (Class 10-A, Roll 12)</option>
+              <option value="Rohan Venkatesh (11-PCM, Roll 03)">Rohan Venkatesh (Class 11-PCM, Roll 03)</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Loan Period (Days)</label>
+            <select
+              value={issueDays}
+              onChange={e => setIssueDays(e.target.value)}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+            >
+              <option value="7">7 Days (Weekly Borrow)</option>
+              <option value="14">14 Days (Standard Student Loan)</option>
+              <option value="28">28 Days (Reference / Scholar Loan)</option>
+            </select>
+          </div>
+        </form>
+      </Modal>
 
       {/* MODAL 2: Overdue Fine & Reminders */}
-      {showOverdueModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-amber-600">notifications_active</span>
-                <h3 className="font-bold text-ink text-sm">Automated Overdue Notice Dispatch (LIB-007)</h3>
-              </div>
-              <button
-                onClick={() => setShowOverdueModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
+      <Modal
+        open={showOverdueModal}
+        onClose={() => setShowOverdueModal(false)}
+        title="Automated Overdue Notice Dispatch (LIB-007)"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setShowOverdueModal(false)}
+              className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
+            >
+              Dismiss
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowOverdueModal(false);
+                addToast('Dispatched WhatsApp & SMS overdue notice to Chetan R. Varma guardian (LIB-007)', 'success');
+              }}
+              className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
+            >
+              Send Automated Notice
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-3">
+          <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 leading-relaxed">
+            Found 1 overdue loan: <strong>"A Brief History of Time"</strong> with Chetan R. Varma (Due 28 Feb 2026). Late fine accrued: ₹20.00 (₹2/day).
+          </div>
 
-            <div className="space-y-3">
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 leading-relaxed">
-                Found 1 overdue loan: <strong>"A Brief History of Time"</strong> with Chetan R. Varma (Due 28 Feb 2026). Late fine accrued: ₹20.00 (₹2/day).
-              </div>
-
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 font-mono text-[11px]">
-                <div>Dispatch Channel: <strong>WhatsApp TRAI DLT + SMS</strong></div>
-                <div>Parent Contact: +91 98402 11094 (R. Varma)</div>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-3 border-t">
-              <button
-                type="button"
-                onClick={() => setShowOverdueModal(false)}
-                className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
-              >
-                Dismiss
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowOverdueModal(false);
-                  addToast('Dispatched WhatsApp & SMS overdue notice to Chetan R. Varma guardian (LIB-007)', 'success');
-                }}
-                className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
-              >
-                Send Automated Notice
-              </button>
-            </div>
+          <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 font-mono text-[11px]">
+            <div>Dispatch Channel: <strong>WhatsApp TRAI DLT + SMS</strong></div>
+            <div>Parent Contact: +91 98402 11094 (R. Varma)</div>
           </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useExportLog } from '../../services/exportLog';
 import { useApp } from '../../context/AppContext';
 import { Figure } from '../../components/common/Figure';
+import { Modal } from '../../components/common/ui';
 
 interface AuditEvent {
   id: string;
@@ -256,54 +257,13 @@ export const AuditLogView: React.FC = () => {
       </div>
 
       {/* MODAL: Event Cryptographic Inspection */}
-      {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-brand">verified</span>
-                <h3 className="font-bold text-ink text-sm">Cryptographic Event Dossier</h3>
-              </div>
-              <button
-                onClick={() => setSelectedEvent(null)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <div className="space-y-3 font-mono">
-              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 text-[11px]">
-                <div><strong className="text-slate-600 font-sans">Action:</strong> <span className="text-brand font-bold">{selectedEvent.action}</span></div>
-                <div><strong className="text-slate-600 font-sans">Timestamp:</strong> {selectedEvent.timestamp}</div>
-                <div><strong className="text-slate-600 font-sans">Origin IP:</strong> {selectedEvent.ip}</div>
-                <div><strong className="text-slate-600 font-sans">Actor:</strong> {selectedEvent.actor}</div>
-                <div><strong className="text-slate-600 font-sans">Target:</strong> {selectedEvent.target}</div>
-              </div>
-
-              <div>
-                <span className="font-bold text-slate-700 font-sans block mb-1">SHA-256 Current Block Hash</span>
-                <div className="p-2.5 bg-subtle border border-line rounded-lg text-ink break-all text-[10px]">
-                  {selectedEvent.hash}
-                </div>
-              </div>
-
-              <div>
-                <span className="font-bold text-slate-700 font-sans block mb-1">Parent Block Hash (PrevHash)</span>
-                <div className="p-2.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 break-all text-[10px]">
-                  {selectedEvent.prevHash}
-                </div>
-              </div>
-
-              <div>
-                <span className="font-bold text-slate-700 font-sans block mb-1">JSON Structured Payload (WORM Encrypted)</span>
-                <pre className="p-2.5 bg-slate-900 text-emerald-400 rounded-lg text-[10px] overflow-x-auto whitespace-pre-wrap">
-                  {selectedEvent.payloadSummary}
-                </pre>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2 border-t">
+      <Modal
+        open={!!selectedEvent}
+        onClose={() => setSelectedEvent(null)}
+        title="Cryptographic Event Dossier"
+        footer={
+          selectedEvent && (
+            <>
               <button
                 type="button"
                 onClick={() => {
@@ -322,10 +282,43 @@ export const AuditLogView: React.FC = () => {
               >
                 Close Dossier
               </button>
+            </>
+          )
+        }
+      >
+        {selectedEvent && (
+          <div className="space-y-3 font-mono">
+            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 text-[11px]">
+              <div><strong className="text-slate-600 font-sans">Action:</strong> <span className="text-brand font-bold">{selectedEvent.action}</span></div>
+              <div><strong className="text-slate-600 font-sans">Timestamp:</strong> {selectedEvent.timestamp}</div>
+              <div><strong className="text-slate-600 font-sans">Origin IP:</strong> {selectedEvent.ip}</div>
+              <div><strong className="text-slate-600 font-sans">Actor:</strong> {selectedEvent.actor}</div>
+              <div><strong className="text-slate-600 font-sans">Target:</strong> {selectedEvent.target}</div>
+            </div>
+
+            <div>
+              <span className="font-bold text-slate-700 font-sans block mb-1">SHA-256 Current Block Hash</span>
+              <div className="p-2.5 bg-subtle border border-line rounded-lg text-ink break-all text-[10px]">
+                {selectedEvent.hash}
+              </div>
+            </div>
+
+            <div>
+              <span className="font-bold text-slate-700 font-sans block mb-1">Parent Block Hash (PrevHash)</span>
+              <div className="p-2.5 bg-slate-100 border border-slate-200 rounded-lg text-slate-700 break-all text-[10px]">
+                {selectedEvent.prevHash}
+              </div>
+            </div>
+
+            <div>
+              <span className="font-bold text-slate-700 font-sans block mb-1">JSON Structured Payload (WORM Encrypted)</span>
+              <pre className="p-2.5 bg-slate-900 text-emerald-400 rounded-lg text-[10px] overflow-x-auto whitespace-pre-wrap">
+                {selectedEvent.payloadSummary}
+              </pre>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
     </div>
   );
 };

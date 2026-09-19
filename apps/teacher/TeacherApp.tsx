@@ -5,6 +5,7 @@ import {
   BottomNav,
   LOGO_SRC,
   SideNav,
+  SideLink,
   Card,
   DownloadButton,
   EmptyState,
@@ -25,6 +26,13 @@ import {
   inputClass,
   useDesktopSidebar,
   useToasts,
+  AppearancePage,
+  AttendanceLegend,
+  ChatThread,
+  ConnectionStatus,
+  OfflineBanner,
+  attendanceStatus,
+  useOnline,
 } from '../shared/mobileUi';
 import { InstallAppCard, InstallButton } from '../shared/webApp';
 import { TestPapersScreen, useWaitingPapers } from './TestPapers';
@@ -48,19 +56,15 @@ import { grantFor } from '../../src/data/permissions';
 import { OutboxEntry, refreshSnapshot, resolveConflict, syncOutbox, useDevice } from './teacherDevice';
 import { Money } from '../../src/components/common/Figure';
 import { EmptyNote } from '../shared/mobileUi';
+import { useTheme } from '../shared/settingsService';
 
 type Tab = 'today' | 'attendance' | 'marks' | 'tests' | 'homework' | 'messages';
+type Page = null | 'appearance';
+
+/** The teacher app's brand accent. The surrounding colours come from the chosen theme. */
+const TEACHER_ACCENT = '#125569';
 
 const CODE_LABEL = Object.fromEntries(DEFAULT_STATUS_CODES.map(c => [c.code, c.label])) as Record<StatusCode, string>;
-const CODE_STYLE: Record<StatusCode, string> = {
-  P: 'bg-emerald-500 text-white',
-  L: 'bg-lime-500 text-white',
-  HD: 'bg-amber-400 text-white',
-  A: 'bg-rose-500 text-white',
-  LV: 'bg-slate-500 text-white',
-  EX: 'bg-indigo-400 text-white',
-  MD: 'bg-violet-500 text-white',
-};
 
 const markError = (raw: string, max: number) => {
   const v = raw.trim().toUpperCase();
@@ -141,6 +145,11 @@ const useTeacherSession = (teacher: TeacherAccount, onSignOut: () => void) => {
   const { toasts, push } = useToasts();
   const { device, setDevice, reset: resetDevice } = useDevice(teacher.id);
   const [tab, setTab] = useState<Tab>('today');
+  const [page, setPage] = useState<Page>(null);
+  /** The real connection, from the browser. `device.online` is only the demo toggle. */
+  const browserOnline = useOnline();
+  const simulateOffline = !device.online;
+  const connected = browserOnline && !simulateOffline;
 
   const sections = Array.from(new Set([...(teacher.classTeacherOf ? [teacher.classTeacherOf] : []), ...teacher.teaches.map(t => t.section)]));
   const classSection = teacher.classTeacherOf;
@@ -152,8 +161,8 @@ const useTeacherSession = (teacher: TeacherAccount, onSignOut: () => void) => {
   const pendingLeaves = backend.leaves.filter(l => l.status === 'Pending' && classIds.includes(l.studentId));
 
   const sync = () => {
-    if (!device.online) {
-      push('You are offline — changes stay on this phone until you reconnect', 'warn');
+    if (!connected) {
+      push(browserOnline ? 'Demo offline mode is on — turn it off to sync' : 'You are offline — changes stay on this phone until you reconnect', 'warn');
       return;
     }
     const r = syncOutbox(device, teacher.name);
@@ -161,7 +170,7 @@ const useTeacherSession = (teacher: TeacherAccount, onSignOut: () => void) => {
     push(r.conflicts ? `${r.written} saved · ${r.conflicts} need your decision` : `Synced · ${r.written} change(s) saved`, r.conflicts ? 'warn' : 'ok');
   };
 
-  return { teacher, onSignOut, backend, toasts, push, device, setDevice, resetDevice, tab, setTab, sections, classSection, roster, myThreads, awaitingReply, pendingLeaves, sync };
+  return { teacher, onSignOut, backend, toasts, push, device, setDevice, resetDevice, tab, setTab, page, setPage, browserOnline, simulateOffline, connected, sections, classSection, roster, myThreads, awaitingReply, pendingLeaves, sync };
 };
 
 type TeacherSession = ReturnType<typeof useTeacherSession>;
@@ -383,7 +392,7 @@ interface Draft {
 }
 
 const AttendanceScreen: React.FC = () => {
-  const { teacher, backend, push, device, setDevice, sections, classSection, roster, sync } = useTeacher();
+  const { teacher, backend, push, device, setDevice, connected, sections, classSection, roster, sync } = useTeacher();
   const [section, setSection] = useState(classSection ?? sections[0]);
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const date = APP_TODAY;
@@ -439,7 +448,7 @@ const AttendanceScreen: React.FC = () => {
     const item = { id: `OUT-${device.outbox.length + 1}-${savedAt.slice(11)}`, section, date, savedAt, entries };
     const next = { ...device, outbox: [...device.outbox, item] };
     setDrafts({});
-    if (device.online) {
+    if (connected) {
       const r = syncOutbox(next, teacher.name);
       setDevice(r.device);
       push(r.conflicts ? `Saved · ${r.conflicts} mark(s) were changed by the office — please choose` : `Attendance saved for ${section}`, r.conflicts ? 'warn' : 'ok');
@@ -459,7 +468,7 @@ const AttendanceScreen: React.FC = () => {
   });
 
   const refresh = () => {
-    if (!device.online) return push('Connect to the internet to refresh', 'warn');
+    if (!connected) return push('Connect to the internet to refresh', 'warn');
     setDevice(refreshSnapshot(device, section, date));
     setDrafts({});
     push('Class list refreshed from school');
@@ -469,7 +478,7 @@ const AttendanceScreen: React.FC = () => {
     <Screen>
       <div className="flex gap-1 overflow-x-auto">
         {sections.map(sec => (
-          <button key={sec} onClick={() => { setSection(sec); setDrafts({}); }} className={cx('px-3 py-1.5 rounded-full text-[13px] shrink-0', sec === section ? 'bg-[var(--accent)] text-white' : 'bg-white border border-slate-200')}>
+          <button key={sec} onClick={() => { setSection(sec); setDrafts({}); }} className={cx('px-3 py-1.5 rounded-full text-[13px] shrink-0', sec === section ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] border border-slate-200')}>
             {sec}
             {sec === classSection ? ' ★' : ''}
           </button>
@@ -490,13 +499,7 @@ const AttendanceScreen: React.FC = () => {
             <Icon name="refresh" className="text-[16px] align-middle" /> Refresh
           </SecondaryButton>
         </div>
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {Object.entries(counts).map(([c, n]) => (
-            <Pill key={c} tone={c === 'P' ? 'green' : c === 'A' ? 'red' : 'grey'}>
-              {CODE_LABEL[c as StatusCode]} {n}
-            </Pill>
-          ))}
-        </div>
+        <AttendanceLegend counts={counts} className="mt-2" />
       </Card>
 
       {device.conflicts.length > 0 && (
@@ -563,7 +566,10 @@ const AttendanceScreen: React.FC = () => {
                       onClick={() => setDraft(s.id, { code })}
                       aria-label={`${s.name} ${CODE_LABEL[code]}`}
                       aria-pressed={d.code === code}
-                      className={cx('flex-1 py-1.5 rounded-lg text-[12px] font-semibold border disabled:opacity-50', d.code === code ? `${CODE_STYLE[code]} border-transparent` : 'bg-white border-slate-200 text-slate-600')}
+                      className={cx(
+                        'flex-1 min-h-11 rounded-lg text-[12px] font-semibold border disabled:opacity-50',
+                        d.code === code ? cx(attendanceStatus(code).chip, 'border-transparent ring-2 ring-inset', attendanceStatus(code).ring) : 'bg-[var(--surface)] border-slate-200 text-slate-600'
+                      )}
                     >
                       {code}
                     </button>
@@ -589,7 +595,7 @@ const AttendanceScreen: React.FC = () => {
         </div>
       </Card>
 
-      {canMark && <PrimaryButton onClick={save}>{device.online ? 'Save attendance' : 'Save on this phone'}</PrimaryButton>}
+      {canMark && <PrimaryButton onClick={save}>{connected ? 'Save attendance' : 'Save on this phone'}</PrimaryButton>}
       {device.outbox.length > 0 && (
         <SecondaryButton onClick={sync} className="w-full">
           Sync {device.outbox.length} saved list(s) now
@@ -843,38 +849,23 @@ const MessagesScreen: React.FC = () => {
 
   if (thread) {
     return (
-      <div className="flex-1 flex flex-col min-h-0">
-        <div className="shrink-0 bg-white border-b border-slate-200 px-4 py-2 flex items-center gap-2">
-          <button onClick={() => setOpenId(null)} aria-label="Back to conversations" className="p-1 -ml-1">
-            <Icon name="arrow_back" />
-          </button>
-          <div className="min-w-0">
-            <p className="text-[14px] font-semibold truncate">Parent of {studentName(thread.studentId)}</p>
-            <p className="text-[12px] text-slate-500 truncate">{thread.subject}</p>
-          </div>
-        </div>
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
-          {thread.messages.map((m, i) =>
-            m.from === 'Parent' && m.status !== 'Delivered' ? (
-              <p key={i} className="text-center text-[12px] text-slate-500 italic">
-                A message from the parent is {m.status === 'Rejected' ? 'not shown (removed by the school)' : 'waiting for school review'}.
-              </p>
-            ) : (
-              <div key={i} className={cx('max-w-[80%] rounded-2xl px-3 py-2 text-[14px]', m.from === 'Teacher' ? 'ml-auto bg-[var(--accent)] text-white' : 'bg-white border border-slate-200')}>
-                <p>{m.text}</p>
-                <p className={cx('text-[10px] mt-0.5', m.from === 'Teacher' ? 'text-white/70' : 'text-slate-400')}>{m.at.slice(5)}</p>
-              </div>
-            )
-          )}
-          <p className="text-center text-[11px] text-slate-400">Parents’ phone numbers are not shown. Please keep conversations here.</p>
-        </div>
-        <div className="shrink-0 bg-white border-t border-slate-200 p-2 flex gap-2">
-          <input value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Reply" className={cx(inputClass, 'py-2')} aria-label="Reply" />
-          <button onClick={send} disabled={!draft.trim()} className="rounded-full bg-[var(--accent)] text-white w-11 h-11 flex items-center justify-center disabled:opacity-40" aria-label="Send reply">
-            <Icon name="send" />
-          </button>
-        </div>
-      </div>
+      <ChatThread
+        title={`Parent of ${studentName(thread.studentId)}`}
+        subtitle={thread.subject}
+        onBack={() => setOpenId(null)}
+        items={thread.messages.map(m =>
+          m.from === 'Parent' && m.status !== 'Delivered'
+            ? { kind: 'note' as const, text: `A message from the parent is ${m.status === 'Rejected' ? 'not shown (removed by the school)' : 'waiting for school review'}.` }
+            : { kind: 'message' as const, mine: m.from === 'Teacher', text: m.text, meta: m.at.slice(5) }
+        )}
+        footnote="Parents’ phone numbers are not shown. Please keep conversations here."
+        draft={draft}
+        onDraft={setDraft}
+        onSend={send}
+        placeholder="Reply"
+        composerLabel="Reply"
+        sendLabel="Send reply"
+      />
     );
   }
 
@@ -910,7 +901,7 @@ const MessagesScreen: React.FC = () => {
 
 const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => void }> = ({ teacher, onSignOut }) => {
   const session = useTeacherSession(teacher, onSignOut);
-  const { tab, setTab, device, setDevice, resetDevice, awaitingReply, pendingLeaves, toasts, push, sync } = session;
+  const { tab, setTab, page, setPage, device, setDevice, resetDevice, browserOnline, simulateOffline, connected, awaitingReply, pendingLeaves, toasts, push, sync } = session;
   const [menu, setMenu] = useState(false);
   const { sidebarOpen, toggleSidebar } = useDesktopSidebar('teacher');
   const waitingPapers = useWaitingPapers(teacher.id);
@@ -934,10 +925,18 @@ const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => v
     onSignOut();
   };
 
-  const toggleOnline = () => {
+  /** Demo only: pretends the network dropped so the offline flow can be shown. It never reports the real connection. */
+  const toggleSimulatedOffline = () => {
     const online = !device.online;
     setDevice({ ...device, online });
-    push(online ? (pending ? `Back online — ${pending} saved list(s) ready to sync` : 'Back online') : 'Offline mode: you can keep marking attendance', online ? 'ok' : 'warn');
+    push(
+      online
+        ? pending
+          ? `Demo network back on — ${pending} saved list(s) ready to sync`
+          : 'Demo network back on'
+        : 'Demo offline mode: you can keep marking attendance',
+      online ? 'ok' : 'warn'
+    );
   };
 
   const body = useMemo(() => {
@@ -960,13 +959,17 @@ const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => v
   const sidebar = (
     <SideNav<Tab>
       tabs={tabs}
-      active={tab}
-      onChange={setTab}
+      active={page ? null : tab}
+      onChange={id => {
+        setPage(null);
+        setTab(id);
+      }}
       title="Lumen Teacher"
       subtitle={teacher.classTeacherOf ? `Class teacher · ${teacher.classTeacherOf}` : teacher.designation}
       onClose={toggleSidebar}
       footer={
         <>
+          <SideLink id="appearance" icon="palette" label="Appearance" active={page === 'appearance'} onClick={() => setPage('appearance')} />
           <InstallButton appName="Lumen Teacher" />
           <div className="flex items-center gap-2">
             <button onClick={() => setMenu(true)} className="flex-1 min-w-0 flex items-center gap-2 rounded-xl p-1 hover:bg-slate-100 text-left" aria-label="Open account">
@@ -987,19 +990,27 @@ const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => v
 
   return (
     <TeacherCtx.Provider value={session}>
-      <AppShell side={sidebarOpen ? sidebar : null} bottom={<BottomNav<Tab> tabs={tabs} active={tab} onChange={setTab} />}>
+      <AppShell side={sidebarOpen ? sidebar : null} bottom={page ? undefined : <BottomNav<Tab> tabs={tabs} active={tab} onChange={setTab} />}>
         <TopBar
-          title={titles[tab]}
+          title={page === 'appearance' ? 'Appearance' : titles[tab]}
+          onBack={page ? () => setPage(null) : undefined}
           onToggleSidebar={toggleSidebar}
           sidebarOpen={sidebarOpen}
-          subtitle={device.online ? (pending ? `${pending} waiting to sync` : `Synced ${device.lastSync ?? device.snapshotAt}`) : `Offline · ${pending} waiting to sync`}
+          subtitle={connected ? (pending ? `${pending} waiting to sync` : `Synced ${device.lastSync ?? device.snapshotAt}`) : `Offline · ${pending} waiting to sync`}
           right={
             <div className="flex items-center gap-1">
-              <button onClick={toggleOnline} className={cx('rounded-full p-1.5', device.online ? 'bg-white/15' : 'bg-amber-500')} aria-label={device.online ? 'Go offline' : 'Go online'} title="Simulate network">
-                <Icon name={device.online ? 'wifi' : 'wifi_off'} className="text-[20px]" />
+              <ConnectionStatus online={browserOnline} />
+              <button
+                onClick={toggleSimulatedOffline}
+                aria-pressed={simulateOffline}
+                className={cx('rounded-full w-9 h-9 flex items-center justify-center', simulateOffline ? 'bg-amber-500' : 'bg-white/15')}
+                aria-label="Demo: simulate a dropped connection"
+                title="Demo only — simulate a dropped connection"
+              >
+                <Icon name="science" className="text-[20px]" />
               </button>
-              {pending > 0 && device.online && (
-                <button onClick={sync} className="rounded-full p-1.5 bg-white/15" aria-label="Sync now">
+              {pending > 0 && connected && (
+                <button onClick={sync} className="rounded-full w-9 h-9 flex items-center justify-center bg-white/15" aria-label="Sync now">
                   <Icon name="sync" className="text-[20px]" />
                 </button>
               )}
@@ -1009,11 +1020,27 @@ const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => v
             </div>
           }
         />
-        {body}
+        <OfflineBanner online={browserOnline} note={pending ? `${pending} saved list(s) will sync when you reconnect` : 'Attendance you mark is saved on this phone'} />
+        {page === 'appearance' ? <AppearancePage accent={TEACHER_ACCENT} onSaved={text => push(text)} /> : body}
       </AppShell>
       <Sheet open={menu} onClose={() => setMenu(false)} title={teacher.name}>
         <p className="text-[13px] text-slate-600">{teacher.designation}</p>
         <p className="text-[12px] text-slate-500">{teacher.email}</p>
+        <button
+          onClick={() => {
+            setMenu(false);
+            setPage('appearance');
+          }}
+          className="w-full min-h-14 flex items-center gap-3 rounded-xl border border-slate-200 px-3 py-2 text-left hover:bg-slate-50"
+          data-settings="appearance"
+        >
+          <Icon name="palette" className="text-[24px] text-[var(--accent-ink)]" />
+          <span className="flex-1">
+            <span className="block text-[15px] font-semibold text-slate-900">Appearance</span>
+            <span className="block text-[13px] text-slate-500">Light, dark, system or school theme</span>
+          </span>
+          <Icon name="chevron_right" className="text-slate-400" />
+        </button>
         <SecondaryButton
           onClick={() => {
             resetDevice();
@@ -1037,5 +1064,10 @@ const TeacherSessionView: React.FC<{ teacher: TeacherAccount; onSignOut: () => v
 
 export const TeacherApp: React.FC = () => {
   const [teacher, setTeacher] = useState<TeacherAccount | null>(null);
-  return <AppFrame accent="#125569">{teacher ? <TeacherSessionView teacher={teacher} onSignOut={() => setTeacher(null)} /> : <Login onLogin={setTeacher} />}</AppFrame>;
+  const { applied } = useTheme();
+  return (
+    <AppFrame accent={TEACHER_ACCENT} theme={applied}>
+      {teacher ? <TeacherSessionView teacher={teacher} onSignOut={() => setTeacher(null)} /> : <Login onLogin={setTeacher} />}
+    </AppFrame>
+  );
 };

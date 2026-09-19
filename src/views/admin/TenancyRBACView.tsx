@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Campus } from '../../types';
+import { DialogClose, DialogShell, Modal } from '../../components/common/ui';
 
 interface RolePermissionRow {
   role: string;
@@ -13,6 +14,8 @@ interface RolePermissionRow {
 
 export const TenancyRBACView: React.FC = () => {
   const { campuses, setCampuses, selectedCampus, setSelectedCampus, addToast } = useApp();
+  const campusFormId = useId();
+  const roleTitleId = useId();
   const [jitElevated, setJitElevated] = useState(false);
 
   // Modals state
@@ -287,96 +290,89 @@ export const TenancyRBACView: React.FC = () => {
       </div>
 
       {/* Modal: Add Campus Node */}
-      {showAddCampusModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <h3 className="font-bold text-base text-ink">Add Campus Branch Node (TEN-002)</h3>
-              <button onClick={() => setShowAddCampusModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
+      <Modal
+        open={showAddCampusModal}
+        onClose={() => setShowAddCampusModal(false)}
+        title="Add Campus Branch Node (TEN-002)"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setShowAddCampusModal(false)}
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form={campusFormId}
+              className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
+            >
+              Provision Campus
+            </button>
+          </>
+        }
+      >
+        <form id={campusFormId} onSubmit={handleCreateCampus} className="space-y-3 text-xs">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Campus Code</label>
+              <input
+                type="text"
+                placeholder="e.g. LMN-BLR"
+                value={newCampus.code}
+                onChange={e => setNewCampus({ ...newCampus, code: e.target.value })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink uppercase"
+                required
+              />
             </div>
-
-            <form onSubmit={handleCreateCampus} className="space-y-3 text-xs">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-ink-soft mb-1">Campus Code</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. LMN-BLR"
-                    value={newCampus.code}
-                    onChange={e => setNewCampus({ ...newCampus, code: e.target.value })}
-                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink uppercase"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink-soft mb-1">Initial Capacity</label>
-                  <input
-                    type="number"
-                    value={newCampus.studentsCount}
-                    onChange={e => setNewCampus({ ...newCampus, studentsCount: Number(e.target.value) })}
-                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Campus Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Lumen Bengaluru South Campus"
-                  value={newCampus.name}
-                  onChange={e => setNewCampus({ ...newCampus, name: e.target.value })}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Geographic Location</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Whitefield, Bengaluru, Karnataka"
-                  value={newCampus.location}
-                  onChange={e => setNewCampus({ ...newCampus, location: e.target.value })}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  required
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
-                <button
-                  type="button"
-                  onClick={() => setShowAddCampusModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
-                >
-                  Provision Campus
-                </button>
-              </div>
-            </form>
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Initial Capacity</label>
+              <input
+                type="number"
+                value={newCampus.studentsCount}
+                onChange={e => setNewCampus({ ...newCampus, studentsCount: Number(e.target.value) })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              />
+            </div>
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Campus Name</label>
+            <input
+              type="text"
+              placeholder="e.g. Lumen Bengaluru South Campus"
+              value={newCampus.name}
+              onChange={e => setNewCampus({ ...newCampus, name: e.target.value })}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Geographic Location</label>
+            <input
+              type="text"
+              placeholder="e.g. Whitefield, Bengaluru, Karnataka"
+              value={newCampus.location}
+              onChange={e => setNewCampus({ ...newCampus, location: e.target.value })}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              required
+            />
+          </div>
+        </form>
+      </Modal>
 
       {/* Modal: Edit Role Verbs */}
-      {showEditRoleModal && selectedRole && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
+      <DialogShell open={showEditRoleModal && Boolean(selectedRole)} onClose={() => setShowEditRoleModal(false)} labelledBy={roleTitleId} className="max-w-md">
+        {selectedRole && (
+          <div className="p-6 space-y-4 overflow-y-auto">
             <div className="flex items-center justify-between border-b border-subtle pb-3">
               <div>
-                <h3 className="font-bold text-base text-ink">Configure Role: {selectedRole.role}</h3>
+                <h3 id={roleTitleId} className="font-bold text-base text-ink">Configure Role: {selectedRole.role}</h3>
                 <span className="text-[11px] text-ink-muted">Module-level authorization verbs</span>
               </div>
-              <button onClick={() => setShowEditRoleModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
+              <DialogClose onClose={() => setShowEditRoleModal(false)} />
             </div>
 
             <form onSubmit={handleSaveRole} className="space-y-3 text-xs">
@@ -452,8 +448,8 @@ export const TenancyRBACView: React.FC = () => {
               </div>
             </form>
           </div>
-        </div>
-      )}
+        )}
+      </DialogShell>
     </div>
   );
 };

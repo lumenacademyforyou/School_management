@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { FeatureTags, PhaseNotice, downloadCsv } from '../../components/common/FeatureTags';
 import { Figure } from '../../components/common/Figure';
+import { btnPrimary, btnSoft } from '../../components/common/ui';
 
 type SubjectType = 'Core' | 'Elective' | 'Co-scholastic';
 type Applicability = 'M' | 'E' | '-';
@@ -389,10 +390,10 @@ export const CurriculumView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 's
                   </div>
                   {r.status === 'Pending' ? (
                     <div className="flex gap-1">
-                      <button onClick={() => decideRequest(r, 'Rejected')} className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 font-semibold">
+                      <button onClick={() => decideRequest(r, 'Rejected')} className={btnSoft}>
                         Reject
                       </button>
-                      <button onClick={() => decideRequest(r, 'Approved')} className="px-2 py-1 rounded-lg bg-brand hover:bg-brand-strong text-white font-semibold">
+                      <button onClick={() => decideRequest(r, 'Approved')} className={btnPrimary}>
                         Approve
                       </button>
                     </div>

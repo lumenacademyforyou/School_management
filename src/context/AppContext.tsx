@@ -18,6 +18,9 @@ import { INITIAL_ROSTER, toProfile } from '../data/students';
 /** Table density; a per-user display preference. */
 export type Density = 'comfortable' | 'compact';
 
+/** The overlays the console shell owns. Only one of them shows at a time. */
+type Overlay = 'ptm' | 'leave' | 'search' | 'quickAction';
+
 export interface ToastMessage {
   id: string;
   title: string;
@@ -64,7 +67,8 @@ interface AppContextType {
   sosActive: boolean;
   triggerSos: (active: boolean) => void;
 
-  // Modals and drawers
+  // Modals and drawers. Only one is ever open: opening one closes whichever was showing, so
+  // overlays cannot stack and Escape always dismisses what the user is actually looking at.
   ptmModalOpen: boolean;
   setPtmModalOpen: (open: boolean) => void;
   leaveModalOpen: boolean;
@@ -73,6 +77,8 @@ interface AppContextType {
   setSearchModalOpen: (open: boolean) => void;
   quickActionOpen: boolean;
   setQuickActionOpen: (open: boolean) => void;
+  /** True while any of the above is showing; shell shortcuts stand down. */
+  overlayOpen: boolean;
 
   // Mobile sidebar
   sidebarOpen: boolean;
@@ -125,10 +131,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [driverCurrentStopIndex, setDriverCurrentStopIndex] = useState<number>(3);
   const [sosActive, setSosActive] = useState<boolean>(false);
 
-  const [ptmModalOpen, setPtmModalOpen] = useState<boolean>(false);
-  const [leaveModalOpen, setLeaveModalOpen] = useState<boolean>(false);
-  const [searchModalOpen, setSearchModalOpen] = useState<boolean>(false);
-  const [quickActionOpen, setQuickActionOpen] = useState<boolean>(false);
+  // One overlay at a time. The per-overlay booleans below are derived from it, so every existing
+  // caller keeps working while opening one overlay now dismisses any other.
+  const [overlay, setOverlay] = useState<Overlay | null>(null);
+  // Stable identities: consumers key keyboard-listener effects off these setters.
+  const setPtmModalOpen = useCallback((open: boolean) => setOverlay(prev => (open ? 'ptm' : prev === 'ptm' ? null : prev)), []);
+  const setLeaveModalOpen = useCallback((open: boolean) => setOverlay(prev => (open ? 'leave' : prev === 'leave' ? null : prev)), []);
+  const setSearchModalOpen = useCallback((open: boolean) => setOverlay(prev => (open ? 'search' : prev === 'search' ? null : prev)), []);
+  const setQuickActionOpen = useCallback((open: boolean) => setOverlay(prev => (open ? 'quickAction' : prev === 'quickAction' ? null : prev)), []);
+  const ptmModalOpen = overlay === 'ptm';
+  const leaveModalOpen = overlay === 'leave';
+  const searchModalOpen = overlay === 'search';
+  const quickActionOpen = overlay === 'quickAction';
+  const overlayOpen = overlay !== null;
 
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -257,6 +272,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSearchModalOpen,
         quickActionOpen,
         setQuickActionOpen,
+        overlayOpen,
         sidebarOpen,
         setSidebarOpen,
         toggleSidebar,

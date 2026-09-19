@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Modal } from '../../components/common/ui';
 
 export const AttendanceView: React.FC = () => {
   const { attendanceRecords, updateStudentAttendance, markAllPresent, addToast } = useApp();
@@ -225,55 +226,43 @@ export const AttendanceView: React.FC = () => {
       </div>
 
       {/* MODAL: Dispatch Absence Alerts */}
-      {showDispatchModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-rose-600">notification_important</span>
-                <h3 className="font-bold text-ink text-sm">Dispatch Absence Notifications (ATT-008)</h3>
-              </div>
-              <button
-                onClick={() => setShowDispatchModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <div className="p-3 bg-rose-50 rounded-xl border border-rose-200 text-rose-950 space-y-1">
-              <div className="font-bold">Absent Students Identified: {absentCount}</div>
-              <div className="text-[11px] text-rose-800">
-                {attendanceRecords.filter(r => r.status === 'A').map(r => r.name).join(', ')}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block font-bold text-slate-700">TRAI DLT Template ID: #100844201</label>
-              <div className="p-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 font-mono text-[11px] leading-relaxed">
-                "Dear Parent, your ward [Student Name] was marked UNEXCUSED ABSENT for Period 2 on {new Date().toLocaleDateString('en-IN')}. Please contact Class Teacher if unexpected."
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2 border-t">
-              <button
-                type="button"
-                onClick={() => setShowDispatchModal(false)}
-                className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmDispatch}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow-xs"
-              >
-                Send WhatsApp Alerts ({absentCount})
-              </button>
-            </div>
+      <Modal
+        open={showDispatchModal}
+        onClose={() => setShowDispatchModal(false)}
+        title="Dispatch Absence Notifications (ATT-008)"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setShowDispatchModal(false)}
+              className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirmDispatch}
+              className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow-xs"
+            >
+              Send WhatsApp Alerts ({absentCount})
+            </button>
+          </>
+        }
+      >
+        <div className="p-3 bg-rose-50 rounded-xl border border-rose-200 text-rose-950 space-y-1">
+          <div className="font-bold">Absent Students Identified: {absentCount}</div>
+          <div className="text-[11px] text-rose-800">
+            {attendanceRecords.filter(r => r.status === 'A').map(r => r.name).join(', ')}
           </div>
         </div>
-      )}
+
+        <div className="space-y-2">
+          <label className="block font-bold text-slate-700">TRAI DLT Template ID: #100844201</label>
+          <div className="p-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 font-mono text-[11px] leading-relaxed">
+            "Dear Parent, your ward [Student Name] was marked UNEXCUSED ABSENT for Period 2 on {new Date().toLocaleDateString('en-IN')}. Please contact Class Teacher if unexpected."
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

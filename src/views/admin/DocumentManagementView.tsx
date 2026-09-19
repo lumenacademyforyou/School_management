@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Figure } from '../../components/common/Figure';
+import { Modal } from '../../components/common/ui';
 
 interface DocumentRecord {
   id: string;
@@ -348,96 +349,79 @@ export const DocumentManagementView: React.FC = () => {
       </div>
 
       {/* MODAL: Upload Document */}
-      {showUploadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-brand">upload_file</span>
-                <h3 className="font-bold text-ink text-sm">Upload Student / Staff Document (DOC-001)</h3>
-              </div>
-              <button
-                onClick={() => setShowUploadModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleUploadSubmit} className="space-y-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Candidate / Student / Asset Name</label>
-                <input
-                  type="text"
-                  value={uploadName}
-                  onChange={e => setUploadName(e.target.value)}
-                  placeholder="e.g. Siddharth Raghavan"
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Admission / Roll / Staff ID</label>
-                <input
-                  type="text"
-                  value={uploadId}
-                  onChange={e => setUploadId(e.target.value)}
-                  placeholder="e.g. LMN-2026-112"
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Document Type</label>
-                <select
-                  value={uploadType}
-                  onChange={e => setUploadType(e.target.value as DocumentRecord['type'])}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                >
-                  <option value="Birth Certificate">Birth Certificate</option>
-                  <option value="Aadhaar Card">Aadhaar Card</option>
-                  <option value="Transfer Certificate">Transfer Certificate</option>
-                  <option value="Previous Marksheet">Previous Marksheet</option>
-                  <option value="Transport Fitness NOC">Transport Fitness NOC</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Select File (PDF / JPG / PNG)</label>
-                <div className="border border-dashed border-slate-300 rounded-xl p-3 bg-slate-50 flex items-center justify-between">
-                  <span className="font-mono text-slate-600">{fileName}</span>
-                  <label className="cursor-pointer px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-slate-700 font-bold hover:bg-slate-100">
-                    Browse
-                    <input
-                      type="file"
-                      className="hidden"
-                      onChange={e => {
-                        if (e.target.files?.[0]) setFileName(e.target.files[0].name);
-                      }}
-                    />
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setShowUploadModal(false)}
-                  className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
-                >
-                  Submit for Scrutiny
-                </button>
-              </div>
-            </form>
+      <Modal open={showUploadModal} onClose={() => setShowUploadModal(false)} title="Upload Student / Staff Document (DOC-001)">
+        <form onSubmit={handleUploadSubmit} className="space-y-3">
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Candidate / Student / Asset Name</label>
+            <input
+              type="text"
+              value={uploadName}
+              onChange={e => setUploadName(e.target.value)}
+              placeholder="e.g. Siddharth Raghavan"
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
+            />
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Admission / Roll / Staff ID</label>
+            <input
+              type="text"
+              value={uploadId}
+              onChange={e => setUploadId(e.target.value)}
+              placeholder="e.g. LMN-2026-112"
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
+            />
+          </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Document Type</label>
+            <select
+              value={uploadType}
+              onChange={e => setUploadType(e.target.value as DocumentRecord['type'])}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+            >
+              <option value="Birth Certificate">Birth Certificate</option>
+              <option value="Aadhaar Card">Aadhaar Card</option>
+              <option value="Transfer Certificate">Transfer Certificate</option>
+              <option value="Previous Marksheet">Previous Marksheet</option>
+              <option value="Transport Fitness NOC">Transport Fitness NOC</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Select File (PDF / JPG / PNG)</label>
+            <div className="border border-dashed border-slate-300 rounded-xl p-3 bg-slate-50 flex items-center justify-between">
+              <span className="font-mono text-slate-600">{fileName}</span>
+              <label className="cursor-pointer px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-slate-700 font-bold hover:bg-slate-100">
+                Browse
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={e => {
+                    if (e.target.files?.[0]) setFileName(e.target.files[0].name);
+                  }}
+                />
+              </label>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-3 border-t">
+            <button
+              type="button"
+              onClick={() => setShowUploadModal(false)}
+              className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
+            >
+              Submit for Scrutiny
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

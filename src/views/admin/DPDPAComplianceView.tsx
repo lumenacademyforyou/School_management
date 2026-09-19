@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Figure } from '../../components/common/Figure';
+import { Modal } from '../../components/common/ui';
 
 interface ConsentRecord {
   purpose: string;
@@ -134,58 +135,60 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
           <span className="text-xs font-mono text-brand">Cryptographically Hashed & Immutable</span>
         </div>
 
-        <table className="w-full text-xs text-left">
-          <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
-            <tr>
-              <th className="p-3">Processing Purpose</th>
-              <th className="p-3">Statutory Legal Basis</th>
-              <th className="p-3">Current Status</th>
-              <th className="p-3">Audit Frequency</th>
-              <th className="p-3 text-right">Action</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-subtle">
-            {consents.map(c => (
-              <tr key={c.purpose} className="hover:bg-wash">
-                <td className="p-3 font-bold text-ink">{c.purpose}</td>
-                <td className="p-3 text-ink-soft">{c.legalBasis}</td>
-                <td className="p-3">
-                  <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">
-                    {c.status}
-                  </span>
-                </td>
-                <td className="p-3 text-ink-soft">{c.lastAudit}</td>
-                <td className="p-3 text-right">
-                  <button
-                    onClick={() => setSelectedConsentForLogs(c)}
-                    className="text-brand font-semibold hover:underline"
-                  >
-                    View Logs →
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-left">
+            <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
+              <tr>
+                <th className="p-3">Processing Purpose</th>
+                <th className="p-3">Statutory Legal Basis</th>
+                <th className="p-3">Current Status</th>
+                <th className="p-3">Audit Frequency</th>
+                <th className="p-3 text-right">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-subtle">
+              {consents.map(c => (
+                <tr key={c.purpose} className="hover:bg-wash">
+                  <td className="p-3 font-bold text-ink">{c.purpose}</td>
+                  <td className="p-3 text-ink-soft">{c.legalBasis}</td>
+                  <td className="p-3">
+                    <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">
+                      {c.status}
+                    </span>
+                  </td>
+                  <td className="p-3 text-ink-soft">{c.lastAudit}</td>
+                  <td className="p-3 text-right">
+                    <button
+                      onClick={() => setSelectedConsentForLogs(c)}
+                      className="text-brand font-semibold hover:underline"
+                    >
+                      View Logs →
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* MODAL 1: Consent Ledger Details */}
-      {selectedConsentForLogs && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-brand">receipt_long</span>
-                <h3 className="font-bold text-ink text-sm">Consent Ledger Immutable Audit</h3>
-              </div>
-              <button
-                onClick={() => setSelectedConsentForLogs(null)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
+      <Modal
+        open={!!selectedConsentForLogs}
+        onClose={() => setSelectedConsentForLogs(null)}
+        title="Consent Ledger Immutable Audit"
+        footer={
+          <button
+            type="button"
+            onClick={() => setSelectedConsentForLogs(null)}
+            className="px-4 py-2 bg-brand text-white font-bold rounded-xl text-xs"
+          >
+            Close Audit View
+          </button>
+        }
+      >
+        {selectedConsentForLogs && (
+          <>
             <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 text-xs">
               <div className="font-bold text-ink">{selectedConsentForLogs.purpose}</div>
               <div className="text-[11px] text-ink-muted">Basis: {selectedConsentForLogs.legalBasis}</div>
@@ -209,87 +212,61 @@ DIGITALLY SIGNED & NOTARIZED: Adv. S. Venkataraman, Institutional DPO`;
               </div>
             </div>
 
-            <div className="flex justify-end pt-2 border-t">
-              <button
-                type="button"
-                onClick={() => setSelectedConsentForLogs(null)}
-                className="px-4 py-2 bg-brand text-white font-bold rounded-xl text-xs"
-              >
-                Close Audit View
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
 
       {/* MODAL 2: Subject Access Request */}
-      {showSarModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-brand">assignment_return</span>
-                <h3 className="font-bold text-ink text-sm">Log Data Subject Request (DPDPA Sec 11)</h3>
-              </div>
-              <button
-                onClick={() => setShowSarModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmitSar} className="space-y-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Student / Data Principal</label>
-                <select
-                  value={sarStudent}
-                  onChange={e => setSarStudent(e.target.value)}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                >
-                  <option value="Aarav S. Ramanathan">Aarav S. Ramanathan (Class 10-A)</option>
-                  <option value="Farah N. Siddiqui">Farah N. Siddiqui (Class 10-A)</option>
-                  <option value="Rohan Venkatesh">Rohan Venkatesh (Class 11-PCM)</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Statutory Request Category</label>
-                <select
-                  value={sarType}
-                  onChange={e => setSarType(e.target.value)}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                >
-                  <option value="Access / Export Data">Right to Access / Export Personal Data Dossier</option>
-                  <option value="Correction / Update">Right to Correction & Updating of Inaccurate Records</option>
-                  <option value="Erasure / Deletion">Right to Erasure (Subject to statutory CBSE retention)</option>
-                  <option value="Grievance Redressal">Grievance Redressal to Data Protection Officer</option>
-                </select>
-              </div>
-
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-900 text-[11px] leading-relaxed">
-                Notice: Under DPDPA 2023, institutional response SLA is strictly within 72 business hours.
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2 border-t">
-                <button
-                  type="button"
-                  onClick={() => setShowSarModal(false)}
-                  className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
-                >
-                  Register Request
-                </button>
-              </div>
-            </form>
+      <Modal open={showSarModal} onClose={() => setShowSarModal(false)} title="Log Data Subject Request (DPDPA Sec 11)">
+        <form onSubmit={handleSubmitSar} className="space-y-3">
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Student / Data Principal</label>
+            <select
+              value={sarStudent}
+              onChange={e => setSarStudent(e.target.value)}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+            >
+              <option value="Aarav S. Ramanathan">Aarav S. Ramanathan (Class 10-A)</option>
+              <option value="Farah N. Siddiqui">Farah N. Siddiqui (Class 10-A)</option>
+              <option value="Rohan Venkatesh">Rohan Venkatesh (Class 11-PCM)</option>
+            </select>
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Statutory Request Category</label>
+            <select
+              value={sarType}
+              onChange={e => setSarType(e.target.value)}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+            >
+              <option value="Access / Export Data">Right to Access / Export Personal Data Dossier</option>
+              <option value="Correction / Update">Right to Correction & Updating of Inaccurate Records</option>
+              <option value="Erasure / Deletion">Right to Erasure (Subject to statutory CBSE retention)</option>
+              <option value="Grievance Redressal">Grievance Redressal to Data Protection Officer</option>
+            </select>
+          </div>
+
+          <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-900 text-[11px] leading-relaxed">
+            Notice: Under DPDPA 2023, institutional response SLA is strictly within 72 business hours.
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2 border-t">
+            <button
+              type="button"
+              onClick={() => setShowSarModal(false)}
+              className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
+            >
+              Register Request
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

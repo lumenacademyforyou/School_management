@@ -13,17 +13,27 @@ export const StaffLoginView: React.FC = () => {
   const [pending, setPending] = useState<StaffAccount | null>(null);
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
-  const [failures, setFailures] = useState(0);
+  // Attempts are counted per account, so trying another sign-in does not inherit the previous one's lock
+  // and does not let an attacker clear a lock by switching accounts and back.
+  const [failures, setFailures] = useState<Record<string, number>>({});
   const [appNotice, setAppNotice] = useState('');
-  const locked = failures >= MAX_ATTEMPTS;
+
+  const accountKey = email.trim().toLowerCase();
+  const attempts = failures[accountKey] ?? 0;
+  const locked = attempts >= MAX_ATTEMPTS;
+
+  const countFailure = (key: string) => {
+    const next = (failures[key] ?? 0) + 1;
+    setFailures(f => ({ ...f, [key]: next }));
+    return next;
+  };
 
   const submitPassword = (e: React.FormEvent) => {
     e.preventDefault();
     if (locked) return;
-    const account = STAFF_ACCOUNTS.find(a => a.email.toLowerCase() === email.trim().toLowerCase());
+    const account = STAFF_ACCOUNTS.find(a => a.email.toLowerCase() === accountKey);
     if (!account || password !== DEMO_STAFF_PASSWORD) {
-      const n = failures + 1;
-      setFailures(n);
+      const n = countFailure(accountKey);
       setError(n >= MAX_ATTEMPTS ? 'Too many attempts. This account is locked — ask the Principal to unlock it.' : `Email or password is incorrect (${MAX_ATTEMPTS - n} attempt(s) left).`);
       return;
     }
@@ -40,7 +50,18 @@ export const StaffLoginView: React.FC = () => {
     e.preventDefault();
     if (!pending) return;
     if (code !== DEMO_TOTP) {
-      setError('That code is not correct.');
+      // A wrong code counts against the same account budget as a wrong password, so the six digits
+      // cannot be worked through by retrying on this step.
+      const n = countFailure(pending.email.toLowerCase());
+      setCode('');
+      if (n >= MAX_ATTEMPTS) {
+        setEmail(pending.email);
+        setPending(null);
+        setPassword('');
+        setError('Too many attempts. This account is locked — ask the Principal to unlock it.');
+        return;
+      }
+      setError(`That code is not correct (${MAX_ATTEMPTS - n} attempt(s) left).`);
       return;
     }
     signIn(pending);
@@ -151,7 +172,7 @@ export const StaffLoginView: React.FC = () => {
               </button>
               <div className="flex justify-between text-xs">
                 <span className="text-ink-muted">Demo code: {DEMO_TOTP}</span>
-                <button type="button" onClick={() => setPending(null)} className="text-brand font-semibold hover:underline cursor-pointer">
+                <button type="button" onClick={() => { setPending(null); setCode(''); setError(''); }} className="text-brand font-semibold hover:underline cursor-pointer">
                   Use a different account
                 </button>
               </div>

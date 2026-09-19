@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Figure } from '../../components/common/Figure';
+import { DialogClose, DialogShell } from '../../components/common/ui';
 
 interface AssetRecord {
   sku: string;
@@ -13,6 +14,9 @@ interface AssetRecord {
 
 export const InventoryView: React.FC = () => {
   const { addToast } = useApp();
+  const addTitleId = useId();
+  const qrTitleId = useId();
+  const auditTitleId = useId();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showQrModal, setShowQrModal] = useState<AssetRecord | null>(null);
   const [showAuditModal, setShowAuditModal] = useState(false);
@@ -120,252 +124,228 @@ export const InventoryView: React.FC = () => {
           <span className="text-xs font-mono text-ink-soft"><Figure value="100" suffix="%" /> Barcoded & RFID Tagged</span>
         </div>
 
-        <table className="w-full text-xs text-left">
-          <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
-            <tr>
-              <th className="p-3">SKU & Code</th>
-              <th className="p-3">Asset Description</th>
-              <th className="p-3">Lab / Department</th>
-              <th className="p-3">Current Stock</th>
-              <th className="p-3">Book Value</th>
-              <th className="p-3 text-right">Action</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-subtle">
-            {assets.map(a => (
-              <tr key={a.sku} className="hover:bg-wash">
-                <td className="p-3 font-mono font-bold text-brand">{a.sku}</td>
-                <td className="p-3 font-bold text-ink">{a.name}</td>
-                <td className="p-3 text-ink-soft">{a.category}</td>
-                <td className="p-3">
-                  <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">
-                    {a.stock} units
-                  </span>
-                </td>
-                <td className="p-3 font-mono font-bold text-ink">{a.value}</td>
-                <td className="p-3 text-right">
-                  <button
-                    onClick={() => setShowQrModal(a)}
-                    className="text-brand font-semibold hover:underline flex items-center gap-1 ml-auto"
-                  >
-                    <span className="material-symbols-outlined text-xs">qr_code</span>
-                    <span>Print Tag</span>
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-left">
+            <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
+              <tr>
+                <th className="p-3">SKU & Code</th>
+                <th className="p-3">Asset Description</th>
+                <th className="p-3">Lab / Department</th>
+                <th className="p-3">Current Stock</th>
+                <th className="p-3">Book Value</th>
+                <th className="p-3 text-right">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-subtle">
+              {assets.map(a => (
+                <tr key={a.sku} className="hover:bg-wash">
+                  <td className="p-3 font-mono font-bold text-brand">{a.sku}</td>
+                  <td className="p-3 font-bold text-ink">{a.name}</td>
+                  <td className="p-3 text-ink-soft">{a.category}</td>
+                  <td className="p-3">
+                    <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">
+                      {a.stock} units
+                    </span>
+                  </td>
+                  <td className="p-3 font-mono font-bold text-ink">{a.value}</td>
+                  <td className="p-3 text-right">
+                    <button
+                      onClick={() => setShowQrModal(a)}
+                      className="text-brand font-semibold hover:underline flex items-center gap-1 ml-auto"
+                    >
+                      <span className="material-symbols-outlined text-xs">qr_code</span>
+                      <span>Print Tag</span>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* MODAL 1: Add New Asset */}
-      {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-brand">inventory_2</span>
-                <h3 className="font-bold text-ink text-sm">Register Capitalized Asset (INV-001)</h3>
-              </div>
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateAsset} className="space-y-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Asset Title / Equipment Name</label>
-                <input
-                  type="text"
-                  value={newName}
-                  onChange={e => setNewName(e.target.value)}
-                  placeholder="e.g., Olympus CX21i Binocular Microscope"
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Department</label>
-                  <select
-                    value={newCategory}
-                    onChange={e => setNewCategory(e.target.value)}
-                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
-                  >
-                    <option value="Physics Lab">Physics Lab</option>
-                    <option value="Chemistry Lab">Chemistry Lab</option>
-                    <option value="Biology Lab">Biology Lab</option>
-                    <option value="Robotics & STEM">Robotics & STEM</option>
-                    <option value="Computer Lab">Computer Lab</option>
-                    <option value="Sports Complex">Sports Complex</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">SKU / Code (Optional)</label>
-                  <input
-                    type="text"
-                    value={newSku}
-                    onChange={e => setNewSku(e.target.value)}
-                    placeholder="Auto-generated if blank"
-                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Quantity Stocked</label>
-                  <input
-                    type="number"
-                    value={newStock}
-                    onChange={e => setNewStock(e.target.value)}
-                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Estimated Book Value (₹)</label>
-                  <input
-                    type="text"
-                    value={newValue}
-                    onChange={e => setNewValue(e.target.value)}
-                    placeholder="50,000"
-                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
-                >
-                  Register Asset
-                </button>
-              </div>
-            </form>
+      <DialogShell open={showAddModal} onClose={() => setShowAddModal(false)} labelledBy={addTitleId} className="max-w-md p-6 space-y-4 text-xs">
+        <div className="flex items-center justify-between border-b pb-3">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-brand">inventory_2</span>
+            <h3 id={addTitleId} className="font-bold text-ink text-sm">Register Capitalized Asset (INV-001)</h3>
           </div>
+          <DialogClose onClose={() => setShowAddModal(false)} />
         </div>
-      )}
+        <form onSubmit={handleCreateAsset} className="space-y-3">
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Asset Title / Equipment Name</label>
+            <input
+              type="text"
+              value={newName}
+              onChange={e => setNewName(e.target.value)}
+              placeholder="e.g., Olympus CX21i Binocular Microscope"
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Department</label>
+              <select
+                value={newCategory}
+                onChange={e => setNewCategory(e.target.value)}
+                className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
+              >
+                <option value="Physics Lab">Physics Lab</option>
+                <option value="Chemistry Lab">Chemistry Lab</option>
+                <option value="Biology Lab">Biology Lab</option>
+                <option value="Robotics & STEM">Robotics & STEM</option>
+                <option value="Computer Lab">Computer Lab</option>
+                <option value="Sports Complex">Sports Complex</option>
+              </select>
+            </div>
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">SKU / Code (Optional)</label>
+              <input
+                type="text"
+                value={newSku}
+                onChange={e => setNewSku(e.target.value)}
+                placeholder="Auto-generated if blank"
+                className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Quantity Stocked</label>
+              <input
+                type="number"
+                value={newStock}
+                onChange={e => setNewStock(e.target.value)}
+                className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
+              />
+            </div>
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Estimated Book Value (₹)</label>
+              <input
+                type="text"
+                value={newValue}
+                onChange={e => setNewValue(e.target.value)}
+                placeholder="50,000"
+                className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-3 border-t">
+            <button
+              type="button"
+              onClick={() => setShowAddModal(false)}
+              className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
+            >
+              Register Asset
+            </button>
+          </div>
+        </form>
+      </DialogShell>
 
       {/* MODAL 2: QR Tag Label Preview */}
       {showQrModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4 text-xs text-center ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3 text-left">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-brand">qr_code_2</span>
-                <h3 className="font-bold text-ink text-sm">Asset Barcode & QR Label</h3>
-              </div>
-              <button
-                onClick={() => setShowQrModal(null)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
+        <DialogShell open onClose={() => setShowQrModal(null)} labelledBy={qrTitleId} className="max-w-sm p-6 space-y-4 text-xs text-center">
+          <div className="flex items-center justify-between border-b pb-3 text-left">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-brand">qr_code_2</span>
+              <h3 id={qrTitleId} className="font-bold text-ink text-sm">Asset Barcode & QR Label</h3>
             </div>
-
-            <div className="p-4 border-2 border-dashed border-slate-300 rounded-xl space-y-2 bg-slate-50">
-              <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
-                Lumen Academy Institutional Asset
-              </div>
-              <div className="flex justify-center my-2">
-                <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(
-                    `LUMEN-ASSET:${showQrModal.sku}`
-                  )}`}
-                  alt="QR Code"
-                  className="w-32 h-32 border border-slate-200 p-1 bg-white rounded-lg shadow-xs"
-                />
-              </div>
-              <div className="font-mono font-bold text-sm text-ink">{showQrModal.sku}</div>
-              <div className="font-bold text-xs text-slate-800">{showQrModal.name}</div>
-              <div className="text-[11px] text-slate-500">{showQrModal.category} • Value: {showQrModal.value}</div>
-            </div>
-
-            <div className="flex justify-center gap-2 pt-2">
-              <button
-                onClick={() => {
-                  window.print();
-                  addToast(`Dispatched print job for QR Label ${showQrModal.sku}`, 'success');
-                }}
-                className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs flex items-center gap-1.5"
-              >
-                <span className="material-symbols-outlined text-sm">print</span>
-                <span>Print QR Sticker</span>
-              </button>
-            </div>
+            <DialogClose onClose={() => setShowQrModal(null)} />
           </div>
-        </div>
+
+          <div className="p-4 border-2 border-dashed border-slate-300 rounded-xl space-y-2 bg-slate-50">
+            <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+              Lumen Academy Institutional Asset
+            </div>
+            <div className="flex justify-center my-2">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(
+                  `LUMEN-ASSET:${showQrModal.sku}`
+                )}`}
+                alt="QR Code"
+                className="w-32 h-32 border border-slate-200 p-1 bg-white rounded-lg shadow-xs"
+              />
+            </div>
+            <div className="font-mono font-bold text-sm text-ink">{showQrModal.sku}</div>
+            <div className="font-bold text-xs text-slate-800">{showQrModal.name}</div>
+            <div className="text-[11px] text-slate-500">{showQrModal.category} • Value: {showQrModal.value}</div>
+          </div>
+
+          <div className="flex justify-center gap-2 pt-2">
+            <button
+              onClick={() => {
+                window.print();
+                addToast(`Dispatched print job for QR Label ${showQrModal.sku}`, 'success');
+              }}
+              className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs flex items-center gap-1.5"
+            >
+              <span className="material-symbols-outlined text-sm">print</span>
+              <span>Print QR Sticker</span>
+            </button>
+          </div>
+        </DialogShell>
       )}
 
       {/* MODAL 3: Audit Asset QR Tags */}
-      {showAuditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-amber-600">qr_code_scanner</span>
-                <h3 className="font-bold text-ink text-sm">Bi-Annual Asset Physical Audit</h3>
-              </div>
-              <button
-                onClick={() => setShowAuditModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
+      <DialogShell open={showAuditModal} onClose={() => setShowAuditModal(false)} labelledBy={auditTitleId} className="max-w-md p-6 space-y-4 text-xs">
+        <div className="flex items-center justify-between border-b pb-3">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-amber-600">qr_code_scanner</span>
+            <h3 id={auditTitleId} className="font-bold text-ink text-sm">Bi-Annual Asset Physical Audit</h3>
+          </div>
+          <DialogClose onClose={() => setShowAuditModal(false)} />
+        </div>
+
+        <div className="space-y-3">
+          <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 leading-relaxed">
+            Hardware handheld scanners are paired on Channel 4. 205 of 205 items in Science Labs verified. Zero discrepancies or missing tags discovered.
+          </div>
+
+          <div className="space-y-1.5">
+            <div className="flex justify-between font-bold text-slate-700">
+              <span>Physics Lab Audit Status</span>
+              <span className="text-emerald-700 font-mono"><Figure value="100" suffix="%" /> (45/45)</span>
             </div>
-
-            <div className="space-y-3">
-              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 leading-relaxed">
-                Hardware handheld scanners are paired on Channel 4. 205 of 205 items in Science Labs verified. Zero discrepancies or missing tags discovered.
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex justify-between font-bold text-slate-700">
-                  <span>Physics Lab Audit Status</span>
-                  <span className="text-emerald-700 font-mono"><Figure value="100" suffix="%" /> (45/45)</span>
-                </div>
-                <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                  <div className="bg-emerald-500 h-2 rounded-full w-full"></div>
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex justify-between font-bold text-slate-700">
-                  <span>Robotics & iPad Lab Status</span>
-                  <span className="text-emerald-700 font-mono"><Figure value="100" suffix="%" /> (120/120)</span>
-                </div>
-                <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                  <div className="bg-emerald-500 h-2 rounded-full w-full"></div>
-                </div>
-              </div>
+            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div className="bg-emerald-500 h-2 rounded-full w-full"></div>
             </div>
+          </div>
 
-            <div className="flex justify-end gap-2 pt-3 border-t">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowAuditModal(false);
-                  addToast('Signed off physical asset verification ledger with digital auditor key', 'success');
-                }}
-                className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
-              >
-                Sign-Off Audit Roster
-              </button>
+          <div className="space-y-1.5">
+            <div className="flex justify-between font-bold text-slate-700">
+              <span>Robotics & iPad Lab Status</span>
+              <span className="text-emerald-700 font-mono"><Figure value="100" suffix="%" /> (120/120)</span>
+            </div>
+            <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div className="bg-emerald-500 h-2 rounded-full w-full"></div>
             </div>
           </div>
         </div>
-      )}
+
+        <div className="flex justify-end gap-2 pt-3 border-t">
+          <button
+            type="button"
+            onClick={() => {
+              setShowAuditModal(false);
+              addToast('Signed off physical asset verification ledger with digital auditor key', 'success');
+            }}
+            className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
+          >
+            Sign-Off Audit Roster
+          </button>
+        </div>
+      </DialogShell>
     </div>
   );
 };

@@ -1,8 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useId, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { FeatureTags, PhaseNotice, downloadCsv } from '../../components/common/FeatureTags';
 import { PrintPortal } from '../../components/common/PrintPortal';
-import { DensityToggle } from '../../components/common/ui';
+import { DensityToggle, DialogShell, Modal } from '../../components/common/ui';
 import { Figure, Money } from '../../components/common/Figure';
 import { useSessionState } from '../../lib/sessionState';
 import { useGrants } from '../../hooks/useGrants';
@@ -126,6 +126,7 @@ interface AuditLine {
 
 export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'collect' }) => {
   const { addToast, currentUser, selectedCampus } = useApp();
+  const receiptTitleId = useId();
   const asOf = FEES_AS_OF;
   const me = currentUser.name;
   /** Records keep a desk suffix, e.g. "Mrs. Lakshmi Narayanan (Accounts)" — it is still the same person. */
@@ -1781,11 +1782,11 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
       )}
 
       {/* ------------------------------------------------------------ Modals */}
-      {receiptFor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setReceiptFor(null)}>
-          <div className="bg-surface rounded-2xl max-w-lg w-full shadow-2xl max-h-[90vh] overflow-y-auto ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
+      <DialogShell open={Boolean(receiptFor)} onClose={() => setReceiptFor(null)} labelledBy={receiptTitleId} className="max-w-lg">
+        {receiptFor && (
+          <>
             <div className="p-3 border-b border-line-soft flex justify-between items-center">
-              <span className="text-sm font-bold text-ink">Receipt {receiptFor.receiptNo}</span>
+              <span id={receiptTitleId} className="text-sm font-bold text-ink">Receipt {receiptFor.receiptNo}</span>
               <div className="flex gap-2">
                 <button onClick={() => setPrintReceipt(true)} className={btnPrimary}>
                   Print
@@ -1795,10 +1796,12 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                 </button>
               </div>
             </div>
-            <Receipt payment={payments.find(p => p.id === receiptFor.id) ?? receiptFor} student={student(receiptFor.studentId)} allocations={receiptAllocations(receiptFor)} credit={ledger.credit[receiptFor.studentId] ?? 0} campus={selectedCampus.name} />
-          </div>
-        </div>
-      )}
+            <div className="overflow-y-auto rounded-b-2xl">
+              <Receipt payment={payments.find(p => p.id === receiptFor.id) ?? receiptFor} student={student(receiptFor.studentId)} allocations={receiptAllocations(receiptFor)} credit={ledger.credit[receiptFor.studentId] ?? 0} campus={selectedCampus.name} />
+            </div>
+          </>
+        )}
+      </DialogShell>
       {printReceipt && receiptFor && (
         <PrintPortal onDone={() => setPrintReceipt(false)}>
           <Receipt payment={payments.find(p => p.id === receiptFor.id) ?? receiptFor} student={student(receiptFor.studentId)} allocations={receiptAllocations(receiptFor)} credit={ledger.credit[receiptFor.studentId] ?? 0} campus={selectedCampus.name} />
@@ -1810,31 +1813,49 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
         </PrintPortal>
       )}
 
-      {cancelling && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setCancelling(null)}>
-          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-ink">Cancel receipt {cancelling.receiptNo}</h3>
+      <Modal
+        open={Boolean(cancelling)}
+        onClose={() => setCancelling(null)}
+        title={`Cancel receipt ${cancelling?.receiptNo ?? ''}`}
+        footer={
+          <>
+            <button onClick={() => setCancelling(null)} className={btnSoft}>
+              Keep
+            </button>
+            <button onClick={confirmCancel} className={btnDanger}>
+              Cancel receipt
+            </button>
+          </>
+        }
+      >
+        {cancelling && (
+          <>
             <p>
               {nameOf(cancelling.studentId)} · <Money value={cancelling.amount} /> · collected by {cancelling.collectedBy}
             </p>
             <input value={cancelReason} onChange={e => setCancelReason(e.target.value)} placeholder="Reason" className={`${inputCls} w-full`} aria-label="Cancel reason" />
             <p className="text-ink-muted">The receipt number is kept and marked cancelled. The money it settled goes back to outstanding.</p>
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setCancelling(null)} className={btnSoft}>
-                Keep
-              </button>
-              <button onClick={confirmCancel} className={btnDanger}>
-                Cancel receipt
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
 
-      {planFor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setPlanFor(null)}>
-          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-ink">Payment plan · {nameOf(planFor)}</h3>
+      <Modal
+        open={Boolean(planFor)}
+        onClose={() => setPlanFor(null)}
+        title={`Payment plan · ${planFor ? nameOf(planFor) : ''}`}
+        footer={
+          <>
+            <button onClick={() => setPlanFor(null)} className={btnSoft}>
+              Cancel
+            </button>
+            <button onClick={createPlan} className={btnPrimary}>
+              Create plan
+            </button>
+          </>
+        }
+      >
+        {planFor && (
+          <>
             <label className="flex items-center gap-2">
               Monthly parts
               <select value={planParts} onChange={e => setPlanParts(Number(e.target.value))} className={inputCls} aria-label="Plan parts">
@@ -1852,17 +1873,9 @@ export const FeesDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'col
                 <Money value={p.amount} />
               </p>
             ))}
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setPlanFor(null)} className={btnSoft}>
-                Cancel
-              </button>
-              <button onClick={createPlan} className={btnPrimary}>
-                Create plan
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
     </div>
   );
 };

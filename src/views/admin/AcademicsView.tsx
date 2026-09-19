@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { TIMETABLE_PERIODS } from '../../data/mockData';
+import { DialogClose, DialogShell } from '../../components/common/ui';
 
 interface PeriodItem {
   period: number;
@@ -13,6 +14,9 @@ interface PeriodItem {
 
 export const AcademicsView: React.FC = () => {
   const { addToast } = useApp();
+
+  const proxyTitleId = useId();
+  const addPeriodTitleId = useId();
 
   const [periods, setPeriods] = useState<PeriodItem[]>(TIMETABLE_PERIODS);
   const [showProxyModal, setShowProxyModal] = useState(false);
@@ -207,159 +211,157 @@ export const AcademicsView: React.FC = () => {
       </div>
 
       {/* Modal: Trigger Proxy Auto-Dispatch */}
-      {showProxyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <div>
-                <h3 className="font-bold text-base text-ink">Automated Faculty Proxy Dispatch</h3>
-                <span className="text-xs text-ink-muted">Assign replacement mentor without clash</span>
-              </div>
-              <button onClick={() => setShowProxyModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleDispatchProxy} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Absent Faculty Member</label>
-                <select
-                  value={selectedAbsentTeacher}
-                  onChange={e => setSelectedAbsentTeacher(e.target.value)}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs"
-                >
-                  {teachers.map(t => (
-                    <option key={t.name} value={t.name}>{t.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Target Period to Substitute</label>
-                <select
-                  value={selectedProxyPeriod}
-                  onChange={e => setSelectedProxyPeriod(Number(e.target.value))}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs"
-                >
-                  {periods.map(p => (
-                    <option key={p.period} value={p.period}>Period {p.period} — {p.subject} ({p.time})</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Available Replacement Faculty</label>
-                <select
-                  value={selectedProxyTeacher}
-                  onChange={e => setSelectedProxyTeacher(e.target.value)}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs"
-                >
-                  <option value="Mr. K. Natarajan (TGT Science)">Mr. K. Natarajan (TGT Science) — 18/28 Free</option>
-                  <option value="Coach R. Dinesh (PE & Sports)">Coach R. Dinesh (PE & Sports) — 20/28 Free</option>
-                  <option value="Ms. Clara D’Souza (TGT English)">Ms. Clara D’Souza (TGT English) — 22/28 Free</option>
-                </select>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
-                <button
-                  type="button"
-                  onClick={() => setShowProxyModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
-                >
-                  Dispatch Proxy
-                </button>
-              </div>
-            </form>
+      <DialogShell
+        open={showProxyModal}
+        onClose={() => setShowProxyModal(false)}
+        labelledBy={proxyTitleId}
+        className="max-w-md p-6 space-y-4 overflow-y-auto"
+      >
+        <div className="flex items-center justify-between border-b border-subtle pb-3">
+          <div>
+            <h3 id={proxyTitleId} className="font-bold text-base text-ink">Automated Faculty Proxy Dispatch</h3>
+            <span className="text-xs text-ink-muted">Assign replacement mentor without clash</span>
           </div>
+          <DialogClose onClose={() => setShowProxyModal(false)} />
         </div>
-      )}
+
+        <form onSubmit={handleDispatchProxy} className="space-y-3 text-xs">
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Absent Faculty Member</label>
+            <select
+              value={selectedAbsentTeacher}
+              onChange={e => setSelectedAbsentTeacher(e.target.value)}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs"
+            >
+              {teachers.map(t => (
+                <option key={t.name} value={t.name}>{t.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Target Period to Substitute</label>
+            <select
+              value={selectedProxyPeriod}
+              onChange={e => setSelectedProxyPeriod(Number(e.target.value))}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs"
+            >
+              {periods.map(p => (
+                <option key={p.period} value={p.period}>Period {p.period} — {p.subject} ({p.time})</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Available Replacement Faculty</label>
+            <select
+              value={selectedProxyTeacher}
+              onChange={e => setSelectedProxyTeacher(e.target.value)}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs"
+            >
+              <option value="Mr. K. Natarajan (TGT Science)">Mr. K. Natarajan (TGT Science) — 18/28 Free</option>
+              <option value="Coach R. Dinesh (PE & Sports)">Coach R. Dinesh (PE & Sports) — 20/28 Free</option>
+              <option value="Ms. Clara D’Souza (TGT English)">Ms. Clara D’Souza (TGT English) — 22/28 Free</option>
+            </select>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
+            <button
+              type="button"
+              onClick={() => setShowProxyModal(false)}
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
+            >
+              Dispatch Proxy
+            </button>
+          </div>
+        </form>
+      </DialogShell>
 
       {/* Modal: Allot Period */}
-      {showAddPeriodModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <div>
-                <h3 className="font-bold text-base text-ink">Allot New Daily Period</h3>
-                <span className="text-xs text-ink-muted">Add subject slot to Class 10-A</span>
-              </div>
-              <button onClick={() => setShowAddPeriodModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleAddPeriod} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Subject Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Artificial Intelligence / Robotics"
-                  value={newPeriod.subject}
-                  onChange={e => setNewPeriod({ ...newPeriod, subject: e.target.value })}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Faculty Mentor</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Mr. S. Balaji"
-                  value={newPeriod.teacher}
-                  onChange={e => setNewPeriod({ ...newPeriod, teacher: e.target.value })}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-ink-soft mb-1">Classroom / Lab</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. CS Lab 01"
-                    value={newPeriod.room}
-                    onChange={e => setNewPeriod({ ...newPeriod, room: e.target.value })}
-                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink-soft mb-1">Time Slot</label>
-                  <input
-                    type="text"
-                    value={newPeriod.time}
-                    onChange={e => setNewPeriod({ ...newPeriod, time: e.target.value })}
-                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
-                <button
-                  type="button"
-                  onClick={() => setShowAddPeriodModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
-                >
-                  Save Period
-                </button>
-              </div>
-            </form>
+      <DialogShell
+        open={showAddPeriodModal}
+        onClose={() => setShowAddPeriodModal(false)}
+        labelledBy={addPeriodTitleId}
+        className="max-w-md p-6 space-y-4 overflow-y-auto"
+      >
+        <div className="flex items-center justify-between border-b border-subtle pb-3">
+          <div>
+            <h3 id={addPeriodTitleId} className="font-bold text-base text-ink">Allot New Daily Period</h3>
+            <span className="text-xs text-ink-muted">Add subject slot to Class 10-A</span>
           </div>
+          <DialogClose onClose={() => setShowAddPeriodModal(false)} />
         </div>
-      )}
+
+        <form onSubmit={handleAddPeriod} className="space-y-3 text-xs">
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Subject Name</label>
+            <input
+              type="text"
+              placeholder="e.g. Artificial Intelligence / Robotics"
+              value={newPeriod.subject}
+              onChange={e => setNewPeriod({ ...newPeriod, subject: e.target.value })}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Faculty Mentor</label>
+            <input
+              type="text"
+              placeholder="e.g. Mr. S. Balaji"
+              value={newPeriod.teacher}
+              onChange={e => setNewPeriod({ ...newPeriod, teacher: e.target.value })}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Classroom / Lab</label>
+              <input
+                type="text"
+                placeholder="e.g. CS Lab 01"
+                value={newPeriod.room}
+                onChange={e => setNewPeriod({ ...newPeriod, room: e.target.value })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              />
+            </div>
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Time Slot</label>
+              <input
+                type="text"
+                value={newPeriod.time}
+                onChange={e => setNewPeriod({ ...newPeriod, time: e.target.value })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
+            <button
+              type="button"
+              onClick={() => setShowAddPeriodModal(false)}
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
+            >
+              Save Period
+            </button>
+          </div>
+        </form>
+      </DialogShell>
     </div>
   );
 };

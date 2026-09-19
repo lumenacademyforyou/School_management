@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Figure } from '../../components/common/Figure';
+import { Modal } from '../../components/common/ui';
 
 interface SubstitutionSuggestion {
   id: string;
@@ -343,103 +344,86 @@ export const TimetableSubstitutionView: React.FC = () => {
       )}
 
       {/* MODAL: Manual Substitute Assignment */}
-      {showManualModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-brand">person_add</span>
-                <h3 className="font-bold text-ink text-sm">Assign Manual Substitute (TTB-014)</h3>
-              </div>
-              <button
-                onClick={() => setShowManualModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleManualAssign} className="space-y-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Period</label>
-                <select
-                  value={formPeriod}
-                  onChange={e => setFormPeriod(e.target.value)}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                >
-                  <option value="Period 1 (08:30 - 09:15 AM)">Period 1 (08:30 - 09:15 AM)</option>
-                  <option value="Period 2 (09:15 - 10:00 AM)">Period 2 (09:15 - 10:00 AM)</option>
-                  <option value="Period 3 (10:00 - 10:45 AM)">Period 3 (10:00 - 10:45 AM)</option>
-                  <option value="Period 4 (11:00 - 11:45 AM)">Period 4 (11:00 - 11:45 AM)</option>
-                  <option value="Period 5 (11:45 - 12:30 PM)">Period 5 (11:45 - 12:30 PM)</option>
-                  <option value="Period 6 (01:15 - 02:00 PM)">Period 6 (01:15 - 02:00 PM)</option>
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Class & Section</label>
-                  <input
-                    type="text"
-                    value={formClass}
-                    onChange={e => setFormClass(e.target.value)}
-                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Subject</label>
-                  <input
-                    type="text"
-                    value={formSubject}
-                    onChange={e => setFormSubject(e.target.value)}
-                    className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Absent Regular Teacher</label>
-                <input
-                  type="text"
-                  value={formAbsent}
-                  onChange={e => setFormAbsent(e.target.value)}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Assigned Substitute Teacher</label>
-                <select
-                  value={formSub}
-                  onChange={e => setFormSub(e.target.value)}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                >
-                  <option value="Mrs. V. Revathi (TGT Science)">Mrs. V. Revathi (TGT Science - Free)</option>
-                  <option value="V. S. Raghavan (PGT Maths)">V. S. Raghavan (PGT Maths - Free)</option>
-                  <option value="Archana Devi (TGT Social)">Archana Devi (TGT Social - Free)</option>
-                  <option value="G. Vignesh (Lab Assistant)">G. Vignesh (Lab Assistant - Free)</option>
-                </select>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setShowManualModal(false)}
-                  className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
-                >
-                  Confirm & Notify
-                </button>
-              </div>
-            </form>
+      <Modal open={showManualModal} onClose={() => setShowManualModal(false)} title="Assign Manual Substitute (TTB-014)">
+        <form onSubmit={handleManualAssign} className="space-y-3">
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Period</label>
+            <select
+              value={formPeriod}
+              onChange={e => setFormPeriod(e.target.value)}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+            >
+              <option value="Period 1 (08:30 - 09:15 AM)">Period 1 (08:30 - 09:15 AM)</option>
+              <option value="Period 2 (09:15 - 10:00 AM)">Period 2 (09:15 - 10:00 AM)</option>
+              <option value="Period 3 (10:00 - 10:45 AM)">Period 3 (10:00 - 10:45 AM)</option>
+              <option value="Period 4 (11:00 - 11:45 AM)">Period 4 (11:00 - 11:45 AM)</option>
+              <option value="Period 5 (11:45 - 12:30 PM)">Period 5 (11:45 - 12:30 PM)</option>
+              <option value="Period 6 (01:15 - 02:00 PM)">Period 6 (01:15 - 02:00 PM)</option>
+            </select>
           </div>
-        </div>
-      )}
+
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Class & Section</label>
+              <input
+                type="text"
+                value={formClass}
+                onChange={e => setFormClass(e.target.value)}
+                className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
+              />
+            </div>
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Subject</label>
+              <input
+                type="text"
+                value={formSubject}
+                onChange={e => setFormSubject(e.target.value)}
+                className="w-full bg-wash border border-slate-300 rounded-xl p-2 text-xs text-slate-800"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Absent Regular Teacher</label>
+            <input
+              type="text"
+              value={formAbsent}
+              onChange={e => setFormAbsent(e.target.value)}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+            />
+          </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Assigned Substitute Teacher</label>
+            <select
+              value={formSub}
+              onChange={e => setFormSub(e.target.value)}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+            >
+              <option value="Mrs. V. Revathi (TGT Science)">Mrs. V. Revathi (TGT Science - Free)</option>
+              <option value="V. S. Raghavan (PGT Maths)">V. S. Raghavan (PGT Maths - Free)</option>
+              <option value="Archana Devi (TGT Social)">Archana Devi (TGT Social - Free)</option>
+              <option value="G. Vignesh (Lab Assistant)">G. Vignesh (Lab Assistant - Free)</option>
+            </select>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-3 border-t">
+            <button
+              type="button"
+              onClick={() => setShowManualModal(false)}
+              className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
+            >
+              Confirm & Notify
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

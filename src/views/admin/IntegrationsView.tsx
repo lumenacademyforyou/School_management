@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { DialogClose, DialogShell } from '../../components/common/ui';
 
 interface IntegrationService {
   id: string;
@@ -25,6 +26,9 @@ interface ApiKeyItem {
 
 export const IntegrationsView: React.FC = () => {
   const { addToast } = useApp();
+  const apiKeyTitleId = useId();
+  const configTitleId = useId();
+  const payloadTitleId = useId();
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [webhookUrl, setWebhookUrl] = useState('https://erp.lumenacademy.edu.in/api/v1/events/webhook');
 
@@ -363,268 +367,252 @@ export const IntegrationsView: React.FC = () => {
       </div>
 
       {/* Modal: API Key Management */}
-      {showApiKeyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <div>
-                <h3 className="font-bold text-base text-ink">Institutional API Key Governance</h3>
-                <span className="text-xs text-ink-muted">HMAC signature tokens for external subsystems & client apps</span>
-              </div>
-              <button onClick={() => setShowApiKeyModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
+      <DialogShell open={showApiKeyModal} onClose={() => setShowApiKeyModal(false)} labelledBy={apiKeyTitleId} className="max-w-2xl p-6 space-y-5 overflow-y-auto">
+        <div className="flex items-center justify-between border-b border-subtle pb-3">
+          <div>
+            <h3 id={apiKeyTitleId} className="font-bold text-base text-ink">Institutional API Key Governance</h3>
+            <span className="text-xs text-ink-muted">HMAC signature tokens for external subsystems & client apps</span>
+          </div>
+          <DialogClose onClose={() => setShowApiKeyModal(false)} />
+        </div>
+
+        {/* Generated Secret Notification */}
+        {newGeneratedSecret && (
+          <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-emerald-900">New Token Generated (Save Now — Not Shown Again)</span>
+              <button
+                onClick={() => {
+                  navigator.clipboard?.writeText(newGeneratedSecret);
+                  addToast('Secret API key copied to clipboard', 'success');
+                }}
+                className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1"
+              >
+                <span className="material-symbols-outlined text-sm">content_copy</span>
+                <span>Copy</span>
               </button>
             </div>
+            <code className="block p-2 bg-white rounded border border-emerald-200 font-mono text-xs text-ink break-all">
+              {newGeneratedSecret}
+            </code>
+          </div>
+        )}
 
-            {/* Generated Secret Notification */}
-            {newGeneratedSecret && (
-              <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-emerald-900">New Token Generated (Save Now — Not Shown Again)</span>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard?.writeText(newGeneratedSecret);
-                      addToast('Secret API key copied to clipboard', 'success');
-                    }}
-                    className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1"
-                  >
-                    <span className="material-symbols-outlined text-sm">content_copy</span>
-                    <span>Copy</span>
-                  </button>
-                </div>
-                <code className="block p-2 bg-white rounded border border-emerald-200 font-mono text-xs text-ink break-all">
-                  {newGeneratedSecret}
-                </code>
-              </div>
-            )}
-
-            {/* Create API Key Form */}
-            <form onSubmit={handleCreateApiKey} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3 text-xs">
-              <span className="font-bold text-ink block">Generate New API Key</span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-ink-soft mb-1">Key Description / Client Name</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. ERP Biometric Proxy Daemon"
-                    value={newKeyName}
-                    onChange={e => setNewKeyName(e.target.value)}
-                    className="w-full bg-white border border-line rounded-xl p-2 text-xs"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-semibold text-ink-soft mb-1">Select Scopes</label>
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {['read:students', 'write:attendance', 'read:fees', 'write:transport_gps'].map(scope => (
-                      <label key={scope} className="inline-flex items-center gap-1 text-[11px] bg-white px-2 py-1 rounded border border-slate-200 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={newKeyScopes.includes(scope)}
-                          onChange={e => {
-                            if (e.target.checked) {
-                              setNewKeyScopes(prev => [...prev, scope]);
-                            } else {
-                              setNewKeyScopes(prev => prev.filter(s => s !== scope));
-                            }
-                          }}
-                        />
-                        <span>{scope}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end pt-2">
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold text-xs"
-                >
-                  Generate Key
-                </button>
-              </div>
-            </form>
-
-            {/* Active Keys List */}
-            <div className="space-y-2">
-              <span className="text-xs font-bold text-ink-soft uppercase">Active Institutional API Keys</span>
-              <div className="space-y-2">
-                {apiKeys.map(k => (
-                  <div key={k.id} className="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between text-xs">
-                    <div>
-                      <div className="font-bold text-ink">{k.name}</div>
-                      <div className="font-mono text-ink-muted text-[11px]">{k.prefix} • Created {k.created}</div>
-                      <div className="flex gap-1 mt-1 flex-wrap">
-                        {k.scopes.map(s => (
-                          <span key={s} className="px-1.5 py-0.5 rounded bg-slate-100 text-ink-soft text-[10px] font-mono">
-                            {s}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      {k.status === 'ACTIVE' ? (
-                        <button
-                          onClick={() => handleRevokeKey(k.id)}
-                          className="px-3 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 font-bold rounded-lg text-xs"
-                        >
-                          Revoke
-                        </button>
-                      ) : (
-                        <span className="text-[11px] text-slate-400 font-bold">REVOKED</span>
-                      )}
-                    </div>
-                  </div>
+        {/* Create API Key Form */}
+        <form onSubmit={handleCreateApiKey} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3 text-xs">
+          <span className="font-bold text-ink block">Generate New API Key</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block font-semibold text-ink-soft mb-1">Key Description / Client Name</label>
+              <input
+                type="text"
+                placeholder="e.g. ERP Biometric Proxy Daemon"
+                value={newKeyName}
+                onChange={e => setNewKeyName(e.target.value)}
+                className="w-full bg-white border border-line rounded-xl p-2 text-xs"
+                required
+              />
+            </div>
+            <div>
+              <label className="block font-semibold text-ink-soft mb-1">Select Scopes</label>
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {['read:students', 'write:attendance', 'read:fees', 'write:transport_gps'].map(scope => (
+                  <label key={scope} className="inline-flex items-center gap-1 text-[11px] bg-white px-2 py-1 rounded border border-slate-200 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={newKeyScopes.includes(scope)}
+                      onChange={e => {
+                        if (e.target.checked) {
+                          setNewKeyScopes(prev => [...prev, scope]);
+                        } else {
+                          setNewKeyScopes(prev => prev.filter(s => s !== scope));
+                        }
+                      }}
+                    />
+                    <span>{scope}</span>
+                  </label>
                 ))}
               </div>
             </div>
+          </div>
+          <div className="flex justify-end pt-2">
+            <button
+              type="submit"
+              className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold text-xs"
+            >
+              Generate Key
+            </button>
+          </div>
+        </form>
 
-            <div className="flex justify-end pt-3 border-t border-subtle">
-              <button
-                onClick={() => setShowApiKeyModal(false)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-semibold"
-              >
-                Close
-              </button>
-            </div>
+        {/* Active Keys List */}
+        <div className="space-y-2">
+          <span className="text-xs font-bold text-ink-soft uppercase">Active Institutional API Keys</span>
+          <div className="space-y-2">
+            {apiKeys.map(k => (
+              <div key={k.id} className="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between text-xs">
+                <div>
+                  <div className="font-bold text-ink">{k.name}</div>
+                  <div className="font-mono text-ink-muted text-[11px]">{k.prefix} • Created {k.created}</div>
+                  <div className="flex gap-1 mt-1 flex-wrap">
+                    {k.scopes.map(s => (
+                      <span key={s} className="px-1.5 py-0.5 rounded bg-slate-100 text-ink-soft text-[10px] font-mono">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  {k.status === 'ACTIVE' ? (
+                    <button
+                      onClick={() => handleRevokeKey(k.id)}
+                      className="px-3 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 font-bold rounded-lg text-xs"
+                    >
+                      Revoke
+                    </button>
+                  ) : (
+                    <span className="text-[11px] text-slate-400 font-bold">REVOKED</span>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      )}
+
+        <div className="flex justify-end pt-3 border-t border-subtle">
+          <button
+            onClick={() => setShowApiKeyModal(false)}
+            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-semibold"
+          >
+            Close
+          </button>
+        </div>
+      </DialogShell>
 
       {/* Modal: Configure Service */}
-      {showConfigModal && selectedService && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <div>
-                <h3 className="font-bold text-base text-ink">Configure {selectedService.name}</h3>
-                <span className="text-xs text-ink-muted">Provider: {selectedService.provider}</span>
-              </div>
-              <button onClick={() => setShowConfigModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
+      {selectedService && (
+        <DialogShell open={showConfigModal} onClose={() => setShowConfigModal(false)} labelledBy={configTitleId} className="max-w-md p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-subtle pb-3">
+            <div>
+              <h3 id={configTitleId} className="font-bold text-base text-ink">Configure {selectedService.name}</h3>
+              <span className="text-xs text-ink-muted">Provider: {selectedService.provider}</span>
+            </div>
+            <DialogClose onClose={() => setShowConfigModal(false)} />
+          </div>
+
+          <form onSubmit={handleSaveServiceConfig} className="space-y-3 text-xs">
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Service Endpoint URL</label>
+              <input
+                type="text"
+                value={selectedService.endpoint || ''}
+                onChange={e => setSelectedService({ ...selectedService, endpoint: e.target.value })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs font-mono text-ink"
+              />
             </div>
 
-            <form onSubmit={handleSaveServiceConfig} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Service Endpoint URL</label>
-                <input
-                  type="text"
-                  value={selectedService.endpoint || ''}
-                  onChange={e => setSelectedService({ ...selectedService, endpoint: e.target.value })}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs font-mono text-ink"
-                />
-              </div>
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Status Mode</label>
+              <select
+                value={selectedService.status}
+                onChange={e => setSelectedService({ ...selectedService, status: e.target.value as any })}
+                className="w-full bg-wash border border-line rounded-xl p-2 text-xs"
+              >
+                <option value="Connected">Connected (Production Live)</option>
+                <option value="Configured">Configured (Sandbox Staging)</option>
+                <option value="Standby">Standby (Inactive)</option>
+              </select>
+            </div>
 
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Status Mode</label>
-                <select
-                  value={selectedService.status}
-                  onChange={e => setSelectedService({ ...selectedService, status: e.target.value as any })}
-                  className="w-full bg-wash border border-line rounded-xl p-2 text-xs"
-                >
-                  <option value="Connected">Connected (Production Live)</option>
-                  <option value="Configured">Configured (Sandbox Staging)</option>
-                  <option value="Standby">Standby (Inactive)</option>
-                </select>
-              </div>
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Latency SLA / Quota Note</label>
+              <input
+                type="text"
+                value={selectedService.latencyOrQuota}
+                onChange={e => setSelectedService({ ...selectedService, latencyOrQuota: e.target.value })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              />
+            </div>
 
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Latency SLA / Quota Note</label>
-                <input
-                  type="text"
-                  value={selectedService.latencyOrQuota}
-                  onChange={e => setSelectedService({ ...selectedService, latencyOrQuota: e.target.value })}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
-                <button
-                  type="button"
-                  onClick={() => setShowConfigModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+            <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
+              <button
+                type="button"
+                onClick={() => setShowConfigModal(false)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </DialogShell>
       )}
 
       {/* Modal: Webhook Test Payload Inspector */}
-      {showPayloadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <div>
-                <h3 className="font-bold text-base text-ink">Outbound Webhook Dispatch Inspector</h3>
-                <span className="text-xs text-ink-muted">Dispatched to {webhookUrl}</span>
-              </div>
-              <button onClick={() => setShowPayloadModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
+      <DialogShell open={showPayloadModal} onClose={() => setShowPayloadModal(false)} labelledBy={payloadTitleId} className="max-w-lg p-6 space-y-4">
+        <div className="flex items-center justify-between border-b border-subtle pb-3">
+          <div>
+            <h3 id={payloadTitleId} className="font-bold text-base text-ink">Outbound Webhook Dispatch Inspector</h3>
+            <span className="text-xs text-ink-muted">Dispatched to {webhookUrl}</span>
+          </div>
+          <DialogClose onClose={() => setShowPayloadModal(false)} />
+        </div>
 
-            <div className="space-y-3 text-xs">
-              <div>
-                <span className="font-bold text-ink-soft block mb-1">HTTP Headers:</span>
-                <pre className="p-2.5 bg-slate-900 text-emerald-400 rounded-xl font-mono text-[11px] overflow-x-auto">
+        <div className="space-y-3 text-xs">
+          <div>
+            <span className="font-bold text-ink-soft block mb-1">HTTP Headers:</span>
+            <pre className="p-2.5 bg-slate-900 text-emerald-400 rounded-xl font-mono text-[11px] overflow-x-auto">
 {`POST /api/v1/events/webhook HTTP/1.1
 Content-Type: application/json
 X-Lumen-Signature: sha256=9b3d1f05a9c84e1b5f...
 X-Lumen-Timestamp: ${Date.now()}`}
-                </pre>
-              </div>
+            </pre>
+          </div>
 
-              <div>
-                <span className="font-bold text-ink-soft block mb-1">Payload JSON Body:</span>
-                <pre className="p-2.5 bg-slate-900 text-slate-100 rounded-xl font-mono text-[11px] overflow-x-auto">
+          <div>
+            <span className="font-bold text-ink-soft block mb-1">Payload JSON Body:</span>
+            <pre className="p-2.5 bg-slate-900 text-slate-100 rounded-xl font-mono text-[11px] overflow-x-auto">
 {JSON.stringify({
   event: "fee.payment.success",
   tenant_id: "lumen_chn_01",
   branch_id: "branch-omr",
   timestamp: new Date().toISOString(),
   data: {
-    transaction_id: "TXN_LMN_2026_9941",
-    student_id: "STU-CHN-2026-004",
-    amount_inr: 45000,
-    payment_mode: "UPI_AUTOPAY",
-    receipt_no: "RCP-2026-0812"
+transaction_id: "TXN_LMN_2026_9941",
+student_id: "STU-CHN-2026-004",
+amount_inr: 45000,
+payment_mode: "UPI_AUTOPAY",
+receipt_no: "RCP-2026-0812"
   }
 }, null, 2)}
-                </pre>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center pt-3 border-t border-subtle">
-              <button
-                onClick={() => {
-                  navigator.clipboard?.writeText(`curl -X POST "${webhookUrl}" -H "Content-Type: application/json" -d '{"event":"ping"}'`);
-                  addToast('cURL test snippet copied', 'success');
-                }}
-                className="text-xs font-bold text-brand hover:underline flex items-center gap-1"
-              >
-                <span className="material-symbols-outlined text-sm">terminal</span>
-                <span>Copy cURL</span>
-              </button>
-              <button
-                onClick={() => setShowPayloadModal(false)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-semibold"
-              >
-                Dismiss
-              </button>
-            </div>
+            </pre>
           </div>
         </div>
-      )}
+
+        <div className="flex justify-between items-center pt-3 border-t border-subtle">
+          <button
+            onClick={() => {
+              navigator.clipboard?.writeText(`curl -X POST "${webhookUrl}" -H "Content-Type: application/json" -d '{"event":"ping"}'`);
+              addToast('cURL test snippet copied', 'success');
+            }}
+            className="text-xs font-bold text-brand hover:underline flex items-center gap-1"
+          >
+            <span className="material-symbols-outlined text-sm">terminal</span>
+            <span>Copy cURL</span>
+          </button>
+          <button
+            onClick={() => setShowPayloadModal(false)}
+            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-semibold"
+          >
+            Dismiss
+          </button>
+        </div>
+      </DialogShell>
     </div>
   );
 };

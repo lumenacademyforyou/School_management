@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Figure } from '../../components/common/Figure';
+import { Modal } from '../../components/common/ui';
 
 interface NumberingSeriesItem {
   code: string;
@@ -37,6 +38,10 @@ interface HouseItem {
 
 export const MastersConfigView: React.FC = () => {
   const { addToast } = useApp();
+  const seriesFormId = useId();
+  const periodFormId = useId();
+  const gradeFormId = useId();
+  const pointsFormId = useId();
   const [activeTab, setActiveTab] = useState<'numbering' | 'bell-schedule' | 'grading' | 'houses'>('numbering');
 
   // Modals state
@@ -516,327 +521,309 @@ export const MastersConfigView: React.FC = () => {
       )}
 
       {/* Modal: Add Numbering Series */}
-      {showAddSeriesModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <h3 className="font-bold text-base text-ink">New Numbering Series (MST-010)</h3>
-              <button onClick={() => setShowAddSeriesModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateSeries} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Target Module</label>
-                <select
-                  value={newSeries.module}
-                  onChange={e => setNewSeries({ ...newSeries, module: e.target.value })}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                >
-                  <option value="Admissions">Admissions (Student Enrolment)</option>
-                  <option value="Fee Receipts">Fee Receipts</option>
-                  <option value="Transfer Certificate">Transfer Certificate (TC)</option>
-                  <option value="Purchase Order">Purchase Order (PO)</option>
-                  <option value="Hostel Gatepass">Hostel Gatepass</option>
-                  <option value="Library Voucher">Library Voucher</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Prefix Pattern</label>
-                <input
-                  type="text"
-                  placeholder="e.g. TC/2026/ or RCP/AY26/"
-                  value={newSeries.prefix}
-                  onChange={e => setNewSeries({ ...newSeries, prefix: e.target.value })}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-ink-soft mb-1">Initial Sequence</label>
-                  <input
-                    type="number"
-                    value={newSeries.currentNumber}
-                    onChange={e => setNewSeries({ ...newSeries, currentNumber: Number(e.target.value) })}
-                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink-soft mb-1">Display Mask</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. TC/2026/XXX"
-                    value={newSeries.format}
-                    onChange={e => setNewSeries({ ...newSeries, format: e.target.value })}
-                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
-                <button
-                  type="button"
-                  onClick={() => setShowAddSeriesModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
-                >
-                  Save Sequence
-                </button>
-              </div>
-            </form>
+      <Modal
+        open={showAddSeriesModal}
+        onClose={() => setShowAddSeriesModal(false)}
+        title="New Numbering Series (MST-010)"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setShowAddSeriesModal(false)}
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form={seriesFormId}
+              className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
+            >
+              Save Sequence
+            </button>
+          </>
+        }
+      >
+        <form id={seriesFormId} onSubmit={handleCreateSeries} className="space-y-3 text-xs">
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Target Module</label>
+            <select
+              value={newSeries.module}
+              onChange={e => setNewSeries({ ...newSeries, module: e.target.value })}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+            >
+              <option value="Admissions">Admissions (Student Enrolment)</option>
+              <option value="Fee Receipts">Fee Receipts</option>
+              <option value="Transfer Certificate">Transfer Certificate (TC)</option>
+              <option value="Purchase Order">Purchase Order (PO)</option>
+              <option value="Hostel Gatepass">Hostel Gatepass</option>
+              <option value="Library Voucher">Library Voucher</option>
+            </select>
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Prefix Pattern</label>
+            <input
+              type="text"
+              placeholder="e.g. TC/2026/ or RCP/AY26/"
+              value={newSeries.prefix}
+              onChange={e => setNewSeries({ ...newSeries, prefix: e.target.value })}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Initial Sequence</label>
+              <input
+                type="number"
+                value={newSeries.currentNumber}
+                onChange={e => setNewSeries({ ...newSeries, currentNumber: Number(e.target.value) })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              />
+            </div>
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Display Mask</label>
+              <input
+                type="text"
+                placeholder="e.g. TC/2026/XXX"
+                value={newSeries.format}
+                onChange={e => setNewSeries({ ...newSeries, format: e.target.value })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              />
+            </div>
+          </div>
+        </form>
+      </Modal>
 
       {/* Modal: Add Bell Period */}
-      {showAddPeriodModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <h3 className="font-bold text-base text-ink">Add Timetable Period (MST-005)</h3>
-              <button onClick={() => setShowAddPeriodModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleCreatePeriod} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Period Label</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Period 9 or Remedial Lab"
-                  value={newPeriod.period}
-                  onChange={e => setNewPeriod({ ...newPeriod, period: e.target.value })}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Time Interval</label>
-                <input
-                  type="text"
-                  placeholder="e.g. 03:40 PM - 04:20 PM"
-                  value={newPeriod.time}
-                  onChange={e => setNewPeriod({ ...newPeriod, time: e.target.value })}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-ink-soft mb-1">Duration</label>
-                  <input
-                    type="text"
-                    value={newPeriod.duration}
-                    onChange={e => setNewPeriod({ ...newPeriod, duration: e.target.value })}
-                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink-soft mb-1">Classification</label>
-                  <select
-                    value={newPeriod.type}
-                    onChange={e => setNewPeriod({ ...newPeriod, type: e.target.value })}
-                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  >
-                    <option value="Instructional">Instructional</option>
-                    <option value="Instructional / Lab">Instructional / Lab</option>
-                    <option value="Break">Break</option>
-                    <option value="Lunch">Lunch</option>
-                    <option value="Remedial / Sports">Remedial / Sports</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
-                <button
-                  type="button"
-                  onClick={() => setShowAddPeriodModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
-                >
-                  Save Period
-                </button>
-              </div>
-            </form>
+      <Modal
+        open={showAddPeriodModal}
+        onClose={() => setShowAddPeriodModal(false)}
+        title="Add Timetable Period (MST-005)"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setShowAddPeriodModal(false)}
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form={periodFormId}
+              className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
+            >
+              Save Period
+            </button>
+          </>
+        }
+      >
+        <form id={periodFormId} onSubmit={handleCreatePeriod} className="space-y-3 text-xs">
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Period Label</label>
+            <input
+              type="text"
+              placeholder="e.g. Period 9 or Remedial Lab"
+              value={newPeriod.period}
+              onChange={e => setNewPeriod({ ...newPeriod, period: e.target.value })}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              required
+            />
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Time Interval</label>
+            <input
+              type="text"
+              placeholder="e.g. 03:40 PM - 04:20 PM"
+              value={newPeriod.time}
+              onChange={e => setNewPeriod({ ...newPeriod, time: e.target.value })}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Duration</label>
+              <input
+                type="text"
+                value={newPeriod.duration}
+                onChange={e => setNewPeriod({ ...newPeriod, duration: e.target.value })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              />
+            </div>
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Classification</label>
+              <select
+                value={newPeriod.type}
+                onChange={e => setNewPeriod({ ...newPeriod, type: e.target.value })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              >
+                <option value="Instructional">Instructional</option>
+                <option value="Instructional / Lab">Instructional / Lab</option>
+                <option value="Break">Break</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Remedial / Sports">Remedial / Sports</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </Modal>
 
       {/* Modal: Add Grade Boundary */}
-      {showAddGradeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <h3 className="font-bold text-base text-ink">Add Custom Grade Boundary (MST-014)</h3>
-              <button onClick={() => setShowAddGradeModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
+      <Modal
+        open={showAddGradeModal}
+        onClose={() => setShowAddGradeModal(false)}
+        title="Add Custom Grade Boundary (MST-014)"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setShowAddGradeModal(false)}
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form={gradeFormId}
+              className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
+            >
+              Save Grade
+            </button>
+          </>
+        }
+      >
+        <form id={gradeFormId} onSubmit={handleCreateGrade} className="space-y-3 text-xs">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Letter Grade</label>
+              <input
+                type="text"
+                placeholder="e.g. A+"
+                value={newGrade.grade}
+                onChange={e => setNewGrade({ ...newGrade, grade: e.target.value })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+                required
+              />
             </div>
-
-            <form onSubmit={handleCreateGrade} className="space-y-3 text-xs">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-ink-soft mb-1">Letter Grade</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. A+"
-                    value={newGrade.grade}
-                    onChange={e => setNewGrade({ ...newGrade, grade: e.target.value })}
-                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink-soft mb-1">Grade Point (GPA)</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. 9.5"
-                    value={newGrade.gpa}
-                    onChange={e => setNewGrade({ ...newGrade, gpa: e.target.value })}
-                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-ink-soft mb-1">Min Marks (%)</label>
-                  <input
-                    type="number"
-                    value={newGrade.minMarks}
-                    onChange={e => setNewGrade({ ...newGrade, minMarks: Number(e.target.value) })}
-                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-ink-soft mb-1">Max Marks (%)</label>
-                  <input
-                    type="number"
-                    value={newGrade.maxMarks}
-                    onChange={e => setNewGrade({ ...newGrade, maxMarks: Number(e.target.value) })}
-                    className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Remark Statement</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Exceptional Proficiency"
-                  value={newGrade.remark}
-                  onChange={e => setNewGrade({ ...newGrade, remark: e.target.value })}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
-                <button
-                  type="button"
-                  onClick={() => setShowAddGradeModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
-                >
-                  Save Grade
-                </button>
-              </div>
-            </form>
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Grade Point (GPA)</label>
+              <input
+                type="text"
+                placeholder="e.g. 9.5"
+                value={newGrade.gpa}
+                onChange={e => setNewGrade({ ...newGrade, gpa: e.target.value })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+                required
+              />
+            </div>
           </div>
-        </div>
-      )}
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Min Marks (%)</label>
+              <input
+                type="number"
+                value={newGrade.minMarks}
+                onChange={e => setNewGrade({ ...newGrade, minMarks: Number(e.target.value) })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+                required
+              />
+            </div>
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Max Marks (%)</label>
+              <input
+                type="number"
+                value={newGrade.maxMarks}
+                onChange={e => setNewGrade({ ...newGrade, maxMarks: Number(e.target.value) })}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Remark Statement</label>
+            <input
+              type="text"
+              placeholder="e.g. Exceptional Proficiency"
+              value={newGrade.remark}
+              onChange={e => setNewGrade({ ...newGrade, remark: e.target.value })}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+            />
+          </div>
+        </form>
+      </Modal>
 
       {/* Modal: Award House Points */}
-      {showAwardPointsModal && selectedHouse && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <h3 className="font-bold text-base text-ink">Award Trophy Points — {selectedHouse.name}</h3>
-              <button onClick={() => setShowAwardPointsModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
+      {selectedHouse && (
+        <Modal
+          open={showAwardPointsModal}
+          onClose={() => setShowAwardPointsModal(false)}
+          title={`Award Trophy Points — ${selectedHouse.name}`}
+          footer={
+            <>
+              <button
+                type="button"
+                onClick={() => setShowAwardPointsModal(false)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
+              >
+                Cancel
               </button>
+              <button
+                type="submit"
+                form={pointsFormId}
+                className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
+              >
+                Confirm Points
+              </button>
+            </>
+          }
+        >
+          <form id={pointsFormId} onSubmit={handleAwardPoints} className="space-y-3 text-xs">
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Select House</label>
+              <select
+                value={selectedHouse.id}
+                onChange={e => setSelectedHouse(houses.find(h => h.id === e.target.value) || houses[0])}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              >
+                {houses.map(h => (
+                  <option key={h.id} value={h.id}>
+                    {h.name} (Current: {h.points} Pts)
+                  </option>
+                ))}
+              </select>
             </div>
 
-            <form onSubmit={handleAwardPoints} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Select House</label>
-                <select
-                  value={selectedHouse.id}
-                  onChange={e => setSelectedHouse(houses.find(h => h.id === e.target.value) || houses[0])}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                >
-                  {houses.map(h => (
-                    <option key={h.id} value={h.id}>
-                      {h.name} (Current: {h.points} Pts)
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Points to Award / Deduct</label>
+              <input
+                type="number"
+                value={pointsDelta}
+                onChange={e => setPointsDelta(Number(e.target.value))}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+                required
+              />
+            </div>
 
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Points to Award / Deduct</label>
-                <input
-                  type="number"
-                  value={pointsDelta}
-                  onChange={e => setPointsDelta(Number(e.target.value))}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Event / Achievement Reason</label>
-                <input
-                  type="text"
-                  value={pointsReason}
-                  onChange={e => setPointsReason(e.target.value)}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  required
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
-                <button
-                  type="button"
-                  onClick={() => setShowAwardPointsModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold"
-                >
-                  Confirm Points
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+            <div>
+              <label className="block font-bold text-ink-soft mb-1">Event / Achievement Reason</label>
+              <input
+                type="text"
+                value={pointsReason}
+                onChange={e => setPointsReason(e.target.value)}
+                className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+                required
+              />
+            </div>
+          </form>
+        </Modal>
       )}
     </div>
   );

@@ -73,6 +73,7 @@ export const ExportMenu: React.FC = () => {
         }}
         aria-disabled={!allowed}
         aria-expanded={open}
+        aria-haspopup="dialog"
         title={allowed ? 'Export a list on this screen to Excel, CSV or PDF' : `${ROLE_LABEL[currentUser.staffRole]} can view this screen but not take its data out of the system. Ask the Principal if you need an export.`}
         className={`flex items-center gap-1.5 border border-line bg-surface text-xs font-semibold px-3 py-1.5 rounded-lg shadow-xs transition-colors ${allowed ? 'text-ink hover:bg-subtle' : 'text-slate-400 cursor-not-allowed'}`}
         data-export-menu

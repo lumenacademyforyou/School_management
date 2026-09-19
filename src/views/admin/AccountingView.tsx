@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Figure } from '../../components/common/Figure';
+import { DialogClose, DialogShell } from '../../components/common/ui';
 
 interface GLAccount {
   code: string;
@@ -23,6 +24,7 @@ interface ExpenseEntry {
 
 export const AccountingView: React.FC = () => {
   const { addToast } = useApp();
+  const voucherTitleId = useId();
   const [activeTab, setActiveTab] = useState<'chart-of-accounts' | 'expenses' | 'day-book' | 'tally-export'>('chart-of-accounts');
 
   // Modal State
@@ -150,7 +152,7 @@ export const AccountingView: React.FC = () => {
             </span>
             <span className="text-xs text-ink-muted">11 Master Features</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-ink mt-1">
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">
             Accounting & General Ledger
           </h1>
           <p className="text-xs md:text-sm text-ink-soft">
@@ -483,80 +485,71 @@ export const AccountingView: React.FC = () => {
       )}
 
       {/* MODAL: Create Payment Voucher */}
-      {showVoucherModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-brand">receipt</span>
-                <h3 className="font-bold text-ink text-sm">Record New Payment Voucher (ACC-003)</h3>
-              </div>
-              <button
-                onClick={() => setShowVoucherModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateVoucher} className="space-y-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Payee / Vendor Name</label>
-                <input
-                  type="text"
-                  value={newPayee}
-                  onChange={e => setNewPayee(e.target.value)}
-                  placeholder="e.g., Godrej Locks & Hardware Depot"
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Expense Head / GL Category</label>
-                <select
-                  value={newCategory}
-                  onChange={e => setNewCategory(e.target.value)}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                >
-                  <option value="Campus Maintenance">Campus Maintenance</option>
-                  <option value="Fleet Fuel & Service">Fleet Fuel & Service</option>
-                  <option value="IT & Leased Line">IT & Leased Line</option>
-                  <option value="Library Books">Library Books</option>
-                  <option value="Hostel Operations">Hostel Operations</option>
-                  <option value="Office Stationery">Office Stationery</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Voucher Amount (INR)</label>
-                <input
-                  type="number"
-                  value={newAmount}
-                  onChange={e => setNewAmount(e.target.value)}
-                  placeholder="e.g. 24500"
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setShowVoucherModal(false)}
-                  className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
-                >
-                  Submit for Authorization
-                </button>
-              </div>
-            </form>
+      <DialogShell open={showVoucherModal} onClose={() => setShowVoucherModal(false)} labelledBy={voucherTitleId} className="max-w-md p-6 space-y-4 text-xs">
+        <div className="flex items-center justify-between border-b pb-3">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-brand">receipt</span>
+            <h3 id={voucherTitleId} className="font-bold text-ink text-sm">Record New Payment Voucher (ACC-003)</h3>
           </div>
+          <DialogClose onClose={() => setShowVoucherModal(false)} />
         </div>
-      )}
+
+        <form onSubmit={handleCreateVoucher} className="space-y-3">
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Payee / Vendor Name</label>
+            <input
+              type="text"
+              value={newPayee}
+              onChange={e => setNewPayee(e.target.value)}
+              placeholder="e.g., Godrej Locks & Hardware Depot"
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
+            />
+          </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Expense Head / GL Category</label>
+            <select
+              value={newCategory}
+              onChange={e => setNewCategory(e.target.value)}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+            >
+              <option value="Campus Maintenance">Campus Maintenance</option>
+              <option value="Fleet Fuel & Service">Fleet Fuel & Service</option>
+              <option value="IT & Leased Line">IT & Leased Line</option>
+              <option value="Library Books">Library Books</option>
+              <option value="Hostel Operations">Hostel Operations</option>
+              <option value="Office Stationery">Office Stationery</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Voucher Amount (INR)</label>
+            <input
+              type="number"
+              value={newAmount}
+              onChange={e => setNewAmount(e.target.value)}
+              placeholder="e.g. 24500"
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-3 border-t">
+            <button
+              type="button"
+              onClick={() => setShowVoucherModal(false)}
+              className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
+            >
+              Submit for Authorization
+            </button>
+          </div>
+        </form>
+      </DialogShell>
     </div>
   );
 };

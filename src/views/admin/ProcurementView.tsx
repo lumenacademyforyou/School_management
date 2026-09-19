@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Figure } from '../../components/common/Figure';
+import { Modal } from '../../components/common/ui';
 
 interface PurchaseOrder {
   poNo: string;
@@ -15,6 +16,7 @@ interface PurchaseOrder {
 
 export const ProcurementView: React.FC = () => {
   const { addToast } = useApp();
+  const createPoFormId = useId();
   const [showCreatePoModal, setShowCreatePoModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
@@ -212,166 +214,145 @@ export const ProcurementView: React.FC = () => {
           <span className="text-xs text-ink-muted font-mono">{orders.length} Records</span>
         </div>
 
-        <table className="w-full text-xs text-left">
-          <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
-            <tr>
-              <th className="p-3">PO Number</th>
-              <th className="p-3">Vendor</th>
-              <th className="p-3">Item Description</th>
-              <th className="p-3 text-right">Amount (₹)</th>
-              <th className="p-3">GRN Status</th>
-              <th className="p-3">Payment Status</th>
-              <th className="p-3">Bank UTR</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-subtle">
-            {orders.map(o => (
-              <tr key={o.poNo} className="hover:bg-wash">
-                <td className="p-3 font-mono font-bold text-brand">{o.poNo}</td>
-                <td className="p-3 font-semibold text-ink">{o.vendor}</td>
-                <td className="p-3 text-ink-soft">{o.items}</td>
-                <td className="p-3 text-right font-mono font-bold text-ink">
-                  <Figure prefix="₹" value={o.amount.toLocaleString('en-IN')} />
-                </td>
-                <td className="p-3">
-                  <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">
-                    {o.grnStatus}
-                  </span>
-                </td>
-                <td className="p-3">
-                  <span
-                    className={`px-2 py-0.5 rounded font-bold text-[10px] ${
-                      o.paymentStatus === 'Paid & Released'
-                        ? 'bg-emerald-100 text-emerald-800'
-                        : 'bg-amber-100 text-amber-800'
-                    }`}
-                  >
-                    {o.paymentStatus}
-                  </span>
-                </td>
-                <td className="p-3 font-mono text-[11px] text-ink-muted">
-                  {o.utr || 'Pending'}
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-left">
+            <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
+              <tr>
+                <th className="p-3">PO Number</th>
+                <th className="p-3">Vendor</th>
+                <th className="p-3">Item Description</th>
+                <th className="p-3 text-right">Amount (₹)</th>
+                <th className="p-3">GRN Status</th>
+                <th className="p-3">Payment Status</th>
+                <th className="p-3">Bank UTR</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-subtle">
+              {orders.map(o => (
+                <tr key={o.poNo} className="hover:bg-wash">
+                  <td className="p-3 font-mono font-bold text-brand">{o.poNo}</td>
+                  <td className="p-3 font-semibold text-ink">{o.vendor}</td>
+                  <td className="p-3 text-ink-soft">{o.items}</td>
+                  <td className="p-3 text-right font-mono font-bold text-ink">
+                    <Figure prefix="₹" value={o.amount.toLocaleString('en-IN')} />
+                  </td>
+                  <td className="p-3">
+                    <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                      {o.grnStatus}
+                    </span>
+                  </td>
+                  <td className="p-3">
+                    <span
+                      className={`px-2 py-0.5 rounded font-bold text-[10px] ${
+                        o.paymentStatus === 'Paid & Released'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : 'bg-amber-100 text-amber-800'
+                      }`}
+                    >
+                      {o.paymentStatus}
+                    </span>
+                  </td>
+                  <td className="p-3 font-mono text-[11px] text-ink-muted">
+                    {o.utr || 'Pending'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* MODAL 1: Create Purchase Order */}
-      {showCreatePoModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-brand">receipt_long</span>
-                <h3 className="font-bold text-ink text-sm">Issue Purchase Order (PRO-001)</h3>
-              </div>
-              <button
-                onClick={() => setShowCreatePoModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleCreatePo} className="space-y-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Vendor Name</label>
-                <input
-                  type="text"
-                  value={vendorName}
-                  onChange={e => setVendorName(e.target.value)}
-                  placeholder="e.g. Navneet Educational Publications Ltd"
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Item Description & Specifications</label>
-                <input
-                  type="text"
-                  value={itemDescription}
-                  onChange={e => setItemDescription(e.target.value)}
-                  placeholder="e.g. 500x Standard Graph Notebooks & Log Tables"
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Estimated Total Amount (₹)</label>
-                <input
-                  type="number"
-                  value={poAmount}
-                  onChange={e => setPoAmount(e.target.value)}
-                  placeholder="25000"
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setShowCreatePoModal(false)}
-                  className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
-                >
-                  Generate PO
-                </button>
-              </div>
-            </form>
+      <Modal
+        open={showCreatePoModal}
+        onClose={() => setShowCreatePoModal(false)}
+        title="Issue Purchase Order (PRO-001)"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setShowCreatePoModal(false)}
+              className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form={createPoFormId}
+              className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
+            >
+              Generate PO
+            </button>
+          </>
+        }
+      >
+        <form id={createPoFormId} onSubmit={handleCreatePo} className="space-y-3">
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Vendor Name</label>
+            <input
+              type="text"
+              value={vendorName}
+              onChange={e => setVendorName(e.target.value)}
+              placeholder="e.g. Navneet Educational Publications Ltd"
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
+            />
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Item Description & Specifications</label>
+            <input
+              type="text"
+              value={itemDescription}
+              onChange={e => setItemDescription(e.target.value)}
+              placeholder="e.g. 500x Standard Graph Notebooks & Log Tables"
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
+            />
+          </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Estimated Total Amount (₹)</label>
+            <input
+              type="number"
+              value={poAmount}
+              onChange={e => setPoAmount(e.target.value)}
+              placeholder="25000"
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
+            />
+          </div>
+        </form>
+      </Modal>
 
       {/* MODAL 2: Release Payment */}
-      {showPaymentModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-emerald-600">payments</span>
-                <h3 className="font-bold text-ink text-sm">Authorize RTGS Vendor Payment</h3>
-              </div>
-              <button
-                onClick={() => setShowPaymentModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900 space-y-2">
-              <div className="font-bold text-sm">Releasing <Figure prefix="₹" value={activePo.amount.toLocaleString('en-IN')} /></div>
-              <div className="text-[11px]">Payee: {activePo.vendor}</div>
-              <div className="text-[11px]">Debit A/c: HDFC Escrow Institutional #401099238</div>
-              <div className="text-[11px]">3-Way Match Verification: <strong className="text-emerald-800"><Figure value="100" suffix="%" /> PASSED</strong></div>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2 border-t">
-              <button
-                type="button"
-                onClick={() => setShowPaymentModal(false)}
-                className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleReleasePaymentConfirm}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs"
-              >
-                Confirm RTGS Transfer
-              </button>
-            </div>
-          </div>
+      <Modal
+        open={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        title="Authorize RTGS Vendor Payment"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setShowPaymentModal(false)}
+              className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleReleasePaymentConfirm}
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs"
+            >
+              Confirm RTGS Transfer
+            </button>
+          </>
+        }
+      >
+        <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900 space-y-2">
+          <div className="font-bold text-sm">Releasing <Figure prefix="₹" value={activePo.amount.toLocaleString('en-IN')} /></div>
+          <div className="text-[11px]">Payee: {activePo.vendor}</div>
+          <div className="text-[11px]">Debit A/c: HDFC Escrow Institutional #401099238</div>
+          <div className="text-[11px]">3-Way Match Verification: <strong className="text-emerald-800"><Figure value="100" suffix="%" /> PASSED</strong></div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 };

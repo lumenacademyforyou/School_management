@@ -2,6 +2,7 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { AdminView } from '../../types';
 import { canView } from '../../data/staffAccess';
+import { DialogClose, useDialogBehavior } from '../common/ui';
 
 interface Shortcut {
   view: AdminView;
@@ -25,17 +26,17 @@ const SHORTCUTS: Shortcut[] = [
 
 export const QuickActionDrawer: React.FC = () => {
   const { quickActionOpen, setQuickActionOpen, setAdminView, currentUser } = useApp();
+  const close = () => setQuickActionOpen(false);
+  const ref = useDialogBehavior(quickActionOpen, close);
   if (!quickActionOpen) return null;
   const available = SHORTCUTS.filter(s => canView(currentUser.staffRole, s.view));
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setQuickActionOpen(false)}>
-      <div className="bg-white w-full max-w-sm h-full shadow-2xl flex flex-col border-l border-line" onClick={e => e.stopPropagation()} role="dialog" aria-label="Quick actions">
+    <div className="fixed inset-0 z-50 flex justify-end bg-lumen-950/55 backdrop-blur-[2px] fade-in" onClick={close}>
+      <div ref={ref} className="bg-surface w-full max-w-sm h-full shadow-2xl flex flex-col border-l border-line" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Quick actions">
         <div className="p-4 border-b border-subtle flex items-center justify-between">
           <h2 className="text-sm font-bold text-ink">Quick actions</h2>
-          <button onClick={() => setQuickActionOpen(false)} className="p-1 text-ink-muted hover:text-ink rounded-lg hover:bg-subtle" aria-label="Close quick actions">
-            <span className="material-symbols-outlined">close</span>
-          </button>
+          <DialogClose onClose={close} label="Close quick actions" />
         </div>
         <div className="flex-1 overflow-y-auto p-3 space-y-2">
           {available.map(s => (

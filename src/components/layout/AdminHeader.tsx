@@ -90,6 +90,9 @@ export const AdminHeader: React.FC = () => {
         <div className="relative" ref={campusRef}>
           <button
             onClick={() => setCampusDropdownOpen(!campusDropdownOpen)}
+            aria-expanded={campusDropdownOpen}
+            aria-haspopup="menu"
+            aria-label={`Switch campus. Current campus: ${selectedCampus.name}`}
             className="flex items-center gap-2 bg-surface hover:bg-subtle border border-line rounded-xl px-2.5 py-1.5 text-left shadow-xs transition-colors"
           >
             <img
@@ -115,7 +118,7 @@ export const AdminHeader: React.FC = () => {
           </button>
 
           {campusDropdownOpen && (
-            <div className="absolute left-0 mt-1.5 w-72 bg-surface rounded-xl shadow-xl border border-line-soft py-2 z-50 animate-dropdown">
+            <div role="menu" aria-label="Campuses" className="absolute left-0 mt-1.5 w-72 bg-surface rounded-xl shadow-xl border border-line-soft py-2 z-50 animate-dropdown">
               <div className="px-3 py-1 text-[11px] font-bold text-ink-muted uppercase tracking-wider">
                 Switch Campus Node
               </div>
@@ -127,6 +130,8 @@ export const AdminHeader: React.FC = () => {
                     setCampusDropdownOpen(false);
                     addToast(`Switched active context to ${c.name}`, 'info');
                   }}
+                  role="menuitemradio"
+                  aria-checked={selectedCampus.id === c.id}
                   className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-subtle transition-colors ${
                     selectedCampus.id === c.id ? 'bg-line-soft font-semibold text-brand' : 'text-ink'
                   }`}
@@ -191,6 +196,9 @@ export const AdminHeader: React.FC = () => {
         <div className="relative" ref={notifRef}>
           <button
             onClick={() => setNotificationsOpen(!notificationsOpen)}
+            aria-expanded={notificationsOpen}
+            aria-haspopup="dialog"
+            aria-label="Notifications"
             className="p-2 rounded-lg text-ink-soft hover:bg-subtle hover:text-brand relative transition-colors"
             title="Notifications"
           >
@@ -199,9 +207,8 @@ export const AdminHeader: React.FC = () => {
 
           {notificationsOpen && (
             <div className="absolute right-0 mt-1.5 w-80 bg-surface rounded-xl shadow-xl border border-line-soft p-3 z-50 animate-dropdown">
-              <div className="flex items-center justify-between pb-2 border-b border-subtle">
+              <div className="pb-2 border-b border-subtle">
                 <span className="text-xs font-bold text-ink">Notifications</span>
-                
               </div>
               <p className="py-6 text-center text-xs text-ink-muted">You're all caught up.</p>
             </div>
@@ -213,6 +220,8 @@ export const AdminHeader: React.FC = () => {
           <button
             onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
             aria-label="Account menu"
+            aria-expanded={profileDropdownOpen}
+            aria-haspopup="menu"
             className="flex items-center gap-2 p-1 rounded-xl hover:bg-subtle transition-colors text-left"
           >
             <img

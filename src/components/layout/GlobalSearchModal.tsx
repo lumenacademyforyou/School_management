@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ALL_NAV_ITEMS } from '../../data/adminNav';
 import { canView } from '../../data/staffAccess';
 import { INITIAL_ROSTER, matchesSearch, toProfile } from '../../data/students';
+import { useDialogBehavior } from '../common/ui';
 
 interface Result {
   id: string;
@@ -19,17 +20,20 @@ export const GlobalSearchModal: React.FC = () => {
   const [query, setQuery] = useState('');
   const role = currentUser.staffRole;
 
+  // Ctrl/⌘ K stays global on purpose: it is how the console is searched from anywhere, including
+  // from inside a text field. Escape, focus and the focus trap come from useDialogBehavior below.
+  const open = useRef(searchModalOpen);
+  open.current = searchModalOpen;
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        setSearchModalOpen(!searchModalOpen);
+        setSearchModalOpen(!open.current);
       }
-      if (e.key === 'Escape' && searchModalOpen) setSearchModalOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [searchModalOpen, setSearchModalOpen]);
+  }, [setSearchModalOpen]);
 
   const results = useMemo<Result[]>(() => {
     const q = query.trim().toLowerCase();
@@ -61,6 +65,7 @@ export const GlobalSearchModal: React.FC = () => {
   }, [query, role, setAdminView, setSearchModalOpen, setStudent]);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const panelRef = useDialogBehavior(searchModalOpen, () => setSearchModalOpen(false));
 
   // Reset selected index when query changes
   useEffect(() => {
@@ -71,7 +76,7 @@ export const GlobalSearchModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-lumen-950/55 backdrop-blur-[2px] fade-in" onClick={() => setSearchModalOpen(false)}>
-      <div className="bg-surface w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden ring-1 ring-lumen-950/10 zoom-in" onClick={e => e.stopPropagation()} role="dialog" aria-label="Search">
+      <div ref={panelRef} className="bg-surface w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden ring-1 ring-lumen-950/10 zoom-in" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Search">
         <div className="p-3 border-b border-subtle flex items-center gap-3">
           <span className="material-symbols-outlined text-brand text-xl">search</span>
           <input

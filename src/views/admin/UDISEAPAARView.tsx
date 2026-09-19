@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Figure } from '../../components/common/Figure';
+import { DialogClose, DialogShell, Modal } from '../../components/common/ui';
 
 interface DcfSection {
   sec: string;
@@ -12,6 +13,7 @@ interface DcfSection {
 
 export const UDISEAPAARView: React.FC = () => {
   const { addToast } = useApp();
+  const dcfTitleId = useId();
   const [syncing, setSyncing] = useState(false);
   const [selectedSection, setSelectedSection] = useState<DcfSection | null>(null);
   const [showApaarCardModal, setShowApaarCardModal] = useState(false);
@@ -181,55 +183,52 @@ export const UDISEAPAARView: React.FC = () => {
           </span>
         </div>
 
-        <table className="w-full text-xs text-left">
-          <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
-            <tr>
-              <th className="p-3">DCF Section Code</th>
-              <th className="p-3">Section Description</th>
-              <th className="p-3">Validation Status</th>
-              <th className="p-3 text-right">Data Audit</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-subtle">
-            {sections.map(s => (
-              <tr key={s.sec} className="hover:bg-wash">
-                <td className="p-3 font-mono font-bold text-brand">{s.sec}</td>
-                <td className="p-3 font-bold text-ink">{s.name}</td>
-                <td className="p-3">
-                  <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">
-                    {s.status}
-                  </span>
-                </td>
-                <td className="p-3 text-right">
-                  <button
-                    onClick={() => setSelectedSection(s)}
-                    className="text-brand font-semibold hover:underline flex items-center gap-1 ml-auto"
-                  >
-                    <span className="material-symbols-outlined text-xs">visibility</span>
-                    <span>View Fields ({s.fields.length})</span>
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-left">
+            <thead className="bg-subtle/60 text-ink-soft font-semibold border-b border-line">
+              <tr>
+                <th className="p-3">DCF Section Code</th>
+                <th className="p-3">Section Description</th>
+                <th className="p-3">Validation Status</th>
+                <th className="p-3 text-right">Data Audit</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-subtle">
+              {sections.map(s => (
+                <tr key={s.sec} className="hover:bg-wash">
+                  <td className="p-3 font-mono font-bold text-brand">{s.sec}</td>
+                  <td className="p-3 font-bold text-ink">{s.name}</td>
+                  <td className="p-3">
+                    <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">
+                      {s.status}
+                    </span>
+                  </td>
+                  <td className="p-3 text-right">
+                    <button
+                      onClick={() => setSelectedSection(s)}
+                      className="text-brand font-semibold hover:underline flex items-center gap-1 ml-auto"
+                    >
+                      <span className="material-symbols-outlined text-xs">visibility</span>
+                      <span>View Fields ({s.fields.length})</span>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* MODAL 1: View DCF Fields */}
-      {selectedSection && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
+      <DialogShell open={Boolean(selectedSection)} onClose={() => setSelectedSection(null)} labelledBy={dcfTitleId} className="max-w-lg">
+        {selectedSection && (
+          <div className="p-6 space-y-4 text-xs overflow-y-auto">
             <div className="flex items-center justify-between border-b pb-3">
               <div>
                 <span className="text-[10px] font-bold text-brand uppercase font-mono">{selectedSection.sec}</span>
-                <h3 className="font-bold text-ink text-sm">{selectedSection.name}</h3>
+                <h3 id={dcfTitleId} className="font-bold text-ink text-sm">{selectedSection.name}</h3>
               </div>
-              <button
-                onClick={() => setSelectedSection(null)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
+              <DialogClose onClose={() => setSelectedSection(null)} />
             </div>
 
             <div className="space-y-2">
@@ -255,85 +254,71 @@ export const UDISEAPAARView: React.FC = () => {
               </button>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </DialogShell>
 
       {/* MODAL 2: APAAR Smart Card Print */}
-      {showApaarCardModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-brand">badge</span>
-                <h3 className="font-bold text-ink text-sm">APAAR National ID Card</h3>
-              </div>
-              <button
-                onClick={() => setShowApaarCardModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
+      <Modal
+        open={showApaarCardModal}
+        onClose={() => setShowApaarCardModal(false)}
+        title="APAAR National ID Card"
+        footer={
+          <button
+            type="button"
+            onClick={() => {
+              window.print();
+              addToast('Dispatched APAAR Smart Card print job', 'success');
+            }}
+            className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs flex items-center gap-1.5"
+          >
+            <span className="material-symbols-outlined text-xs">print</span>
+            <span>Print Plastic PVC Card</span>
+          </button>
+        }
+      >
+        {/* Smart Card Visual */}
+        <div className="bg-linear-to-br from-ink to-lumen-800 text-white p-5 rounded-2xl border border-blue-400/30 shadow-xl space-y-4 relative overflow-hidden">
+          <div className="flex items-center justify-between border-b border-white/20 pb-2">
+            <div>
+              <div className="text-[9px] uppercase tracking-widest text-accent font-bold">Government of India</div>
+              <div className="text-xs font-bold text-white">Ministry of Education • APAAR</div>
             </div>
-
-            {/* Smart Card Visual */}
-            <div className="bg-linear-to-br from-ink to-[#1e3a8a] text-white p-5 rounded-2xl border border-blue-400/30 shadow-xl space-y-4 relative overflow-hidden">
-              <div className="flex items-center justify-between border-b border-white/20 pb-2">
-                <div>
-                  <div className="text-[9px] uppercase tracking-widest text-accent font-bold">Government of India</div>
-                  <div className="text-xs font-bold text-white">Ministry of Education • APAAR</div>
-                </div>
-                <div className="text-right text-[9px] font-mono text-slate-300">
-                  ONE NATION ONE ID
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="w-16 h-20 bg-slate-200 rounded-lg overflow-hidden border border-white/30 shrink-0">
-                  <img
-                    src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=200&h=250&fit=crop"
-                    alt="Student Photo"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <div className="text-sm font-bold text-white">Aarav S. Ramanathan</div>
-                  <div className="text-[11px] text-slate-300">DOB: 14 Oct 2009 • Gender: Male</div>
-                  <div className="text-[11px] text-slate-300">School: Lumen Academy Sr. Sec. School</div>
-                  <div className="text-[11px] text-ink font-mono font-bold">PEN: 20241094821</div>
-                </div>
-              </div>
-
-              <div className="pt-2 border-t border-white/20 flex items-center justify-between">
-                <div>
-                  <div className="text-[9px] uppercase tracking-wider text-slate-400 font-bold">APAAR ID</div>
-                  <div className="text-base font-mono font-bold tracking-wider text-white">
-                    9840-1284-9012
-                  </div>
-                </div>
-                <img
-                  src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=APAAR:984012849012"
-                  alt="QR"
-                  className="w-12 h-12 bg-white p-0.5 rounded"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2 border-t">
-              <button
-                type="button"
-                onClick={() => {
-                  window.print();
-                  addToast('Dispatched APAAR Smart Card print job', 'success');
-                }}
-                className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs flex items-center gap-1.5"
-              >
-                <span className="material-symbols-outlined text-xs">print</span>
-                <span>Print Plastic PVC Card</span>
-              </button>
+            <div className="text-right text-[9px] font-mono text-slate-300">
+              ONE NATION ONE ID
             </div>
           </div>
+
+          <div className="flex items-center gap-3">
+            <div className="w-16 h-20 bg-slate-200 rounded-lg overflow-hidden border border-white/30 shrink-0">
+              <img
+                src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=200&h=250&fit=crop"
+                alt="Student Photo"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="space-y-1">
+              <div className="text-sm font-bold text-white">Aarav S. Ramanathan</div>
+              <div className="text-[11px] text-slate-300">DOB: 14 Oct 2009 • Gender: Male</div>
+              <div className="text-[11px] text-slate-300">School: Lumen Academy Sr. Sec. School</div>
+              <div className="text-[11px] text-ink font-mono font-bold">PEN: 20241094821</div>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-white/20 flex items-center justify-between">
+            <div>
+              <div className="text-[9px] uppercase tracking-wider text-slate-400 font-bold">APAAR ID</div>
+              <div className="text-base font-mono font-bold tracking-wider text-white">
+                9840-1284-9012
+              </div>
+            </div>
+            <img
+              src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=APAAR:984012849012"
+              alt="QR"
+              className="w-12 h-12 bg-white p-0.5 rounded"
+            />
+          </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 };

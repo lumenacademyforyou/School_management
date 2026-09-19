@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Figure } from '../../components/common/Figure';
+import { Modal } from '../../components/common/ui';
 
 interface SupportStaff {
   id: string;
@@ -28,6 +29,7 @@ interface WorkOrder {
 
 export const NonTeachingStaffView: React.FC = () => {
   const { addToast } = useApp();
+  const workOrderFormId = useId();
   const [activeTab, setActiveTab] = useState<'staff-roster' | 'duty-shifts' | 'work-orders' | 'statutory-compliance'>('staff-roster');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -560,117 +562,109 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
       )}
 
       {/* MODAL 1: Create Work Order Modal */}
-      {showWorkOrderModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-brand">add_task</span>
-                <h3 className="font-bold text-ink text-sm">Dispatch New Support Work Order</h3>
-              </div>
-              <button
-                onClick={() => setShowWorkOrderModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateWorkOrder} className="space-y-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Work Order Task Title</label>
-                <input
-                  type="text"
-                  value={woTitle}
-                  onChange={e => setWoTitle(e.target.value)}
-                  placeholder="e.g., Auditorium Stage Mic Line Repair"
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Assign Support Staff</label>
-                <select
-                  value={woAssignee}
-                  onChange={e => setWoAssignee(e.target.value)}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                >
-                  {staffList.map(s => (
-                    <option key={s.id} value={s.name}>
-                      {s.name} ({s.category} • {s.shift.split(' ')[0]})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Priority Level</label>
-                  <select
-                    value={woPriority}
-                    onChange={e => setWoPriority(e.target.value as any)}
-                    className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                  >
-                    <option value="Routine">Routine</option>
-                    <option value="High">High</option>
-                    <option value="Emergency">Emergency</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">Category</label>
-                  <select
-                    value={woCategory}
-                    onChange={e => setWoCategory(e.target.value)}
-                    className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                  >
-                    <option value="General Maintenance">General Maintenance</option>
-                    <option value="Security">Security</option>
-                    <option value="Housekeeping">Housekeeping</option>
-                    <option value="Lab Facility">Lab Facility</option>
-                    <option value="Transport Depot">Transport Depot</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setShowWorkOrderModal(false)}
-                  className="px-3 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
-                >
-                  Dispatch Work Order
-                </button>
-              </div>
-            </form>
+      <Modal
+        open={showWorkOrderModal}
+        onClose={() => setShowWorkOrderModal(false)}
+        title="Dispatch New Support Work Order"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setShowWorkOrderModal(false)}
+              className="px-3 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form={workOrderFormId}
+              className="px-4 py-2 bg-brand hover:bg-brand-strong text-white font-bold rounded-xl text-xs shadow-xs"
+            >
+              Dispatch Work Order
+            </button>
+          </>
+        }
+      >
+        <form id={workOrderFormId} onSubmit={handleCreateWorkOrder} className="space-y-3">
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Work Order Task Title</label>
+            <input
+              type="text"
+              value={woTitle}
+              onChange={e => setWoTitle(e.target.value)}
+              placeholder="e.g., Auditorium Stage Mic Line Repair"
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
+            />
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Assign Support Staff</label>
+            <select
+              value={woAssignee}
+              onChange={e => setWoAssignee(e.target.value)}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+            >
+              {staffList.map(s => (
+                <option key={s.id} value={s.name}>
+                  {s.name} ({s.category} • {s.shift.split(' ')[0]})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Priority Level</label>
+              <select
+                value={woPriority}
+                onChange={e => setWoPriority(e.target.value as any)}
+                className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+              >
+                <option value="Routine">Routine</option>
+                <option value="High">High</option>
+                <option value="Emergency">Emergency</option>
+              </select>
+            </div>
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Category</label>
+              <select
+                value={woCategory}
+                onChange={e => setWoCategory(e.target.value)}
+                className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+              >
+                <option value="General Maintenance">General Maintenance</option>
+                <option value="Security">Security</option>
+                <option value="Housekeeping">Housekeeping</option>
+                <option value="Lab Facility">Lab Facility</option>
+                <option value="Transport Depot">Transport Depot</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </Modal>
 
       {/* MODAL 2: Staff Profile & Asset Ledger Modal */}
-      {selectedStaffMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-brand">badge</span>
-                <h3 className="font-bold text-ink text-sm">
-                  Support Staff Profile & Assets (NTS-010)
-                </h3>
-              </div>
-              <button
-                onClick={() => setSelectedStaffMember(null)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
+      <Modal
+        open={Boolean(selectedStaffMember)}
+        onClose={() => setSelectedStaffMember(null)}
+        title="Support Staff Profile & Assets (NTS-010)"
+        footer={
+          selectedStaffMember && (
+            <button
+              onClick={() => {
+                addToast(`Issued additional equipment asset requisition for ${selectedStaffMember.name}`, 'success');
+                setSelectedStaffMember(null);
+              }}
+              className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold flex items-center gap-1.5"
+            >
+              <span className="material-symbols-outlined text-sm">inventory_2</span>
+              <span>Issue Additional Asset</span>
+            </button>
+          )
+        }
+      >
+        {selectedStaffMember && (
+          <>
             <div className="space-y-3 bg-wash p-4 rounded-xl border border-slate-200">
               <div className="flex items-center justify-between">
                 <div>
@@ -713,22 +707,9 @@ Status: PUBLISHED & BROADCASTED VIA SMS TO ALL 64 SUPPORT PERSONNEL`;
                 </div>
               </div>
             </div>
-
-            <div className="flex justify-end gap-2 pt-2 border-t">
-              <button
-                onClick={() => {
-                  addToast(`Issued additional equipment asset requisition for ${selectedStaffMember.name}`, 'success');
-                  setSelectedStaffMember(null);
-                }}
-                className="px-4 py-2 bg-brand hover:bg-brand-strong text-white rounded-xl font-bold flex items-center gap-1.5"
-              >
-                <span className="material-symbols-outlined text-sm">inventory_2</span>
-                <span>Issue Additional Asset</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
     </div>
   );
 };

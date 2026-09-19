@@ -4,6 +4,7 @@ import { Campus } from '../../types';
 import { FeatureTags, downloadCsv } from '../../components/common/FeatureTags';
 import { PrintPortal } from '../../components/common/PrintPortal';
 import { encodeQr, qrPath } from '../../lib/qrcode';
+import { Modal, btnPrimary, btnSoft } from '../../components/common/ui';
 import {
   CARD_HOLDERS,
   INITIAL_CARD_RECORDS,
@@ -576,10 +577,10 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
               ))}
             </select>
             <div className="flex-1" />
-            <button onClick={generateSelected} disabled={!selected.size} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 disabled:opacity-50">
+            <button onClick={generateSelected} disabled={!selected.size} className={btnSoft}>
               Generate cards ({selected.size})
             </button>
-            <button onClick={printSelected} disabled={!selected.size} className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand text-white hover:bg-brand-strong disabled:opacity-50">
+            <button onClick={printSelected} disabled={!selected.size} className={btnPrimary}>
               <span className="material-symbols-outlined text-sm">print</span>
               Print selected
             </button>
@@ -694,7 +695,7 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
               <span className="block font-semibold text-ink-soft mb-1">Orientation</span>
               <div className="flex gap-1">
                 {(['portrait', 'landscape'] as const).map(o => (
-                  <button key={o} onClick={() => setTemplate({ orientation: o })} className={`flex-1 capitalize px-2 py-1.5 rounded-lg font-semibold ${template.orientation === o ? 'bg-ink text-white' : 'bg-slate-100'}`}>
+                  <button key={o} onClick={() => setTemplate({ orientation: o })} className={`${btnSoft} flex-1 capitalize ${template.orientation === o ? '!bg-ink !text-white !border-ink' : ''}`}>
                     {o}
                   </button>
                 ))}
@@ -772,13 +773,13 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
             </p>
             <textarea value={importText} onChange={e => { setImportText(e.target.value); setImportRows(null); }} rows={8} className="w-full font-mono border border-line rounded-lg p-2" />
             <div className="flex gap-2">
-              <button onClick={validateImport} className="font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200">
+              <button onClick={validateImport} className={btnSoft}>
                 Validate
               </button>
               <button
                 onClick={commitImport}
                 disabled={!importRows || importRows.every(r => r.errors.length)}
-                className="font-semibold px-3 py-1.5 rounded-lg bg-brand text-white hover:bg-brand-strong disabled:opacity-50"
+                className={btnPrimary}
               >
                 Import valid rows & send to print
               </button>
@@ -826,7 +827,7 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
         <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
           <div className="p-4 bg-subtle border-b border-line flex items-center justify-between">
             <span className="text-xs font-bold text-ink">Every card ever issued · {records.length} records</span>
-            <button onClick={exportRegister} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200">
+            <button onClick={exportRegister} className={btnSoft}>
               Export CSV
             </button>
           </div>
@@ -873,10 +874,23 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
         </div>
       )}
 
-      {reissueFor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setReissueFor(null)}>
-          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-ink">Reissue card · {reissueFor.name}</h3>
+      <Modal
+        open={!!reissueFor}
+        onClose={() => setReissueFor(null)}
+        title={reissueFor ? `Reissue card · ${reissueFor.name}` : 'Reissue card'}
+        footer={
+          <>
+            <button onClick={() => setReissueFor(null)} className={btnSoft}>
+              Cancel
+            </button>
+            <button onClick={confirmReissue} className={`${btnPrimary} !bg-amber-500 hover:!bg-amber-600`}>
+              Revoke & reissue
+            </button>
+          </>
+        }
+      >
+        {reissueFor && (
+          <>
             <p className="text-ink-soft">
               Current card {activeCardFor(records, reissueFor.id)?.cardNo} will be revoked and a new number issued from the series.
             </p>
@@ -889,17 +903,9 @@ export const IdCardStudioView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
               </select>
             </label>
             {reissueReason === 'Lost' && <p className="text-amber-700">The old RFID tag is also blocked. Assign a new tag through bulk import.</p>}
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setReissueFor(null)} className="font-semibold px-3 py-1.5 rounded-lg bg-slate-100">
-                Cancel
-              </button>
-              <button onClick={confirmReissue} className="font-semibold px-3 py-1.5 rounded-lg bg-amber-500 text-white">
-                Revoke & reissue
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
 
       {printJob && (
         <PrintPortal onDone={() => setPrintJob(null)}>

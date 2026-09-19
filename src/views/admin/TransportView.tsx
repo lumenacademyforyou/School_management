@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { BUS_ROUTE_14 } from '../../data/mockData';
 import { Figure } from '../../components/common/Figure';
+import { Modal } from '../../components/common/ui';
 
 export const TransportView: React.FC = () => {
   const {
@@ -206,71 +207,54 @@ export const TransportView: React.FC = () => {
       </div>
 
       {/* MODAL: Delay Broadcast */}
-      {showDelayModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-4 text-xs ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-amber-600">warning</span>
-                <h3 className="font-bold text-ink text-sm">Broadcast Route Delay Alert (TRN-018)</h3>
-              </div>
-              <button
-                onClick={() => setShowDelayModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleBroadcastDelay} className="space-y-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Estimated Delay Duration (Minutes)</label>
-                <select
-                  value={delayMinutes}
-                  onChange={e => setDelayMinutes(e.target.value)}
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
-                >
-                  <option value="10">10 Minutes</option>
-                  <option value="15">15 Minutes</option>
-                  <option value="25">25 Minutes</option>
-                  <option value="45">45 Minutes</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Reason for Delay</label>
-                <input
-                  type="text"
-                  value={delayReason}
-                  onChange={e => setDelayReason(e.target.value)}
-                  placeholder="e.g. Heavy traffic or tyre puncture"
-                  className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
-                />
-              </div>
-
-              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
-                Will dispatch an instant push notification and SMS to all 35 parents assigned to Route 14 stops.
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2 border-t">
-                <button
-                  type="button"
-                  onClick={() => setShowDelayModal(false)}
-                  className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-xs shadow-xs"
-                >
-                  Send Delay Notification
-                </button>
-              </div>
-            </form>
+      <Modal open={showDelayModal} onClose={() => setShowDelayModal(false)} title="Broadcast Route Delay Alert (TRN-018)">
+        <form onSubmit={handleBroadcastDelay} className="space-y-3">
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Estimated Delay Duration (Minutes)</label>
+            <select
+              value={delayMinutes}
+              onChange={e => setDelayMinutes(e.target.value)}
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800"
+            >
+              <option value="10">10 Minutes</option>
+              <option value="15">15 Minutes</option>
+              <option value="25">25 Minutes</option>
+              <option value="45">45 Minutes</option>
+            </select>
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block font-bold text-slate-700 mb-1">Reason for Delay</label>
+            <input
+              type="text"
+              value={delayReason}
+              onChange={e => setDelayReason(e.target.value)}
+              placeholder="e.g. Heavy traffic or tyre puncture"
+              className="w-full bg-wash border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-hidden focus:border-brand"
+            />
+          </div>
+
+          <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
+            Will dispatch an instant push notification and SMS to all 35 parents assigned to Route 14 stops.
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2 border-t">
+            <button
+              type="button"
+              onClick={() => setShowDelayModal(false)}
+              className="px-3.5 py-1.5 text-slate-600 font-bold hover:bg-slate-100 rounded-lg text-xs"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-xs shadow-xs"
+            >
+              Send Delay Notification
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

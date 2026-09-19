@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { FeatureTags, downloadCsv } from '../../components/common/FeatureTags';
 import { AddStudentModal, EditIdentifiersModal, EmisDisplay, EmisStatusBadge, StudentStatusBadge } from '../../components/students/StudentIdentifiers';
 import { useGrants } from '../../hooks/useGrants';
-import { DensityToggle } from '../../components/common/ui';
+import { DensityToggle, Modal } from '../../components/common/ui';
 import { rosterStore, useRoster } from '../../services/studentService';
 import {
   AuditEntry,
@@ -957,22 +957,23 @@ export const StudentDirectoryView: React.FC<{ initialTab?: Tab }> = ({ initialTa
         </Panel>
       )}
 
-      {rejecting && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setRejecting(null)}>
-          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-ink">Reject change: {rejecting.label}</h3>
-            <input value={rejectReason} onChange={e => setRejectReason(e.target.value)} placeholder="Reason shown to the parent" className={`${inputCls} w-full`} />
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setRejecting(null)} className={btnSoft}>
-                Cancel
-              </button>
-              <button onClick={confirmReject} className={`${btn} bg-rose-600 text-white`}>
-                Reject
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal
+        open={!!rejecting}
+        onClose={() => setRejecting(null)}
+        title={rejecting ? `Reject change: ${rejecting.label}` : 'Reject change'}
+        footer={
+          <>
+            <button onClick={() => setRejecting(null)} className={btnSoft}>
+              Cancel
+            </button>
+            <button onClick={confirmReject} className={`${btn} bg-rose-600 text-white`}>
+              Reject
+            </button>
+          </>
+        }
+      >
+        <input value={rejectReason} onChange={e => setRejectReason(e.target.value)} placeholder="Reason shown to the parent" className={`${inputCls} w-full`} />
+      </Modal>
       <EditIdentifiersModal student={editingIds} onClose={() => setEditingIds(null)} onSaved={saved => log(saved.id, 'Identifiers updated', '', `EMIS ${saved.emis ?? '—'} · APAAR ${saved.apaar || '—'}`)} />
       <AddStudentModal
         open={adding}

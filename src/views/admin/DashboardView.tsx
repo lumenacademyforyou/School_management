@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { AdminView } from '../../types';
 import { ROLE_LABEL, StaffRole } from '../../data/staffAccess';
-import { Figure, Icon } from '../../components/common/ui';
+import { DialogClose, DialogShell, Figure, Icon } from '../../components/common/ui';
 
 // ---------------------------------------------------------------------------
 // Role overview: one headline answer to "is everything okay?", then the rest
@@ -216,6 +216,7 @@ export const DashboardView: React.FC = () => {
       reason: 'Required for Class 10 CBSE Board practical examinations scheduled starting 15th March.',
     },
   ]);
+  const reviewTitleId = useId();
   const [selectedReviewItem, setSelectedReviewItem] = useState<typeof approvals[0] | null>(null);
 
   const handleApproveItem = (id: string, name: string) => {
@@ -670,17 +671,20 @@ export const DashboardView: React.FC = () => {
         </div>
       </div>
       {/* Review Approval Modal */}
-      {selectedReviewItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
+      <DialogShell
+        open={!!selectedReviewItem}
+        onClose={() => setSelectedReviewItem(null)}
+        labelledBy={reviewTitleId}
+        className="max-w-md p-6 space-y-4 overflow-y-auto"
+      >
+        {selectedReviewItem && (
+          <>
             <div className="flex items-center justify-between border-b border-subtle pb-3">
               <div>
-                <h3 className="font-bold text-base text-ink">{selectedReviewItem.title}</h3>
+                <h3 id={reviewTitleId} className="font-bold text-base text-ink">{selectedReviewItem.title}</h3>
                 <span className="text-xs text-ink-muted">Department Category: {selectedReviewItem.category}</span>
               </div>
-              <button onClick={() => setSelectedReviewItem(null)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
+              <DialogClose onClose={() => setSelectedReviewItem(null)} />
             </div>
 
             <div className="space-y-3 text-xs">
@@ -733,9 +737,9 @@ export const DashboardView: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </DialogShell>
     </div>
   );
 };

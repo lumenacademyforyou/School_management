@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { DialogClose, DialogShell } from '../../components/common/ui';
 
 interface StudentSubmission {
   id: string;
@@ -48,6 +49,7 @@ export const AssignmentStudioView: React.FC = () => {
     },
   ]);
 
+  const resubmitTitleId = useId();
   const [selectedStudentId, setSelectedStudentId] = useState('sub-1');
   const [isRecordingVoice, setIsRecordingVoice] = useState(false);
   const [voiceRecorded, setVoiceRecorded] = useState(false);
@@ -330,59 +332,58 @@ export const AssignmentStudioView: React.FC = () => {
       </div>
 
       {/* Modal: Request Revision */}
-      {showResubmitModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in bg-lumen-950/55 backdrop-blur-[2px]">
-          <div className="bg-surface rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 ring-1 ring-lumen-950/10">
-            <div className="flex items-center justify-between border-b border-subtle pb-3">
-              <div>
-                <h3 className="font-bold text-base text-ink">Request Assignment Revision</h3>
-                <span className="text-xs text-ink-muted">Return to {currentStudent.name}</span>
-              </div>
-              <button onClick={() => setShowResubmitModal(false)} className="text-ink-muted hover:text-ink">
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <form onSubmit={handleConfirmResubmit} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Reason for Resubmission Request</label>
-                <textarea
-                  rows={3}
-                  value={resubmitReason}
-                  onChange={e => setResubmitReason(e.target.value)}
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-ink-soft mb-1">Revised Due Date</label>
-                <input
-                  type="date"
-                  defaultValue="2025-03-02"
-                  className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
-                <button
-                  type="button"
-                  onClick={() => setShowResubmitModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold"
-                >
-                  Send Revision Notice
-                </button>
-              </div>
-            </form>
+      <DialogShell
+        open={showResubmitModal}
+        onClose={() => setShowResubmitModal(false)}
+        labelledBy={resubmitTitleId}
+        className="max-w-md p-6 space-y-4 overflow-y-auto"
+      >
+        <div className="flex items-center justify-between border-b border-subtle pb-3">
+          <div>
+            <h3 id={resubmitTitleId} className="font-bold text-base text-ink">Request Assignment Revision</h3>
+            <span className="text-xs text-ink-muted">Return to {currentStudent.name}</span>
           </div>
+          <DialogClose onClose={() => setShowResubmitModal(false)} />
         </div>
-      )}
+
+        <form onSubmit={handleConfirmResubmit} className="space-y-3 text-xs">
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Reason for Resubmission Request</label>
+            <textarea
+              rows={3}
+              value={resubmitReason}
+              onChange={e => setResubmitReason(e.target.value)}
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block font-bold text-ink-soft mb-1">Revised Due Date</label>
+            <input
+              type="date"
+              defaultValue="2025-03-02"
+              className="w-full bg-wash border border-line rounded-xl p-2.5 text-xs text-ink"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-3 border-t border-subtle">
+            <button
+              type="button"
+              onClick={() => setShowResubmitModal(false)}
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold"
+            >
+              Send Revision Notice
+            </button>
+          </div>
+        </form>
+      </DialogShell>
     </div>
   );
 };

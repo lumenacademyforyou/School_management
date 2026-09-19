@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { CLASS_10A_STUDENTS } from '../../data/mockData';
 import { FeatureTags, PhaseNotice, downloadCsv } from '../../components/common/FeatureTags';
 import { Figure } from '../../components/common/Figure';
+import { Modal, btnPrimary, btnSoft } from '../../components/common/ui';
 
 // ---------------------------------------------------------------------------
 // Domain model
@@ -657,17 +658,17 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
               </div>
               <div className="flex gap-2">
                 {locked && !unlockRequested && (
-                  <button onClick={() => { setUnlockRequested(true); addToast('Post-lock edit request sent to Principal', 'info'); }} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200">
+                  <button onClick={() => { setUnlockRequested(true); addToast('Post-lock edit request sent to Principal', 'info'); }} className={btnSoft}>
                     Request edit
                   </button>
                 )}
                 {locked && unlockRequested && (
-                  <button onClick={approveUnlock} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-500 text-white hover:bg-amber-600">
+                  <button onClick={approveUnlock} className={`${btnPrimary} !bg-amber-500 hover:!bg-amber-600`}>
                     Approve edit (Principal)
                   </button>
                 )}
                 {!locked && (
-                  <button onClick={advanceStage} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-brand text-white hover:bg-brand-strong">
+                  <button onClick={advanceStage} className={btnPrimary}>
                     {stage === 'Draft' ? 'Submit for moderation' : stage === 'Submitted' ? 'Complete moderation (HOD)' : 'Lock marks'}
                   </button>
                 )}
@@ -768,7 +769,7 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
               Suppress rank on published result
             </label>
             <div className="flex-1" />
-            <button onClick={exportResults} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200">
+            <button onClick={exportResults} className={btnSoft}>
               Export CSV
             </button>
             <button
@@ -777,7 +778,7 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
                 addToast('Results approved by Principal', 'success');
               }}
               disabled={!locked || approved || incompleteCount > 0}
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50"
+              className={`${btnPrimary} !bg-amber-500 hover:!bg-amber-600`}
             >
               {approved ? 'Approved' : 'Principal approval'}
             </button>
@@ -934,27 +935,28 @@ export const ExaminationsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 
         </div>
       )}
 
-      {withholdTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setWithholdTarget(null)}>
-          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-ink">Withhold result · {nameOf(withholdTarget)}</h3>
-            <label className="block text-[11px] font-semibold text-ink-soft">Reason (required)</label>
-            <select value={withholdReason} onChange={e => setWithholdReason(e.target.value)} className="w-full text-xs border border-line rounded-lg px-2 py-1.5">
-              <option>Fee dues pending</option>
-              <option>Disciplinary review</option>
-              <option>Document verification pending</option>
-            </select>
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setWithholdTarget(null)} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100">
-                Cancel
-              </button>
-              <button onClick={confirmWithhold} className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-500 text-white">
-                Withhold
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal
+        open={!!withholdTarget}
+        onClose={() => setWithholdTarget(null)}
+        title={withholdTarget ? `Withhold result · ${nameOf(withholdTarget)}` : 'Withhold result'}
+        footer={
+          <>
+            <button onClick={() => setWithholdTarget(null)} className={btnSoft}>
+              Cancel
+            </button>
+            <button onClick={confirmWithhold} className={`${btnPrimary} !bg-amber-500 hover:!bg-amber-600`}>
+              Withhold
+            </button>
+          </>
+        }
+      >
+        <label className="block text-[11px] font-semibold text-ink-soft">Reason (required)</label>
+        <select value={withholdReason} onChange={e => setWithholdReason(e.target.value)} className="w-full text-xs border border-line rounded-lg px-2 py-1.5">
+          <option>Fee dues pending</option>
+          <option>Disciplinary review</option>
+          <option>Document verification pending</option>
+        </select>
+      </Modal>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Figure } from '../../components/common/Figure';
+import { ConfirmDialog, Stepper, btnPrimary, btnSoft, inputCls } from '../../components/common/ui';
 
 interface MappingRow {
   source: string;
@@ -26,6 +27,14 @@ export const DataMigrationView: React.FC = () => {
   const [uploadedRowCount, setUploadedRowCount] = useState(450);
   const [isDryRunning, setIsDryRunning] = useState(false);
   const [dryRunComplete, setDryRunComplete] = useState(false);
+  const [confirmCommit, setConfirmCommit] = useState(false);
+
+  // A dry run only vouches for the file, entity and mapping it ran against. Changing any of them
+  // sends the wizard back to step 3, so nothing reaches production unvalidated.
+  const invalidateDryRun = () => {
+    setDryRunComplete(false);
+    setStep(current => (current === 4 ? 3 : current));
+  };
 
   const [mappings, setMappings] = useState<MappingRow[]>([
     { source: 'admission_no', target: 'Student.admissionNumber', status: 'Exact Match' },
@@ -78,6 +87,7 @@ export const DataMigrationView: React.FC = () => {
     if (!file) return;
 
     setUploadedFileName(file.name);
+    invalidateDryRun();
     const reader = new FileReader();
     reader.onload = event => {
       const text = event.target?.result as string;
@@ -125,6 +135,12 @@ export const DataMigrationView: React.FC = () => {
   };
 
   const handleFinalCommit = () => {
+    setConfirmCommit(false);
+    if (!dryRunComplete) {
+      addToast('Dry-run validation required', 'warning', 'Commit is only available once a dry run has passed for the current file and mapping.');
+      setStep(3);
+      return;
+    }
     const newTxId = `TX-${Math.floor(1000 + Math.random() * 9000)}`;
     const newSnapshot: MigrationSnapshot = {
       id: newTxId,
@@ -157,8 +173,8 @@ export const DataMigrationView: React.FC = () => {
             </span>
             <span className="text-xs text-ink-muted">16 Master Features</span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-ink mt-1">
-            Data Import, Export & Migration Wizard
+          <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink mt-1">
+            Data Import, Export &amp; Migration Wizard
           </h1>
           <p className="text-xs md:text-sm text-ink-soft">
             Guided 4-step import wizard, fuzzy column auto-mapping, dry-run validation report, atomic staged commit & rollback.
@@ -168,7 +184,7 @@ export const DataMigrationView: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => handleDownloadTemplate(selectedEntity)}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-ink rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+            className={btnSoft}
           >
             <span className="material-symbols-outlined text-sm">download</span>
             <span>Download CSV Template</span>
@@ -176,34 +192,19 @@ export const DataMigrationView: React.FC = () => {
         </div>
       </div>
 
-      {/* Step Indicator */}
+      {/* Step Indicator. The commit step stays out of reach until a dry run has passed, so the
+          validation it depends on cannot be stepped over. */}
       <div className="bg-surface p-4 rounded-2xl border border-line-soft shadow-sm">
-        <div className="grid grid-cols-4 gap-2 text-center text-xs">
-          <button
-            onClick={() => setStep(1)}
-            className={`p-2 rounded-xl font-bold transition-all ${step === 1 ? 'bg-brand text-white' : 'bg-slate-100 text-ink-muted hover:bg-slate-200'}`}
-          >
-            1. Select Entity & File
-          </button>
-          <button
-            onClick={() => setStep(2)}
-            className={`p-2 rounded-xl font-bold transition-all ${step === 2 ? 'bg-brand text-white' : 'bg-slate-100 text-ink-muted hover:bg-slate-200'}`}
-          >
-            2. Column Auto-Mapping
-          </button>
-          <button
-            onClick={() => setStep(3)}
-            className={`p-2 rounded-xl font-bold transition-all ${step === 3 ? 'bg-brand text-white' : 'bg-slate-100 text-ink-muted hover:bg-slate-200'}`}
-          >
-            3. Dry-Run Validation
-          </button>
-          <button
-            onClick={() => setStep(4)}
-            className={`p-2 rounded-xl font-bold transition-all ${step === 4 ? 'bg-brand text-white' : 'bg-slate-100 text-ink-muted hover:bg-slate-200'}`}
-          >
-            4. Atomic Commit
-          </button>
-        </div>
+        <Stepper
+          current={String(step)}
+          onSelect={id => setStep(Number(id) as 1 | 2 | 3 | 4)}
+          steps={[
+            { id: '1', label: 'Select Entity & File', done: step > 1 },
+            { id: '2', label: 'Column Auto-Mapping', done: step > 2 },
+            { id: '3', label: 'Dry-Run Validation', done: dryRunComplete },
+            { id: '4', label: 'Atomic Commit', disabled: !dryRunComplete },
+          ]}
+        />
       </div>
 
       {/* Step 1: Upload & Select Entity */}
@@ -219,7 +220,10 @@ export const DataMigrationView: React.FC = () => {
               ].map(item => (
                 <div
                   key={item.id}
-                  onClick={() => setSelectedEntity(item.id)}
+                  onClick={() => {
+                    setSelectedEntity(item.id);
+                    invalidateDryRun();
+                  }}
                   className={`p-4 rounded-xl border cursor-pointer transition-all ${
                     selectedEntity === item.id
                       ? 'border-brand bg-subtle/40 shadow-xs'
@@ -249,7 +253,7 @@ export const DataMigrationView: React.FC = () => {
             <div className="flex items-center justify-center gap-3 pt-2">
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="px-5 py-2.5 bg-brand text-white rounded-xl text-xs font-bold hover:bg-brand-strong transition-all flex items-center gap-1.5"
+                className={btnPrimary}
               >
                 <span className="material-symbols-outlined text-sm">upload_file</span>
                 <span>Select & Upload Local File</span>
@@ -262,7 +266,7 @@ export const DataMigrationView: React.FC = () => {
                   addToast('Loaded sample dataset "Lumen_Chennai_Students_AY26.csv" (450 rows detected)', 'info');
                   setStep(2);
                 }}
-                className="px-4 py-2.5 bg-slate-100 text-ink hover:bg-slate-200 rounded-xl text-xs font-bold transition-all"
+                className={btnSoft}
               >
                 Load Sample Batch (450 Rows)
               </button>
@@ -294,13 +298,15 @@ export const DataMigrationView: React.FC = () => {
                 <input
                   type="text"
                   value={row.target}
+                  aria-label={`Target field for ${row.source}`}
                   onChange={e => {
                     const nextVal = e.target.value;
                     setMappings(prev =>
                       prev.map((m, idx) => (idx === i ? { ...m, target: nextVal } : m))
                     );
+                    invalidateDryRun();
                   }}
-                  className="font-mono text-xs text-brand bg-white border border-line rounded-lg px-2 py-1 flex-1 max-w-sm"
+                  className={`${inputCls} font-mono text-brand flex-1 max-w-sm`}
                 />
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 self-start sm:self-auto">
                   {row.status}
@@ -310,12 +316,12 @@ export const DataMigrationView: React.FC = () => {
           </div>
 
           <div className="flex justify-between pt-4 border-t border-line-soft">
-            <button onClick={() => setStep(1)} className="px-4 py-2 bg-slate-100 text-xs font-bold rounded-xl">
+            <button onClick={() => setStep(1)} className={btnSoft}>
               ← Back
             </button>
             <button
               onClick={() => setStep(3)}
-              className="px-5 py-2 bg-brand text-white text-xs font-bold rounded-xl hover:bg-brand-strong"
+              className={btnPrimary}
             >
               Proceed to Dry-Run →
             </button>
@@ -336,7 +342,7 @@ export const DataMigrationView: React.FC = () => {
               <button
                 onClick={handleTriggerDryRun}
                 disabled={isDryRunning}
-                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-2 mx-auto"
+                className={`${btnPrimary} mx-auto`}
               >
                 <span className="material-symbols-outlined text-sm">play_circle</span>
                 <span>{isDryRunning ? 'Analyzing Constraints...' : 'Execute Dry-Run Analyzer'}</span>
@@ -364,14 +370,14 @@ export const DataMigrationView: React.FC = () => {
               </div>
 
               <div className="flex justify-between items-center pt-4 border-t border-line-soft flex-wrap gap-2">
-                <button onClick={() => setStep(2)} className="px-4 py-2 bg-slate-100 text-xs font-bold rounded-xl">
+                <button onClick={() => setStep(2)} className={btnSoft}>
                   ← Back
                 </button>
 
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleDownloadDryRunReport}
-                    className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-ink text-xs font-bold rounded-xl flex items-center gap-1.5"
+                    className={btnSoft}
                   >
                     <span className="material-symbols-outlined text-sm">download</span>
                     <span>Download Report (JSON)</span>
@@ -379,7 +385,7 @@ export const DataMigrationView: React.FC = () => {
 
                   <button
                     onClick={() => setStep(4)}
-                    className="px-5 py-2 bg-brand text-white text-xs font-bold rounded-xl hover:bg-brand-strong"
+                    className={btnPrimary}
                   >
                     Confirm & Go to Staged Commit →
                   </button>
@@ -410,13 +416,10 @@ export const DataMigrationView: React.FC = () => {
           </div>
 
           <div className="flex justify-between pt-4 border-t border-line-soft">
-            <button onClick={() => setStep(3)} className="px-4 py-2 bg-slate-100 text-xs font-bold rounded-xl">
+            <button onClick={() => setStep(3)} className={btnSoft}>
               ← Back
             </button>
-            <button
-              onClick={handleFinalCommit}
-              className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-1.5"
-            >
+            <button onClick={() => setConfirmCommit(true)} disabled={!dryRunComplete} className={btnPrimary}>
               <span className="material-symbols-outlined text-sm">lock</span>
               <span>Commit {uploadedRowCount - 2} Records to Production</span>
             </button>
@@ -485,6 +488,20 @@ export const DataMigrationView: React.FC = () => {
           </table>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmCommit}
+        title="Commit to production?"
+        confirmLabel={`Commit ${uploadedRowCount - 2} records`}
+        onCancel={() => setConfirmCommit(false)}
+        onConfirm={handleFinalCommit}
+        body={
+          <>
+            {uploadedRowCount - 2} {selectedEntity} records from <span className="font-semibold text-ink">{uploadedFileName}</span> become live immediately. A rollback
+            snapshot is created automatically and stays available for 72 hours.
+          </>
+        }
+      />
     </div>
   );
 };

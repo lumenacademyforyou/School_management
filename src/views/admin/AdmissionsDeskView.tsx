@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useId, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { FeatureTags, PhaseNotice, downloadCsv } from '../../components/common/FeatureTags';
 import { PrintPortal } from '../../components/common/PrintPortal';
@@ -46,6 +46,7 @@ import {
 } from '../../data/admissions';
 import { Figure } from '../../components/common/Figure';
 import { EmptyNote } from '../../components/common/EmptyNote';
+import { DialogShell, Modal } from '../../components/common/ui';
 
 type Tab = 'pipeline' | 'enquiries' | 'applications' | 'decisions' | 'offers' | 'analytics';
 
@@ -106,6 +107,8 @@ const btnSoft = `${btn} bg-slate-100 hover:bg-slate-200 text-ink`;
 
 export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'pipeline' }) => {
   const { addToast, selectedCampus } = useApp();
+  const newAppFormId = useId();
+  const letterTitleId = useId();
   const asOf = ADMISSIONS_AS_OF;
   const [tab, setTab] = useState<Tab>(initialTab);
   const [enquiries, setEnquiries] = useState<Enquiry[]>(INITIAL_ENQUIRIES);
@@ -1346,125 +1349,124 @@ export const AdmissionsDeskView: React.FC<{ initialTab?: Tab }> = ({ initialTab 
 
       {/* ------------------------------------------------------------------ */}
       {losing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setLosing(null)}>
-          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-ink">Close {losing.id} as lost</h3>
-            <select value={lostReason} onChange={e => setLostReason(e.target.value)} className={inputCls}>
-              <option value="">Choose a reason…</option>
-              {LOST_REASONS.map(r => (
-                <option key={r}>{r}</option>
-              ))}
-            </select>
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setLosing(null)} className={btnSoft}>
-                Cancel
-              </button>
-              <button onClick={confirmLost} className={`${btn} bg-rose-600 text-white`}>
-                Close enquiry
-              </button>
-            </div>
-          </div>
-        </div>
+        <Modal open onClose={() => setLosing(null)} title={`Close ${losing.id} as lost`} footer={
+          <>
+            <button onClick={() => setLosing(null)} className={btnSoft}>
+              Cancel
+            </button>
+            <button onClick={confirmLost} className={`${btn} bg-rose-600 text-white`}>
+              Close enquiry
+            </button>
+          </>
+        }>
+          <select value={lostReason} onChange={e => setLostReason(e.target.value)} className={inputCls}>
+            <option value="">Choose a reason…</option>
+            {LOST_REASONS.map(r => (
+              <option key={r}>{r}</option>
+            ))}
+          </select>
+        </Modal>
       )}
 
       {declining && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setDeclining(null)}>
-          <div className="bg-surface rounded-2xl max-w-sm w-full p-5 space-y-3 shadow-2xl text-xs ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-ink">{declining.child} declines the offer</h3>
-            <select value={declineReason} onChange={e => setDeclineReason(e.target.value)} className={inputCls}>
-              {DECLINE_REASONS.map(r => (
-                <option key={r}>{r}</option>
+        <Modal open onClose={() => setDeclining(null)} title={`${declining.child} declines the offer`} footer={
+          <>
+            <button onClick={() => setDeclining(null)} className={btnSoft}>
+              Cancel
+            </button>
+            <button onClick={confirmDecline} className={`${btn} bg-rose-600 text-white`}>
+              Record decline
+            </button>
+          </>
+        }>
+          <select value={declineReason} onChange={e => setDeclineReason(e.target.value)} className={inputCls}>
+            {DECLINE_REASONS.map(r => (
+              <option key={r}>{r}</option>
+            ))}
+          </select>
+          <p className="text-ink-soft">The seat goes back to the pool and the next waitlisted applicant in this quota gets an offer.</p>
+        </Modal>
+      )}
+
+      <Modal
+        open={showNewApp}
+        onClose={() => setShowNewApp(false)}
+        title="Enter a paper application form"
+        footer={
+          <>
+            <button type="button" onClick={() => setShowNewApp(false)} className={btnSoft}>
+              Cancel
+            </button>
+            <button type="submit" form={newAppFormId} className={btnPrimary}>
+              Create application
+            </button>
+          </>
+        }
+      >
+        <form id={newAppFormId} onSubmit={createOfflineApplication} className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <input value={newApp.child} onChange={e => setNewApp({ ...newApp, child: e.target.value })} placeholder="Child’s name" className={`${inputCls} col-span-2`} aria-label="Child name" />
+            <input type="date" value={newApp.dob} onChange={e => setNewApp({ ...newApp, dob: e.target.value })} className={inputCls} aria-label="Date of birth" />
+            <select value={newApp.gender} onChange={e => setNewApp({ ...newApp, gender: e.target.value as Application['gender'] })} className={inputCls} aria-label="Gender">
+              <option>Female</option>
+              <option>Male</option>
+            </select>
+            <select value={newApp.classApplied} onChange={e => setNewApp({ ...newApp, classApplied: e.target.value })} className={inputCls} aria-label="Class">
+              {CLASS_CONFIG.map(c => (
+                <option key={c.classApplied}>{c.classApplied}</option>
               ))}
             </select>
-            <p className="text-ink-soft">The seat goes back to the pool and the next waitlisted applicant in this quota gets an offer.</p>
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setDeclining(null)} className={btnSoft}>
-                Cancel
-              </button>
-              <button onClick={confirmDecline} className={`${btn} bg-rose-600 text-white`}>
-                Record decline
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showNewApp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setShowNewApp(false)}>
-          <form onSubmit={createOfflineApplication} className="bg-surface rounded-2xl max-w-lg w-full p-5 space-y-2 shadow-2xl text-xs max-h-[90vh] overflow-y-auto ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-ink">Enter a paper application form</h3>
-            <div className="grid grid-cols-2 gap-2">
-              <input value={newApp.child} onChange={e => setNewApp({ ...newApp, child: e.target.value })} placeholder="Child’s name" className={`${inputCls} col-span-2`} aria-label="Child name" />
-              <input type="date" value={newApp.dob} onChange={e => setNewApp({ ...newApp, dob: e.target.value })} className={inputCls} aria-label="Date of birth" />
-              <select value={newApp.gender} onChange={e => setNewApp({ ...newApp, gender: e.target.value as Application['gender'] })} className={inputCls} aria-label="Gender">
-                <option>Female</option>
-                <option>Male</option>
-              </select>
-              <select value={newApp.classApplied} onChange={e => setNewApp({ ...newApp, classApplied: e.target.value })} className={inputCls} aria-label="Class">
-                {CLASS_CONFIG.map(c => (
-                  <option key={c.classApplied}>{c.classApplied}</option>
-                ))}
-              </select>
-              <select value={newApp.quota} onChange={e => setNewApp({ ...newApp, quota: e.target.value as Quota })} className={inputCls} aria-label="Quota">
-                {QUOTAS.map(q => (
-                  <option key={q}>{q}</option>
-                ))}
-              </select>
-              <input value={newApp.guardian} onChange={e => setNewApp({ ...newApp, guardian: e.target.value })} placeholder="Guardian’s name" className={inputCls} aria-label="Guardian name" />
-              <input value={newApp.mobile} onChange={e => setNewApp({ ...newApp, mobile: e.target.value })} placeholder="Guardian mobile" className={inputCls} aria-label="Guardian mobile" />
-              <label className="col-span-2 block">
-                <span className="block text-[10px] font-semibold text-ink-soft">Joining month (mid-year admissions are prorated)</span>
-                <select value={newApp.joiningMonth} onChange={e => setNewApp({ ...newApp, joiningMonth: Number(e.target.value) })} className={inputCls}>
-                  {ACADEMIC_MONTHS.map((m, i) => (
-                    <option key={m} value={i + 1}>
-                      {m}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <div className="p-2 rounded-lg bg-slate-50 space-y-1">
-              <p className="font-semibold text-ink">Consent ticked on the paper form</p>
-              {CONSENT_PURPOSES.map(p => (
-                <label key={p} className="flex items-center gap-1">
-                  <input type="checkbox" checked={Boolean(newConsent[p])} onChange={e => setNewConsent({ ...newConsent, [p]: e.target.checked })} className="accent-brand" />
-                  {p}
-                </label>
+            <select value={newApp.quota} onChange={e => setNewApp({ ...newApp, quota: e.target.value as Quota })} className={inputCls} aria-label="Quota">
+              {QUOTAS.map(q => (
+                <option key={q}>{q}</option>
               ))}
-            </div>
-            <label className="flex items-center gap-1">
-              <input type="checkbox" checked={newApp.declaration} onChange={e => setNewApp({ ...newApp, declaration: e.target.checked })} className="accent-brand" />
-              Guardian signed the declaration
+            </select>
+            <input value={newApp.guardian} onChange={e => setNewApp({ ...newApp, guardian: e.target.value })} placeholder="Guardian’s name" className={inputCls} aria-label="Guardian name" />
+            <input value={newApp.mobile} onChange={e => setNewApp({ ...newApp, mobile: e.target.value })} placeholder="Guardian mobile" className={inputCls} aria-label="Guardian mobile" />
+            <label className="col-span-2 block">
+              <span className="block text-[10px] font-semibold text-ink-soft">Joining month (mid-year admissions are prorated)</span>
+              <select value={newApp.joiningMonth} onChange={e => setNewApp({ ...newApp, joiningMonth: Number(e.target.value) })} className={inputCls}>
+                {ACADEMIC_MONTHS.map((m, i) => (
+                  <option key={m} value={i + 1}>
+                    {m}
+                  </option>
+                ))}
+              </select>
             </label>
-            <div className="flex justify-end gap-2 pt-1">
-              <button type="button" onClick={() => setShowNewApp(false)} className={btnSoft}>
-                Cancel
-              </button>
-              <button type="submit" className={btnPrimary}>
-                Create application
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+          </div>
+          <div className="p-2 rounded-lg bg-slate-50 space-y-1">
+            <p className="font-semibold text-ink">Consent ticked on the paper form</p>
+            {CONSENT_PURPOSES.map(p => (
+              <label key={p} className="flex items-center gap-1">
+                <input type="checkbox" checked={Boolean(newConsent[p])} onChange={e => setNewConsent({ ...newConsent, [p]: e.target.checked })} className="accent-brand" />
+                {p}
+              </label>
+            ))}
+          </div>
+          <label className="flex items-center gap-1">
+            <input type="checkbox" checked={newApp.declaration} onChange={e => setNewApp({ ...newApp, declaration: e.target.checked })} className="accent-brand" />
+            Guardian signed the declaration
+          </label>
+        </form>
+      </Modal>
 
       {letterFor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setLetterFor(null)}>
-          <div className="bg-surface rounded-2xl max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
-            <div className="p-3 border-b border-line-soft flex justify-between items-center">
-              <span className="text-sm font-bold text-ink">Offer letter preview</span>
-              <div className="flex gap-2">
-                <button onClick={() => setPrinting(true)} className={btnPrimary}>
-                  Print / save PDF
-                </button>
-                <button onClick={() => setLetterFor(null)} className={btnSoft}>
-                  Close
-                </button>
-              </div>
+        <DialogShell open onClose={() => setLetterFor(null)} labelledBy={letterTitleId} className="max-w-2xl">
+          <div className="p-3 border-b border-line-soft flex justify-between items-center">
+            <span id={letterTitleId} className="text-sm font-bold text-ink">Offer letter preview</span>
+            <div className="flex gap-2">
+              <button onClick={() => setPrinting(true)} className={btnPrimary}>
+                Print / save PDF
+              </button>
+              <button onClick={() => setLetterFor(null)} className={btnSoft}>
+                Close
+              </button>
             </div>
+          </div>
+          <div className="overflow-y-auto">
             <OfferLetter app={letterFor} campusName={selectedCampus.name} campusAddress={selectedCampus.location} />
           </div>
-        </div>
+        </DialogShell>
       )}
       {printing && letterFor && (
         <PrintPortal onDone={() => setPrinting(false)}>

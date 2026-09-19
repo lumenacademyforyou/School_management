@@ -30,6 +30,13 @@ import {
   useDesktopSidebar,
   useToasts,
   LOGO_SRC,
+  AttendanceChip,
+  AttendanceLegend,
+  ConnectionStatus,
+  ChatThread,
+  OfflineBanner,
+  attendanceStatus,
+  useOnline,
 } from '../shared/mobileUi';
 import { InstallAppCard, InstallButton } from '../shared/webApp';
 import { DEFAULT_PREFS, ParentPrefs, fullRegister, nowStamp, prefsFor, resetBackend, updateBackend, useBackend } from '../shared/demoBackend';
@@ -76,9 +83,7 @@ import { DownloadButton, EmptyNote } from '../shared/mobileUi';
 type Tab = 'home' | 'attendance' | 'fees' | 'messages' | 'more' | 'homework';
 type Page = null | 'results' | 'timetable' | 'homework' | 'notices' | 'profile' | 'consent' | 'settings' | 'appearance' | 'hall-of-fame' | 'transport' | 'hostel' | 'later';
 
-const STATUS_TONE: Record<string, 'green' | 'red' | 'amber' | 'grey'> = { P: 'green', L: 'amber', HD: 'amber', A: 'red', LV: 'grey', EX: 'grey', MD: 'grey' };
 const CODE_LABEL = Object.fromEntries(DEFAULT_STATUS_CODES.map(c => [c.code, c.label])) as Record<string, string>;
-const CAL_COLOUR: Record<string, string> = { P: 'bg-emerald-500', L: 'bg-lime-500', HD: 'bg-amber-400', A: 'bg-rose-500', LV: 'bg-slate-400', EX: 'bg-indigo-400', MD: 'bg-violet-500' };
 
 // ---------------------------------------------------------------------------
 // Login (IAM-002: mobile + OTP)
@@ -201,7 +206,7 @@ const HomeScreen: React.FC = () => {
         <Card onClick={() => setTab('attendance')} className="!rounded-2xl">
           <p className="text-[12px] text-slate-500">{t('today')}</p>
           <div className="mt-1">
-            {todayMark ? <Pill tone={STATUS_TONE[todayMark.code]}>{CODE_LABEL[todayMark.code]}</Pill> : <Pill>{t('notMarked')}</Pill>}
+            {todayMark ? <AttendanceChip code={todayMark.code} /> : <Pill>{t('notMarked')}</Pill>}
           </div>
           <p className="mt-2 text-[22px] font-bold text-slate-900">{pct ? `${pct.pct}%` : '—'}</p>
           <p className="text-[11px] text-slate-500">{t('thisYear')}</p>
@@ -269,6 +274,7 @@ const HomeScreen: React.FC = () => {
 const AttendanceScreen: React.FC = () => {
   const { backend, push, t, child, section, register, pct } = useParent();
   const [month, setMonth] = useState(APP_TODAY.slice(0, 7));
+  const [selected, setSelected] = useState<string | null>(null);
   const [leaveOpen, setLeaveOpen] = useState(false);
   const [form, setForm] = useState({ from: '2024-09-18', to: '2024-09-18', reason: '', document: '' });
   const monthDays = dateRange(`${month}-01`, month === APP_TODAY.slice(0, 7) ? APP_TODAY : `${month}-31`).filter(d => d.startsWith(month));
@@ -279,6 +285,15 @@ const AttendanceScreen: React.FC = () => {
     return acc;
   }, {});
   const leaves = backend.leaves.filter(l => l.studentId === child.id).sort((a, b) => b.from.localeCompare(a.from));
+
+  /** What a calendar cell means, in words. Used for the accessible name, the tooltip and the tap-to-reveal line. */
+  const dayStatus = (d: string) => {
+    const kind = classifyDay(d, HOLIDAYS);
+    const m = register[markKey(child.id, d)];
+    if (!kind.working) return { working: false, code: undefined as string | undefined, text: kind.reason ?? 'Not a school day' };
+    if (!m) return { working: true, code: undefined as string | undefined, text: 'Not marked' };
+    return { working: true, code: m.code as string | undefined, text: `${CODE_LABEL[m.code]}${m.reason ? ` · ${m.reason}` : ''}` };
+  };
 
   const submit = () => {
     if (!form.reason.trim()) return push('Please give a reason', 'warn');
@@ -333,26 +348,36 @@ const AttendanceScreen: React.FC = () => {
             <span key={`p${i}`} />
           ))}
           {monthDays.map(d => {
-            const kind = classifyDay(d, HOLIDAYS);
-            const m = register[markKey(child.id, d)];
+            const status = dayStatus(d);
+            const st = status.code ? attendanceStatus(status.code) : null;
             return (
-              <div
+              <button
                 key={d}
-                title={kind.working ? (m ? CODE_LABEL[m.code] : 'Not marked') : kind.reason}
-                className={cx('aspect-square rounded-lg flex items-center justify-center text-[12px] font-medium', !kind.working ? 'bg-slate-100 text-slate-400' : m ? `${CAL_COLOUR[m.code]} text-white` : 'border border-dashed border-slate-300 text-slate-400')}
+                type="button"
+                onClick={() => setSelected(sel => (sel === d ? null : d))}
+                aria-pressed={selected === d}
+                aria-label={`${fmtDay(d)} · ${status.text}`}
+                title={status.text}
+                data-day={d}
+                className={cx(
+                  'aspect-square min-h-11 rounded-lg flex flex-col items-center justify-center leading-none gap-0.5',
+                  selected === d && 'ring-2 ring-[var(--accent)]',
+                  !status.working ? 'bg-slate-100 text-slate-400' : st ? st.chip : 'border border-dashed border-slate-300 text-slate-400'
+                )}
               >
-                {Number(d.slice(8))}
-              </div>
+                <span className="text-[12px] font-medium">{Number(d.slice(8))}</span>
+                {/* The letter, not the tint, is what carries the status: it stays readable without colour vision. */}
+                <span aria-hidden="true" className="text-[9px] font-bold tracking-wide">
+                  {status.working ? st?.letter ?? '–' : '·'}
+                </span>
+              </button>
             );
           })}
         </div>
-        <div className="mt-3 flex flex-wrap gap-1.5">
-          {Object.entries(counts).map(([code, n]) => (
-            <Pill key={code} tone={STATUS_TONE[code]}>
-              {CODE_LABEL[code]} {n}
-            </Pill>
-          ))}
-        </div>
+        <p className="mt-2 min-h-[18px] text-[12px] text-slate-600" aria-live="polite">
+          {selected ? `${fmtDay(selected)} · ${dayStatus(selected).text}` : 'Tap a date to see that day’s status.'}
+        </p>
+        <AttendanceLegend counts={counts} className="mt-3" />
       </Card>
 
       <PrimaryButton onClick={() => setLeaveOpen(true)}>{t('applyLeave')}</PrimaryButton>
@@ -599,35 +624,20 @@ const MessagesScreen: React.FC = () => {
 
   if (thread) {
     return (
-      <div className="flex-1 flex flex-col min-h-0">
-        <div className="shrink-0 bg-[var(--surface)] border-b border-slate-200 px-4 py-2 flex items-center gap-2">
-          <button onClick={() => setOpen(null)} aria-label="Back to conversations" className="p-1 -ml-1">
-            <Icon name="arrow_back" />
-          </button>
-          <div className="min-w-0">
-            <p className="text-[14px] font-semibold truncate">{thread.teacher}</p>
-            <p className="text-[12px] text-slate-500 truncate">{thread.subject}</p>
-          </div>
-        </div>
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
-          {thread.messages.map((m, i) => (
-            <div key={i} className={cx('max-w-[80%] rounded-2xl px-3 py-2 text-[14px]', m.from === 'Parent' ? 'ml-auto bg-[var(--accent)] text-white' : 'bg-[var(--surface)] border border-slate-200')}>
-              <p>{m.text}</p>
-              <p className={cx('text-[10px] mt-0.5', m.from === 'Parent' ? 'text-white/70' : 'text-slate-400')}>
-                {m.at.slice(5)} · {m.status === 'Delivered' ? '✓' : m.status}
-              </p>
-            </div>
-          ))}
-          {thread.messages.length === 0 && <EmptyNote>Say hello to {thread.teacher}.</EmptyNote>}
-          <p className="text-center text-[11px] text-slate-400">Your phone number is not shared with teachers.</p>
-        </div>
-        <div className="shrink-0 bg-[var(--surface)] border-t border-slate-200 p-2 flex gap-2">
-          <input value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Message" className={cx(inputClass, 'py-2')} aria-label="Message" />
-          <button onClick={send} disabled={!draft.trim()} className="rounded-full bg-[var(--accent)] text-white w-11 h-11 flex items-center justify-center disabled:opacity-40" aria-label="Send message">
-            <Icon name="send" />
-          </button>
-        </div>
-      </div>
+      <ChatThread
+        title={thread.teacher}
+        subtitle={thread.subject}
+        onBack={() => setOpen(null)}
+        items={thread.messages.map(m => ({ kind: 'message' as const, mine: m.from === 'Parent', text: m.text, meta: `${m.at.slice(5)} · ${m.status === 'Delivered' ? '✓' : m.status}` }))}
+        empty={<EmptyNote>Say hello to {thread.teacher}.</EmptyNote>}
+        footnote="Your phone number is not shared with teachers."
+        draft={draft}
+        onDraft={setDraft}
+        onSend={send}
+        placeholder="Message"
+        composerLabel="Message"
+        sendLabel="Send message"
+      />
     );
   }
 
@@ -1061,7 +1071,12 @@ const SettingsPage: React.FC = () => {
               {channels.map(c => {
                 const on = prefs.channels[cat.key].includes(c);
                 return (
-                  <button key={c} onClick={() => toggleChannel(cat.key, c)} aria-pressed={on} className={cx('px-2.5 py-1 rounded-full text-[12px] border', on ? 'bg-[var(--accent)] text-white border-[var(--accent)]' : 'border-slate-300 text-slate-600')}>
+                  <button
+                    key={c}
+                    onClick={() => toggleChannel(cat.key, c)}
+                    aria-pressed={on}
+                    className={cx('min-h-11 inline-flex items-center px-3.5 rounded-full text-[12px] border', on ? 'bg-[var(--accent)] text-white border-[var(--accent)]' : 'border-slate-300 text-slate-600')}
+                  >
                     {c}
                   </button>
                 );
@@ -1086,19 +1101,26 @@ const SettingsPage: React.FC = () => {
 };
 
 
+/** Roadmap cards. They look like the rest of the app but nothing here opens, so each one says so. */
 const LaterPage: React.FC = () => (
   <Screen>
-    {[
-      { icon: 'support_agent', title: 'Helpdesk tickets' },
-      { icon: 'cloud_off', title: 'Read notices and homework offline' },
-    ].map(x => (
-      <Card key={x.title}>
-        <div className="flex items-center gap-3">
-          <Icon name={x.icon} className="text-[26px] text-slate-400" />
-          <p className="text-[14px] font-medium">{x.title}</p>
-        </div>
-      </Card>
-    ))}
+    <p className="text-[12px] text-slate-500">These are planned features. Nothing on this page can be opened yet.</p>
+    <ul className="list-none space-y-4" aria-label="Planned features">
+      {[
+        { icon: 'support_agent', title: 'Helpdesk tickets' },
+        { icon: 'cloud_off', title: 'Read notices and homework offline' },
+      ].map(x => (
+        <li key={x.title}>
+          <Card>
+            <div className="flex items-center gap-3">
+              <Icon name={x.icon} className="text-[26px] text-slate-400" />
+              <p className="flex-1 text-[14px] font-medium">{x.title}</p>
+              <Pill tone="grey">Not available yet</Pill>
+            </div>
+          </Card>
+        </li>
+      ))}
+    </ul>
     <PhaseNotice ids={['APP-014', 'APP-016']} phase="Phase 3" note="These arrive with the operations and offline release, along with live GPS in place of the demo bus position." />
   </Screen>
 );
@@ -1268,6 +1290,7 @@ const ChildSession: React.FC<{ account: ParentAccount; onSignOut: () => void }> 
   const session = useParentSession(account, onSignOut);
   const { toasts, prefs, t, tab, setTab, page, setPage, switcher, setSwitcher, setChildId, child, section, studentMode, tabs, back, titles } = session;
   const { sidebarOpen, toggleSidebar } = useDesktopSidebar('parent');
+  const online = useOnline();
 
   const childPicker = (
     <button onClick={() => setSwitcher(true)} className="flex items-center gap-2 rounded-full bg-white/15 pl-1 pr-2 py-1" aria-label="Switch child">
@@ -1279,6 +1302,13 @@ const ChildSession: React.FC<{ account: ParentAccount; onSignOut: () => void }> 
       <span className="text-[13px] font-semibold max-w-[90px] truncate">{child.name.split(' ')[0]}</span>
       {account.children.length > 1 && <Icon name="expand_more" className="text-[18px]" />}
     </button>
+  );
+
+  const topRight = (
+    <div className="flex items-center gap-1">
+      <ConnectionStatus online={online} />
+      {childPicker}
+    </div>
   );
 
   const pageBody = () => {
@@ -1375,7 +1405,7 @@ const ChildSession: React.FC<{ account: ParentAccount; onSignOut: () => void }> 
             onBack={back}
             onToggleSidebar={toggleSidebar}
             sidebarOpen={sidebarOpen}
-            right={childPicker}
+            right={topRight}
           />
         ) : (
           <TopBar
@@ -1383,9 +1413,10 @@ const ChildSession: React.FC<{ account: ParentAccount; onSignOut: () => void }> 
             subtitle={prefs.lowData ? 'Data saver on' : studentMode ? 'Student view' : undefined}
             onToggleSidebar={toggleSidebar}
             sidebarOpen={sidebarOpen}
-            right={childPicker}
+            right={topRight}
           />
         )}
+        <OfflineBanner online={online} note="Showing what was last loaded on this phone" />
         {page ? pageBody() : tabBody()}
       </AppShell>
       <Sheet open={switcher} onClose={() => setSwitcher(false)} title="Switch child">

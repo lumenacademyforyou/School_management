@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { AdminView } from './types';
 import { HOME_VIEW, ROLE_LABEL, canChangeView, canView, viewModules } from './data/staffAccess';
@@ -186,11 +186,15 @@ const Screen: React.FC<{ view: AdminView }> = ({ view }) => {
 };
 
 const Console: React.FC = () => {
-  const { adminView, sidebarOpen, setSidebarOpen, isAuthenticated, density, sidebarCollapsed, toggleSidebarCollapsed } = useApp();
+  const { adminView, sidebarOpen, setSidebarOpen, isAuthenticated, density, sidebarCollapsed, toggleSidebarCollapsed, overlayOpen } = useApp();
 
-  // Ctrl+B / Cmd+B hides or shows the desktop sidebar, as in most desktop apps.
+  // Ctrl+B / Cmd+B hides or shows the desktop sidebar, as in most desktop apps. It stands down while a
+  // dialog is open, so the shortcut never rearranges the page behind the dialog the user is working in.
+  const suppressed = useRef(overlayOpen);
+  suppressed.current = overlayOpen;
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (suppressed.current) return;
       if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'b') {
         e.preventDefault();
         toggleSidebarCollapsed();

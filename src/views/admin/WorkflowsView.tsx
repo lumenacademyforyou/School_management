@@ -5,6 +5,7 @@ import { canChangeModule } from '../../data/permissions';
 import type { StaffRole } from '../../data/staffAccess';
 import { Figure } from '../../components/common/Figure';
 import { EmptyNote } from '../../components/common/EmptyNote';
+import { Modal } from '../../components/common/ui';
 
 type Role = 'AO' | 'BA' | 'PR' | 'AC' | 'CO' | 'HR';
 
@@ -611,33 +612,34 @@ export const WorkflowsView: React.FC<{ initialTab?: Tab }> = ({ initialTab = 'qu
         </div>
       )}
 
-      {rejecting && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-lumen-950/55 backdrop-blur-[2px]" onClick={() => setRejecting(null)}>
-          <div className="bg-surface rounded-2xl max-w-md w-full p-5 space-y-3 shadow-2xl text-xs ring-1 ring-lumen-950/10" onClick={e => e.stopPropagation()}>
-            <h3 className="text-sm font-bold text-ink">Reject {rejecting.reference}</h3>
-            <label className="block">
-              <span className="block font-semibold text-ink-soft mb-1">Reason code</span>
-              <select value={rejectReason} onChange={e => setRejectReason(e.target.value)} className="w-full border border-line rounded-lg px-2 py-1.5">
-                {REJECT_REASONS.map(r => (
-                  <option key={r}>{r}</option>
-                ))}
-              </select>
-            </label>
-            <label className="block">
-              <span className="block font-semibold text-ink-soft mb-1">Comment (required)</span>
-              <textarea value={rejectComment} onChange={e => setRejectComment(e.target.value)} rows={3} className="w-full border border-line rounded-lg px-2 py-1.5" />
-            </label>
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setRejecting(null)} className="font-semibold px-3 py-1.5 rounded-lg bg-slate-100">
-                Cancel
-              </button>
-              <button onClick={confirmReject} className="font-semibold px-3 py-1.5 rounded-lg bg-rose-600 text-white">
-                Reject
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal
+        open={!!rejecting}
+        onClose={() => setRejecting(null)}
+        title={rejecting ? `Reject ${rejecting.reference}` : 'Reject'}
+        footer={
+          <>
+            <button onClick={() => setRejecting(null)} className="font-semibold px-3 py-1.5 rounded-lg bg-slate-100">
+              Cancel
+            </button>
+            <button onClick={confirmReject} className="font-semibold px-3 py-1.5 rounded-lg bg-rose-600 text-white">
+              Reject
+            </button>
+          </>
+        }
+      >
+        <label className="block">
+          <span className="block font-semibold text-ink-soft mb-1">Reason code</span>
+          <select value={rejectReason} onChange={e => setRejectReason(e.target.value)} className="w-full border border-line rounded-lg px-2 py-1.5">
+            {REJECT_REASONS.map(r => (
+              <option key={r}>{r}</option>
+            ))}
+          </select>
+        </label>
+        <label className="block">
+          <span className="block font-semibold text-ink-soft mb-1">Comment (required)</span>
+          <textarea value={rejectComment} onChange={e => setRejectComment(e.target.value)} rows={3} className="w-full border border-line rounded-lg px-2 py-1.5" />
+        </label>
+      </Modal>
     </div>
   );
 };
