@@ -4,6 +4,78 @@ One entry per working day. Newest first. Jira IDs in brackets.
 
 ---
 
+## 19 Sep 2026 (Sat) — Sprint 2
+
+Design review of the web apps, then the repo merge that had been blocking
+everything else. Written up in `docs/frontend-integration.md`.
+
+### Done — [LS-162] INF: One repo, `server/` + `web/` ✅
+
+`CSK-branch` and `ui_design` both used `src/`, `tests/`, `scripts/`,
+`package.json` and `tsconfig.json`: no content in common, every path in common.
+The open PR to merge them read `-11,082` lines, because merging one into the
+other deletes it — in that direction, the Express layer, all four migrations and
+the 148 tests, which are LS-26, LS-27, LS-28 and LS-30.
+
+npm workspaces instead. 56 files into `server/`, 139 into `web/`, both
+byte-for-byte, verified by diffing file lists against each source branch. The
+API moved to **port 4000**; it had defaulted to 3000, which is the admin
+console's dev port, so running both locally collided.
+
+The workspaces keep their own TypeScript version and test runner. The backend
+wants 6.x and the frontend 5.8, and forcing that during the move would have put
+an avoidable break under four checkouts at once — deferred as LS-175.
+
+### Done — [LS-176] FND: Design system hardening ✅
+
+Two defects worth naming. `ReadOnlyGuard` matched a fixed verb list, so actions
+worded "cancel", "void", "waive", "refund", "suspend" or "override" reached
+their handlers for roles that could not perform them — widened, with explicit
+`data-readonly-allow` / `data-readonly-block` escape hatches, and approvers no
+longer blocked by labels like "Bulk approve". The data-migration wizard let a
+user jump to step 4 and commit to production without ever running the dry run;
+gated now, and editing the file, entity or mapping invalidates a passed run.
+
+Then the shared dialog primitives — `useDialogBehavior`, `DialogShell`,
+`DialogClose` — and 53 hand-rolled modals across 30 screens moved onto them.
+None had handled Escape or labelled its close button. Same behaviour written
+locally in `web/apps/shared/mobileUi.tsx` for the bottom sheets, since the mobile
+apps do not import console code.
+
+Attendance status in the mobile apps was colour-only with the label on hover,
+so it did not exist on touch. Calendar cells are buttons now, carrying a status
+letter and a full accessible name.
+
+### Found — the deployed database is behind the code ⚠️
+
+The Supabase project `School_management` (`jiyfmnwtomtmjnubdkcf`) is at
+migration **0003**. The eight SIS tables from `0004_sis_core.sql` are not there.
+LS-27 is committed and tested but was never applied to the shared project, so
+the SIS and setup APIs have no tables to talk to. Raised as LS-163; it blocks
+every L3 ticket.
+
+Not applied from here on purpose: going around `npm run migrate` leaves
+`schema_migrations` disagreeing with reality, and the next migrate run then
+retries 0004 and fails.
+
+### Found — LS-28 shipped its API, not its screens
+
+LS-28 is titled "setup screens" and is marked Done, but `CSK-branch` has no
+React in it at all. What shipped is the setup API, and `sis-data-model.md` says
+as much under *Deliberately not here*. Left Done — the API half is real — with
+the screens raised as LS-170.
+
+### Planned — Sprint 2
+
+Fifteen tickets, LS-162 to LS-176, in six layers, with the dependency links so
+no UI ticket starts before the API it consumes. Four non-pilot tickets (LS-23,
+LS-37, LS-41, LS-45 — all Assessment/QPG track) moved to Sprint 3 to make room.
+
+Pilot slice agreed as setup, student and staff records, attendance, and fee
+*viewing*. Collection and the gateway move to Sprint 3.
+
+---
+
 ## 15 Sep 2026 (Tue) — Sprint 1
 
 Checked for blockers first: neither ticket depends on anyone else's work.

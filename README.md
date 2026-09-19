@@ -50,6 +50,10 @@ Design notes and the reasoning behind them:
 [`docs/auth-rbac-tenancy.md`](docs/auth-rbac-tenancy.md) (auth, RBAC, tenancy) and
 [`docs/sis-data-model.md`](docs/sis-data-model.md) (school schema and setup API).
 
+The web apps still run on mock data. Wiring them onto this API — the layers, and
+the three places the two halves disagree — is
+[`docs/frontend-integration.md`](docs/frontend-integration.md).
+
 ## Running the server locally
 
 Requires Node 20+ and a PostgreSQL database (local, or a Supabase project).
