@@ -1,0 +1,178 @@
+# LumenAcademy SMS — web apps
+
+The `web/` workspace: a staff admin console, a parent web app and a teacher web
+app. Today they run on demo data in the browser; wiring them onto the API in
+[`../server`](../server) is the current phase of work.
+
+## Run locally
+
+**Prerequisites:** Node.js 20+, and `npm install` once at the repo root (it
+installs both workspaces).
+
+Run all three apps (admin console on 3000, parent app on 3001, teacher app on
+3002) from the repo root:
+
+    npm run dev
+
+or from this directory: `npm run dev`. The API, when you need it, is
+`npm run dev:api` at the root and listens on 4000.
+
+Run `npm run lint` to typecheck and `npm test` to run the 96 logic tests (`tests/`, no extra packages: Vite loads the TypeScript and a small harness runs it).
+
+## Project layout
+
+```
+index.html              admin console entry page
+src/                    admin console
+  App.tsx               screen routing and the read-only guard
+  views/admin/          one file per screen; questionPapers/ holds the paper generator, emis/ the TN EMIS desk
+  views/auth/           staff sign-in
+  components/           layout, shared admin UI (common/ui.tsx), student identifier widgets
+  context/              signed-in user, current screen, toasts
+  data/                 seed data and pure business rules: fees, students, TN EMIS, question papers,
+                        Term results and ranks, transport, hostel, feature catalogue, access grants
+  services/             mock APIs the screens call (question papers, students, EMIS, results, transport, hostel)
+  hooks/, lib/          grant lookups, observable store, session state, QR codes, app links
+apps/
+  parent/               parent app: ParentApp.tsx, StudentLife.tsx (Hall of Fame, transport, hostel, appearance)
+  teacher/              teacher app: TeacherApp.tsx, offline device store
+  shared/               both web apps: demo backend, UI kit, install support, i18n, timetable data, theme settings
+tests/                  logic tests (npm test)
+scripts/                dev.mjs starts all three dev servers; test.mjs runs the tests
+public/                 logos
+```
+
+The parent and teacher apps reuse the business rules in `src/data` (fees, attendance, messaging, permissions) but never import admin console screens.
+
+## Design system
+
+Every colour comes from the logo, and all three apps use the same tokens (`src/index.css`, `@theme`):
+
+| Role | Token | Value | Taken from |
+| --- | --- | --- | --- |
+| Brand teal | `brand`, `lumen-50`…`lumen-950` | `#17667d` | Mountains and ring |
+| Navy ink | `ink`, `lumen-900` | `#0c3147` | Mortarboard and lettering |
+| Gold | `accent`, `gold-50`…`gold-900` | `#dea02d` | Sun rays and tassel |
+| Cream | `canvas`, `surface`, `cream-50`…`cream-400` | `#f7f4ec` | Lettering band |
+
+- **Semantic names first.** Components use `ink`, `ink-soft`, `ink-muted`, `line`, `line-soft`, `subtle`, `wash`, `surface`, `canvas`, `brand` and `accent`. Use the numbered scales only when a specific step is needed.
+- **Colour grade.** Light steps lean cream and dark steps lean teal-navy. Tailwind's `slate` scale is regraded the same way, so every neutral follows. `sky`, `blue` and `teal` resolve to the brand teal, amber sits on the gold side, and emerald and rose stay the success and error colours.
+- **Details.** Shadows are tinted navy, never grey. Gold is kept for emphasis: the page eyebrow, the current-screen marker, the header rule and the one gold call to action (`btnGold`). The navy panels (`bg-lumen-night`) carry the logo's sun as a faint ray texture (`bg-sunburst`).
+- **Contrast.** Every text and background pair meets WCAG AA; the weakest, captions on `subtle`, is 4.6:1.
+- **Parent app themes** (Settings → Appearance): Light (teal bar, cream paper), School (navy bar, gold edge, deeper cream) and Dark (teal-navy night with cream type).
+
+## Dashboards by role
+
+The dashboard leads with one number per role, top left, with a verdict ("On track" or "Needs attention") that answers "is everything okay?". The other figures sit to the right at a smaller size, and each opens its breakdown on demand; only one breakdown is open at a time. Set in `HEADLINE_BY_ROLE` (`src/views/admin/DashboardView.tsx`).
+
+| Role | Headline | Why |
+| --- | --- | --- |
+| Principal | Attendance today | The whole school is in and safe; everything else can wait. |
+| Accountant | Term fees realised (%) | Collection against demand is the accountant's outcome. |
+| Admissions Officer | Admissions pending | The open pipeline is the admissions officer's queue. |
+| Auditor | Outstanding fees | The largest open balance an auditor tests. |
+| Exam Coordinator | Pre-board pass rate | The result the coordinator's papers exist to produce. |
+
+## Apps in this repository
+
+The admin console, parent app and teacher app are separate apps. Each has its own entry folder, build and output, and none of them ships another app's screens.
+
+| App | Dev command | Dev URL | Build output |
+| --- | --- | --- | --- |
+| All three at once | `npm run dev` | ports 3000, 3001, 3002 | – |
+| Admin console (staff) | `npm run dev:admin` | http://localhost:3000/ | `dist/admin` |
+| Parent app | `npm run dev:parent` | http://localhost:3001/ | `dist/parent` |
+| Teacher app | `npm run dev:teacher` | http://localhost:3002/ | `dist/teacher` |
+| Parent + teacher together (demo) | `npm run dev:apps` | http://localhost:3003/parent/ and /teacher/ | – |
+
+### Parent and teacher web apps
+
+The parent and teacher apps are responsive web apps that can be installed:
+
+- **Layout**: phones and tablets get bottom tabs. From 1024px wide, a sidebar replaces them, content is centred, the home screens use two columns, and bottom sheets open as dialogs (Escape closes them).
+- **Install**: each build includes `manifest.webmanifest` and an offline service worker (`sw.js`), both generated by `vite.config.ts`. Chrome and Edge show **Install** in the sidebar and under Settings (parent) or the account menu (teacher). On iPhone, use Share → Add to Home Screen.
+- **Offline**: after the first visit, the installed app opens without a network. The service worker is registered only in production builds, so try it with `npm run build:parent` and `npm run preview:parent` (http://localhost:4001/), or `build:teacher` and `preview:teacher` (4002).
+
+`npm run build` builds all three; `npm run build:admin`, `build:parent` and `build:teacher` build one. Set `VITE_PARENT_APP_URL` and `VITE_TEACHER_APP_URL` (see `.env.example`) so the staff sign-in page and the catalogue link to where the other apps are deployed. If a linked app isn't running, the console says so and names the command to start it.
+
+### Demo sign-in
+
+- **Admin console**: pick a staff account on the sign-in page. The password is `Lumen@2024`, and the authenticator code is `529148` for every account except the Admissions Officer. The Exam Coordinator (`exams@lumenacademy.edu.in`) lands on the Question Paper Generator.
+- **Parent app**: any demo mobile on the sign-in screen with OTP `412890`. Families with more than one child are listed first. Useful accounts:
+  - `+91 90030 45521`, parent of twins. Kavin ranks 1st in Mathematics (gold) and 3rd in Science, rides Route 3 and lives in the hostel. Kavya has no top-three place, rides Route 3 and is a day scholar.
+  - `+91 98401 23456`, Aarav's parent: 2nd in Science (silver).
+  - `+91 94001 04729`, Ananya's parent: 3rd in Mathematics (bronze), no school transport.
+- **Teacher app**: `malini.iyer@lumenacademy.edu.in`, `natarajan@lumenacademy.edu.in` or `clara@lumenacademy.edu.in`, with password `Lumen@2024`.
+
+### Who can do what
+
+Access is defined per feature in `src/data/permissions.ts`. Each role gets a row with verbs, a scope and a condition. The console shows the table under **Administration → Access Grants**. Each row answers four questions:
+
+| Question | Grants |
+| --- | --- |
+| Who is accountable for the outcome being produced? | C, U, D (exactly one role) |
+| Who needs to see it to do their own job? | R |
+| Who answers if it's wrong or contested? | A |
+| Who needs the data outside the system? | E |
+
+Module policies set the default rows, and `FEATURE_OVERRIDES` pins individual features. For example:
+
+- **FEE-003 fee structure**: the accountant creates, reads and updates it, and it locks once invoicing starts. After that, any revision needs the Principal's approval.
+- **FEE-011 concession approval**: the accountant proposes, and the Principal must approve anything above 10%.
+- **FEE-028 outstanding ledger**: the accountant's export is logged, and the class teacher sees their own section's amounts but not concession reasons.
+
+The rest of the app is derived from the same table:
+
+- **Sidebar, search and quick actions**: a staff member sees only screens where their role has a grant.
+- **Read-only screens**: a screen where the role holds no C, U or D opens read-only. Reading, tabs, printing and exports still work, and a role that holds A can still approve or reject.
+- **Fees desk and approvals queue**: every action is checked against its own feature grant.
+
+| Staff role | Signs in to | Can change |
+| --- | --- | --- |
+| Principal | Dashboard | Platform, communication, approvals, compliance; approves fees, admissions and attendance |
+| Accountant | Fees | Fees, accounting, payroll |
+| Admissions Officer | Admissions | Admissions, student records, documents, certificates and ID cards; operates the TN EMIS desk (uploads and exports) |
+| Auditor | Audit log | Nothing; reads and exports finance, audit, reports and compliance, including the EMIS file |
+| Exam Coordinator | Question Paper Generator | Question papers and the question bank; the Principal approves every paper, and no one approves their own |
+
+Class teachers mark attendance and enter marks in the teacher app. The console attendance desk is the Principal's read-and-approve view.
+
+## Features added in this release
+
+| Feature | Where | Notes |
+| --- | --- | --- |
+| Question Paper Generator (QPG-001–014, 017, 018) | Admin → Academics · later phases → Question Paper Generator (also linked from Examinations) | Dashboard, 8-step wizard (details, blueprint, bank, AI generation, builder, sets, answer key, approval), archive. The Question Bank screen uses the same bank. |
+| Hall of Fame (EXM-018, EXM-026) | Parent app home card, More → Hall of Fame, and ranks on Results | Top-three subject ranks across the whole class; gold, silver and bronze styles; nothing is shown for other children. |
+| Transport (APP-010, TRN-001–009) | Parent app home card and More → Transport | Route, vehicle, driver, attendant, stops and a map placeholder with a demo clock. |
+| Hostel (HST-001–009) | Parent app home card and More → Hostel | Block, room, bed, warden, residence, night roll call and outpasses. |
+| Appearance (APP-015) | Parent app Settings → Appearance (also in More) | Light, Dark, System and School themes with previews; saved in `localStorage`. |
+| EMIS number (STU-026) | Admin → Students and Student 360 | Optional column, search, status filter, copy, edit and add forms with Empty, Valid, Invalid and Duplicate states. |
+| TN EMIS desk (STU-026, GOV-010, GOV-011) | Admin → Compliance → TN EMIS | Tamil Nadu EMIS portal returns. Students tab: each record against the portal (linked, not on portal, details or class differ, no number, fix number, release pending). Upload queue: additions, class updates, releases to the common pool and corrections, with rejections kept and an upload history. Common pool: look up a number, link a pool match or admit a transfer with the form pre-filled. Staff: teacher EMIS IDs. Daily attendance: upload by the 10:30 AM cut-off, and retry failed days. Also: refresh from the portal and download the EMIS file (CSV). |
+| Installable web apps | Parent and teacher apps | Desktop sidebar layout, install prompt, offline start. See [Parent and teacher web apps](#parent-and-teacher-web-apps). |
+
+Screens switch by state, not by URL, so the new "routes" are screen ids (`question-papers`, `question-bank`, `emis`) in the console and pages (`hall-of-fame`, `transport`, `hostel`, `appearance`) in the parent app.
+
+### Where a backend plugs in later
+
+Every screen reads through a service that returns Promises. Replace the body with HTTP calls and the screens stay the same.
+
+| Service | Replace with |
+| --- | --- |
+| `src/services/questionPaperService.ts` | Paper, bank and approval endpoints; the AI model call (`generateQuestions`); server-side PDF rendering (`exportDocument`) |
+| `src/services/studentService.ts` | Student record and identifier endpoints; the state EMIS registry check |
+| `src/services/emisService.ts` | The Tamil Nadu EMIS portal: record lookup, common pool, student uploads, teacher IDs and daily attendance submission |
+| `src/services/hallOfFameService.ts` | Published results with ranks |
+| `src/services/transportService.ts` | Transport allocation and the vehicle's live GPS feed (`trip`) |
+| `src/services/hostelService.ts` | Hostel residence, roll call and outpass endpoints |
+| `apps/shared/settingsService.ts` | Syncing the theme to the parent's profile |
+
+Hiding a button in the browser is not security. The grant checks here only shape the interface; the server must enforce the same rules.
+
+### Demo data
+
+There is no backend yet.
+
+- **Parent and teacher apps**: they share a demo store in the browser's local storage (`apps/shared/demoBackend.ts`). A leave request, homework or notice sent from one app appears in the other only when both run on the same origin, so use `npm run dev:apps` for that. On 3001 and 3002 each app works on its own. "Reset demo data" in either app restores the seed data.
+- **Teacher app offline mode**: the teacher app keeps its own on-device cache and outbox (`apps/teacher/teacherDevice.ts`) and works offline. Use the Wi-Fi button in its header to simulate losing the connection.
+- **Admin console**: records created on the fees desk, question papers, student identifier changes and EMIS uploads last until the page is reloaded. So one role can raise something, sign out, and the next role can sign in and act on it.
+- **Mock AI, GPS and EMIS portal**: generated questions come from a fixed template, the bus position comes from the timetable, and the EMIS portal is an in-browser stand-in with demo rules (16-digit student numbers and 8-digit teacher IDs, both starting with 33; a 10:30 AM attendance cut-off). Confirm the real formats and deadlines with the state before connecting it. Nothing leaves the browser.

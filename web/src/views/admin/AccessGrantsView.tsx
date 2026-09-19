@@ -1,0 +1,204 @@
+import React, { useMemo, useState } from 'react';
+import { useApp } from '../../context/AppContext';
+import { FeatureTags } from '../../components/common/FeatureTags';
+import { SMS_MODULES } from '../../data/featureCatalog';
+import {
+  FEATURE_GRANTS,
+  GRANT_ROLES,
+  GRANT_ROLE_LABEL,
+  GrantRole,
+  VERB_LABEL,
+  VERB_ORDER,
+  ownershipViolations,
+  systemProducedFeatures,
+  verbString,
+} from '../../data/permissions';
+import { EmptyNote } from '../../components/common/EmptyNote';
+
+const QUESTIONS: { q: string; grants: string }[] = [
+  { q: 'Who is accountable for the outcome being produced?', grants: 'C, U, D — exactly one role' },
+  { q: 'Who needs to see it to do their own job?', grants: 'R' },
+  { q: 'Who answers if it’s wrong or contested?', grants: 'A' },
+  { q: 'Who needs the data outside the system?', grants: 'E' },
+];
+
+const VERB_STYLE: Record<string, string> = {
+  C: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  U: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  D: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  R: 'bg-slate-50 text-slate-600 border-slate-200',
+  A: 'bg-amber-50 text-amber-800 border-amber-200',
+  E: 'bg-slate-100 text-slate-700 border-slate-300',
+};
+
+const Verbs: React.FC<{ verbs: string[] }> = ({ verbs }) =>
+  verbs.length ? (
+    <span className="inline-flex gap-0.5">
+      {verbs.map(v => (
+        <span key={v} title={VERB_LABEL[v as keyof typeof VERB_LABEL]} className={`font-mono text-[10px] font-bold w-5 text-center py-0.5 rounded border ${VERB_STYLE[v]}`}>
+          {v}
+        </span>
+      ))}
+    </span>
+  ) : (
+    <span className="text-ink-muted">–</span>
+  );
+
+/** RBAC-001/003/013: the feature × role grant matrix every screen and action is checked against. */
+export const AccessGrantsView: React.FC = () => {
+  const { currentUser } = useApp();
+  const [moduleCode, setModuleCode] = useState('FEE');
+  const [role, setRole] = useState<GrantRole | 'all'>('all');
+  const [query, setQuery] = useState('');
+
+  const violations = useMemo(() => ownershipViolations(), []);
+  const systemProduced = useMemo(() => systemProducedFeatures(), []);
+
+  const features = FEATURE_GRANTS.filter(f => (moduleCode === 'all' || f.module === moduleCode) && (!query.trim() || `${f.id} ${f.name}`.toLowerCase().includes(query.trim().toLowerCase())));
+  const rows = features.flatMap(f => f.rows.filter(g => role === 'all' || g.role === role).map(g => ({ f, g })));
+  const shown = rows.slice(0, 400);
+
+  const summary = GRANT_ROLES.map(gr => {
+    const mine = features.map(f => f.rows.find(x => x.role === gr)).filter(Boolean);
+    return {
+      role: gr,
+      owns: mine.filter(g => g!.verbs.some(v => v === 'C' || v === 'U' || v === 'D')).length,
+      reads: mine.filter(g => g!.verbs.length > 0).length,
+      approves: mine.filter(g => g!.verbs.includes('A')).length,
+      exports: mine.filter(g => g!.verbs.includes('E')).length,
+    };
+  });
+
+  return (
+    <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto pb-20">
+      <div>
+        <div className="flex items-center gap-2 text-[11px] font-semibold text-accent-ink uppercase tracking-[0.14em] mb-1.5">
+          <span className="material-symbols-outlined text-sm">admin_panel_settings</span>
+          <span>Module 3 · Roles & Permissions (RBAC)</span>
+        </div>
+        <h1 className="text-2xl md:text-[28px] leading-tight font-bold font-display tracking-tight text-ink">Access grants</h1>
+        <p className="text-xs text-ink-soft mt-1">
+          One row per feature and role: verbs, scope and condition. Screens and actions in every app are checked against this table. You are signed in as {currentUser.roleTitle}.
+        </p>
+        <FeatureTags ids={['RBAC-001', 'RBAC-003', 'RBAC-010', 'RBAC-013']} className="mt-2" />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+          <p className="p-3 bg-subtle border-b border-line text-xs font-bold text-ink">How each row is derived</p>
+          <table className="w-full text-xs">
+            <tbody className="divide-y divide-subtle">
+              {QUESTIONS.map(x => (
+                <tr key={x.q}>
+                  <td className="p-2.5">{x.q}</td>
+                  <td className="p-2.5 font-mono font-semibold text-brand whitespace-nowrap">{x.grants}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="p-3 text-[11px] text-ink-soft border-t border-subtle">
+            Accountable means one role. If two roles can both create fee structures, neither owns them. Everyone else gets Read.
+          </p>
+        </div>
+        <div className="space-y-3">
+          <div className={`rounded-2xl border p-3 text-xs ${violations.length ? 'border-rose-200 bg-rose-50 text-rose-800' : 'border-emerald-200 bg-emerald-50 text-emerald-800'}`}>
+            <p className="font-bold">{violations.length ? `${violations.length} feature(s) with more than one owner` : 'Every feature has at most one owner'}</p>
+            {violations.slice(0, 5).map(v => (
+              <p key={v.id} className="font-mono text-[11px]">
+                {v.id}: {v.owners.map(o => GRANT_ROLE_LABEL[o]).join(', ')}
+              </p>
+            ))}
+            <p className="mt-1 text-[11px]">Checked across all {FEATURE_GRANTS.length} catalogue features.</p>
+          </div>
+          <div className="rounded-2xl border border-line-soft bg-surface p-3 text-xs">
+            <p className="font-bold text-ink">{systemProduced.length} computed feature(s)</p>
+            <p className="text-[11px] text-ink-soft">Nobody edits these directly; the system produces them from other records.</p>
+            <p className="font-mono text-[11px] text-ink-muted mt-1">{systemProduced.join(', ') || '—'}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-surface rounded-2xl border border-line-soft shadow-sm overflow-hidden">
+        <div className="p-3 bg-subtle border-b border-line flex flex-wrap items-center gap-2 text-xs">
+          <select value={moduleCode} onChange={e => setModuleCode(e.target.value)} className="border border-line rounded-lg px-2 py-1.5 bg-white" aria-label="Module">
+            <option value="all">All modules</option>
+            {SMS_MODULES.map(m => (
+              <option key={m.code} value={m.code}>
+                {m.code} · {m.name}
+              </option>
+            ))}
+          </select>
+          <select value={role} onChange={e => setRole(e.target.value as GrantRole | 'all')} className="border border-line rounded-lg px-2 py-1.5 bg-white" aria-label="Role">
+            <option value="all">All roles</option>
+            {GRANT_ROLES.map(r => (
+              <option key={r} value={r}>
+                {GRANT_ROLE_LABEL[r]}
+              </option>
+            ))}
+          </select>
+          <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Feature id or name" className="border border-line rounded-lg px-2 py-1.5 bg-white flex-1 min-w-[160px]" aria-label="Find feature" />
+          <span className="text-ink-soft">
+            {features.length} feature(s) · {rows.length} row(s)
+          </span>
+        </div>
+
+        <div className="p-3 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-2 border-b border-subtle">
+          {summary.map(s => (
+            <button
+              key={s.role}
+              onClick={() => setRole(role === s.role ? 'all' : s.role)}
+              className={`text-left rounded-xl border p-2 text-[11px] ${role === s.role ? 'border-brand bg-subtle' : 'border-line-soft hover:bg-wash'}`}
+            >
+              <span className="block font-bold text-ink">{GRANT_ROLE_LABEL[s.role]}</span>
+              <span className="block text-ink-soft">
+                owns {s.owns} · reads {s.reads}
+              </span>
+              <span className="block text-ink-muted">
+                approves {s.approves} · exports {s.exports}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead className="bg-slate-50 text-ink-soft">
+              <tr>
+                <th className="p-2.5 text-left">Feature</th>
+                <th className="p-2.5 text-left">Role</th>
+                <th className="p-2.5 text-left">Verb</th>
+                <th className="p-2.5 text-left">Scope</th>
+                <th className="p-2.5 text-left">Condition</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-subtle">
+              {shown.map(({ f, g }, i) => (
+                <tr key={`${f.id}-${g.role}`} className={i > 0 && shown[i - 1].f.id === f.id ? '' : 'border-t-2 border-line-soft'}>
+                  <td className="p-2.5 align-top">
+                    {(i === 0 || shown[i - 1].f.id !== f.id) && (
+                      <>
+                        <span className="font-mono font-bold text-brand">{f.id}</span> <span className="text-ink">{f.name}</span>
+                        <span className="block text-[10px] text-ink-muted">{f.phase}</span>
+                      </>
+                    )}
+                  </td>
+                  <td className="p-2.5 whitespace-nowrap">{GRANT_ROLE_LABEL[g.role]}</td>
+                  <td className="p-2.5" aria-label={`${f.id} ${GRANT_ROLE_LABEL[g.role]} verbs ${verbString(g.verbs)}`}>
+                    <Verbs verbs={g.verbs} />
+                  </td>
+                  <td className="p-2.5 whitespace-nowrap">{g.scope}</td>
+                  <td className="p-2.5 text-ink-soft">{g.condition || '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {rows.length > shown.length && <p className="p-3 text-[11px] text-ink-muted">Showing the first {shown.length} rows — pick a module or role to narrow the list.</p>}
+          {rows.length === 0 && <EmptyNote>No rows match.</EmptyNote>}
+        </div>
+        <p className="p-3 text-[10px] text-ink-muted border-t border-subtle">
+          Legend: {VERB_ORDER.map(v => `${v} ${VERB_LABEL[v]}`).join(' · ')}. Roles not listed for a feature have no access to it.
+        </p>
+      </div>
+    </div>
+  );
+};

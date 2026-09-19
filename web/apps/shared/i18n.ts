@@ -1,0 +1,93 @@
+// UI strings for the parent app (APP-019). English is complete; Tamil and Hindi fall back to English per key.
+import type { Language } from '../../src/data/messaging';
+
+const EN = {
+  home: 'Home',
+  attendance: 'Attendance',
+  fees: 'Fees',
+  messages: 'Messages',
+  more: 'More',
+  today: 'Today',
+  present: 'Present',
+  absent: 'Absent',
+  notMarked: 'Not marked yet',
+  feeDue: 'Fee due',
+  allPaid: 'All fees paid',
+  payNow: 'Pay now',
+  homework: 'Homework',
+  notices: 'Notices',
+  results: 'Results',
+  timetable: 'Timetable',
+  profile: 'Profile & documents',
+  consent: 'Consent centre',
+  settings: 'Notifications & settings',
+  applyLeave: 'Apply for leave',
+  thisYear: 'This year',
+  acknowledge: 'Acknowledge',
+  acknowledged: 'Acknowledged',
+  markDone: 'Mark as done',
+  done: 'Done',
+  signOut: 'Sign out',
+  language: 'Language',
+  dataSaver: 'Data saver',
+  studentMode: 'Student view',
+  due: 'Due',
+  upcoming: 'Upcoming',
+  greeting: 'Good morning',
+};
+
+export type StringKey = keyof typeof EN;
+
+const TA: Partial<Record<StringKey, string>> = {
+  home: 'முகப்பு',
+  attendance: 'வருகை',
+  fees: 'கட்டணம்',
+  messages: 'செய்திகள்',
+  more: 'மேலும்',
+  today: 'இன்று',
+  present: 'வருகை',
+  absent: 'வரவில்லை',
+  notMarked: 'இன்னும் பதிவு செய்யப்படவில்லை',
+  feeDue: 'செலுத்த வேண்டிய கட்டணம்',
+  allPaid: 'அனைத்து கட்டணமும் செலுத்தப்பட்டது',
+  payNow: 'இப்போது செலுத்து',
+  homework: 'வீட்டுப்பாடம்',
+  notices: 'அறிவிப்புகள்',
+  results: 'தேர்வு முடிவுகள்',
+  timetable: 'கால அட்டவணை',
+  applyLeave: 'விடுப்பு விண்ணப்பம்',
+  acknowledge: 'ஒப்புக்கொள்',
+  acknowledged: 'ஒப்புக்கொள்ளப்பட்டது',
+  signOut: 'வெளியேறு',
+  language: 'மொழி',
+  greeting: 'காலை வணக்கம்',
+};
+
+const HI: Partial<Record<StringKey, string>> = {
+  home: 'होम',
+  attendance: 'उपस्थिति',
+  fees: 'शुल्क',
+  messages: 'संदेश',
+  more: 'और',
+  today: 'आज',
+  present: 'उपस्थित',
+  absent: 'अनुपस्थित',
+  notMarked: 'अभी दर्ज नहीं',
+  feeDue: 'बकाया शुल्क',
+  allPaid: 'सभी शुल्क जमा',
+  payNow: 'अभी भुगतान करें',
+  homework: 'गृहकार्य',
+  notices: 'सूचनाएँ',
+  results: 'परिणाम',
+  timetable: 'समय सारणी',
+  applyLeave: 'छुट्टी का आवेदन',
+  acknowledge: 'स्वीकार करें',
+  acknowledged: 'स्वीकार किया',
+  signOut: 'साइन आउट',
+  language: 'भाषा',
+  greeting: 'सुप्रभात',
+};
+
+const TABLES: Record<Language, Partial<Record<StringKey, string>>> = { en: EN, ta: TA, hi: HI };
+
+export const translator = (lang: Language) => (key: StringKey) => TABLES[lang][key] ?? EN[key];
