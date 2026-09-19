@@ -59,7 +59,9 @@ The Jira tickets all carry the same one: *reviewed, unit and integration
 tested, acceptance criteria met, documentation updated, deployed to staging, QA
 signed off, no open P1 or P2 defects.*
 
-Two of those cannot be met yet and that is worth saying out loud rather than
-quietly ticking: **there is no staging environment and no CI** ([1020], JD1).
-Until those exist, "done" here means: tested locally, documented, merged to
-`CSK-branch`.
+One of those cannot be met yet and that is worth saying out loud rather than
+quietly ticking: **there is no staging environment**. CI ([1020], JD1) exists
+now — GitHub Actions runs typecheck, lint and the test suite (with a
+PostgreSQL 17 service) on every push and on pull requests targeting
+`CSK-branch`; see `.github/workflows/ci.yml`. Until staging exists, "done"
+here means: tested locally, CI green, documented, merged to `CSK-branch`.

@@ -307,4 +307,4 @@ Santhosh owns these. Dates are the Jira start dates.
 ## Definition of done
 Every ticket carries the same one: *reviewed, unit and integration tested, acceptance criteria met, documentation updated, deployed to staging, QA signed off, no open P1 or P2 defects.*
 
-Two of those cannot be met yet — there is no staging environment and no CI (task 1020, JD1). Until they exist, "done" here means tested locally, documented, and merged to `CSK-branch`. See `docs/daily-workflow.md`.
+One of those cannot be met yet — there is no staging environment. CI (task 1020, JD1) now runs on every push and on pull requests targeting `CSK-branch`: typecheck, lint and the full test suite against a PostgreSQL 17 service, defined in `.github/workflows/ci.yml`. Until staging exists, "done" here means tested locally, CI green, documented, and merged to `CSK-branch`. See `docs/daily-workflow.md`.

@@ -152,6 +152,10 @@ createdb lumen_platform_test
 TEST_ADMIN_DATABASE_URL=postgres://postgres@localhost:5432/lumen_platform_test npm test
 ```
 
+GitHub Actions (`.github/workflows/ci.yml`) runs the same three checks on
+every push and on pull requests targeting `CSK-branch`, against a PostgreSQL
+17 service container.
+
 `npm test` does not read `.env`, so set `TEST_ADMIN_DATABASE_URL` in the shell
 (PowerShell: `$env:TEST_ADMIN_DATABASE_URL = '...'`). Check the port: the
 Windows PostgreSQL installer picks 5433 when 5432 is taken.
